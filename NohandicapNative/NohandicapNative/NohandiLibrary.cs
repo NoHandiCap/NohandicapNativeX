@@ -1,0 +1,72 @@
+﻿
+
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+
+namespace NohandicapNative
+{
+    public class NohandiLibrary
+    {
+        public static List<TabItem> GetTabs()
+        {
+            List<TabItem> items = new List<TabItem>();
+            string[] tabTitles = { "Home", "Map", "List", "Favorites" };
+
+            string[] tabColors = { "#2196F3", "#5D4037", "#7B1FA2", "#FF5252", "#FF9800" };
+            for (int i = 0; i < tabTitles.Length; ++i)
+            {
+                items.Add(new TabItem()
+                {
+                    Id = i,
+                    Title = tabTitles[i],
+                    Color = tabColors[i],
+                    Image = string.Format("ic_{0}", tabTitles[i].ToLowerInvariant())
+                });
+            }
+            return items;
+        }
+        public static List<TabItem> GetAdditionalCategory()
+        {
+            List<TabItem> items = new List<TabItem>();
+            string[] buttonTitles = { "Kunsnt&Kultur", "Museen", "Shoppen", "Sport&Welsness", "Essen&Trinken", "Nächtigen", "Nützliches", "Events", "Location" };
+
+            string[] buttonColors = { "#D71C61", "#8D26AB", "#FA89DD", "#36449D", "#2186E2", "#01ACC0", "#02887D", "#43A047", "#7BB242" };
+
+            string[] buttonImage = { "kunst", "museum", "shop", "sport", "eat", "sleep", "search", "event", "location" };
+            for (int i = 0; i < buttonTitles.Length; ++i)
+            {
+                items.Add(new TabItem()
+                {
+                    Id = i,
+                    Title = buttonTitles[i],
+                    Color = buttonColors[i],
+                    Image = buttonImage[i]
+                });
+            }
+            return items;
+        }
+        public static List<TabItem> GetMainCategory()
+        {
+            List<TabItem> items = new List<TabItem>();
+            string[] buttonTitles = { "Barrierenfrei", "Teilweise Behinderten gerecht", "Total Behinderten gerecht"};
+
+            string[] buttonColors = { "#37474F", "#37474F", "#37474F" };
+
+            string[] buttonImage = { "wheelchair", "wheelchair2", "wheelchair3" };
+            for (int i = 0; i < buttonTitles.Length; ++i)
+            {
+                items.Add(new TabItem()
+                {
+                    Id = i,
+                    Title = buttonTitles[i],
+                    Color = buttonColors[i],
+                    Image = buttonImage[i]
+                });
+            }
+            return items;
+        }
+
+    }
+}
