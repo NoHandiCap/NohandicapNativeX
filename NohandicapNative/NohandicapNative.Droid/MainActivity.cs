@@ -84,8 +84,7 @@ namespace NohandicapNative.Droid
             {
                 var tab = items[i];
                 _bottomBar.MapColorForTab(i, tab.Color);
-
-            }  
+                            }  
             _bottomBar.SetOnTabClickListener(this);
             _bottomBar.SetActiveTabColor(Color.Red);
          
