@@ -29,6 +29,10 @@ using NohandicapNative.Droid.Services;
 
 namespace NohandicapNative.Droid
 {
+public    class Nohandicap : Application
+    {
+        public MainActivity MainActivity;
+    }
 	[Activity (Label = "NohandicapNative.Droid", MainLauncher = true, Icon = "@drawable/icon")]
 	public class MainActivity : AppCompatActivity, IOnMenuTabSelectedListener, IOnTabClickListener
     {
@@ -48,22 +52,15 @@ namespace NohandicapNative.Droid
         }
 
         protected override void OnCreate (Bundle bundle)
-		{
-
-          
-            
-            //SupportActionBar.Elevation = 0;
-            //SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Color.White));
-               SetTheme(Resource.Style.AppThemeNoBar);
+        {
+            SetTheme(Resource.Style.AppThemeNoBar);
             base.OnCreate (bundle);
          
             SetContentView(Resource.Layout.Main);
-
-
-
+            
             // Create your application here
             _bottomBar = BottomBar.AttachShy(FindViewById<CoordinatorLayout>(Resource.Id.myCoordinator), FindViewById<LinearLayout>(Resource.Id.linContent), bundle);
-      
+           
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar> (Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
@@ -85,47 +82,33 @@ namespace NohandicapNative.Droid
                 var tab = items[i];
                 _bottomBar.MapColorForTab(i, tab.Color);
                             }  
-            _bottomBar.SetOnTabClickListener(this);
-            _bottomBar.SetActiveTabColor(Color.Red);
-         
+            _bottomBar.SetOnTabClickListener(this);          
         }
-        public override bool OnCreateOptionsMenu(IMenu menu)
-        {
-            MenuInflater inflater = MenuInflater;
-            inflater.Inflate(Resource.Menu.main_menu, menu);
-            return true;
-        }
+   
 
         protected override void OnSaveInstanceState(Bundle outState)
         {
             base.OnSaveInstanceState(outState);
-
-            // Necessary to restore the BottomBar's state, otherwise we would
+             // Necessary to restore the BottomBar's state, otherwise we would
             // lose the current tab on orientation change.
             _bottomBar.OnSaveInstanceState(outState);
         }
       
         
         #region IOnTabClickListener implementation
-
+        public void SetCurrentTab(int position)
+        {
+            _bottomBar.SelectTabAtPosition(position, true);
+        }
         public void OnTabSelected(int position)
         {
-
-
-
-
             switch (position)
             {
-                case 0:
-                  
+                case 0:                  
                         ShowFragment(homePage,position.ToString());
-               
-
                     break;
-                case 1:
-                   
-                        ShowFragment(mapPage, position.ToString());
-                   
+                case 1:                   
+                        ShowFragment(mapPage, position.ToString());                
 
                     break;
                 case 2:
@@ -133,9 +116,7 @@ namespace NohandicapNative.Droid
                     break;
                 case 3:
                     ShowFragment(favorites, position.ToString());
-
                     break;
-
                 default:
                     break;
             }
@@ -150,7 +131,7 @@ namespace NohandicapNative.Droid
             
             lastPos = position;
         }
-        private void ShowFragment(Android.Support.V4.App.Fragment fragment,string tag)
+       public void ShowFragment(Android.Support.V4.App.Fragment fragment,string tag)
         {
             Android.Support.V4.App.FragmentManager fragmentManager = SupportFragmentManager;
 
@@ -173,11 +154,29 @@ namespace NohandicapNative.Droid
         }
         public void OnTabReSelected(int position)
         {
-            Toast.MakeText(ApplicationContext, "Tab reselected!", ToastLength.Short).Show();
+          
         }
 
         #endregion
-      
+        public override bool OnCreateOptionsMenu(IMenu menu)
+        {
+            MenuInflater inflater = MenuInflater;
+            inflater.Inflate(Resource.Menu.main_menu, menu);
+            return true;
+        }
+        public override bool OnOptionsItemSelected(IMenuItem item)
+        {
+            switch (item.ItemId)
+            {
+                case Android.Resource.Id.Home:
+                    SetCurrentTab(0);
+            break;
+                case Resource.Id.settings:
+                    StartActivity(typeof(SettingsActivity));
+                    break;
+            }
+            return true;
+        }
     }
 }
 

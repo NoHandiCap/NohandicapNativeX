@@ -12,6 +12,7 @@ using Android.Widget;
 using Java.Lang;
 using NohandicapNative.Droid.Services;
 using Android.Graphics;
+using Android.Support.V4.App;
 
 namespace NohandicapNative.Droid.Adapters
 {
@@ -19,7 +20,7 @@ namespace NohandicapNative.Droid.Adapters
     {
         private Context context;
         private List<TabItem> items;
-        public GridViewAdapter(Context context, List<TabItem> items)
+        public GridViewAdapter(FragmentActivity context, List<TabItem> items)
         {
             this.context = context;
             this.items = items;
@@ -52,6 +53,21 @@ namespace NohandicapNative.Droid.Adapters
             button.SetWidth(170);
             button.SetHeight(180);
             button.TextSize = 9.5f;
+            button.Click += delegate
+              {
+                  var activity = (MainActivity)context;
+                  Android.Support.V4.App.FragmentManager fragmentManager = activity.SupportFragmentManager;
+                  activity.SetCurrentTab(1);
+            
+              
+
+                  //if (mapFragment == null) { mapFragment = new GMapFragment();
+            
+                      
+                  //}
+              
+                
+              };
             return button;
         }
     }

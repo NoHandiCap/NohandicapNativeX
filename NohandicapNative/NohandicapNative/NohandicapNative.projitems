@@ -9,7 +9,11 @@
     <Import_RootNamespace>NohandicapNative</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)GeometryModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MarkerModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NohandiLibrary.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PropertiesModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RestApiService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TabItem.cs" />
   </ItemGroup>
 </Project>

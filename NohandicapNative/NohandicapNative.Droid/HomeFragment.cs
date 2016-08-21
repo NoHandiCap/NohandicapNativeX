@@ -28,9 +28,9 @@ namespace NohandicapNative.Droid
             GridView additionalCategory = view.FindViewById<GridView>(Resource.Id.additionalCategory);
             List<TabItem> additItems = NohandiLibrary.GetAdditionalCategory();
             List<TabItem> mainItems = NohandiLibrary.GetMainCategory();
-            mainCategory.Adapter = new GridViewAdapter(Activity.BaseContext, mainItems);
-          additionalCategory.Adapter= new GridViewAdapter(Activity.BaseContext, additItems);
-
+            mainCategory.Adapter = new GridViewAdapter(Activity, mainItems);
+          additionalCategory.Adapter= new GridViewAdapter(Activity, additItems);
+            
             return view;
         }
     }
