@@ -49,7 +49,8 @@ namespace NohandicapNative
                                             }
                                         }
                                     };
-                                    return JsonConvert.DeserializeObject<T>(root, settings);
+                                    var v= JsonConvert.DeserializeObject<T>(root, settings);
+                                    return v;
 
                                 }
                             }

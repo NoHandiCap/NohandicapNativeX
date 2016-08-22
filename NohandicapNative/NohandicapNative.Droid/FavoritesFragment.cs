@@ -24,8 +24,8 @@ namespace NohandicapNative.Droid
             items.Add(new MarkerModel()
             {
                 Id = 0.ToString(),
-                Title = "Hello",
-                Description = "Descript",
+                Properties=new PropertiesModel() { Title= "Hello", Description = "Descript" },
+            
                 Image = "eat"
 
             });

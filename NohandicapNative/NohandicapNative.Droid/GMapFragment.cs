@@ -16,6 +16,7 @@ using Android.Gms.Common;
 using Android.Gms.Maps.Model;
 using System.Collections.ObjectModel;
 using System.Collections;
+using NohandicapNative.Droid.Services;
 
 namespace NohandicapNative.Droid
 {
@@ -66,7 +67,7 @@ namespace NohandicapNative.Droid
         private async void LoadData()
         {
             ObservableCollection<MarkerModel> markers = await RestApiService.GetData<ObservableCollection<MarkerModel>>(null, null, "features");
-          
+           // var s = new SqliteService(Utils.PATH);
             for (int i = 0; i < 20; i++)
             {
                 try
@@ -77,13 +78,15 @@ namespace NohandicapNative.Droid
                     LatLng latlng = new LatLng(double.Parse(coordinat[1]), double.Parse(coordinat[0]));
                     MarkerOptions options = new MarkerOptions().SetPosition(latlng).SetTitle(markers[i].Title);
                     map.AddMarker(options);
+               
                 }catch(Exception e)
                 {
 
                 }
+              
             }
-          
-           
+          //  s.insertUpdateData(markers[1]);
+         //   var v =await s.GetData(1);
         }
         public override void OnResume()
         {

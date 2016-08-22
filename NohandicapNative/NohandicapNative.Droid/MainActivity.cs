@@ -60,7 +60,8 @@ public    class Nohandicap : Application
             
             // Create your application here
             _bottomBar = BottomBar.AttachShy(FindViewById<CoordinatorLayout>(Resource.Id.myCoordinator), FindViewById<LinearLayout>(Resource.Id.linContent), bundle);
-           
+           var s = new SqliteService(Utils.PATH);
+            s.CreateDB();
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar> (Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);

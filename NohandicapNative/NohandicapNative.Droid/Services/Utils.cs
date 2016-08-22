@@ -18,7 +18,7 @@ namespace NohandicapNative.Droid.Services
         public const string MAP_TAG = "1";
         public const string LIST_TAG = "2";
         public const string FAVORITES_TAG = "3";
-
+        public static string PATH = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
         public static Android.Graphics.Drawables.Drawable GetImage(Context context, string image)
 
         { 
