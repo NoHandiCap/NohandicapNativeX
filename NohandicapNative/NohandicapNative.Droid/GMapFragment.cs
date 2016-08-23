@@ -68,23 +68,23 @@ namespace NohandicapNative.Droid
         {
             ObservableCollection<MarkerModel> markers = await RestApiService.GetData<ObservableCollection<MarkerModel>>(null, null, "features");
            // var s = new SqliteService(Utils.PATH);
-            for (int i = 0; i < 20; i++)
-            {
-                try
-                {
-                    string[] coordinat = ((IEnumerable)markers[i].Coordinates.coordinates).Cast<object>()
-                                     .Select(x => x.ToString())
-                                     .ToArray();
-                    LatLng latlng = new LatLng(double.Parse(coordinat[1]), double.Parse(coordinat[0]));
-                    MarkerOptions options = new MarkerOptions().SetPosition(latlng).SetTitle(markers[i].Title);
-                    map.AddMarker(options);
+            //for (int i = 0; i < 20; i++)
+            //{
+            //    try
+            //    {
+            //        string[] coordinat = ((IEnumerable)markers[i].Coordinates.coordinates).Cast<object>()
+            //                         .Select(x => x.ToString())
+            //                         .ToArray();
+            //        LatLng latlng = new LatLng(double.Parse(coordinat[1]), double.Parse(coordinat[0]));
+            //        MarkerOptions options = new MarkerOptions().SetPosition(latlng).SetTitle(markers[i].Title);
+            //        map.AddMarker(options);
                
-                }catch(Exception e)
-                {
+            //    }catch(Exception e)
+            //    {
 
-                }
+            //    }
               
-            }
+            //}
           //  s.insertUpdateData(markers[1]);
          //   var v =await s.GetData(1);
         }

@@ -1,22 +1,26 @@
 ﻿
 
 
-using SQLite;
+
+
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-
+using SQLite.Net;
+using SQLiteNetExtensions.Extensions;
 namespace NohandicapNative
 {
     public class SqliteService
     {
         private const string DB_NAME = "nohandicap.db3";
-        private static SQLiteAsyncConnection dbCon;
+        private static SQLiteConnection dbCon;
         public SqliteService(string path)
         {
-            dbCon = new SQLiteAsyncConnection(Path.Combine(path, DB_NAME));
+            dbCon = new SQLiteConnection(null,Path.Combine(path, DB_NAME));
+   
         }
         public async Task<bool> CreateDB()
         {
@@ -36,8 +40,8 @@ namespace NohandicapNative
 
                 //#endif
 
-                await dbCon.CreateTableAsync<PropertiesModel>();
-                    await dbCon.CreateTableAsync<MarkerModel>();
+               dbCon.CreateTable<PropertiesModel>();
+                    dbCon.CreateTable<MarkerModel>();
                   
                
                   return true;
@@ -48,13 +52,12 @@ namespace NohandicapNative
             }
 
         }
-        public  async Task<string> insertUpdateData(MarkerModel data)
+        public string insertUpdateData(MarkerModel data)
         {
             try
             {
-              
-                if (await dbCon.InsertAsync(data) != 0)
-                    await dbCon.UpdateAsync(data);
+
+                dbCon.InsertWithChildren(data);
                 return "Single data file inserted or updated";
             }
             catch (SQLiteException ex)
@@ -62,12 +65,12 @@ namespace NohandicapNative
                 return ex.Message;
             }
         }
-        public async Task<MarkerModel> GetData(int id)
+        public List<MarkerModel> GetData(int id)
         {
             try
             {
 
-                return await dbCon.Table<MarkerModel>().FirstOrDefaultAsync();
+                return  dbCon.GetAllWithChildren<MarkerModel>();
                 
             }
             catch (SQLiteException ex)
@@ -75,13 +78,13 @@ namespace NohandicapNative
                 return null;
             }
         }
-        private async Task<int> findNumberRecords(string path)
+        private int findNumberRecords(string path)
         {
             try
             {
-                var db = new SQLiteAsyncConnection(path);
+              
                 // this counts all records in the database, it can be slow depending on the size of the database
-                var count = await db.Table<MarkerModel>().CountAsync();
+                var count =  dbCon.GetAllWithChildren<MarkerModel>().Count;
 
                 // for a non-parameterless query
                 // var count = db.ExecuteScalarAsync<int>("SELECT Count(*) FROM Person WHERE FirstName="Amy");

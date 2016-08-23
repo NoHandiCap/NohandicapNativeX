@@ -22,9 +22,9 @@ namespace NohandicapNative.Droid
             List<MarkerModel> items = new List<MarkerModel>();
             items.Add(new MarkerModel()
             {
-                Id = 0.ToString(),
-                Properties = new PropertiesModel() { Title = "Hello", Description = "Descript" },
-                Image ="eat"
+                //Id = 0.ToString(),
+                //Properties = new PropertiesModel() { Title = "Hello", Description = "Descript" },
+                //Image ="eat"
 
             });
             var listAdapter = new ListAdapter(Activity,items);

@@ -46,7 +46,7 @@ namespace NohandicapNative.Droid.Adapters
 
         public override long GetItemId(int position)
         {
-            return long.Parse(items[position].Id);
+            return items[position].ID;
         }
 
         public override View GetView(int position, View convertView, ViewGroup parent)

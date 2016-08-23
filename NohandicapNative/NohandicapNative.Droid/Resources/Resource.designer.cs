@@ -1617,6 +1617,8 @@ namespace NohandicapNative.Droid
 			global::BottomNavigationBar.Resource.Styleable.ViewStubCompat_android_id = global::NohandicapNative.Droid.Resource.Styleable.ViewStubCompat_android_id;
 			global::BottomNavigationBar.Resource.Styleable.ViewStubCompat_android_inflatedId = global::NohandicapNative.Droid.Resource.Styleable.ViewStubCompat_android_inflatedId;
 			global::BottomNavigationBar.Resource.Styleable.ViewStubCompat_android_layout = global::NohandicapNative.Droid.Resource.Styleable.ViewStubCompat_android_layout;
+			global::SQLite.Net.Platform.XamarinAndroid.Resource.String.ApplicationName = global::NohandicapNative.Droid.Resource.String.ApplicationName;
+			global::SQLite.Net.Platform.XamarinAndroid.Resource.String.Hello = global::NohandicapNative.Droid.Resource.String.Hello;
 		}
 		
 		public partial class Animation
@@ -4644,6 +4646,12 @@ namespace NohandicapNative.Droid
 		public partial class String
 		{
 			
+			// aapt resource value: 0x7f070039
+			public const int ApplicationName = 2131165241;
+			
+			// aapt resource value: 0x7f070038
+			public const int Hello = 2131165240;
+			
 			// aapt resource value: 0x7f070021
 			public const int abc_action_bar_home_description = 2131165217;
 			
@@ -4701,8 +4709,8 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f070033
 			public const int abc_toolbar_collapse_description = 2131165235;
 			
-			// aapt resource value: 0x7f070038
-			public const int app_name = 2131165240;
+			// aapt resource value: 0x7f07003a
+			public const int app_name = 2131165242;
 			
 			// aapt resource value: 0x7f070035
 			public const int appbar_scrolling_view_behavior = 2131165237;
@@ -4812,8 +4820,8 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f070000
 			public const int place_autocomplete_search_hint = 2131165184;
 			
-			// aapt resource value: 0x7f070039
-			public const int settings = 2131165241;
+			// aapt resource value: 0x7f07003b
+			public const int settings = 2131165243;
 			
 			// aapt resource value: 0x7f070034
 			public const int status_bar_notification_info_overflow = 2131165236;
