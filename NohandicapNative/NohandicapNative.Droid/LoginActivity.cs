@@ -3,33 +3,40 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-
+using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using Android.Support.V4.App;
-using NohandicapNative.Droid.Adapters;
-using Android.App;
+using Android.Support.V7.App;
+using Java.Lang;
 
 namespace NohandicapNative.Droid
 {
-    class FavoritesFragment : Android.Support.V4.App.Fragment
+    [Activity(Label = "LoginActivity",Theme = "@style/android:Theme.Holo.Light.NoActionBar")]
+    public class LoginActivity : AppCompatActivity
     {
-        MainActivity myContext;
         Button loginButton;
         TextView signUpButton;
         EditText emailText;
         EditText passwordText;
-        
-        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+
+        protected override void OnCreate(Bundle bundle)
         {
-            var view = inflater.Inflate(Resource.Layout.Login, container, false);
-            loginButton = view.FindViewById<Button>(Resource.Id.btn_login);
-            signUpButton = view.FindViewById<TextView>(Resource.Id.link_signup);
-            emailText = view.FindViewById<EditText>(Resource.Id.input_email);
-            passwordText = view.FindViewById<EditText>(Resource.Id.input_password);
+            SetTheme(Resource.Style.AppThemeNoBar);
+
+            base.OnCreate(bundle);
+
+            // Set our view from the "main" layout resource
+            SetContentView(Resource.Layout.Login);
+
+            //Initializing button from layout
+            loginButton = FindViewById<Button>(Resource.Id.btn_login);
+             signUpButton = FindViewById<TextView>(Resource.Id.link_signup);
+            emailText = FindViewById<EditText>(Resource.Id.input_email);
+            passwordText = FindViewById<EditText>(Resource.Id.input_password);
+
             ////Login button click action
             loginButton.Click += (object sender, EventArgs e) =>
             {
@@ -43,24 +50,6 @@ namespace NohandicapNative.Droid
             {
 
             };
-            //var listView = view.FindViewById<ListView>(Resource.Id.listview);
-            //List<MarkerModel> items = new List<MarkerModel>();
-            //items.Add(new MarkerModel()
-            //{
-            //    //Id = 0.ToString(),
-            //    //Properties=new PropertiesModel() { Title= "Hello", Description = "Descript" },
-
-            //    //Image = "eat"
-
-            //});
-            //var listAdapter = new ListAdapter(Activity, items);
-            //listView.Adapter = listAdapter;
-            return view;
-        }
-        public override void OnAttach(Activity activity)
-        {
-            myContext = (MainActivity)activity;
-            base.OnAttach(activity);
         }
         public void login()
         {
@@ -74,7 +63,7 @@ namespace NohandicapNative.Droid
 
             loginButton.Enabled = false;
 
-            ProgressDialog progressDialog = new ProgressDialog(myContext,
+            ProgressDialog progressDialog = new ProgressDialog(this,
                      Resource.Style.AppThemeDarkDialog);
             progressDialog.Indeterminate = true;
             progressDialog.SetMessage("Authenticating...");
@@ -91,15 +80,18 @@ namespace NohandicapNative.Droid
                 progressDialog.Dismiss();
             }, 3000);
         }
-       
+        public override void OnBackPressed()
+        {
+            MoveTaskToBack(true);
+        }
         public void onLoginSuccess()
         {
-            loginButton.Enabled = true;
-           // Finish();
+            loginButton.Enabled=true;
+            Finish();
         }
         public void onLoginFailed()
         {
-            Toast.MakeText(myContext, "Login failed", ToastLength.Short).Show();
+            Toast.MakeText(this, "Login failed", ToastLength.Short).Show();
 
             loginButton.Enabled = true;
         }
@@ -112,22 +104,22 @@ namespace NohandicapNative.Droid
 
             if (string.IsNullOrEmpty(email) || !Android.Util.Patterns.EmailAddress.Matcher(email).Matches())
             {
-                emailText.Error = "enter a valid email address";
+                emailText.Error="enter a valid email address";
                 valid = false;
             }
             else
             {
-                emailText.Error = null;
+                emailText.Error=null;
             }
 
             if (string.IsNullOrEmpty(password) || password.Length < 4 || password.Length > 10)
             {
-                passwordText.Error = "between 4 and 10 alphanumeric characters";
+                passwordText.Error="between 4 and 10 alphanumeric characters";
                 valid = false;
             }
             else
             {
-                passwordText.Error = null;
+                passwordText.Error=null;
             }
 
             return valid;

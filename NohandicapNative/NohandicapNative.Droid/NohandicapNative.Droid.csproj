@@ -114,6 +114,7 @@
     <Compile Include="Adapters\GridViewAdapter.cs" />
     <Compile Include="Adapters\ListAdapter.cs" />
     <Compile Include="FavoritesFragment.cs" />
+    <Compile Include="LoginActivity.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="GMapFragment.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
@@ -122,6 +123,7 @@
     <Compile Include="ListFragment.cs" />
     <Compile Include="Services\Utils.cs" />
     <Compile Include="SettingsActivity.cs" />
+    <Compile Include="SigUpActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -140,6 +142,9 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\ListPage.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\Login.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

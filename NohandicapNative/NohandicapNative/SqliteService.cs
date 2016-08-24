@@ -11,15 +11,17 @@ using System.Text;
 using System.Threading.Tasks;
 using SQLite.Net;
 using SQLiteNetExtensions.Extensions;
+using SQLite.Net.Interop;
+
 namespace NohandicapNative
 {
     public class SqliteService
     {
         private const string DB_NAME = "nohandicap.db3";
         private static SQLiteConnection dbCon;
-        public SqliteService(string path)
+        public SqliteService(ISQLitePlatform platform, string path)
         {
-            dbCon = new SQLiteConnection(null,Path.Combine(path, DB_NAME));
+            dbCon = new SQLiteConnection(platform,Path.Combine(path, DB_NAME));
    
         }
         public async Task<bool> CreateDB()
@@ -40,8 +42,11 @@ namespace NohandicapNative
 
                 //#endif
 
-               dbCon.CreateTable<PropertiesModel>();
-                    dbCon.CreateTable<MarkerModel>();
+                dbCon.CreateTable<CategoryModel>();
+                dbCon.CreateTable<LanguagesDbModel>();
+                dbCon.CreateTable<TranslateModel>();
+                dbCon.CreateTable<LanguageModel>();
+                dbCon.CreateTable<MarkerModel>();
                   
                
                   return true;
@@ -57,7 +62,7 @@ namespace NohandicapNative
             try
             {
 
-                dbCon.InsertWithChildren(data);
+                dbCon.InsertWithChildren(data,true);
                 return "Single data file inserted or updated";
             }
             catch (SQLiteException ex)
@@ -70,7 +75,7 @@ namespace NohandicapNative
             try
             {
 
-                return  dbCon.GetAllWithChildren<MarkerModel>();
+                return  dbCon.GetAllWithChildren<MarkerModel>(null,true);
                 
             }
             catch (SQLiteException ex)

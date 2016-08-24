@@ -7,13 +7,11 @@ using System.Text;
 
 namespace NohandicapNative
 {
-   public class LanguagTranslateModel
+   public class TranslateModel
     {
         [PrimaryKey,AutoIncrement]
-        public int ID { get; set; }
-        [ForeignKey(typeof(LanguagesDbModel))]
-        public int LanguageID { get; set; }
+        public int ID { get; set; }      
         public string Translate { get; set; }
-       
+      
     }
 }

@@ -56,7 +56,7 @@ namespace NohandicapNative.Droid
             {
                 e.PrintStackTrace();
             }
-            LoadData();
+          //  LoadData();
             // Updates the location and zoom of the MapView
             CameraUpdate cameraUpdate = CameraUpdateFactory.NewLatLngZoom(new LatLng(48.219406, 16.387580), 10);
             map.AnimateCamera(cameraUpdate);
@@ -67,26 +67,27 @@ namespace NohandicapNative.Droid
         private async void LoadData()
         {
             ObservableCollection<MarkerModel> markers = await RestApiService.GetData<ObservableCollection<MarkerModel>>(null, null, "features");
-           // var s = new SqliteService(Utils.PATH);
-            //for (int i = 0; i < 20; i++)
-            //{
-            //    try
-            //    {
-            //        string[] coordinat = ((IEnumerable)markers[i].Coordinates.coordinates).Cast<object>()
-            //                         .Select(x => x.ToString())
-            //                         .ToArray();
-            //        LatLng latlng = new LatLng(double.Parse(coordinat[1]), double.Parse(coordinat[0]));
-            //        MarkerOptions options = new MarkerOptions().SetPosition(latlng).SetTitle(markers[i].Title);
-            //        map.AddMarker(options);
-               
-            //    }catch(Exception e)
-            //    {
+          //  var s = new SqliteService(Utils.PATH);
+            for (int i = 0; i < 20; i++)
+            {
+                try
+                {
+                    //string[] coordinat = ((IEnumerable)markers[i].Coordinates.coordinates).Cast<object>()
+                  //                   .Select(x => x.ToString())
+                   //                  .ToArray();
+                  //  LatLng latlng = new LatLng(double.Parse(coordinat[1]), double.Parse(coordinat[0]));
+                   // MarkerOptions options = new MarkerOptions().SetPosition(latlng).SetTitle(markers[i].Title);
+                   // map.AddMarker(options);
 
-            //    }
-              
-            //}
-          //  s.insertUpdateData(markers[1]);
-         //   var v =await s.GetData(1);
+                }
+                catch (Exception e)
+                {
+
+                }
+
+            }
+           // s.insertUpdateData(markers[1]);
+           // var v = await s.GetData(1);
         }
         public override void OnResume()
         {

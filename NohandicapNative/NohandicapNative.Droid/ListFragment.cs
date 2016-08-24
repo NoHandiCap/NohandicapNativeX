@@ -20,13 +20,13 @@ namespace NohandicapNative.Droid
             var view = inflater.Inflate(Resource.Layout.ListPage, container, false);
             var listView = view.FindViewById<ListView>(Resource.Id.listview);
             List<MarkerModel> items = new List<MarkerModel>();
-            items.Add(new MarkerModel()
-            {
-                //Id = 0.ToString(),
-                //Properties = new PropertiesModel() { Title = "Hello", Description = "Descript" },
-                //Image ="eat"
+            //items.Add(new MarkerModel()
+            //{
+            //    //Id = 0.ToString(),
+            //    //Properties = new PropertiesModel() { Title = "Hello", Description = "Descript" },
+            //    //Image ="eat"
 
-            });
+            //});
             var listAdapter = new ListAdapter(Activity,items);
             listView.Adapter = listAdapter;
             return view;

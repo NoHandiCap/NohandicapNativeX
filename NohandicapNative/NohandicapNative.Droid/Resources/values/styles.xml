@@ -16,6 +16,11 @@
     <item name="colorControlNormal">@android:color/white</item>
   
   </style>
+  <style name="AppThemeDarkDialog" parent="Theme.AppCompat.Dialog">
+    <item name="colorAccent">@color/white</item>
+    <item name="android:textColorPrimary">@color/iron</item>
+    <item name="android:background">@color/primary</item>
+  </style>
   <style name="AppThemeNoBar.ActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
 
     <item name="android:titleTextStyle">@style/AppThemeNoBar.ActionBar.Text</item>

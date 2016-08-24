@@ -36,6 +36,7 @@ public    class Nohandicap : Application
 	[Activity (Label = "NohandicapNative.Droid", MainLauncher = true, Icon = "@drawable/icon")]
 	public class MainActivity : AppCompatActivity, IOnMenuTabSelectedListener, IOnTabClickListener
     {
+         int PICK_CONTACT_REQUEST = 1;  // The request code
         private BottomBar _bottomBar;
         Android.Support.V7.Widget.Toolbar toolbar;
         List<TabItem> items;
@@ -57,22 +58,36 @@ public    class Nohandicap : Application
             base.OnCreate (bundle);
          
             SetContentView(Resource.Layout.Main);
-            
+            ShowLoginWindow();
             // Create your application here
             _bottomBar = BottomBar.AttachShy(FindViewById<CoordinatorLayout>(Resource.Id.myCoordinator), FindViewById<LinearLayout>(Resource.Id.linContent), bundle);
-           var s = new SqliteService(Utils.PATH);
+           var s = new SqliteService(new SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid(),Utils.PATH);
             s.CreateDB();
-            LanguagesDbModel lang = new LanguagesDbModel();
-            lang.LanguageName = "dsv";
-            LanguagTranslateModel lan = new LanguagTranslateModel();
-            lan.Translate = "JFEFE";
-            lang.Translates = new List<LanguagTranslateModel>() { lan };
+           
+
             CategoryModel ct = new CategoryModel();
             ct.Color = "dvfsd";
+            ct.Name = "Total";
+            TranslateModel trans = new TranslateModel();
+            trans.Translate = "Hotel";
+            LanguageModel lang = new LanguageModel();
+            lang.LanguageName = "German";
+            LanguagesDbModel langDb = new LanguagesDbModel();
+            langDb.Translate = trans;
+            langDb.Language = lang;
+            var trans2 = new TranslateModel();
+            LanguagesDbModel langDb2 = new LanguagesDbModel();
+            trans2.Translate = "Part";
+            langDb2.Translate = trans2;
+            langDb2.Language = lang;
+            CategoryModel ct2 = new CategoryModel();
+            ct2.Color = "234";
+            ct2.Name = "Teilweise";
+            ct2.Languages = new List<LanguagesDbModel>() { langDb2 };
             MarkerModel marker = new MarkerModel();
             marker.Title = "lol";
-            marker.Languages = new List<LanguagesDbModel>() { lang };
-            marker.Categories = new List<CategoryModel>() { ct };
+            marker.Languages = new List<LanguagesDbModel>() { langDb };
+            marker.Categories = new List<CategoryModel>() { ct2,ct };
             s.insertUpdateData(marker);
             var g = s.GetData(1);
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar> (Resource.Id.toolbar);
@@ -107,7 +122,11 @@ public    class Nohandicap : Application
             // lose the current tab on orientation change.
             _bottomBar.OnSaveInstanceState(outState);
         }
-      
+      private  void ShowLoginWindow()
+        {
+            var myIntent = new Intent(this, typeof(LoginActivity));
+            StartActivityForResult(myIntent, 0);
+        }
         
         #region IOnTabClickListener implementation
         public void SetCurrentTab(int position)
@@ -191,6 +210,16 @@ public    class Nohandicap : Application
             }
             return true;
         }
+        protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
+            if (resultCode == Result.Ok)
+            {
+              //  var helloLabel = FindViewById<TextView>(Resource.Id.helloLabel);
+               // helloLabel.Text = data.GetStringExtra("greeting");
+            }
+        }
+        
     }
 }
 
