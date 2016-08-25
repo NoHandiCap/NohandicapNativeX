@@ -19,15 +19,19 @@ namespace NohandicapNative.Droid
     {
         MainActivity myContext;
         Button loginButton;
-        TextView signUpButton;
+        Button signUpButton;
+        TextView laterButton;
         EditText emailText;
         EditText passwordText;
-        
+
+
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             var view = inflater.Inflate(Resource.Layout.Login, container, false);
             loginButton = view.FindViewById<Button>(Resource.Id.btn_login);
-            signUpButton = view.FindViewById<TextView>(Resource.Id.link_signup);
+            laterButton = view.FindViewById<TextView>(Resource.Id.link_later);
+            signUpButton = view.FindViewById<Button>(Resource.Id.btn_sign_up);
+
             emailText = view.FindViewById<EditText>(Resource.Id.input_email);
             passwordText = view.FindViewById<EditText>(Resource.Id.input_password);
             ////Login button click action

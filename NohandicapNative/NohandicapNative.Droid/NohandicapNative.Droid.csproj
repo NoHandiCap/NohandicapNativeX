@@ -113,6 +113,7 @@
   <ItemGroup>
     <Compile Include="Adapters\GridViewAdapter.cs" />
     <Compile Include="Adapters\ListAdapter.cs" />
+    <Compile Include="DetailActivity.cs" />
     <Compile Include="FavoritesFragment.cs" />
     <Compile Include="LoginActivity.cs" />
     <Compile Include="MainActivity.cs" />
@@ -145,6 +146,15 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\Login.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\SignUp.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\DetailPage.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\menu\detail_menu.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

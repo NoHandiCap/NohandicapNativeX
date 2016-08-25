@@ -16,11 +16,118 @@ namespace NohandicapNative.Droid
     [Activity(Label = "SigUpActivity")]
     public class SigUpActivity : AppCompatActivity
     {
+        Button signUpButton;
+        TextView loginLinkButton;
+        EditText emailText;
+        EditText passwordText;
+        EditText nameText;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            SetTheme(Resource.Style.AppThemeNoBar);
             base.OnCreate(savedInstanceState);
-
+            SetContentView(Resource.Layout.SignUp);
             // Create your application here
+            loginLinkButton = FindViewById<TextView>(Resource.Id.link_login);
+            signUpButton = FindViewById<Button>(Resource.Id.btn_signup);
+
+            emailText = FindViewById<EditText>(Resource.Id.input_email);
+            passwordText = FindViewById<EditText>(Resource.Id.input_password);
+            nameText = FindViewById<EditText>(Resource.Id.input_name);
+            signUpButton.Click += (s, e) =>
+            {
+                signup();
+            };
+            loginLinkButton.Click += (s, e) =>
+            {
+                Finish();
+            };
+        }
+        public void signup()
+        {
+
+
+            if (!validate())
+            {
+                onSignupFailed();
+                return;
+            }
+
+            signUpButton.Enabled = false;
+
+            ProgressDialog progressDialog = new ProgressDialog(this,
+                   Resource.Style.AppThemeDarkDialog);
+            progressDialog.Indeterminate = true;
+            progressDialog.SetMessage("Creating Account...");
+            progressDialog.Show();
+
+            String name = nameText.Text;
+            String email = emailText.Text;
+            String password = passwordText.Text;
+            new Android.OS.Handler().PostDelayed(() =>
+            {
+
+                // On complete call either onSignupSuccess or onSignupFailed 
+                // depending on success
+                onSignupSuccess();
+                // onSignupFailed();
+                progressDialog.Dismiss();
+
+            }, 3000);
+        }
+        public void onSignupSuccess()
+        {
+            signUpButton.Enabled=true;
+            SetResult(Result.Ok, null);
+            Finish();
+        }
+
+        public void onSignupFailed()
+        {
+            Toast.MakeText(BaseContext, "Login failed", ToastLength.Short).Show();
+
+            signUpButton.Enabled=true;
+        }
+
+        public bool validate()
+        {
+            bool valid = true;
+
+            String name = nameText.Text;
+            String email = emailText.Text;
+            String password = passwordText.Text;
+
+            if (string.IsNullOrEmpty(name) || name.Length < 3)
+            {
+                nameText.Error="at least 3 characters";
+                valid = false;
+            }
+            else
+            {
+                nameText.Error=null;
+            }
+
+            if (string.IsNullOrEmpty(email) || !Android.Util.Patterns.EmailAddress.Matcher(email).Matches())
+            {
+                emailText.Error="enter a valid email address";
+                valid = false;
+            }
+            else
+            {
+                emailText.Error=null;
+            }
+
+            if (string.IsNullOrEmpty(password) || password.Length < 4 || password.Length > 10)
+            {
+                passwordText.Error="between 4 and 10 alphanumeric characters";
+                valid = false;
+            }
+            else
+            {
+                passwordText.Error=null;
+            }
+
+            return valid;
         }
     }
 }

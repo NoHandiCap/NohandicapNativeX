@@ -59,6 +59,7 @@ namespace NohandicapNative.Droid.Adapters
             title.Text = items[position].Title;
             description.Text = items[position].Description;
             image.SetImageDrawable(Utils.GetImage(context, items[position].Image));
+           
                 return view;
                 
         }

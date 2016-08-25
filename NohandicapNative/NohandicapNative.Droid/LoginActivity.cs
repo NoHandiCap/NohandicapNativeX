@@ -18,7 +18,8 @@ namespace NohandicapNative.Droid
     public class LoginActivity : AppCompatActivity
     {
         Button loginButton;
-        TextView signUpButton;
+        Button signUpButton;
+        TextView laterButton;
         EditText emailText;
         EditText passwordText;
 
@@ -33,7 +34,9 @@ namespace NohandicapNative.Droid
 
             //Initializing button from layout
             loginButton = FindViewById<Button>(Resource.Id.btn_login);
-             signUpButton = FindViewById<TextView>(Resource.Id.link_signup);
+             laterButton = FindViewById<TextView>(Resource.Id.link_later);
+            signUpButton = FindViewById<Button>(Resource.Id.btn_sign_up);
+
             emailText = FindViewById<EditText>(Resource.Id.input_email);
             passwordText = FindViewById<EditText>(Resource.Id.input_password);
 
@@ -46,10 +49,24 @@ namespace NohandicapNative.Droid
                 //SetResult(Result.Ok, myIntent);
                 //Finish();
             };
-            signUpButton.Click += (s, e) =>
-            {
-
+            signUpButton.Click += (s, e) => {
+                var myIntent = new Intent(this, typeof(SigUpActivity));
+                StartActivityForResult(myIntent, 0);
+                Finish();
             };
+            laterButton.Click += (s, e) =>
+            {
+                Finish();
+            };
+        }
+        protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
+            if (resultCode == Result.Ok)
+            {
+                //  var helloLabel = FindViewById<TextView>(Resource.Id.helloLabel);
+                // helloLabel.Text = data.GetStringExtra("greeting");
+            }
         }
         public void login()
         {

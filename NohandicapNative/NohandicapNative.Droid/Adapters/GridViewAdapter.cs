@@ -18,9 +18,9 @@ namespace NohandicapNative.Droid.Adapters
 {
     public class GridViewAdapter : BaseAdapter
     {
-        private Context context;
+        private MainActivity context;
         private List<TabItem> items;
-        public GridViewAdapter(FragmentActivity context, List<TabItem> items)
+        public GridViewAdapter(MainActivity context, List<TabItem> items)
         {
             this.context = context;
             this.items = items;
@@ -53,18 +53,13 @@ namespace NohandicapNative.Droid.Adapters
             button.SetWidth(170);
             button.SetHeight(180);
             button.TextSize = 9.5f;
-            button.Click += delegate
+            button.Click += (s,e)=>
               {
                   var activity = (MainActivity)context;
                   Android.Support.V4.App.FragmentManager fragmentManager = activity.SupportFragmentManager;
                   activity.SetCurrentTab(1);
-            
-              
-
-                  //if (mapFragment == null) { mapFragment = new GMapFragment();
-            
-                      
-                  //}
+                  context.SupportActionBar.Title = (s as Button).Text;
+           
               
                 
               };
