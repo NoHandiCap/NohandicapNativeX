@@ -46,7 +46,7 @@ namespace NohandicapNative
                 dbCon.CreateTable<LanguagesDbModel>();
                 dbCon.CreateTable<TranslateModel>();
                 dbCon.CreateTable<LanguageModel>();
-                dbCon.CreateTable<MarkerModel>();
+                dbCon.CreateTable<ProductModel>();
                   
                
                   return true;
@@ -57,7 +57,7 @@ namespace NohandicapNative
             }
 
         }
-        public string insertUpdateData(MarkerModel data)
+        public string insertUpdateData(ProductModel data)
         {
             try
             {
@@ -70,12 +70,12 @@ namespace NohandicapNative
                 return ex.Message;
             }
         }
-        public List<MarkerModel> GetData(int id)
+        public List<ProductModel> GetData(int id)
         {
             try
             {
 
-                return  dbCon.GetAllWithChildren<MarkerModel>(null,true);
+                return  dbCon.GetAllWithChildren<ProductModel>(null,true);
                 
             }
             catch (SQLiteException ex)
@@ -89,7 +89,7 @@ namespace NohandicapNative
             {
               
                 // this counts all records in the database, it can be slow depending on the size of the database
-                var count =  dbCon.GetAllWithChildren<MarkerModel>().Count;
+                var count =  dbCon.GetAllWithChildren<ProductModel>().Count;
 
                 // for a non-parameterless query
                 // var count = db.ExecuteScalarAsync<int>("SELECT Count(*) FROM Person WHERE FirstName="Amy");

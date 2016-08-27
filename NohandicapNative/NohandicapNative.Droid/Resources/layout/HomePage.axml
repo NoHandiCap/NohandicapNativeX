@@ -6,51 +6,107 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin">
-    <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/scrollView"
-        android:layout_alignBottom="@+id/mainCategory"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="bottom|top"
-        android:layout_alignTop="@+id/scrollView"
-        android:layout_alignLeft="@+id/scrollView"
-        android:layout_alignStart="@+id/scrollView">
-        <GridView
+        android:layout_height="match_parent"
+        android:gravity="bottom|top">
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/linearLayout"
+            android:background="#CDDC39">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageView"
+                android:src="@drawable/wheelchair"
+                android:layout_marginStart="25dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Large Text"
+                android:id="@+id/first_category"
+                android:layout_gravity="center"
+                android:textColor="#000000"/>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/linearLayout2"
+            android:layout_below="@+id/linearLayout3"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:background="#CDDC39">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageView2"
+                android:src="@drawable/wheelchair3" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Large Text"
+                android:id="@+id/second_category"
+                android:layout_gravity="center"
+        android:textColor="#000000"/>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/linearLayout3"
+            android:layout_below="@+id/linearLayout"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:background="#CDDC39"
+          >
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageView3"
+                android:src="@drawable/wheelchair2" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+              
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Large Text"
+                android:id="@+id/thrity_category"
+                android:layout_gravity="center"
+                android:textColor="#000000"
+                 android:layout_marginBottom="5dp"/>
+        </LinearLayout>
+      <GridView
+          android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/additionalCategory"
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_below="@+id/mainCategory"
-             android:horizontalSpacing="5dp"      
-        android:verticalSpacing="5dp"
-            android:numColumns="3" />
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:id="@+id/logo"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:src="@drawable/logo_handicap" />
-        <GridView
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:id="@+id/mainCategory"
-            android:layout_below="@+id/logo"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"            
-            android:layout_alignParentStart="true"
-               android:horizontalSpacing="5dp"      
-        android:verticalSpacing="5dp"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentEnd="false"
+            android:horizontalSpacing="5dp"
+            android:verticalSpacing="5dp"
             android:numColumns="3"
-            android:layout_marginBottom="25dp" />
+            android:nestedScrollingEnabled="false"
+            android:scrollbars="none"
+            android:fadeScrollbars="true"
+            android:layout_below="@+id/linearLayout2" />
+    <!--<GridView
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:id="@+id/mainCategory"
+                android:layout_below="@+id/logo"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentStart="true"
+                android:horizontalSpacing="5dp"
+                android:verticalSpacing="5dp"
+                android:numColumns="3"
+                android:layout_marginBottom="25dp" />-->
     </RelativeLayout>
 </RelativeLayout>

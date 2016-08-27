@@ -11,6 +11,6 @@ namespace NohandicapNative
         [PrimaryKey, AutoIncrement]
         public int ID { get; set; }
         public string LanguageName { get; set; }
-       
+        public string ShortName { get; set; }
     }
 }

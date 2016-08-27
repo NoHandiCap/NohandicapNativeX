@@ -11,7 +11,7 @@ public class LanguagesDbModel
         [PrimaryKey,AutoIncrement]
         public int ID { get; set; }
 
-        [ForeignKey(typeof(MarkerModel))]
+        [ForeignKey(typeof(ProductModel))]
         public int MarkerID { get; set; }
 
         [ForeignKey(typeof(CategoryModel))]

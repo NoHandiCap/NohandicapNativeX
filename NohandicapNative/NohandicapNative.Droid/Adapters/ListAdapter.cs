@@ -14,16 +14,17 @@ using Android.Graphics.Drawables;
 using Android.Content.Res;
 using NohandicapNative.Droid.Services;
 using Android.Support.V4.App;
+using Android.Graphics;
 
 namespace NohandicapNative.Droid.Adapters
 {
    public class ListAdapter : BaseAdapter
     {
-       private List<MarkerModel> items;
+       private List<ProductModel> items;
         Activity context;
         private FragmentActivity activity;
 
-       public ListAdapter(Activity context,List<MarkerModel> items)
+       public ListAdapter(Activity context,List<ProductModel> items)
         {
             this.context = context;
             this.items = items;
@@ -59,8 +60,12 @@ namespace NohandicapNative.Droid.Adapters
             title.Text = items[position].Title;
             description.Text = items[position].Description;
             image.SetImageDrawable(Utils.GetImage(context, items[position].Image));
-           
-                return view;
+            image.SetBackgroundColor(Color.ParseColor("#7B1FA2"));
+
+            image.LayoutParameters.Height = 100;
+            image.LayoutParameters.Width = 100;
+            image.SetPadding(5, 0, 5, 0);
+            return view; 
                 
         }
     }

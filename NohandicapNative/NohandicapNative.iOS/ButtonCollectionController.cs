@@ -1,53 +1,87 @@
-﻿using CoreGraphics;
+﻿
+using CoreGraphics;
 using Foundation;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using UIKit;
-using static CoreText.CTFontFeatureAnnotation;
+
 
 namespace NohandicapNative.iOS
 {
- public   class ButtonCollectionController : UICollectionViewController
+    public class Monkey : IAnimal
     {
-        static NSString animalCellId = new NSString("ButtonCell");
-        static NSString headerId = new NSString("Header");
-        List<TabItem> tabs;
-
-        public ButtonCollectionController(UICollectionViewLayout layout, List<TabItem> tabs) : base(layout)
+        public Monkey()
         {
-            this.tabs = tabs;
+        }
+
+        public string Name
+        {
+            get
+            {
+                return "Monkey";
+            }
+        }
+
+        public UIImage Image
+        {
+            get
+            {
+                return UIImage.FromBundle("monkey.png");
+            }
+        }
+
+    }
+    public interface IAnimal
+    {
+        string Name { get; }
+
+        UIImage Image { get; }
+    }
+    public   class ButtonCollectionController : UICollectionViewController
+    {
+        static NSString animalCellId = new NSString("AnimalCell");
+        static NSString headerId = new NSString("Header");
+        List<IAnimal> animals;
+
+        public ButtonCollectionController(UICollectionViewLayout layout) : base (layout)
+        {
+            animals = new List<IAnimal>();
+            for (int i = 0; i < 9; i++)
+            {
+                animals.Add(new Monkey());
+            }
         }
 
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
 
-            CollectionView.RegisterClassForCell(typeof(ButtonCell), animalCellId);
+            CollectionView.RegisterClassForCell(typeof(AnimalCell), animalCellId);
             CollectionView.RegisterClassForSupplementaryView(typeof(Header), UICollectionElementKindSection.Header, headerId);
-
-
+            CollectionView.BackgroundColor = UIColor.White;
+    
         }
 
         public override nint NumberOfSections(UICollectionView collectionView)
         {
             return 1;
         }
-
+        
         public override nint GetItemsCount(UICollectionView collectionView, nint section)
         {
-            return tabs.Count;
+            return animals.Count;
         }
 
         public override UICollectionViewCell GetCell(UICollectionView collectionView, NSIndexPath indexPath)
         {
-            var tabCell = (ButtonCell)collectionView.DequeueReusableCell(animalCellId, indexPath);
+            var animalCell = (AnimalCell)collectionView.DequeueReusableCell(animalCellId, indexPath);
 
-            var tab = tabs[indexPath.Row];
+            var animal = animals[indexPath.Row];
 
-            tabCell.Image =UIImage.FromBundle(tab.Image);
-
-            return tabCell;
+            animalCell.Image = animal.Image;
+            animalCell.Title = animal.Name;
+            return animalCell;
         }
 
         public override UICollectionReusableView GetViewForSupplementaryElement(UICollectionView collectionView, NSString elementKind, NSIndexPath indexPath)
@@ -85,7 +119,7 @@ namespace NohandicapNative.iOS
             return true;
         }
 
-     
+       
 
         // CanBecomeFirstResponder and CanPerform are needed for a custom menu item to appear
         public override bool CanBecomeFirstResponder
@@ -104,20 +138,75 @@ namespace NohandicapNative.iOS
 				return false;
 		}*/
 
-        //public override void WillRotate(UIInterfaceOrientation toInterfaceOrientation, double duration)
-        //{
-        //    base.WillRotate(toInterfaceOrientation, duration);
+        public override void WillRotate(UIInterfaceOrientation toInterfaceOrientation, double duration)
+        {
+            base.WillRotate(toInterfaceOrientation, duration);
 
-        //    var lineLayout = CollectionView.CollectionViewLayout as LineLayout;
-        //    if (lineLayout != null)
-        //    {
-        //        if ((toInterfaceOrientation == UIInterfaceOrientation.Portrait) || (toInterfaceOrientation == UIInterfaceOrientation.PortraitUpsideDown))
-        //            lineLayout.SectionInset = new UIEdgeInsets(400, 0, 400, 0);
-        //        else
-        //            lineLayout.SectionInset = new UIEdgeInsets(220, 0.0f, 200, 0.0f);
-        //    }
-        //}
+            var lineLayout = CollectionView.CollectionViewLayout as LineLayout;
+            if (lineLayout != null)
+            {
+                if ((toInterfaceOrientation == UIInterfaceOrientation.Portrait) || (toInterfaceOrientation == UIInterfaceOrientation.PortraitUpsideDown))
+                    lineLayout.SectionInset = new UIEdgeInsets(400, 0, 400, 0);
+                else
+                    lineLayout.SectionInset = new UIEdgeInsets(220, 0.0f, 200, 0.0f);
+            }
+        }
+
     }
+
+    public class AnimalCell : UICollectionViewCell
+    {
+        UIImageView imageView;
+        UILabel title;
+        [Export("initWithFrame:")]
+        public AnimalCell(CGRect frame) : base(frame)
+        {
+            BackgroundView = new UIView { BackgroundColor = UIColor.Orange };
+
+            SelectedBackgroundView = new UIView { BackgroundColor = UIColor.Green };
+
+            ContentView.Layer.BorderColor = UIColor.LightGray.CGColor;
+            ContentView.Layer.BorderWidth = 2.0f;
+            ContentView.BackgroundColor = UIColor.White;
+            ContentView.Transform = CGAffineTransform.MakeScale(0.8f, 0.8f);
+
+            imageView = new UIImageView(UIImage.FromBundle("ic_map.png"));
+            imageView.Center = ContentView.Center;
+            imageView.Transform = CGAffineTransform.MakeScale(0.7f, 0.7f);
+
+            title = new UILabel();
+            title.Center = ContentView.Center;
+            title.TextColor = UIColor.Black;
+            title.Center = ContentView.Center;
+            title.Transform = CGAffineTransform.MakeScale(0.7f, 0.7f);
+            ContentView.AddSubview(title);
+        }
+
+        public UIImage Image
+        {
+            set
+            {
+                imageView.Image = value;
+            }
+        }
+        public string Title
+        {
+            set
+            {
+                title.Text = value;
+            }
+        }
+        [Export("custom")]
+        void Custom()
+        {
+            // Put all your custom menu behavior code here
+            Console.WriteLine("custom in the cell");
+        }
+
+
+       
+    }
+
     public class Header : UICollectionReusableView
     {
         UILabel label;
@@ -141,5 +230,7 @@ namespace NohandicapNative.iOS
             label = new UILabel() { Frame = new CGRect(0, 0, 300, 50), BackgroundColor = UIColor.Yellow };
             AddSubview(label);
         }
+
     }
+
 }

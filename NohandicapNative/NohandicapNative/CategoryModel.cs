@@ -1,4 +1,5 @@
-﻿using SQLite.Net.Attributes;
+﻿using NohandicapNative;
+using SQLite.Net.Attributes;
 using SQLiteNetExtensions.Attributes;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace NohandicapNative
     {
         [PrimaryKey, AutoIncrement]
         public virtual int ID { get; set; }
-        [ForeignKey(typeof(MarkerModel))]
+        [ForeignKey(typeof(ProductModel))]
         public int MarkerID { get; set; }
         public string Color { get; set; }
         public string Name { get; set; }       

@@ -26,9 +26,17 @@ namespace NohandicapNative.iOS
                 tabItems[i] = new UINavigationController(item);
                 if (i == 0)
                 {
-                  
-                    var col = new ButtonCollectionController(new LineLayout(), NohandiLibrary.GetMainCategory());
-                    col.CollectionView.ContentInset = new UIEdgeInsets(50, 0, 0, 0);
+                    var flowLayout = new UICollectionViewFlowLayout()
+                    {
+                        HeaderReferenceSize = new CGSize(100, 100),
+                        SectionInset = new UIEdgeInsets(2, 2, 2,2),
+                        ScrollDirection = UICollectionViewScrollDirection.Vertical,
+                        MinimumInteritemSpacing = 5, // minimum spacing between cells
+                        MinimumLineSpacing = 5 // minimum spacing between rows if ScrollDirection is Vertical or between columns if Horizontal
+                    };
+
+                    var col = new ButtonCollectionController(flowLayout);
+                    col.CollectionView.ContentInset = new UIEdgeInsets(0, 0, 0, 0);
                     col.Title = tab.Title;
                     col.TabBarItem = new UITabBarItem(tab.Title, UIImage.FromBundle(tab.Image), 0);
                     col.View.BackgroundColor = UIColor.White;

@@ -22,7 +22,7 @@ namespace NohandicapNative.Droid
 {
     class GMapFragment : Android.Support.V4.App.Fragment
     {
-        IEnumerable<MarkerModel> lists;
+        IEnumerable<ProductModel> lists;
         private MainActivity myContext;
         MapView mapView;
         GoogleMap map;
@@ -45,8 +45,8 @@ namespace NohandicapNative.Droid
             map.MyLocationEnabled=true;
             map.UiSettings.MapToolbarEnabled = true;
             map.UiSettings.ZoomControlsEnabled = true;
-           
-           
+       
+
             // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
             try
             {
@@ -60,13 +60,18 @@ namespace NohandicapNative.Droid
             // Updates the location and zoom of the MapView
             CameraUpdate cameraUpdate = CameraUpdateFactory.NewLatLngZoom(new LatLng(48.219406, 16.387580), 10);
             map.AnimateCamera(cameraUpdate);
+            MarkerOptions options = new MarkerOptions().SetPosition(new LatLng(48.219506, 16.388480)).SetTitle("Restaurant");
+            options.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.marker_eat));
+            map.AddMarker(options);
+            MarkerOptions options2 = new MarkerOptions().SetPosition(new LatLng(48.210606, 16.380480)).SetTitle("Event");
+            options2.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.marker_event));
 
-
+            map.AddMarker(options2);
             return view;
         }
         private async void LoadData()
         {
-            ObservableCollection<MarkerModel> markers = await RestApiService.GetData<ObservableCollection<MarkerModel>>(null, null, "features");
+            ObservableCollection<ProductModel> markers = await RestApiService.GetData<ObservableCollection<ProductModel>>(null, null, "features");
           //  var s = new SqliteService(Utils.PATH);
             for (int i = 0; i < 20; i++)
             {

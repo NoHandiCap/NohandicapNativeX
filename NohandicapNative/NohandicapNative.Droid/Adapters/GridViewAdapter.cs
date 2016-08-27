@@ -48,11 +48,13 @@ namespace NohandicapNative.Droid.Adapters
             var item = items[position];
            var button = new Button(context);
             button.Text = item.Title;
+            button.SetTextColor(Color.White);
+    
             button.SetCompoundDrawablesWithIntrinsicBounds(null, Utils.GetImage(context, item.Image), null, null);
             button.SetBackgroundColor(Color.ParseColor(item.Color));
-            button.SetWidth(170);
-            button.SetHeight(180);
-            button.TextSize = 9.5f;
+            button.SetMinimumWidth(200);
+            button.SetMinimumHeight(200);
+            button.TextSize = 10f;
             button.Click += (s,e)=>
               {
                   var activity = (MainActivity)context;

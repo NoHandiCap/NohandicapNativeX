@@ -14,7 +14,7 @@ namespace NohandicapNative
             List<TabItem> items = new List<TabItem>();
             string[] tabTitles = { "Home", "Map", "List", "Favorites" };
 
-            string[] tabColors = { "#37474F", "#5D4037", "#7B1FA2", "#FF5252", "#FF9800" };
+            string[] tabColors = { "#37474F", "#5D4037", "#7B1FA2", "#009688" };
             for (int i = 0; i < tabTitles.Length; ++i)
             {
                 items.Add(new TabItem()

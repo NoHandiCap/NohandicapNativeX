@@ -8,7 +8,8 @@ using System.Text;
 namespace NohandicapNative
 {
     [JsonObject]
-    public class MarkerModel
+  
+    public class ProductModel
     {
         [PrimaryKey, AutoIncrement]
         public virtual int ID { get; set; }
@@ -23,6 +24,6 @@ namespace NohandicapNative
         public List<CategoryModel> Categories { get; set; }
       
         [OneToMany(CascadeOperations = CascadeOperation.All)]
-        public virtual List<LanguagesDbModel> Languages { get; set; }
+        public List<LanguagesDbModel> Languages { get; set; }
     }
 }

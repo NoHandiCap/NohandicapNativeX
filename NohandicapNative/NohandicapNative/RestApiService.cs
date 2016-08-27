@@ -43,7 +43,7 @@ namespace NohandicapNative
                                         Error = (sender, args) =>
                                         {
                                             if (object.Equals(args.ErrorContext.Member, "test") &&
-                                                args.ErrorContext.OriginalObject.GetType() == typeof(MarkerModel))
+                                                args.ErrorContext.OriginalObject.GetType() == typeof(ProductModel))
                                             {
                                                 args.ErrorContext.Handled = false;
                                             }

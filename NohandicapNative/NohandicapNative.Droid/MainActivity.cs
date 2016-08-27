@@ -58,7 +58,7 @@ public    class Nohandicap : Application
             base.OnCreate (bundle);
          
             SetContentView(Resource.Layout.Main);
-            ShowLoginWindow();
+     //  ShowLoginWindow();
             // Create your application here
             _bottomBar = BottomBar.AttachShy(FindViewById<CoordinatorLayout>(Resource.Id.myCoordinator), FindViewById<LinearLayout>(Resource.Id.linContent), bundle);
            var s = new SqliteService(new SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid(),Utils.PATH);
@@ -84,7 +84,7 @@ public    class Nohandicap : Application
             ct2.Color = "234";
             ct2.Name = "Teilweise";
             ct2.Languages = new List<LanguagesDbModel>() { langDb2 };
-            MarkerModel marker = new MarkerModel();
+            ProductModel marker = new ProductModel();
             marker.Title = "lol";
             marker.Languages = new List<LanguagesDbModel>() { langDb };
             marker.Categories = new List<CategoryModel>() { ct2,ct };
@@ -92,10 +92,11 @@ public    class Nohandicap : Application
             var g = s.GetData(1);
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar> (Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
-            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+        //    SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             mapPage = new GMapFragment();
             listPage = new ListFragment();
             homePage = new HomeFragment();
+           
             favorites = new FavoritesFragment();
             items = NohandiLibrary.GetTabs();
            var tabItems = new BottomBarTab[items.Count];
@@ -103,7 +104,8 @@ public    class Nohandicap : Application
             {
                 var tab = items[i];
                 tabItems[i] = new BottomBarTab(Utils.GetImage(this,tab.Image), tab.Title);
-              
+          
+             
             }
             _bottomBar.SetItems(tabItems);
             for (int i = 0; i < tabItems.Length; i++)
@@ -111,7 +113,16 @@ public    class Nohandicap : Application
                 var tab = items[i];
                 _bottomBar.MapColorForTab(i, tab.Color);
                             }  
-            _bottomBar.SetOnTabClickListener(this);          
+            _bottomBar.SetOnTabClickListener(this);
+            Drawable dr = Resources.GetDrawable(Resource.Drawable.logo_small);
+            Bitmap bitmap = ((BitmapDrawable)dr).Bitmap;
+            // Scale it to 50 x 50
+            Drawable d = new BitmapDrawable(Resources, Bitmap.CreateScaledBitmap(bitmap, 70, 70, true));
+
+           SupportActionBar.SetIcon(d);
+           SupportActionBar.SetDisplayShowTitleEnabled(true);
+            SupportActionBar.SetDefaultDisplayHomeAsUpEnabled(true);
+            SupportActionBar.SetDisplayHomeAsUpEnabled(false);
         }
    
 
@@ -154,15 +165,19 @@ public    class Nohandicap : Application
                     break;
             }
 
-            if (position == 0)
-            {
-                SupportActionBar.Hide();
-            }else
+            //if (position == 0)
+            //{
+            //    SupportActionBar.SetDisplayHomeAsUpEnabled(false);
+            //}
+            //else
+            //    SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+
             SupportActionBar.Show();
             SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Color.ParseColor(items[position].Color)));
           SupportActionBar.Title=items[position].Title;
-            
-            lastPos = position;
+            if (position == 0) SupportActionBar.Title="Nohandicap";
+         
+                lastPos = position;
         }
        public void ShowFragment(Android.Support.V4.App.Fragment fragment,string tag)
         {

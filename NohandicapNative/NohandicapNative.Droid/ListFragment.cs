@@ -21,8 +21,8 @@ namespace NohandicapNative.Droid
         {
             var view = inflater.Inflate(Resource.Layout.ListPage, container, false);
             var listView = view.FindViewById<ListView>(Resource.Id.listview);
-            List<MarkerModel> items = new List<MarkerModel>();
-            items.Add(new MarkerModel()
+            List<ProductModel> items = new List<ProductModel>();
+            items.Add(new ProductModel()
             {
                 
                Title = "Restarant",
@@ -30,7 +30,7 @@ namespace NohandicapNative.Droid
                 Image ="eat"
 
             });
-            items.Add(new MarkerModel()
+            items.Add(new ProductModel()
             {
 
                 Title = "Hotel",
@@ -38,7 +38,7 @@ namespace NohandicapNative.Droid
                 Image = "sleep"
 
             });
-            items.Add(new MarkerModel()
+            items.Add(new ProductModel()
             {
 
                 Title = "Eavent",
