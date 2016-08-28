@@ -25,25 +25,25 @@ namespace NohandicapNative.Droid
             items.Add(new ProductModel()
             {
                 
-               Title = "Restarant",
+               FirmName = "Restarant",
                 Description = "Descript" ,
-                Image ="eat"
+                MainImage=new ImageModel() { LocalImage="event"}
+                
 
             });
             items.Add(new ProductModel()
             {
 
-                Title = "Hotel",
+                FirmName = "Hotel",
                 Description = "Descript",
-                Image = "sleep"
-
+                 MainImage = new ImageModel() { LocalImage = "eat" }
             });
             items.Add(new ProductModel()
             {
 
-                Title = "Eavent",
+                FirmName = "Eavent",
                 Description = "Descript",
-                Image = "event"
+                MainImage = new ImageModel() { LocalImage = "eat" }
 
             });
             var listAdapter = new ListAdapter(myContext,items);
@@ -52,7 +52,7 @@ namespace NohandicapNative.Droid
             {
                 int position = e.Position;
                     var detailIntent = new Intent(myContext, typeof(DetailActivity));
-                    detailIntent.PutExtra("Title", items[position].Title);
+                    detailIntent.PutExtra("Title", items[position].FirmName);
                 myContext.StartActivity(detailIntent);
                
             };

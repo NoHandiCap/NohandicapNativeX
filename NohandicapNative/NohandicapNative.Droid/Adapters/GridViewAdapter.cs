@@ -13,10 +13,11 @@ using Java.Lang;
 using NohandicapNative.Droid.Services;
 using Android.Graphics;
 using Android.Support.V4.App;
+using static Android.Views.View;
 
 namespace NohandicapNative.Droid.Adapters
 {
-    public class GridViewAdapter : BaseAdapter
+    public class GridViewAdapter : BaseAdapter, IOnTouchListener
     {
         private MainActivity context;
         private List<TabItem> items;
@@ -45,6 +46,11 @@ namespace NohandicapNative.Droid.Adapters
 
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
+            var grid = (GridView)parent;
+            int h = grid.ColumnWidth;
+            int minSize = h * 3;
+            grid.SetMinimumHeight(minSize);
+            grid.SetOnTouchListener(this);
             var item = items[position];
            var button = new Button(context);
             button.Text = item.Title;
@@ -52,8 +58,9 @@ namespace NohandicapNative.Droid.Adapters
     
             button.SetCompoundDrawablesWithIntrinsicBounds(null, Utils.GetImage(context, item.Image), null, null);
             button.SetBackgroundColor(Color.ParseColor(item.Color));
-            button.SetMinimumWidth(200);
-            button.SetMinimumHeight(200);
+            button.SetWidth(h);
+            button.SetHeight(h-50);
+
             button.TextSize = 10f;
             button.Click += (s,e)=>
               {
@@ -66,6 +73,15 @@ namespace NohandicapNative.Droid.Adapters
                 
               };
             return button;
+        }
+
+        public bool OnTouch(View v, MotionEvent e)
+        {
+            if (e.Action == MotionEventActions.Scroll)
+            {
+            return false;
+        }
+        return false;
         }
     }
 }

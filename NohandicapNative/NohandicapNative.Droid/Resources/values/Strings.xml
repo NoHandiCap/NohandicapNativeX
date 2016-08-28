@@ -3,7 +3,10 @@
 	
 	<string name="app_name">Nohandicap</string>
   <string name="settings">Settings</string>
-  <string name="lang_prompt">Choose a language</string>
+  <string name="next">Next</string>
+  <string name="load_data">Loading data from server...</string>
+  <string name="authentication">Authenticating...</string>
+  <string name="lang_prompt">Choose a language:</string>
   <string-array name="lang_array">
     <item>English</item>
     <item>German</item>

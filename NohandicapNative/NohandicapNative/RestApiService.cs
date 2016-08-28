@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace NohandicapNative
 {
- public   class RestApiService
+ public class RestApiService
     {
-       public static async Task<T> GetData<T>(string dataUri, string accessToken = null, string rootName = null)
+       public static async Task<T> GetData<T>(string dataUri, string accessToken = null, string rootName = "result")
         {
-            var url = "http://data.wien.gv.at/daten/geo?service=WFS&request=GetFeature&version=1.1.0&srsName=EPSG:4326&outputFormat=json&typeName=ogdwien:SPAZIERPUNKTOGD,ogdwien:SPAZIERLINIEOGD";
+            var url = dataUri;
             try
             {
                 using (var httpClient = new HttpClient() { Timeout = TimeSpan.FromSeconds(10) })
@@ -24,6 +24,7 @@ namespace NohandicapNative
 
                     using (HttpResponseMessage response = await httpClient.GetAsync(url))
                     {
+                        
                         string content = null;
                         if (response != null && response.Content != null)
                             content = await response.Content.ReadAsStringAsync();
@@ -43,13 +44,14 @@ namespace NohandicapNative
                                         Error = (sender, args) =>
                                         {
                                             if (object.Equals(args.ErrorContext.Member, "test") &&
-                                                args.ErrorContext.OriginalObject.GetType() == typeof(ProductModel))
+                                                args.ErrorContext.OriginalObject.GetType() == typeof(T))
                                             {
                                                 args.ErrorContext.Handled = false;
                                             }
                                         }
                                     };
-                                    var v= JsonConvert.DeserializeObject<T>(root, settings);
+                                    var s = root.Replace("\n", "");
+                                    var v= JsonConvert.DeserializeObject<T>(root.Replace("\n",""), settings);
                                     return v;
 
                                 }

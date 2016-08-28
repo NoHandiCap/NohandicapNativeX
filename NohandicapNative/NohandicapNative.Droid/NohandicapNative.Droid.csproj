@@ -108,9 +108,10 @@
   <ItemGroup>
     <Compile Include="Adapters\GridViewAdapter.cs" />
     <Compile Include="Adapters\ListAdapter.cs" />
+    <Compile Include="Adapters\SpinnerAdapter.cs" />
     <Compile Include="DetailActivity.cs" />
     <Compile Include="FavoritesFragment.cs" />
-    <Compile Include="LoginActivity.cs" />
+    <Compile Include="FirstStartActivity.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="GMapFragment.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
@@ -119,7 +120,7 @@
     <Compile Include="ListFragment.cs" />
     <Compile Include="Services\Utils.cs" />
     <Compile Include="SettingsActivity.cs" />
-    <Compile Include="SigUpActivity.cs" />
+    <Compile Include="SignUpActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -158,9 +159,15 @@
     <AndroidResource Include="Resources\layout\spinner_row.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
+    <AndroidResource Include="Resources\layout\FirstStart.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout-large\Main.axml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\Main.axml" />
+    <AndroidResource Include="Resources\layout\Main.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
     <AndroidResource Include="Resources\values\Strings.xml" />
     <AndroidResource Include="Resources\drawable-hdpi\Icon.png" />
     <AndroidResource Include="Resources\drawable-mdpi\Icon.png" />
@@ -206,15 +213,6 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-hdpi\sport.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-hdpi\wheelchair.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-hdpi\wheelchair2.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-hdpi\wheelchair3.png" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-hdpi\back.png" />
@@ -340,7 +338,7 @@
     <AndroidResource Include="Resources\drawable\sport.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\wheelchair.png" />
+    <AndroidResource Include="Resources\drawable\wheelchaisdr.png" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\wheelchair2.png" />
@@ -364,7 +362,9 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\SettingsPage.axml" />
+    <AndroidResource Include="Resources\layout\SettingsPage.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\menu\settings_menu.xml" />
@@ -376,6 +376,21 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\logo_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\wheelchair.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\german.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\france.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\english.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\values-de\Strings.xml" />
   </ItemGroup>
   <Import Project="..\NohandicapNative\NohandicapNative.projitems" Label="Shared" Condition="Exists('..\NohandicapNative\NohandicapNative.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

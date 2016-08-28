@@ -41,11 +41,23 @@ namespace NohandicapNative.Droid
             mapView.OnResume();
             // Gets to GoogleMap from the MapView and does initialization stuff
             map = mapView.Map;
-            map.UiSettings.MyLocationButtonEnabled=true;
-            map.MyLocationEnabled=true;
-            map.UiSettings.MapToolbarEnabled = true;
-            map.UiSettings.ZoomControlsEnabled = true;
-       
+            if (map != null)
+            {
+          
+                map.UiSettings.MyLocationButtonEnabled = true;
+                map.MyLocationEnabled = true;
+                map.UiSettings.MapToolbarEnabled = true;
+                map.UiSettings.ZoomControlsEnabled = true;
+                CameraUpdate cameraUpdate = CameraUpdateFactory.NewLatLngZoom(new LatLng(48.219406, 16.387580), 10);
+                map.AnimateCamera(cameraUpdate);
+                MarkerOptions options = new MarkerOptions().SetPosition(new LatLng(48.219506, 16.388480)).SetTitle("Restaurant");
+                options.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.marker_eat));
+                map.AddMarker(options);
+                MarkerOptions options2 = new MarkerOptions().SetPosition(new LatLng(48.210606, 16.380480)).SetTitle("Event");
+                options2.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.marker_event));
+
+                map.AddMarker(options2);
+            }
 
             // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
             try
@@ -56,17 +68,9 @@ namespace NohandicapNative.Droid
             {
                 e.PrintStackTrace();
             }
-          //  LoadData();
+            //  LoadData();
             // Updates the location and zoom of the MapView
-            CameraUpdate cameraUpdate = CameraUpdateFactory.NewLatLngZoom(new LatLng(48.219406, 16.387580), 10);
-            map.AnimateCamera(cameraUpdate);
-            MarkerOptions options = new MarkerOptions().SetPosition(new LatLng(48.219506, 16.388480)).SetTitle("Restaurant");
-            options.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.marker_eat));
-            map.AddMarker(options);
-            MarkerOptions options2 = new MarkerOptions().SetPosition(new LatLng(48.210606, 16.380480)).SetTitle("Event");
-            options2.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.marker_event));
-
-            map.AddMarker(options2);
+           
             return view;
         }
         private async void LoadData()

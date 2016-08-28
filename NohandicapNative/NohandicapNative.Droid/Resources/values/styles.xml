@@ -34,7 +34,10 @@
     <item name="actionMenuTextColor">@android:color/white</item>
     <item name="colorControlNormal">@android:color/white</item>
   </style>
-
+  <style name="AppThemeNoBar.Button" parent="Widget.AppCompat.Button.Colored">
+    <item name="colorButtonNormal">@color/blue</item>
+    <item name="android:textColor">@color/white</item>
+  </style>
   <style name="AppThemeNoBar.ActionBar.Text" parent="@android:style/TextAppearance">
     <item name="android:textColor">#FFFFFF</item>
   </style>

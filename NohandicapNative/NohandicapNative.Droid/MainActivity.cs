@@ -29,7 +29,7 @@ using NohandicapNative.Droid.Services;
 
 namespace NohandicapNative.Droid
 {
-public    class Nohandicap : Application
+public class Nohandicap : Application
     {
         public MainActivity MainActivity;
     }
@@ -57,42 +57,30 @@ public    class Nohandicap : Application
             SetTheme(Resource.Style.AppThemeNoBar);
             base.OnCreate (bundle);
          
-            SetContentView(Resource.Layout.Main);
-     //  ShowLoginWindow();
+            SetContentView(Resource.Layout.Main);           
+           ShowFirstWindow();
             // Create your application here
             _bottomBar = BottomBar.AttachShy(FindViewById<CoordinatorLayout>(Resource.Id.myCoordinator), FindViewById<LinearLayout>(Resource.Id.linContent), bundle);
            var s = new SqliteService(new SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid(),Utils.PATH);
             s.CreateDB();
-           
-
-            CategoryModel ct = new CategoryModel();
-            ct.Color = "dvfsd";
-            ct.Name = "Total";
-            TranslateModel trans = new TranslateModel();
-            trans.Translate = "Hotel";
+            Load();
             LanguageModel lang = new LanguageModel();
-            lang.LanguageName = "German";
-            LanguagesDbModel langDb = new LanguagesDbModel();
-            langDb.Translate = trans;
-            langDb.Language = lang;
-            var trans2 = new TranslateModel();
-            LanguagesDbModel langDb2 = new LanguagesDbModel();
-            trans2.Translate = "Part";
-            langDb2.Translate = trans2;
-            langDb2.Language = lang;
-            CategoryModel ct2 = new CategoryModel();
-            ct2.Color = "234";
-            ct2.Name = "Teilweise";
-            ct2.Languages = new List<LanguagesDbModel>() { langDb2 };
-            ProductModel marker = new ProductModel();
-            marker.Title = "lol";
-            marker.Languages = new List<LanguagesDbModel>() { langDb };
-            marker.Categories = new List<CategoryModel>() { ct2,ct };
-            s.insertUpdateData(marker);
-            var g = s.GetData(1);
-            toolbar = FindViewById<Android.Support.V7.Widget.Toolbar> (Resource.Id.toolbar);
+            lang.LanguageName = "English";
+            CategoryModel cat = new CategoryModel();
+            cat.Name = "Behinderte";
+            cat.Sort = 1;
+            cat.Language = lang;
+            ProductModel prod = new ProductModel();
+            prod.Language = lang;
+            prod.FirmName = "adidas";
+            prod.Categories = new List<CategoryModel>() { cat };
+            // s.insertUpdateData(prod);
+            //  var b = s.GetData(1);
+          
+            toolbar = FindViewById<Android.Support.V7.Widget.Toolbar> (Resource.Id.toolbar);          
             SetSupportActionBar(toolbar);
-        //    SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+            _bottomBar.NoTabletGoodness();
+            //    SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             mapPage = new GMapFragment();
             listPage = new ListFragment();
             homePage = new HomeFragment();
@@ -114,18 +102,17 @@ public    class Nohandicap : Application
                 _bottomBar.MapColorForTab(i, tab.Color);
                             }  
             _bottomBar.SetOnTabClickListener(this);
-            Drawable dr = Resources.GetDrawable(Resource.Drawable.logo_small);
-            Bitmap bitmap = ((BitmapDrawable)dr).Bitmap;
-            // Scale it to 50 x 50
-            Drawable d = new BitmapDrawable(Resources, Bitmap.CreateScaledBitmap(bitmap, 70, 70, true));
-
-           SupportActionBar.SetIcon(d);
+         
+           SupportActionBar.SetIcon(Utils.SetDrawableSize(this, Resource.Drawable.logo_small,70,70));
            SupportActionBar.SetDisplayShowTitleEnabled(true);
             SupportActionBar.SetDefaultDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetDisplayHomeAsUpEnabled(false);
         }
    
-
+      private async void Load()
+        {
+            var product =await RestApiService.GetData<List<ProductModel>>("http://www.stage.nohandicap.net/cms/component/shopmap/ajax/api.php?action=getprod&idlang=3");
+        }
         protected override void OnSaveInstanceState(Bundle outState)
         {
             base.OnSaveInstanceState(outState);
@@ -133,9 +120,9 @@ public    class Nohandicap : Application
             // lose the current tab on orientation change.
             _bottomBar.OnSaveInstanceState(outState);
         }
-      private  void ShowLoginWindow()
+      private  void ShowFirstWindow()
         {
-            var myIntent = new Intent(this, typeof(LoginActivity));
+            var myIntent = new Intent(this, typeof(FirstStartActivity));
             StartActivityForResult(myIntent, 0);
         }
         

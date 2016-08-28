@@ -41,10 +41,8 @@ namespace NohandicapNative
                 //                 path= Environment.GetFolderPath(Environment.SpecialFolder.Personal); // Documents folder
 
                 //#endif
-
-                dbCon.CreateTable<CategoryModel>();
-                dbCon.CreateTable<LanguagesDbModel>();
-                dbCon.CreateTable<TranslateModel>();
+                dbCon.CreateTable<ImageModel>();
+                dbCon.CreateTable<CategoryModel>();              
                 dbCon.CreateTable<LanguageModel>();
                 dbCon.CreateTable<ProductModel>();
                   
