@@ -18,10 +18,5 @@ namespace NohandicapNative
 
         [JsonProperty(PropertyName = "short")]
         public string ShortName { get; set; }
-
-        [ForeignKey(typeof(ProductModel))]
-        public int ProductID { get; set; }
-        [ForeignKey(typeof(CategoryModel))]
-        public int CategoryID { get; set; }
     }
 }

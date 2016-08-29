@@ -16,6 +16,7 @@ using System.IO;
 using Java.Util;
 using Android.Content.Res;
 using Android.Util;
+using Android.Preferences;
 
 namespace NohandicapNative.Droid.Services
 {
@@ -26,6 +27,8 @@ namespace NohandicapNative.Droid.Services
         public const string LIST_TAG = "2";
         public const string FAVORITES_TAG = "3";
         public static string PATH = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+        public const string LOG_TAG = "NHC: ";
+        public const string LANG_ID_TAG = "langID";
         public static Android.Graphics.Drawables.Drawable GetImage(Context context, string image)
 
         {
@@ -39,6 +42,10 @@ namespace NohandicapNative.Droid.Services
             // Scale it to 50 x 50
             Drawable d = new BitmapDrawable(context.Resources, Bitmap.CreateScaledBitmap(bitmap, width, height, true));
             return d;
+        }
+        public static SqliteService GetDatabaseConnection()
+        {
+          return new SqliteService(new SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid(), Utils.PATH);
         }
         public static bool SaveImageBitmapFromUrl(string url, string name)
         {
@@ -70,7 +77,7 @@ namespace NohandicapNative.Droid.Services
             Bitmap bitmap = BitmapFactory.DecodeFile(name, options);
             return bitmap;
         }
-        public static void SetLocale(MainActivity context, string lang)
+        public static Resources SetLocale(Activity context, string lang)
         {
             var myLocale = new Locale(lang);
             Resources res = context.Resources;
@@ -78,10 +85,11 @@ namespace NohandicapNative.Droid.Services
             Configuration conf = res.Configuration;
             conf.Locale = myLocale;
             res.UpdateConfiguration(conf, dm);
-            Intent refresh = new Intent(context, typeof(MainActivity));
+            return res;
+        Intent refresh = new Intent(context, typeof(MainActivity));
 
-            context.StartActivity(refresh);
-            context.Finish();
+          context.StartActivity(refresh);
+          context.Finish();
         }
         protected void saveset()
         {
@@ -101,6 +109,19 @@ namespace NohandicapNative.Droid.Services
             var prefs = Application.Context.GetSharedPreferences("MyApp", FileCreationMode.Private);
             var somePref = prefs.GetString("PrefName", null);
 
+        }
+        public static void WriteToSettings(Context context,string key, string value)
+        {
+            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
+            ISharedPreferencesEditor editor = prefs.Edit();
+            editor.PutString(key, value);          
+            editor.Apply();
+        }
+        public static string ReadFromSettings(Context context, string key)
+        {
+            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
+
+            return prefs.GetString(key, null);
         }
 
     }

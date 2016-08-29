@@ -12,7 +12,9 @@ namespace NohandicapNative
     {
         [PrimaryKey]
         [JsonProperty(PropertyName = "id")]
-        public virtual int ID { get; set; }
+        public int ID { get; set; }
+        public int LangID { get; set; }
+
         [JsonProperty(PropertyName = "firmenname")]
         public string FirmName { get; set; }
         [JsonProperty(PropertyName = "text")]
@@ -46,9 +48,9 @@ namespace NohandicapNative
         [JsonProperty(PropertyName = "gpslon")]
         public string Long { get; set; }
         public string Color { get; set; }
-   [JsonProperty(PropertyName = "cat")]
+   [JsonProperty(PropertyName = "cat"),Ignore]
         public List<string> categoriesList { get; set; }
-    [JsonProperty(PropertyName = "img")]
+        [JsonProperty(PropertyName = "img"), OneToOne(CascadeOperations = CascadeOperation.All)]
         public ImageModel imageList { get; set; }
 
         [ForeignKey(typeof(ImageModel))]
@@ -58,12 +60,7 @@ namespace NohandicapNative
         public ImageModel MainImage { get; set; }
 
         [OneToMany(CascadeOperations = CascadeOperation.All)]
-        public List<ImageModel> AdditionalImages { get; set; }
-        [OneToMany(CascadeOperations = CascadeOperation.All)]
-        public List<CategoryModel> Categories { get; set; }
-
-        [OneToOne(CascadeOperations = CascadeOperation.All)]
-        public LanguageModel Language { get; set; }
+        public List<ImageModel> AdditionalImages { get; set; }       
 
 
     }

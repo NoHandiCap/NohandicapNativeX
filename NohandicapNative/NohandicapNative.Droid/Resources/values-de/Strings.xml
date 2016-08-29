@@ -4,12 +4,34 @@
   <string name="settings">Einstellungen</string>
   <string name="next">Weiter</string>
   <string name="load_data">Datei laden aus Server..</string>
-
   <string name="lang_prompt">Whälen Sie Ihre Sprache:</string>
+  <string name="main_cat1">Barrierenfrei</string>
+  <string name="main_cat2">Teilweise Behinderten gerecht</string>
+  <string name="main_cat3">Total Behinderten gerecht</string>
   <string-array name="lang_array">
     <item>English</item>
-    <item>Deutsh</item>
-    <item>French</item>
-  
+    <item>Deutsch</item>
+    <item>Francosisch</item>  
+  </string-array>
+  <string-array name="lang_short_array">
+    <item>en</item>
+    <item>de</item>
+    <item>fr</item>
+  </string-array>
+  <string-array name="main_category_array">
+    <item>@string/main_cat1</item>
+    <item>@string/main_cat2</item>
+    <item>@string/main_cat3</item>
+  </string-array>
+  <string-array name="additional_category_array">
+    <item>Kunst&amp;Kultur</item>
+    <item>Museen</item>
+    <item>Shopping</item>
+    <item>Sport&amp;Wellness</item>
+    <item>Essen&amp;Trinken</item>
+    <item>Nächtigen</item>
+    <item>Nützliches</item>
+    <item>Events</item>
+    <item>Location</item>
   </string-array>
 </resources>

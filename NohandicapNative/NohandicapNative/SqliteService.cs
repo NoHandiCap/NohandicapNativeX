@@ -12,42 +12,30 @@ using System.Threading.Tasks;
 using SQLite.Net;
 using SQLiteNetExtensions.Extensions;
 using SQLite.Net.Interop;
+using System.Linq;
 
 namespace NohandicapNative
 {
-    public class SqliteService
+    public  class SqliteService
     {
-        private const string DB_NAME = "nohandicap.db3";
+        public const string DB_NAME = "nohandicap.db3";
         private static SQLiteConnection dbCon;
+        private string _path; 
         public SqliteService(ISQLitePlatform platform, string path)
         {
-            dbCon = new SQLiteConnection(platform,Path.Combine(path, DB_NAME));
+            path = Path.Combine(path, DB_NAME);
+            dbCon = new SQLiteConnection(platform,path);
    
         }
-        public async Task<bool> CreateDB()
+        public bool CreateDB()
         {
             try
             {
-
-                //#if SILVERLIGHT
-                //    path = filename;
-                //#else
-
-                //#if __ANDROID__
-                //   path = Environment.GetFolderPath(Environment.SpecialFolder.Personal); ;
-                //#else
-                //                // we need to put in /Library/ on iOS5.1 to meet Apple's iCloud terms
-                //                // (they don't want non-user-generated data in Documents)
-                //                 path= Environment.GetFolderPath(Environment.SpecialFolder.Personal); // Documents folder
-
-                //#endif
                 dbCon.CreateTable<ImageModel>();
                 dbCon.CreateTable<CategoryModel>();              
                 dbCon.CreateTable<LanguageModel>();
-                dbCon.CreateTable<ProductModel>();
-                  
-               
-                  return true;
+                dbCon.CreateTable<ProductModel>();           
+                return true;
             }
             catch (Exception e)
             {
@@ -55,12 +43,11 @@ namespace NohandicapNative
             }
 
         }
-        public string insertUpdateData(ProductModel data)
+        public string InsertUpdateProduct<T>(T data)
         {
             try
-            {
-
-                dbCon.InsertWithChildren(data,true);
+            {             
+                dbCon.InsertOrReplaceWithChildren(data, true);
                 return "Single data file inserted or updated";
             }
             catch (SQLiteException ex)
@@ -68,36 +55,16 @@ namespace NohandicapNative
                 return ex.Message;
             }
         }
-        public List<ProductModel> GetData(int id)
+        public List<T> GetDataList<T>() where T : class
+        {           
+                return dbCon.GetAllWithChildren<T>().ToList();
+            
+        }           
+        public T Find<T>(int pk) where T : class
         {
-            try
-            {
-
-                return  dbCon.GetAllWithChildren<ProductModel>(null,true);
-                
-            }
-            catch (SQLiteException ex)
-            {
-                return null;
-            }
-        }
-        private int findNumberRecords(string path)
-        {
-            try
-            {
-              
-                // this counts all records in the database, it can be slow depending on the size of the database
-                var count =  dbCon.GetAllWithChildren<ProductModel>().Count;
-
-                // for a non-parameterless query
-                // var count = db.ExecuteScalarAsync<int>("SELECT Count(*) FROM Person WHERE FirstName="Amy");
-
-                return count;
-            }
-            catch (SQLiteException ex)
-            {
-                return -1;
-            }
+      var s= dbCon.GetAllWithChildren<T>().FirstOrDefault(m => m.GetHashCode() == pk);
+            var k = s.GetHashCode();
+            return s;
         }
     }
 }

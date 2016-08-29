@@ -9,6 +9,8 @@ namespace NohandicapNative
 {
     public class NohandiLibrary
     {
+        public const string LINK_LANGUAGE = "http://www.stage.nohandicap.net/cms/component/shopmap/ajax/api.php?action=getlang";
+        public const string LINK_CATEGORY = "http://www.stage.nohandicap.net/cms/component/shopmap/ajax/api.php?action=getcat&idlang=";
         public static List<TabItem> GetTabs()
         {
             List<TabItem> items = new List<TabItem>();

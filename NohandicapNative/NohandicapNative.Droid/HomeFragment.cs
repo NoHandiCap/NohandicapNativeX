@@ -23,68 +23,108 @@ namespace NohandicapNative.Droid
   public  class HomeFragment: Android.Support.V4.App.Fragment
     {
         MainActivity myContext;
+        int[] mainCategoriesText = { Resource.Id.first_category, Resource.Id.second_category, Resource.Id.thrity_category };
+        int[] mainCategoriesImgView = { Resource.Id.imageView, Resource.Id.imageView2, Resource.Id.imageView3 };
+        int[] mainCategoriesLayout= { Resource.Id.category_linearLayout, Resource.Id.category_linearLayout3, Resource.Id.category_linearLayout2 };
+        private SqliteService dbCon;
+
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
 
             var view = inflater.Inflate(Resource.Layout.HomePage,container,false);
             //view.SetBackgroundColor(Color.ParseColor("#FFECB3"));
-
+            dbCon = Utils.GetDatabaseConnection();
             //  GridView mainCategory = view.FindViewById<GridView>(Resource.Id.mainCategory);
-            TextView first = view.FindViewById<TextView>(Resource.Id.first_category);
-            TextView second = view.FindViewById<TextView>(Resource.Id.second_category);
-            TextView three = view.FindViewById<TextView>(Resource.Id.thrity_category);
-            ImageView firstImg = view.FindViewById<ImageView>(Resource.Id.imageView);
-            ImageView secondImg = view.FindViewById<ImageView>(Resource.Id.imageView2);
-            ImageView threeImg = view.FindViewById<ImageView>(Resource.Id.imageView3);
-            first.SetTextColor(Color.Gray);
-            second.SetTextColor(Color.Black);
-            three.SetTextColor(Color.Gray);
-            first.Click += (s, e) => {
-                TextView textView = (TextView)s;
-                if (!textView.Selected)
-                {
-                    textView.SetTextColor(Color.Black);
-                    textView.Selected = true;
-                    second.SetTextColor(Color.Gray);
-                    second.Selected = false;
-                    three.SetTextColor(Color.Gray);
-                    three.Selected = false;
-                }                
-            };
-            second.Click += (s, e) => {
-                TextView textView = (TextView)s;
-                if (!textView.Selected)
-                {
-                    textView.SetTextColor(Color.Black);
-                    textView.Selected = true;
-                    first.SetTextColor(Color.Gray);
-                    first.Selected = false;
-                    three.SetTextColor(Color.Gray);
-                    three.Selected = false;
-                }               
-            };
-            three.Click += (s, e) => {
-                TextView textView = (TextView)s;
-                if (!textView.Selected)
-                {
-                    textView.SetTextColor(Color.Black);
-                    textView.Selected = true;
-                    first.SetTextColor(Color.Gray);
-                    first.Selected = false;
-                    second.SetTextColor(Color.Gray);
-                    second.Selected = false;
-                }                
-            };
-            firstImg.SetImageDrawable(Utils.SetDrawableSize(myContext,Resource.Drawable.wheelchair,40,40));
-            secondImg.SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair2, 75, 40));
-            threeImg.SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair3, 105, 40));
+            TextView[] mainCat = new TextView[mainCategoriesText.Length];
+           ImageView[] mainImg = new ImageView[mainCategoriesImgView.Length];
+            LinearLayout[] mainLayout = new LinearLayout[mainCategoriesLayout.Length];
 
-            List<TabItem> mainItems = NohandiLibrary.GetMainCategory();
-            first.Text = mainItems[0].Title;
-            
-            second.Text = mainItems[1].Title;
-            three.Text = mainItems[2].Title;
-          // GridView additionalCategory = view.FindViewById<GridView>(Resource.Id.additionalCategory);
+            string[] mainItems = Resources.GetStringArray(Resource.Array.main_category_array);
+            for (int i = 0; i < mainCat.Length; i++)
+            {
+                mainCat[i]= view.FindViewById<TextView>(mainCategoriesText[i]);
+                mainCat[i].Text = mainItems[i];
+                mainImg[i]= view.FindViewById<ImageView>(mainCategoriesImgView[i]);
+                mainLayout[i]= view.FindViewById<LinearLayout>(mainCategoriesLayout[i]);
+
+            }           
+            for (int i = 0; i < mainCat.Length; i++)
+            {
+                mainLayout[i].Click += (s, e) => {
+                    var layout = (LinearLayout)s;
+                    if (!layout.Selected)
+                    {
+                        
+                        for (int y = 0; y < mainCat.Length; y++)
+                        {
+                            if (mainLayout[y] != layout)
+                            {
+                                mainCat[y].SetTextColor(Color.Gray);
+                                mainLayout[y].Selected = false;
+                            }
+                            else
+                            {
+                                mainCat[y].SetTextColor(Color.Black);
+                                mainLayout[y].Selected = true;
+                            }
+                        }                      
+                    }
+                };
+
+            }
+            mainImg[0].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair, 40, 40));
+            mainImg[1].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair2, 75, 40));
+            mainImg[2].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair3, 105, 40));
+
+            //TextView first = view.FindViewById<TextView>(Resource.Id.first_category);
+            //TextView second = view.FindViewById<TextView>(Resource.Id.second_category);
+            //TextView three = view.FindViewById<TextView>(Resource.Id.thrity_category);
+            //ImageView firstImg = view.FindViewById<ImageView>(Resource.Id.imageView);
+            //ImageView secondImg = view.FindViewById<ImageView>(Resource.Id.imageView2);
+            //ImageView threeImg = view.FindViewById<ImageView>(Resource.Id.imageView3);
+            //first.SetTextColor(Color.Gray);
+            //second.SetTextColor(Color.Black);
+            //three.SetTextColor(Color.Gray);
+            //first.Click += (s, e) => {
+            //    TextView textView = (TextView)s;
+            //    if (!textView.Selected)
+            //    {
+            //        textView.SetTextColor(Color.Black);
+            //        textView.Selected = true;
+            //        second.SetTextColor(Color.Gray);
+            //        second.Selected = false;
+            //        three.SetTextColor(Color.Gray);
+            //        three.Selected = false;
+            //    }                
+            //};
+            //second.Click += (s, e) => {
+            //    TextView textView = (TextView)s;
+            //    if (!textView.Selected)
+            //    {
+            //        textView.SetTextColor(Color.Black);
+            //        textView.Selected = true;
+            //        first.SetTextColor(Color.Gray);
+            //        first.Selected = false;
+            //        three.SetTextColor(Color.Gray);
+            //        three.Selected = false;
+            //    }               
+            //};
+            //three.Click += (s, e) => {
+            //    TextView textView = (TextView)s;
+            //    if (!textView.Selected)
+            //    {
+            //        textView.SetTextColor(Color.Black);
+            //        textView.Selected = true;
+            //        first.SetTextColor(Color.Gray);
+            //        first.Selected = false;
+            //        second.SetTextColor(Color.Gray);
+            //        second.Selected = false;
+            //    }                
+            //};
+
+
+
+            // GridView additionalCategory = view.FindViewById<GridView>(Resource.Id.additionalCategory);
             List<TabItem> additItems = NohandiLibrary.GetAdditionalCategory();
 
             GridLayout gridLayout = view.FindViewById<GridLayout>(Resource.Id.additionalCategoryGrid);

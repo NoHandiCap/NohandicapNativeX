@@ -17,9 +17,9 @@ namespace NohandicapNative
         public int ID { get; set; }      
         public string LinkImage { get; set; }
         public string LocalImage { get; set; }
-        [JsonProperty(PropertyName = "thumbs")]
+        [JsonProperty(PropertyName = "thumbs"),Ignore]
         public List<string> Thumbs { get; set; }
-        [JsonProperty(PropertyName = "images")]
+        [JsonProperty(PropertyName = "images"),Ignore]
         public List<string> Images { get; set; }
         [ForeignKey(typeof(ProductModel))]
         public int ProductID { get; set; }

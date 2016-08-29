@@ -1,20 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	
+<resources>	
 	<string name="app_name">Nohandicap</string>
-  <string name="settings">Settings</string>
-  <string name="next">Next</string>
-  <string name="load_data">Loading data from server...</string>
-  <string name="authentication">Authenticating...</string>
-  <string name="lang_prompt">Choose a language:</string>
-  <string name="main_cat1">Disability</string>
-  <string name="main_cat2">Partially disabled persons</string>
-  <string name="main_cat3">Total disabled persons</string>
-
+  <string name="settings">Réglages</string>
+  <string name="next">Plus</string>
+  <string name="load_data">Licence de serveur ...</string>
+  <string name="lang_prompt">Choisissez votre langue:</string>
+  <string name="main_cat1">Invalidité</string>
+  <string name="main_cat2">Personnes partiellement handicapées</string>
+  <string name="main_cat3">Nombre total de personnes handicapées</string>
   <string-array name="lang_array">
-    <item>English</item>
-    <item>German</item>
-    <item>French</item>
+    <item>Anglais</item>
+    <item>Allemand</item>
+    <item>Français</item>  
   </string-array>
   <string-array name="lang_short_array">
     <item>en</item>

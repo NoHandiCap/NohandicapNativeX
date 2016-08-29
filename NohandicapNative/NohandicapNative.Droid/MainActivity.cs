@@ -26,6 +26,7 @@ using Android.App;
 
 using Android.Support.Design.Widget;
 using NohandicapNative.Droid.Services;
+using System.IO;
 
 namespace NohandicapNative.Droid
 {
@@ -58,24 +59,14 @@ public class Nohandicap : Application
             base.OnCreate (bundle);
          
             SetContentView(Resource.Layout.Main);           
-           ShowFirstWindow();
+         
             // Create your application here
             _bottomBar = BottomBar.AttachShy(FindViewById<CoordinatorLayout>(Resource.Id.myCoordinator), FindViewById<LinearLayout>(Resource.Id.linContent), bundle);
-           var s = new SqliteService(new SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid(),Utils.PATH);
-            s.CreateDB();
-            Load();
-            LanguageModel lang = new LanguageModel();
-            lang.LanguageName = "English";
-            CategoryModel cat = new CategoryModel();
-            cat.Name = "Behinderte";
-            cat.Sort = 1;
-            cat.Language = lang;
-            ProductModel prod = new ProductModel();
-            prod.Language = lang;
-            prod.FirmName = "adidas";
-            prod.Categories = new List<CategoryModel>() { cat };
-            // s.insertUpdateData(prod);
-            //  var b = s.GetData(1);
+            if (!File.Exists(System.IO.Path.Combine(Utils.PATH, SqliteService.DB_NAME)))
+            {
+                ShowFirstWindow();
+            }
+           
           
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar> (Resource.Id.toolbar);          
             SetSupportActionBar(toolbar);

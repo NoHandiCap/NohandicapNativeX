@@ -13,17 +13,16 @@ namespace NohandicapNative
     {
         [PrimaryKey]
         [JsonProperty(PropertyName = "id")]
-        public virtual int ID { get; set; }
+        public int ID { get; set; }
+        public int LangID { get; set; }
+
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
         [JsonProperty(PropertyName = "gruppe")]
         public int Group { get; set; }
         [JsonProperty(PropertyName = "reihe")]
         public int Sort { get; set; }
-        [ForeignKey(typeof(ProductModel))]
-        public int ProductID { get; set; }
-        [OneToOne(CascadeOperations = CascadeOperation.All)]
-        public LanguageModel Language { get; set; }
+       
         public string Color { get; set; }
        
         public bool IsSelected { get; set; }

@@ -15,14 +15,13 @@
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="35dp"
-            android:id="@+id/linearLayout"
+            android:id="@+id/category_linearLayout"
             android:background="#ffffff">
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/imageView"
                 android:layout_gravity="center"
-
                 android:layout_marginStart="32dp" />
             <TextView
                 android:layout_width="wrap_content"
@@ -35,12 +34,11 @@
         </LinearLayout>
         <LinearLayout
             android:layout_marginBottom="10dp"
-
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="35dp"
-            android:id="@+id/linearLayout2"
-            android:layout_below="@+id/linearLayout3"
+            android:id="@+id/category_linearLayout2"
+            android:layout_below="@+id/category_linearLayout3"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:background="#ffffff">
@@ -48,8 +46,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/imageView3"
-                android:layout_gravity="center"
-                />
+                android:layout_gravity="center" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -65,8 +62,8 @@
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="35dp"
-            android:id="@+id/linearLayout3"
-            android:layout_below="@+id/linearLayout"
+            android:id="@+id/category_linearLayout3"
+            android:layout_below="@+id/category_linearLayout"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:background="#ffffff">
@@ -75,8 +72,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/imageView2"
                 android:layout_gravity="center"
-                android:layout_marginStart="15dp"
-                />
+                android:layout_marginStart="15dp" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -86,7 +82,7 @@
                 android:layout_gravity="center"
                 android:textColor="#000000" />
         </LinearLayout>
-        <!--<GridView
+    <!--<GridView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/additionalCategory"
@@ -110,12 +106,11 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentStart="false"
             android:layout_alignParentEnd="false"
-            android:layout_below="@+id/linearLayout2"
+            android:layout_below="@+id/category_linearLayout2"
             android:columnCount="3"
             android:rowCount="3"
             android:rowOrderPreserved="false"
             android:useDefaultMargins="true">
-
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -124,10 +119,8 @@
                 android:layout_column="0"
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1"
-                android:layout_gravity="fill" 
-                android:gravity="center"
-                />
-
+                android:layout_gravity="fill"
+                android:gravity="center" />
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -136,9 +129,7 @@
                 android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
                 android:layout_gravity="fill"
-                android:gravity="center"
-                />
-
+                android:gravity="center" />
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -146,10 +137,8 @@
                 android:id="@+id/button3"
                 android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
-                android:layout_gravity="fill" 
-                android:gravity="center"
-                />
-
+                android:layout_gravity="fill"
+                android:gravity="center" />
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -158,9 +147,7 @@
                 android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
                 android:layout_gravity="fill"
-                android:gravity="center"
-                />
-
+                android:gravity="center" />
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -168,10 +155,8 @@
                 android:id="@+id/button6"
                 android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
-                android:layout_gravity="fill" 
-                android:gravity="center"
-                />
-
+                android:layout_gravity="fill"
+                android:gravity="center" />
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -179,9 +164,8 @@
                 android:id="@+id/button7"
                 android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
-                android:layout_gravity="fill" android:gravity="center"
-                />
-
+                android:layout_gravity="fill"
+                android:gravity="center" />
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -189,10 +173,8 @@
                 android:id="@+id/button8"
                 android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
-                android:layout_gravity="fill" 
-                android:gravity="center"
-                />
-
+                android:layout_gravity="fill"
+                android:gravity="center" />
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -200,10 +182,8 @@
                 android:id="@+id/button9"
                 android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
-                android:layout_gravity="fill" 
-                android:gravity="center"
-                />
-
+                android:layout_gravity="fill"
+                android:gravity="center" />
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -212,9 +192,7 @@
                 android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
                 android:layout_gravity="fill"
-                android:gravity="center"
-            
-                />
+                android:gravity="center" />
         </GridLayout>
     </RelativeLayout>
 </ScrollView>
