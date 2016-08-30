@@ -10,13 +10,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)CategoryModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ImageJsonModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ImageModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LanguageModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NohandiLibrary.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProductModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RestApiService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SqliteService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)SupplierDataConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)JsonDataConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TabItem.cs" />
   </ItemGroup>
 </Project>

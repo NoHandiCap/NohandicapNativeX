@@ -31,6 +31,7 @@ namespace NohandicapNative
         {
             try
             {
+                dbCon.CreateTable<ImageJsonModel>();
                 dbCon.CreateTable<ImageModel>();
                 dbCon.CreateTable<CategoryModel>();              
                 dbCon.CreateTable<LanguageModel>();
@@ -47,7 +48,19 @@ namespace NohandicapNative
         {
             try
             {             
-                dbCon.InsertOrReplaceWithChildren(data, true);
+                dbCon.InsertOrReplaceWithChildren(data, true);               
+                return "Single data file inserted or updated";
+            }
+            catch (SQLiteException ex)
+            {
+                return ex.Message;
+            }
+        }
+        public string InsertUpdateProductList<T>(List<T> data)
+        {
+            try
+            {
+                dbCon.InsertOrReplaceAllWithChildren(data, true);
                 return "Single data file inserted or updated";
             }
             catch (SQLiteException ex)
@@ -62,9 +75,15 @@ namespace NohandicapNative
         }           
         public T Find<T>(int pk) where T : class
         {
-      var s= dbCon.GetAllWithChildren<T>().FirstOrDefault(m => m.GetHashCode() == pk);
+            var s= dbCon.GetAllWithChildren<T>().FirstOrDefault(m => m.GetHashCode() == pk);
             var k = s.GetHashCode();
             return s;
+        }
+        public  async Task<List<ProductModel>> LoadProductsFromInternet(string langID)
+        {
+            var products =await RestApiService.GetData<List<ProductModel>>(NohandiLibrary.LINK_PRODUCT + langID);
+            InsertUpdateProductList(products);
+            return GetDataList<ProductModel>();
         }
     }
 }

@@ -29,11 +29,20 @@ namespace NohandicapNative.Droid.Services
         public static string PATH = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
         public const string LOG_TAG = "NHC: ";
         public const string LANG_ID_TAG = "langID";
+        public const string LANG_SHORT = "langShort";
+        public const string TAB_ID = "tabID";
+
         public static Android.Graphics.Drawables.Drawable GetImage(Context context, string image)
 
         {
             var id = context.Resources.GetIdentifier(image, "drawable", context.PackageName);
             return context.Resources.GetDrawable(id);
+        }
+        public static void ReloadMainActivity(Application application,Context context)
+        {
+            ((NohandicapApplication)application).MainActivity.Finish();
+            Intent refresh = new Intent(context, typeof(MainActivity));
+            context.StartActivity(refresh);
         }
         public static Drawable SetDrawableSize(Context context, int res, int width, int height)
         {
@@ -86,10 +95,7 @@ namespace NohandicapNative.Droid.Services
             conf.Locale = myLocale;
             res.UpdateConfiguration(conf, dm);
             return res;
-        Intent refresh = new Intent(context, typeof(MainActivity));
-
-          context.StartActivity(refresh);
-          context.Finish();
+       
         }
         protected void saveset()
         {

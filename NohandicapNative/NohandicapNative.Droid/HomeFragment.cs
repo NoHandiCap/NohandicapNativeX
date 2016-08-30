@@ -43,7 +43,7 @@ namespace NohandicapNative.Droid
             for (int i = 0; i < mainCat.Length; i++)
             {
                 mainCat[i]= view.FindViewById<TextView>(mainCategoriesText[i]);
-                mainCat[i].Text = mainItems[i];
+                mainCat[i].Text = mainItems[i];             
                 mainImg[i]= view.FindViewById<ImageView>(mainCategoriesImgView[i]);
                 mainLayout[i]= view.FindViewById<LinearLayout>(mainCategoriesLayout[i]);
 
@@ -137,7 +137,7 @@ namespace NohandicapNative.Droid
                 button.SetTextColor(Color.White);
                 button.SetCompoundDrawablesWithIntrinsicBounds(null, Utils.GetImage(myContext, item.Image), null, null);
                 button.SetBackgroundColor(Color.ParseColor(item.Color));
-                button.TextSize = 10f;
+                button.TextSize = 8.5f;
                 button.Click += (s, e) =>
                 {
 
@@ -220,19 +220,9 @@ namespace NohandicapNative.Droid
             myContext = (MainActivity)activity;
             base.OnAttach(activity);
         }
-        //public override void OnCreateOptionsMenu(IMenu menu, MenuInflater inflater)
-        //{
-
-        //    base.OnCreateOptionsMenu(menu, inflater);
-        //    menu.Clear();
-
-        //    if (Build.VERSION.SdkInt >= BuildVersionCodes.Base11)
-        //    {
-        //        // selectMenu(menu);
-        //        inflater.Inflate(Resource.Menu.home_menu, menu);
-        //    }
-
-        //}
+       
+     
+       
 
     }
 }

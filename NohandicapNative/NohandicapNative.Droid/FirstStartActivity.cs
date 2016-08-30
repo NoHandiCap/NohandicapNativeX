@@ -31,8 +31,9 @@ namespace NohandicapNative.Droid
         private int _selecteLang= 1;
         Spinner spin;
         TextView spinnerPrompt;
-        string[] defaultShortLanguages;
+    
         Resources res;
+        List<LanguageModel> Languages;
         protected override void OnCreate(Bundle bundle)
         {
             SetTheme(Resource.Style.AppThemeNoBar);
@@ -40,6 +41,7 @@ namespace NohandicapNative.Droid
             base.OnCreate(bundle);           
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.FirstStart);
+            Languages = new List<LanguageModel>();
             dbCon = Utils.GetDatabaseConnection();
             dbCon.CreateDB();
             FillLanguageTable();
@@ -51,6 +53,7 @@ namespace NohandicapNative.Droid
             {
                 FillCategoryTable();
                 LoadData();
+               
             };
             spin = (Spinner)FindViewById(Resource.Id.lang_spinner);
 
@@ -63,7 +66,7 @@ namespace NohandicapNative.Droid
         {
             var languages =await RestApiService.GetData<List<LanguageModel>>(NohandiLibrary.LINK_LANGUAGE);
             string[] defaultLanguages = Resources.GetStringArray(Resource.Array.lang_array);
-          defaultShortLanguages = Resources.GetStringArray(Resource.Array.lang_short_array);
+          var defaultShortLanguages = Resources.GetStringArray(Resource.Array.lang_short_array);
             try
             {
 
@@ -77,12 +80,14 @@ namespace NohandicapNative.Droid
                         lang.ShortName = defaultShortLanguages[i];
                         lang.LanguageName = defaultLanguages[i];
                         dbCon.InsertUpdateProduct(lang);
+                        Languages.Add(lang);
                     }
                 }else
                 {
                     foreach (LanguageModel lang in languages)
                     {
                         dbCon.InsertUpdateProduct(lang);
+                        Languages.Add(lang);
                     }
                     defaultShortLanguages = languages.Select(x => x.ShortName).ToArray();              
                 }
@@ -135,6 +140,9 @@ namespace NohandicapNative.Droid
         private async Task<bool> LoadData()
         {
            
+
+        
+        
             ProgressDialog progressDialog = new ProgressDialog(this,
                     Resource.Style.AppThemeDarkDialog);
             progressDialog.Indeterminate = true;
@@ -145,6 +153,7 @@ namespace NohandicapNative.Droid
               
                 // onLoginFailed();
                 progressDialog.Dismiss();
+                Utils.ReloadMainActivity(Application,this);
                 Finish();
             }, 3000);
             var l = dbCon.GetDataList<LanguageModel>();
@@ -161,10 +170,11 @@ namespace NohandicapNative.Droid
         }
 
         public void OnItemSelected(AdapterView parent, View view, int position, long id)
-        {
-            _selecteLangID = position + 1;
-            Utils.WriteToSettings(this, Utils.LANG_ID_TAG, _selecteLangID.ToString());            
-          res=   Utils.SetLocale(this,defaultShortLanguages[_selecteLangID-1]);
+        {           
+            Utils.WriteToSettings(this, Utils.LANG_ID_TAG, Languages[position].ID.ToString());      
+            Utils.WriteToSettings(this, Utils.LANG_SHORT, Languages[position].ShortName);
+
+            res =   Utils.SetLocale(this, Languages[position].ShortName);
             nextButton.Text = res.GetString(Resource.String.next);
             spinnerPrompt.Text = res.GetString(Resource.String.lang_prompt);
         }

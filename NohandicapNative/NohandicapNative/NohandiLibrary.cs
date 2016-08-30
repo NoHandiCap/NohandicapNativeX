@@ -11,6 +11,7 @@ namespace NohandicapNative
     {
         public const string LINK_LANGUAGE = "http://www.stage.nohandicap.net/cms/component/shopmap/ajax/api.php?action=getlang";
         public const string LINK_CATEGORY = "http://www.stage.nohandicap.net/cms/component/shopmap/ajax/api.php?action=getcat&idlang=";
+        public const string LINK_PRODUCT = "http://www.stage.nohandicap.net/cms/component/shopmap/ajax/api.php?action=getprod&idlang=";
         public static List<TabItem> GetTabs()
         {
             List<TabItem> items = new List<TabItem>();

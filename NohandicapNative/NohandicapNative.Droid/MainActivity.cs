@@ -27,14 +27,51 @@ using Android.App;
 using Android.Support.Design.Widget;
 using NohandicapNative.Droid.Services;
 using System.IO;
+using Android.Content.Res;
+using Java.Util;
+using Android.Preferences;
 
 namespace NohandicapNative.Droid
 {
-public class Nohandicap : Application
+    [Application]
+    public class NohandicapApplication : Application
     {
-        public MainActivity MainActivity;
+        public MainActivity MainActivity { get; set; }
+        private Locale locale = null;
+        public NohandicapApplication(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
+    {
+        }
+        public override void OnConfigurationChanged(Configuration newConfig)
+        {
+            base.OnConfigurationChanged(newConfig);
+            if (locale != null)
+            {
+                newConfig.Locale = locale;
+                Locale.Default=locale;
+                BaseContext.Resources.UpdateConfiguration(newConfig, BaseContext.Resources.DisplayMetrics);
+            }
+        }
+        public override void OnCreate()
+        {
+            base.OnCreate();
+            ISharedPreferences settings = PreferenceManager.GetDefaultSharedPreferences(this);
+
+            Configuration config = BaseContext.Resources.Configuration;
+
+            string lang = settings.GetString(Utils.LANG_SHORT, null);
+            if (lang != null)
+            {
+                if (!"".Equals(lang) && !config.Locale.Language.Equals(lang))
+                {
+                    locale = new Locale(lang);
+                    Locale.Default = locale;
+                    config.Locale = locale;
+                    BaseContext.Resources.UpdateConfiguration(config, BaseContext.Resources.DisplayMetrics);
+                }
+            }
+        }
     }
-	[Activity (Label = "NohandicapNative.Droid", MainLauncher = true, Icon = "@drawable/icon")]
+	[Activity (Label = "NohandicapNative.Droid", MainLauncher = true, Icon = "@drawable/logo_small",ConfigurationChanges = Android.Content.PM.ConfigChanges.Orientation | Android.Content.PM.ConfigChanges.ScreenSize)]
 	public class MainActivity : AppCompatActivity, IOnMenuTabSelectedListener, IOnTabClickListener
     {
          int PICK_CONTACT_REQUEST = 1;  // The request code
@@ -46,63 +83,69 @@ public class Nohandicap : Application
         GMapFragment mapPage;
         ListFragment listPage;
         FavoritesFragment favorites;
-
+        SqliteService dbCon;
         int lastPos = 0;
         public void OnMenuItemSelected(int menuItemId)
         {
            
         }
 
-        protected override void OnCreate (Bundle bundle)
+        protected override void OnCreate(Bundle bundle)
         {
             SetTheme(Resource.Style.AppThemeNoBar);
-            base.OnCreate (bundle);
-         
-            SetContentView(Resource.Layout.Main);           
-         
+            base.OnCreate(bundle);
+
+            SetContentView(Resource.Layout.Main);
+           
             // Create your application here
             _bottomBar = BottomBar.AttachShy(FindViewById<CoordinatorLayout>(Resource.Id.myCoordinator), FindViewById<LinearLayout>(Resource.Id.linContent), bundle);
             if (!File.Exists(System.IO.Path.Combine(Utils.PATH, SqliteService.DB_NAME)))
             {
                 ShowFirstWindow();
+                Finish();
             }
-           
-          
-            toolbar = FindViewById<Android.Support.V7.Widget.Toolbar> (Resource.Id.toolbar);          
+            toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
             _bottomBar.NoTabletGoodness();
             //    SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             mapPage = new GMapFragment();
             listPage = new ListFragment();
             homePage = new HomeFragment();
-           
             favorites = new FavoritesFragment();
             items = NohandiLibrary.GetTabs();
-           var tabItems = new BottomBarTab[items.Count];
+            var tabItems = new BottomBarTab[items.Count];
             for (int i = 0; i < tabItems.Length; i++)
             {
                 var tab = items[i];
-                tabItems[i] = new BottomBarTab(Utils.GetImage(this,tab.Image), tab.Title);
-          
-             
+                tabItems[i] = new BottomBarTab(Utils.GetImage(this, tab.Image), tab.Title);
+
+
             }
             _bottomBar.SetItems(tabItems);
             for (int i = 0; i < tabItems.Length; i++)
             {
                 var tab = items[i];
                 _bottomBar.MapColorForTab(i, tab.Color);
-                            }  
+            }
             _bottomBar.SetOnTabClickListener(this);
-         
-           SupportActionBar.SetIcon(Utils.SetDrawableSize(this, Resource.Drawable.logo_small,70,70));
-           SupportActionBar.SetDisplayShowTitleEnabled(true);
+
+            SupportActionBar.SetIcon(Utils.SetDrawableSize(this, Resource.Drawable.logo_small, 70, 70));
+            SupportActionBar.SetDisplayShowTitleEnabled(true);
             SupportActionBar.SetDefaultDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetDisplayHomeAsUpEnabled(false);
+            if (bundle != null)
+            {
+                var postion = bundle.GetInt(Utils.TAB_ID);
+                _bottomBar.SelectTabAtPosition(postion, false);
+            }
+             ((NohandicapApplication)Application).MainActivity = this;
+            dbCon = Utils.GetDatabaseConnection();
+            LoadProducts();
         }
-   
-      private async void Load()
+      private async void LoadProducts()
         {
-            var product =await RestApiService.GetData<List<ProductModel>>("http://www.stage.nohandicap.net/cms/component/shopmap/ajax/api.php?action=getprod&idlang=3");
+            var prod = await RestApiService.GetData<List<ProductModel>>(NohandiLibrary.LINK_PRODUCT);
+            var product = await dbCon.LoadProductsFromInternet(Utils.ReadFromSettings(this, Utils.LANG_ID_TAG));
         }
         protected override void OnSaveInstanceState(Bundle outState)
         {
@@ -110,7 +153,14 @@ public class Nohandicap : Application
              // Necessary to restore the BottomBar's state, otherwise we would
             // lose the current tab on orientation change.
             _bottomBar.OnSaveInstanceState(outState);
+            outState.PutInt(Utils.TAB_ID, _bottomBar.CurrentTabPosition);
+            //if (outState != null)
+            //{
+            //    homePage= (HomeFragment)SupportFragmentManager.GetFragment(outState, stringValueA);
+            //    fragmentB = (FragmentB)fragmentManager.getFragment(savedInstanceState, stringValueB);
+            //}
         }
+       
       private  void ShowFirstWindow()
         {
             var myIntent = new Intent(this, typeof(FirstStartActivity));
@@ -178,6 +228,7 @@ public class Nohandicap : Application
             }
 
         }
+
         public void OnTabReSelected(int position)
         {
           

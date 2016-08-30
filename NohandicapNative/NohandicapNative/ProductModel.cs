@@ -50,18 +50,16 @@ namespace NohandicapNative
         public string Color { get; set; }
    [JsonProperty(PropertyName = "cat"),Ignore]
         public List<string> categoriesList { get; set; }
+        //[JsonProperty(PropertyName = "img"), OneToOne(CascadeOperations = CascadeOperation.All)]
+        //public ImageModel imageList { get; set; }    
+        //[OneToOne(CascadeOperations = CascadeOperation.All)]
+        //public ImageModel MainImage { get; set; }
         [JsonProperty(PropertyName = "img"), OneToOne(CascadeOperations = CascadeOperation.All)]
-        public ImageModel imageList { get; set; }
+        [JsonConverter(typeof(ImageDataConverter))]
+        public ImageJsonModel imageCollection { get; set; }
 
-        [ForeignKey(typeof(ImageModel))]
-        public int ImageID { get; set; }
-
-        [OneToOne(CascadeOperations = CascadeOperation.All)]
-        public ImageModel MainImage { get; set; }
-
-        [OneToMany(CascadeOperations = CascadeOperation.All)]
-        public List<ImageModel> AdditionalImages { get; set; }       
-
+        [ForeignKey(typeof(ImageJsonModel))]
+        public int ImageJsonID { get; set; }
 
     }
 }

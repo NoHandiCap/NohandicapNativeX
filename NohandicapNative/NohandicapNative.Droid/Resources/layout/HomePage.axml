@@ -99,7 +99,7 @@
              android:stretchMode="columnWidth"
             android:layout_below="@+id/linearLayout2" />-->
         <GridLayout
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:id="@+id/additionalCategoryGrid"
             android:layout_alignParentLeft="true"
@@ -108,8 +108,7 @@
             android:layout_alignParentEnd="false"
             android:layout_below="@+id/category_linearLayout2"
             android:columnCount="3"
-            android:rowCount="3"
-            android:rowOrderPreserved="false"
+            android:rowCount="3"            
             android:useDefaultMargins="true">
             <Button
                 android:layout_width="wrap_content"

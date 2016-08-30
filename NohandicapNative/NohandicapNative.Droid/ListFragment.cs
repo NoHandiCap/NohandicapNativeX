@@ -22,30 +22,30 @@ namespace NohandicapNative.Droid
             var view = inflater.Inflate(Resource.Layout.ListPage, container, false);
             var listView = view.FindViewById<ListView>(Resource.Id.listview);
             List<ProductModel> items = new List<ProductModel>();
-            items.Add(new ProductModel()
-            {
+            //items.Add(new ProductModel()
+            //{
                 
-               FirmName = "Restarant",
-                Description = "Descript" ,
-                MainImage=new ImageModel() { LocalImage="event"}
+            //   FirmName = "Restarant",
+            //    Description = "Descript" ,
+            //    MainImage=new ImageModel() { LocalImage="event"}
                 
 
-            });
-            items.Add(new ProductModel()
-            {
+            //});
+            //items.Add(new ProductModel()
+            //{
 
-                FirmName = "Hotel",
-                Description = "Descript",
-                 MainImage = new ImageModel() { LocalImage = "eat" }
-            });
-            items.Add(new ProductModel()
-            {
+            //    FirmName = "Hotel",
+            //    Description = "Descript",
+            //     MainImage = new ImageModel() { LocalImage = "eat" }
+            //});
+            //items.Add(new ProductModel()
+            //{
 
-                FirmName = "Eavent",
-                Description = "Descript",
-                MainImage = new ImageModel() { LocalImage = "eat" }
+            //    FirmName = "Eavent",
+            //    Description = "Descript",
+            //    MainImage = new ImageModel() { LocalImage = "eat" }
 
-            });
+            //});
             var listAdapter = new ListAdapter(myContext,items);
             listView.Adapter = listAdapter;
             listView.ItemClick += (s, e) =>
@@ -58,6 +58,7 @@ namespace NohandicapNative.Droid
             };
             return view;
         }
+       
         public override void OnAttach(Activity activity)
         {
             myContext = (MainActivity)activity;

@@ -60,7 +60,7 @@ namespace NohandicapNative.Droid.Adapters
             title.Text = items[position].FirmName;
             description.Text = items[position].Description;
             //image.SetImageDrawable(new BitmapDrawable(view.Resources, Utils.GetBitmap(items[position].MainImage.GetImage())));
-           image.SetImageDrawable(Utils.GetImage(context,items[position].MainImage.GetImage()));
+        //   image.SetImageDrawable(Utils.GetImage(context,items[position].MainImage.Image));
 
             image.SetBackgroundColor(Color.ParseColor("#7B1FA2"));
             image.LayoutParameters.Height = 100;
