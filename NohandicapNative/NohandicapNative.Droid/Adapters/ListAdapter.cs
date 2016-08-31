@@ -54,18 +54,17 @@ namespace NohandicapNative.Droid.Adapters
         {
             var view = convertView ?? context.LayoutInflater.Inflate(
         Resource.Layout.list_item, parent, false);
-            var image = view.FindViewById<ImageView>(Resource.Id.image_item);
-            var title= view.FindViewById<TextView>(Resource.Id.title_item);
-            var description = view.FindViewById<TextView>(Resource.Id.description_item);
-            title.Text = items[position].FirmName;
-            description.Text = items[position].Description;
-            //image.SetImageDrawable(new BitmapDrawable(view.Resources, Utils.GetBitmap(items[position].MainImage.GetImage())));
-        //   image.SetImageDrawable(Utils.GetImage(context,items[position].MainImage.Image));
-
-            image.SetBackgroundColor(Color.ParseColor("#7B1FA2"));
-            image.LayoutParameters.Height = 100;
-            image.LayoutParameters.Width = 100;
-            image.SetPadding(5, 0, 5, 0);
+            //var image = view.FindViewById<ImageView>(Resource.Id.image_item);
+            //var title= view.FindViewById<TextView>(Resource.Id.title_item);
+            //var description = view.FindViewById<TextView>(Resource.Id.description_item);
+            //title.Text = items[position].FirmName;
+            //description.Text = items[position].Description;
+            //var mainimage = items[position].ImageCollection.Images;
+            //if (mainimage.Count != 0)
+            //   image.SetImageDrawable(new BitmapDrawable(Utils.GetBitmap(mainimage[0].LocalImage)));   
+            //image.LayoutParameters.Height = 100;
+            //image.LayoutParameters.Width = 100;
+            //image.SetPadding(5, 0, 5, 0);
             return view; 
                 
         }

@@ -96,7 +96,8 @@ namespace NohandicapNative.Droid
             base.OnCreate(bundle);
 
             SetContentView(Resource.Layout.Main);
-           
+            Utils.mainActivity = this;
+
             // Create your application here
             _bottomBar = BottomBar.AttachShy(FindViewById<CoordinatorLayout>(Resource.Id.myCoordinator), FindViewById<LinearLayout>(Resource.Id.linContent), bundle);
             if (!File.Exists(System.IO.Path.Combine(Utils.PATH, SqliteService.DB_NAME)))
@@ -107,6 +108,9 @@ namespace NohandicapNative.Droid
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
             _bottomBar.NoTabletGoodness();
+         
+          //  _bottomBar.SetBackgroundColor(Color.ParseColor(Utils.BACKGROUND));
+
             //    SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             mapPage = new GMapFragment();
             listPage = new ListFragment();
@@ -117,15 +121,19 @@ namespace NohandicapNative.Droid
             for (int i = 0; i < tabItems.Length; i++)
             {
                 var tab = items[i];
-                tabItems[i] = new BottomBarTab(Utils.GetImage(this, tab.Image), tab.Title);
-
-
+                var icon = Utils.GetImage(this, tab.Image);
+                
+                tabItems[i] = new BottomBarTab(icon, tab.Title);
+                _bottomBar.SetActiveTabColor(Color.Red);
+              
             }
             _bottomBar.SetItems(tabItems);
             for (int i = 0; i < tabItems.Length; i++)
             {
                 var tab = items[i];
                 _bottomBar.MapColorForTab(i, tab.Color);
+                // _bottomBar.MapColorForTab(i, Color.ParseColor(Utils.BACKGROUND));
+
             }
             _bottomBar.SetOnTabClickListener(this);
 
@@ -133,6 +141,7 @@ namespace NohandicapNative.Droid
             SupportActionBar.SetDisplayShowTitleEnabled(true);
             SupportActionBar.SetDefaultDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetDisplayHomeAsUpEnabled(false);
+          
             if (bundle != null)
             {
                 var postion = bundle.GetInt(Utils.TAB_ID);
@@ -140,7 +149,9 @@ namespace NohandicapNative.Droid
             }
              ((NohandicapApplication)Application).MainActivity = this;
             dbCon = Utils.GetDatabaseConnection();
-            LoadProducts();
+
+            _bottomBar.HideShadow();
+           // LoadProducts();
         }
       private async void LoadProducts()
         {

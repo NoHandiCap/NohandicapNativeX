@@ -32,7 +32,7 @@ namespace NohandicapNative.Droid
         {
 
             var view = inflater.Inflate(Resource.Layout.HomePage,container,false);
-            //view.SetBackgroundColor(Color.ParseColor("#FFECB3"));
+          view.SetBackgroundColor(Color.ParseColor(Utils.BACKGROUND));
             dbCon = Utils.GetDatabaseConnection();
             //  GridView mainCategory = view.FindViewById<GridView>(Resource.Id.mainCategory);
             TextView[] mainCat = new TextView[mainCategoriesText.Length];
@@ -123,29 +123,30 @@ namespace NohandicapNative.Droid
             //};
 
 
-
-            // GridView additionalCategory = view.FindViewById<GridView>(Resource.Id.additionalCategory);
+            ButtonGridView additionalCategory = view.FindViewById<ButtonGridView>(Resource.Id.additionalCategory);
             List<TabItem> additItems = NohandiLibrary.GetAdditionalCategory();
 
-            GridLayout gridLayout = view.FindViewById<GridLayout>(Resource.Id.additionalCategoryGrid);
+      //   GridLayout gridLayout = view.FindViewById<GridLayout>(Resource.Id.additionalCategory);
 
-            for (int i = 0; i < gridLayout.ChildCount; i++)
-            {
-                var item = additItems[i];
-                var button =(Button)gridLayout.GetChildAt(i);
-                button.Text = item.Title;
-                button.SetTextColor(Color.White);
-                button.SetCompoundDrawablesWithIntrinsicBounds(null, Utils.GetImage(myContext, item.Image), null, null);
-                button.SetBackgroundColor(Color.ParseColor(item.Color));
-                button.TextSize = 8.5f;
-                button.Click += (s, e) =>
-                {
+          //  for (int i = 0; i < gridLayout.ChildCount; i++)
+          //  {
+          //      var item = additItems[i];
+          //      var button =(Button)gridLayout.GetChildAt(i);
+          //      button.Text = item.Title;
+          //      button.SetTextColor(Color.White);
+          //      button.SetCompoundDrawablesWithIntrinsicBounds(null, Utils.GetImage(myContext, item.Image), null, null);
+          //      button.SetBackgroundColor(Color.ParseColor(item.Color));
+          //      button.TextSize = 8.5f;
+          //button.SetMaxHeight(200);
+          //     button.SetMaxWidth(200);
+          //      button.Click += (s, e) =>
+          //      {
 
-                    Android.Support.V4.App.FragmentManager fragmentManager = myContext.SupportFragmentManager;
-                    myContext.SetCurrentTab(1);
-                    myContext.SupportActionBar.Title = (s as Button).Text;
-                };
-            }
+          //          Android.Support.V4.App.FragmentManager fragmentManager = myContext.SupportFragmentManager;
+          //          myContext.SetCurrentTab(1);
+          //          myContext.SupportActionBar.Title = (s as Button).Text;
+          //      };
+          //  }
             //int total = additItems.Count;
             //int column = 3;
             //int row = total / column;
@@ -210,7 +211,7 @@ namespace NohandicapNative.Droid
             //}
             //  List<TabItem> mainItems = NohandiLibrary.GetMainCategory();
             //  mainCategory.Adapter = new GridViewAdapter(myContext, mainItems);
-            //     additionalCategory.Adapter= new GridViewAdapter(myContext, additItems);
+              additionalCategory.Adapter= new GridViewAdapter(myContext, additItems);
 
 
             return view;

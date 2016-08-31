@@ -70,7 +70,7 @@ namespace NohandicapNative
         }
         public List<T> GetDataList<T>() where T : class
         {           
-                return dbCon.GetAllWithChildren<T>().ToList();
+                return dbCon.GetAllWithChildren<T>(null,true).ToList();
             
         }           
         public T Find<T>(int pk) where T : class

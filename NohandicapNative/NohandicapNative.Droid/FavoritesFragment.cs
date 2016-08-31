@@ -12,6 +12,8 @@ using Android.Widget;
 using Android.Support.V4.App;
 using NohandicapNative.Droid.Adapters;
 using Android.App;
+using Android.Graphics;
+using NohandicapNative.Droid.Services;
 
 namespace NohandicapNative.Droid
 {
@@ -28,6 +30,8 @@ namespace NohandicapNative.Droid
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             var view = inflater.Inflate(Resource.Layout.Login, container, false);
+            view.SetBackgroundColor(Color.ParseColor(Utils.BACKGROUND));
+
             loginButton = view.FindViewById<Button>(Resource.Id.btn_login);
             laterButton = view.FindViewById<TextView>(Resource.Id.link_later);
             signUpButton = view.FindViewById<Button>(Resource.Id.btn_sign_up);

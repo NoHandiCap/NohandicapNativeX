@@ -17,6 +17,7 @@ using Android.Gms.Maps.Model;
 using System.Collections.ObjectModel;
 using System.Collections;
 using NohandicapNative.Droid.Services;
+using Android.Graphics;
 
 namespace NohandicapNative.Droid
 {
@@ -34,7 +35,8 @@ namespace NohandicapNative.Droid
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             var view = inflater.Inflate(Resource.Layout.MapPage, container, false);
-        
+          view.SetBackgroundColor(Color.ParseColor(Utils.BACKGROUND));
+
             // Gets the MapView from the XML layout and creates it
             mapView = (MapView)view.FindViewById(Resource.Id.mapView);
             mapView.OnCreate(savedInstanceState);

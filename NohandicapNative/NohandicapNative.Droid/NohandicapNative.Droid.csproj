@@ -84,6 +84,10 @@
       <HintPath>..\..\packages\Xamarin.Android.Support.v7.AppCompat.23.3.0\lib\MonoAndroid403\Xamarin.Android.Support.v7.AppCompat.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Xamarin.Android.Support.v7.CardView, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Xamarin.Android.Support.v7.CardView.23.3.0\lib\MonoAndroid403\Xamarin.Android.Support.v7.CardView.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Xamarin.Android.Support.v7.RecyclerView, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Xamarin.Android.Support.v7.RecyclerView.23.3.0\lib\MonoAndroid403\Xamarin.Android.Support.v7.RecyclerView.dll</HintPath>
       <Private>True</Private>
@@ -108,7 +112,10 @@
   <ItemGroup>
     <Compile Include="Adapters\GridViewAdapter.cs" />
     <Compile Include="Adapters\ListAdapter.cs" />
+    <Compile Include="Adapters\CardViewAdapter.cs" />
     <Compile Include="Adapters\SpinnerAdapter.cs" />
+    <Compile Include="Adapters\SquareLinearLayout.cs" />
+    <Compile Include="ButtonGridView.cs" />
     <Compile Include="DetailActivity.cs" />
     <Compile Include="FavoritesFragment.cs" />
     <Compile Include="FirstStartActivity.cs" />
@@ -163,6 +170,9 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout-large\Main.axml" />
+    <AndroidResource Include="Resources\layout\grid_item.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\Main.axml">

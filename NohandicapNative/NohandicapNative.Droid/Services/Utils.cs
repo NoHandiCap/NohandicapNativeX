@@ -12,11 +12,11 @@ using Android.Widget;
 using Android.Graphics.Drawables;
 using Android.Graphics;
 using System.Net;
-using System.IO;
 using Java.Util;
 using Android.Content.Res;
 using Android.Util;
 using Android.Preferences;
+using Java.IO;
 
 namespace NohandicapNative.Droid.Services
 {
@@ -31,12 +31,44 @@ namespace NohandicapNative.Droid.Services
         public const string LANG_ID_TAG = "langID";
         public const string LANG_SHORT = "langShort";
         public const string TAB_ID = "tabID";
+        public const string BACKGROUND= "#FFECB3";
 
+        public static Context mainActivity;
         public static Android.Graphics.Drawables.Drawable GetImage(Context context, string image)
 
         {
+            
             var id = context.Resources.GetIdentifier(image, "drawable", context.PackageName);
             return context.Resources.GetDrawable(id);
+        }
+        public static Drawable covertBitmapToDrawable(Context context, Bitmap bitmap)
+        {
+            Drawable d = new BitmapDrawable(context.Resources, bitmap);
+            return d;
+        }
+        public static Bitmap changeImageColor(Bitmap sourceBitmap, int color)
+        {
+            Bitmap resultBitmap = Bitmap.CreateBitmap(sourceBitmap, 0, 0,
+            sourceBitmap.Width - 1, sourceBitmap.Height - 1);
+            Paint p = new Paint();
+            ColorFilter filter = new LightingColorFilter(color, 1);
+            p.SetColorFilter(filter);
+
+            Canvas canvas = new Canvas(resultBitmap);
+            canvas.DrawBitmap(resultBitmap, 0, 0, p);
+            return resultBitmap;
+        }
+        public static Bitmap convertDrawableToBitmap(Drawable drawable)
+        {
+         
+
+            Bitmap bitmap = Bitmap.CreateBitmap(drawable.IntrinsicWidth,
+            drawable.IntrinsicHeight, Bitmap.Config.Argb8888);
+            Canvas canvas = new Canvas(bitmap);
+            drawable.SetBounds(0, 0, canvas.Width, canvas.Height);
+            drawable.Draw(canvas);
+
+            return bitmap;
         }
         public static void ReloadMainActivity(Application application,Context context)
         {
@@ -58,6 +90,7 @@ namespace NohandicapNative.Droid.Services
         }
         public static bool SaveImageBitmapFromUrl(string url, string name)
         {
+
             Bitmap imageBitmap = null;
 
             using (var webClient = new WebClient())
@@ -73,17 +106,25 @@ namespace NohandicapNative.Droid.Services
         }
         public static void Save(Bitmap bitmap, string name)
         {
-
-            using (var os = new FileStream(name, FileMode.CreateNew))
+            name = name.Replace(".jpg", "");
+            var parentDir = new File(mainActivity.FilesDir.ToString());
+            List<File> inFiles = new List<File>();
+            File[] files = parentDir.ListFiles();
+           
+            
+        
+            using (var os = new System.IO.FileStream(System.IO.Path.Combine(mainActivity.FilesDir.ToString(), name), System.IO.FileMode.Create))
             {
                 bitmap.Compress(Bitmap.CompressFormat.Png, 95, os);
             }
         }
         public static Bitmap GetBitmap(string name)
         {
+            name = name.Replace(".jpg", "");
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.InPreferredConfig = Bitmap.Config.Argb8888;
-            Bitmap bitmap = BitmapFactory.DecodeFile(name, options);
+            
+            Bitmap bitmap = BitmapFactory.DecodeFile(System.IO.Path.Combine(mainActivity.FilesDir.ToString(), name), options);
             return bitmap;
         }
         public static Resources SetLocale(Activity context, string lang)

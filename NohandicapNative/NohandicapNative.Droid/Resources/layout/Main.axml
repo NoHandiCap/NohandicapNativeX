@@ -24,8 +24,9 @@
     <!-- The main content view where fragments are loaded -->
         <FrameLayout
             android:id="@+id/flContent"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingBottom="50dp" />
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+             android:layout_marginBottom="45dp"
+            android:layout_marginTop="-10dp" />
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

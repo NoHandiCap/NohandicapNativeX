@@ -48,15 +48,23 @@ namespace NohandicapNative
         [JsonProperty(PropertyName = "gpslon")]
         public string Long { get; set; }
         public string Color { get; set; }
-   [JsonProperty(PropertyName = "cat"),Ignore]
-        public List<string> categoriesList { get; set; }
-        //[JsonProperty(PropertyName = "img"), OneToOne(CascadeOperations = CascadeOperation.All)]
-        //public ImageModel imageList { get; set; }    
-        //[OneToOne(CascadeOperations = CascadeOperation.All)]
-        //public ImageModel MainImage { get; set; }
-        [JsonProperty(PropertyName = "img"), OneToOne(CascadeOperations = CascadeOperation.All)]
-        [JsonConverter(typeof(ImageDataConverter))]
-        public ImageJsonModel imageCollection { get; set; }
+        [JsonProperty(PropertyName = "cat"),Ignore]
+        public List<string> categoriesList { get; set; }  
+        [flield: NonSerialized]
+        private ImageJsonModel _imageCollection;
+        [JsonProperty(PropertyName = "img"), OneToOne(CascadeOperations = CascadeOperation.All), JsonConverter(typeof(ImageDataConverter))]
+        public ImageJsonModel ImageCollection
+        {
+            get
+            {
+                return _imageCollection;
+            }
+            set
+            {
+                _imageCollection = value;
+                ImageJsonID = value.ID;
+            }
+        }
 
         [ForeignKey(typeof(ImageJsonModel))]
         public int ImageJsonID { get; set; }

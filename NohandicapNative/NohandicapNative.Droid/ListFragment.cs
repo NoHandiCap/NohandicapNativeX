@@ -11,54 +11,41 @@ using Android.Widget;
 using Android.Support.V4.App;
 using NohandicapNative.Droid.Adapters;
 using Android.App;
+using NohandicapNative.Droid.Services;
+using Android.Graphics;
 
 namespace NohandicapNative.Droid
 {
   public  class ListFragment : Android.Support.V4.App.Fragment
     {
         MainActivity myContext;
+        ListView listView;
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             var view = inflater.Inflate(Resource.Layout.ListPage, container, false);
-            var listView = view.FindViewById<ListView>(Resource.Id.listview);
-            List<ProductModel> items = new List<ProductModel>();
-            //items.Add(new ProductModel()
-            //{
-                
-            //   FirmName = "Restarant",
-            //    Description = "Descript" ,
-            //    MainImage=new ImageModel() { LocalImage="event"}
-                
+         listView = view.FindViewById<ListView>(Resource.Id.listview);    
+          view.SetBackgroundColor(Color.ParseColor(Utils.BACKGROUND));
 
-            //});
-            //items.Add(new ProductModel()
-            //{
-
-            //    FirmName = "Hotel",
-            //    Description = "Descript",
-            //     MainImage = new ImageModel() { LocalImage = "eat" }
-            //});
-            //items.Add(new ProductModel()
-            //{
-
-            //    FirmName = "Eavent",
-            //    Description = "Descript",
-            //    MainImage = new ImageModel() { LocalImage = "eat" }
-
-            //});
-            var listAdapter = new ListAdapter(myContext,items);
-            listView.Adapter = listAdapter;
             listView.ItemClick += (s, e) =>
             {
                 int position = e.Position;
-                    var detailIntent = new Intent(myContext, typeof(DetailActivity));
-                    detailIntent.PutExtra("Title", items[position].FirmName);
-                myContext.StartActivity(detailIntent);
+                //    var detailIntent = new Intent(myContext, typeof(DetailActivity));
+                  //  detailIntent.PutExtra("Title", items[position].FirmName);
+             //   myContext.StartActivity(detailIntent);
                
             };
+        //    LoadData();
             return view;
         }
-       
+       private async void LoadData()
+        {
+            var dbCon = Utils.GetDatabaseConnection();
+            var product =dbCon.GetDataList<ProductModel>();
+            var listAdapter = new CardViewAdapter(myContext, product);
+
+            //var listAdapter = new ListAdapter(myContext, product);
+            listView.Adapter = listAdapter;
+        }
         public override void OnAttach(Activity activity)
         {
             myContext = (MainActivity)activity;
