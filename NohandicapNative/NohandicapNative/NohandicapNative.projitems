@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)CategoryModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CustomRadioButton.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ImageJsonModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ImageModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LanguageModel.cs" />

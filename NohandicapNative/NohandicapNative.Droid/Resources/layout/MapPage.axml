@@ -4,15 +4,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:minWidth="25px"
-    android:minHeight="25px">
-<!--<RelativeLayout
-        android:id="@+id/map"
+    android:minHeight="25px"
+android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+              >
+<RelativeLayout
+       android:id="@+id/map"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:background="#FFFFFFFF"
+      >
+       
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/mapView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />-->
-  <com.google.android.gms.maps.MapView
- xmlns:android="http://schemas.android.com/apk/res/android"
- android:id="@+id/mapView"
- android:layout_width="match_parent"
- android:layout_height="match_parent" />
-
+        android:layout_height="match_parent" 
+         android:layout_marginBottom="5dp"
+       android:layout_marginTop="5dp"/>
+</RelativeLayout>
 </LinearLayout>

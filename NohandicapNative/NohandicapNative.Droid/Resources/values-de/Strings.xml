@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>	
 	<string name="app_name">Nohandicap</string>
+  <string name="current_language_short">de</string>
+
   <string name="settings">Einstellungen</string>
   <string name="next">Weiter</string>
   <string name="load_data">Datei laden aus Server..</string>

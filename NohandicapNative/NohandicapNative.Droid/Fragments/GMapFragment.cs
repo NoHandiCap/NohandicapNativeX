@@ -18,6 +18,7 @@ using System.Collections.ObjectModel;
 using System.Collections;
 using NohandicapNative.Droid.Services;
 using Android.Graphics;
+using Android.Content.PM;
 
 namespace NohandicapNative.Droid
 {
@@ -72,7 +73,7 @@ namespace NohandicapNative.Droid
             }
             //  LoadData();
             // Updates the location and zoom of the MapView
-           
+            
             return view;
         }
         private async void LoadData()

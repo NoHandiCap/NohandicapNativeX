@@ -1,7 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>	
 	<string name="app_name">Nohandicap</string>
+  <string name="current_language_short">fr</string>
+
   <string name="settings">Réglages</string>
+  
   <string name="next">Plus</string>
   <string name="load_data">Licence de serveur ...</string>
   <string name="lang_prompt">Choisissez votre langue:</string>

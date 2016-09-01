@@ -32,7 +32,7 @@ namespace NohandicapNative.Droid.Services
         public const string LANG_SHORT = "langShort";
         public const string TAB_ID = "tabID";
         public const string BACKGROUND= "#FFECB3";
-
+       public const string TAB_COLOR = "#FF73012B";
         public static Context mainActivity;
         public static Android.Graphics.Drawables.Drawable GetImage(Context context, string image)
 
@@ -72,7 +72,7 @@ namespace NohandicapNative.Droid.Services
         }
         public static void ReloadMainActivity(Application application,Context context)
         {
-            ((NohandicapApplication)application).MainActivity.Finish();
+           ((NohandicapApplication)application).MainActivity.Finish();
             Intent refresh = new Intent(context, typeof(MainActivity));
             context.StartActivity(refresh);
         }
@@ -169,6 +169,38 @@ namespace NohandicapNative.Droid.Services
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
 
             return prefs.GetString(key, null);
+        }
+        private static Locale sLocale;
+
+        public static void setLocale(Locale locale)
+        {
+            sLocale = locale;
+            if (sLocale != null)
+            {
+                Locale.Default=sLocale;
+            }
+        }
+
+        public static void updateConfig(ContextThemeWrapper wrapper)
+        {
+            if (sLocale != null && Build.VERSION.SdkInt >= Build.VERSION_CODES.JellyBeanMr1)
+            {
+                Configuration configuration = new Configuration();
+                configuration.SetLocale(sLocale);
+                wrapper.ApplyOverrideConfiguration(configuration);
+            }
+        }
+
+        public static void updateConfig(Application app, Configuration configuration)
+        {
+            if (sLocale != null && Build.VERSION.SdkInt < Build.VERSION_CODES.JellyBeanMr1)
+            {
+                //Wrapping the configuration to avoid Activity endless loop
+                Configuration config = new Configuration(configuration);
+                config.Locale = sLocale;
+                Resources res = app.BaseContext.Resources;
+                res.UpdateConfiguration(config, res.DisplayMetrics);
+            }
         }
 
     }

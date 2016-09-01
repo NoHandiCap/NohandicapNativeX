@@ -52,7 +52,7 @@ namespace NohandicapNative
         public List<string> categoriesList { get; set; }  
         [flield: NonSerialized]
         private ImageJsonModel _imageCollection;
-        [JsonProperty(PropertyName = "img"), OneToOne(CascadeOperations = CascadeOperation.All), JsonConverter(typeof(ImageDataConverter))]
+        [JsonProperty(PropertyName = "img"),  JsonConverter(typeof(ImageDataConverter)),Ignore]
         public ImageJsonModel ImageCollection
         {
             get

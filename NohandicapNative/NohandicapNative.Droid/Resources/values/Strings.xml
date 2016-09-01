@@ -2,6 +2,7 @@
 <resources>
 	
 	<string name="app_name">Nohandicap</string>
+  <string name="current_language_short">en</string>
   <string name="settings">Settings</string>
   <string name="next">Next</string>
   <string name="load_data">Loading data from server...</string>

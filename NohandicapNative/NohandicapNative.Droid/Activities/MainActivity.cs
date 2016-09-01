@@ -30,6 +30,7 @@ using System.IO;
 using Android.Content.Res;
 using Java.Util;
 using Android.Preferences;
+using Android.Content.PM;
 
 namespace NohandicapNative.Droid
 {
@@ -38,47 +39,43 @@ namespace NohandicapNative.Droid
     {
         public MainActivity MainActivity { get; set; }
         private Locale locale = null;
+       
+
+       
         public NohandicapApplication(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
-    {
+        {
         }
         public override void OnConfigurationChanged(Configuration newConfig)
         {
+           
             base.OnConfigurationChanged(newConfig);
-            if (locale != null)
-            {
-                newConfig.Locale = locale;
-                Locale.Default=locale;
-                BaseContext.Resources.UpdateConfiguration(newConfig, BaseContext.Resources.DisplayMetrics);
-            }
+           Utils.updateConfig(this, newConfig);
         }
+
         public override void OnCreate()
         {
             base.OnCreate();
             ISharedPreferences settings = PreferenceManager.GetDefaultSharedPreferences(this);
-
-            Configuration config = BaseContext.Resources.Configuration;
-
             string lang = settings.GetString(Utils.LANG_SHORT, null);
             if (lang != null)
             {
-                if (!"".Equals(lang) && !config.Locale.Language.Equals(lang))
-                {
-                    locale = new Locale(lang);
-                    Locale.Default = locale;
-                    config.Locale = locale;
-                    BaseContext.Resources.UpdateConfiguration(config, BaseContext.Resources.DisplayMetrics);
-                }
-            }
+                Utils.setLocale(new Locale(lang));
+                Utils.updateConfig(this, BaseContext.Resources.Configuration);
+            }     
+         
+
+           
         }
     }
-	[Activity (Label = "NohandicapNative.Droid", MainLauncher = true, Icon = "@drawable/logo_small",ConfigurationChanges = Android.Content.PM.ConfigChanges.Orientation | Android.Content.PM.ConfigChanges.ScreenSize)]
+    [Activity(Label = "Nohandicap", Icon = "@drawable/logo_small", ConfigurationChanges =Android.Content.PM.ConfigChanges.Orientation | 
+        Android.Content.PM.ConfigChanges.ScreenSize
+       )]
 	public class MainActivity : AppCompatActivity, IOnMenuTabSelectedListener, IOnTabClickListener
     {
          int PICK_CONTACT_REQUEST = 1;  // The request code
         private BottomBar _bottomBar;
         Android.Support.V7.Widget.Toolbar toolbar;
         List<TabItem> items;
-
         HomeFragment homePage;
         GMapFragment mapPage;
         ListFragment listPage;
@@ -89,71 +86,74 @@ namespace NohandicapNative.Droid
         {
            
         }
-
+        public MainActivity()
+        {
+            Utils.updateConfig(this);
+        }
         protected override void OnCreate(Bundle bundle)
         {
             SetTheme(Resource.Style.AppThemeNoBar);
             base.OnCreate(bundle);
-
             SetContentView(Resource.Layout.Main);
             Utils.mainActivity = this;
-
+            toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             // Create your application here
             _bottomBar = BottomBar.AttachShy(FindViewById<CoordinatorLayout>(Resource.Id.myCoordinator), FindViewById<LinearLayout>(Resource.Id.linContent), bundle);
             if (!File.Exists(System.IO.Path.Combine(Utils.PATH, SqliteService.DB_NAME)))
             {
                 ShowFirstWindow();
                 Finish();
-            }
-            toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
-            SetSupportActionBar(toolbar);
-            _bottomBar.NoTabletGoodness();
-         
-          //  _bottomBar.SetBackgroundColor(Color.ParseColor(Utils.BACKGROUND));
-
+            }   
             //    SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             mapPage = new GMapFragment();
             listPage = new ListFragment();
             homePage = new HomeFragment();
             favorites = new FavoritesFragment();
             items = NohandiLibrary.GetTabs();
+            dbCon = Utils.GetDatabaseConnection();
+            PrepareBar();
+            if (bundle != null)
+            {
+                var postion = bundle.GetInt(Utils.TAB_ID);
+                _bottomBar.SelectTabAtPosition(postion, false);
+            }
+            //   LoadProducts();
+        }
+        private void PrepareBar()
+        {
+            SetSupportActionBar(toolbar);
+            _bottomBar.NoNavBarGoodness();
+            _bottomBar.NoTabletGoodness();
             var tabItems = new BottomBarTab[items.Count];
             for (int i = 0; i < tabItems.Length; i++)
             {
                 var tab = items[i];
                 var icon = Utils.GetImage(this, tab.Image);
-                
+
                 tabItems[i] = new BottomBarTab(icon, tab.Title);
                 _bottomBar.SetActiveTabColor(Color.Red);
-              
+
             }
             _bottomBar.SetItems(tabItems);
             for (int i = 0; i < tabItems.Length; i++)
             {
                 var tab = items[i];
                 _bottomBar.MapColorForTab(i, tab.Color);
-                // _bottomBar.MapColorForTab(i, Color.ParseColor(Utils.BACKGROUND));
+                //  _bottomBar.MapColorForTab(i, Color.ParseColor(Utils.BACKGROUND));
 
             }
             _bottomBar.SetOnTabClickListener(this);
-
             SupportActionBar.SetIcon(Utils.SetDrawableSize(this, Resource.Drawable.logo_small, 70, 70));
             SupportActionBar.SetDisplayShowTitleEnabled(true);
             SupportActionBar.SetDefaultDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetDisplayHomeAsUpEnabled(false);
-          
-            if (bundle != null)
-            {
-                var postion = bundle.GetInt(Utils.TAB_ID);
-                _bottomBar.SelectTabAtPosition(postion, false);
-            }
-             ((NohandicapApplication)Application).MainActivity = this;
-            dbCon = Utils.GetDatabaseConnection();
+           
+            ((NohandicapApplication)Application).MainActivity = this;
+        
 
             _bottomBar.HideShadow();
-           // LoadProducts();
         }
-      private async void LoadProducts()
+        private async void LoadProducts()
         {
             var prod = await RestApiService.GetData<List<ProductModel>>(NohandiLibrary.LINK_PRODUCT);
             var product = await dbCon.LoadProductsFromInternet(Utils.ReadFromSettings(this, Utils.LANG_ID_TAG));
@@ -214,9 +214,12 @@ namespace NohandicapNative.Droid
             SupportActionBar.Show();
             SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Color.ParseColor(items[position].Color)));
           SupportActionBar.Title=items[position].Title;
-            if (position == 0) SupportActionBar.Title="Nohandicap";
-         
-                lastPos = position;
+            if (position == 0) {        
+                SupportActionBar.Title = "Nohandicap";
+            }
+     
+
+            lastPos = position;
         }
        public void ShowFragment(Android.Support.V4.App.Fragment fragment,string tag)
         {

@@ -29,6 +29,10 @@ namespace NohandicapNative.Droid
         int[] flags = { Resource.Drawable.german, Resource.Drawable.english, Resource.Drawable.france };
         List<LanguageModel> languageList;
         LanguageModel selectedLanguage;
+        public SettingsActivity()
+        {
+            Utils.updateConfig(this);
+        }
         protected override void OnCreate(Bundle savedInstanceState)
         {
 
@@ -52,6 +56,7 @@ namespace NohandicapNative.Droid
                      
            
         }
+       
        
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
