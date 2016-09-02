@@ -20,5 +20,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)SqliteService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)JsonDataConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TabItem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UserModel.cs" />
   </ItemGroup>
 </Project>

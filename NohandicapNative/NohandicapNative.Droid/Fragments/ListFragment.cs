@@ -34,7 +34,7 @@ namespace NohandicapNative.Droid
              //   myContext.StartActivity(detailIntent);
                
             };
-        //    LoadData();
+         LoadData();
             return view;
         }
        private async void LoadData()

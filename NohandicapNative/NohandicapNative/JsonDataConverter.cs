@@ -26,8 +26,8 @@ namespace NohandicapNative
                 var thumbs = token["thumbs"].ToObject<List<string>>();
                 var images = token["images"].ToObject<List<string>>();
                 ImageJsonModel model = new ImageJsonModel();
-                List<ImageModel> thumbsList = new List<ImageModel>();
-                List<ImageModel> imgList = new List<ImageModel>();
+                model.Thumbs = new List<ImageModel>();
+                model.Images = new List<ImageModel>();
 
 #if __ANDROID__
                 var dbCon = Utils.GetDatabaseConnection();
@@ -45,15 +45,15 @@ namespace NohandicapNative
                         Utils.SaveImageBitmapFromUrl(item, filename);
                         thumb.LocalImage = filename;
                         thumb.LinkImage = item;
-                       dbCon.InsertUpdateProduct(thumb);
+                       // dbCon.InsertUpdateProduct(thumb);
 
-                        thumbsList.Add(thumb);
+                        model.Thumbs.Add(thumb);
                     }catch(Exception e) {
                         var s = e.Message;
                     }
                 }           
 
-                foreach (var item in thumbs)
+                foreach (var item in images)
                 {
                     try {
                         string filename = "none";
@@ -64,11 +64,12 @@ namespace NohandicapNative
                     Utils.SaveImageBitmapFromUrl(item, filename);
                     img.LocalImage = filename;
                     img.LinkImage = item;
-                    dbCon.InsertUpdateProduct(img);
-                        imgList.Add(img);
+                //  dbCon.InsertUpdateProduct(img);
+                        model.Images.Add(img);
                     }
                     catch (Exception e) {
                         var s = e.Message;
+                       
                     }
                 }
                

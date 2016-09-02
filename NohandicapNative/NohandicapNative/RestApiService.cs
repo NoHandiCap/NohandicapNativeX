@@ -59,21 +59,34 @@ namespace NohandicapNative
                         }
                         else if (response.StatusCode == HttpStatusCode.InternalServerError)
                         {
-                            throw new Exception("Internal server error received (" + url + "). " + content);
+                          //  throw new Exception("Internal server error received (" + url + "). " + content);
                         }
                         else
                         {
-                            throw new Exception("Bad or invalid request received (" + url + "). " + content);
+                           // throw new Exception("Bad or invalid request received (" + url + "). " + content);
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-               // Log.Error("Could not fetch data via GetData (" + url + ").", ex.ToString());
-                throw ex;
+                // Log.Error("Could not fetch data via GetData (" + url + ").", ex.ToString());
+                return default(T);
             }
             return default(T);
+        }
+        public static async Task<string> Login(string email,string password)
+        {
+            using (WebClient client = new WebClient())
+            {
+                var reqparm = new System.Collections.Specialized.NameValueCollection();
+                reqparm.Add("user", email);
+                reqparm.Add("pwd", password);
+                byte[] responsebytes = client.UploadValues(NohandiLibrary.LINK_LOGIN, "POST", reqparm);
+                string responsebody = Encoding.UTF8.GetString(responsebytes);
+                return responsebody;
+            }
+            return null;
         }
        
     }

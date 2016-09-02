@@ -12,12 +12,13 @@ namespace NohandicapNative
     {
         [PrimaryKey, AutoIncrement]
         public int ID { get; set; }
-      //  [JsonProperty(PropertyName = "thumbs"),OneToMany(CascadeOperations = CascadeOperation.All)]
-       [OneToMany(CascadeOperations = CascadeOperation.All)]
+       [JsonProperty(PropertyName = "thumbs"), TextBlob("ThumbsBlobbed")]      
         public List<ImageModel> Thumbs { get; set; }
-        // [JsonProperty(PropertyName = "images"),OneToMany(CascadeOperations = CascadeOperation.All)]
-        [OneToMany(CascadeOperations = CascadeOperation.All)]
+       [JsonProperty(PropertyName = "images"), TextBlob("ImagesBlobbed")]
         public List<ImageModel> Images { get; set; }
-        
+
+        public string ThumbsBlobbed { get; set; } // serialized phone numbers
+        public string ImagesBlobbed { get; set; }
+
     }
 }

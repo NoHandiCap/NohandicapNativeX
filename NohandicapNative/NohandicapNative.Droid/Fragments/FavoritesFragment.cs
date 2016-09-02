@@ -14,22 +14,59 @@ using NohandicapNative.Droid.Adapters;
 using Android.App;
 using Android.Graphics;
 using NohandicapNative.Droid.Services;
+using NohandicapNative.Droid;
 
 namespace NohandicapNative.Droid
 {
-    class FavoritesFragment : Android.Support.V4.App.Fragment
+  public class FavoritesFragment : Android.Support.V4.App.Fragment
     {
-        MainActivity myContext;
+        public const string TYPE_LOGIN = "login";
+        public const string TYPE_SIGNUP = "signup";
+        public const string TYPE_LIST = "list";
+
+        MainActivity myContext;       
+        View view;
+        string TypeFragment = TYPE_LIST;
+
+        #region ctor
+
+        public FavoritesFragment()
+        {
+
+        }
+        public FavoritesFragment(string TypeFragment)
+        {
+            this.TypeFragment = TypeFragment;
+        }
+#endregion
+
+        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        {
+            if (Utils.ReadFromSettings(myContext, Utils.IS_LOGIN, Utils.IS_NOT_LOGED) == Utils.IS_NOT_LOGED)
+            {
+                InitiallizeLoginFragment(inflater, container);
+                return view;
+            }
+            switch (TypeFragment)
+            {
+                case TYPE_LOGIN:
+                 InitiallizeLoginFragment(inflater, container);
+                    return view;               
+                default:
+                    return view;
+                    break;
+            }
+
+        }
+        #region LoginFragment
         Button loginButton;
         Button signUpButton;
         TextView laterButton;
         EditText emailText;
         EditText passwordText;
-
-
-        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        private void InitiallizeLoginFragment(LayoutInflater inflater, ViewGroup container)
         {
-            var view = inflater.Inflate(Resource.Layout.Login, container, false);
+            view = inflater.Inflate(Resource.Layout.Login, container, false);
             view.SetBackgroundColor(Color.ParseColor(Utils.BACKGROUND));
 
             loginButton = view.FindViewById<Button>(Resource.Id.btn_login);
@@ -50,6 +87,7 @@ namespace NohandicapNative.Droid
             signUpButton.Click += (s, e) =>
             {
 
+                StartActivityForResult(new Intent(Application.Context, typeof(SigUpActivity)), 1) ;
             };
             //var listView = view.FindViewById<ListView>(Resource.Id.listview);
             //List<MarkerModel> items = new List<MarkerModel>();
@@ -63,16 +101,9 @@ namespace NohandicapNative.Droid
             //});
             //var listAdapter = new ListAdapter(Activity, items);
             //listView.Adapter = listAdapter;
-            return view;
-        }
-        public override void OnAttach(Activity activity)
-        {
-            myContext = (MainActivity)activity;
-            base.OnAttach(activity);
         }
         public void login()
         {
-
 
             if (!validate())
             {
@@ -99,11 +130,11 @@ namespace NohandicapNative.Droid
                 progressDialog.Dismiss();
             }, 3000);
         }
-       
+
         public void onLoginSuccess()
         {
             loginButton.Enabled = true;
-           // Finish();
+            // Finish();
         }
         public void onLoginFailed()
         {
@@ -140,5 +171,13 @@ namespace NohandicapNative.Droid
 
             return valid;
         }
+        #endregion
+       
+    public override void OnAttach(Activity activity)
+        {
+            myContext = (MainActivity)activity;
+            base.OnAttach(activity);
+        }
+      
     }
 }

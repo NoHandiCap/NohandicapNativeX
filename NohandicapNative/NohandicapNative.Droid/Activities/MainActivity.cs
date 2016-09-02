@@ -31,17 +31,19 @@ using Android.Content.Res;
 using Java.Util;
 using Android.Preferences;
 using Android.Content.PM;
+using Android.Util;
+using System.Threading;
 
 namespace NohandicapNative.Droid
 {
+    #region Application region
     [Application]
     public class NohandicapApplication : Application
     {
+        static readonly string TAG = "X:" + typeof(NohandicapApplication).Name;
         public MainActivity MainActivity { get; set; }
-        private Locale locale = null;
-       
-
-       
+        private Locale locale = null;   
+               
         public NohandicapApplication(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
         {
         }
@@ -49,30 +51,40 @@ namespace NohandicapNative.Droid
         {
            
             base.OnConfigurationChanged(newConfig);
-           Utils.updateConfig(this, newConfig);
-        }
+            Log.Debug(TAG, "Make config");
+            Utils.updateConfig(this, newConfig);
+            Log.Debug(TAG, "Config created");
 
+        }
         public override void OnCreate()
         {
             base.OnCreate();
+            Log.Debug(TAG, "Configure locale");
+
             ISharedPreferences settings = PreferenceManager.GetDefaultSharedPreferences(this);
             string lang = settings.GetString(Utils.LANG_SHORT, null);
             if (lang != null)
             {
                 Utils.setLocale(new Locale(lang));
+                Log.Debug(TAG, "Language: " +lang);
                 Utils.updateConfig(this, BaseContext.Resources.Configuration);
             }     
-         
+            Log.Debug(TAG, "Locale configuration finished");
 
-           
+
+
         }
     }
+    #endregion
+
     [Activity(Label = "Nohandicap", Icon = "@drawable/logo_small", ConfigurationChanges =Android.Content.PM.ConfigChanges.Orientation | 
         Android.Content.PM.ConfigChanges.ScreenSize
        )]
 	public class MainActivity : AppCompatActivity, IOnMenuTabSelectedListener, IOnTabClickListener
     {
-         int PICK_CONTACT_REQUEST = 1;  // The request code
+        #region Properties
+        static readonly string TAG = "X:" + typeof(MainActivity).Name;
+        int PICK_CONTACT_REQUEST = 1;  // The request code
         private BottomBar _bottomBar;
         Android.Support.V7.Widget.Toolbar toolbar;
         List<TabItem> items;
@@ -82,29 +94,16 @@ namespace NohandicapNative.Droid
         FavoritesFragment favorites;
         SqliteService dbCon;
         int lastPos = 0;
-        public void OnMenuItemSelected(int menuItemId)
-        {
-           
-        }
-        public MainActivity()
-        {
-            Utils.updateConfig(this);
-        }
+        #endregion      
+       
         protected override void OnCreate(Bundle bundle)
         {
             SetTheme(Resource.Style.AppThemeNoBar);
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.Main);
             Utils.mainActivity = this;
-            toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
-            // Create your application here
+            toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);          
             _bottomBar = BottomBar.AttachShy(FindViewById<CoordinatorLayout>(Resource.Id.myCoordinator), FindViewById<LinearLayout>(Resource.Id.linContent), bundle);
-            if (!File.Exists(System.IO.Path.Combine(Utils.PATH, SqliteService.DB_NAME)))
-            {
-                ShowFirstWindow();
-                Finish();
-            }   
-            //    SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             mapPage = new GMapFragment();
             listPage = new ListFragment();
             homePage = new HomeFragment();
@@ -117,10 +116,27 @@ namespace NohandicapNative.Droid
                 var postion = bundle.GetInt(Utils.TAB_ID);
                 _bottomBar.SelectTabAtPosition(postion, false);
             }
-            //   LoadProducts();
+           ((NohandicapApplication)Application).MainActivity = this;
+            RestApiService.Login("brstwu2@gmail.com", "1");
+            ThreadPool.QueueUserWorkItem(o => CheckDataBase());
+        }
+        private void CheckDataBase()
+        {
+            var language = dbCon.GetDataList<LanguageModel>();
+            var categories = dbCon.GetDataList<CategoryModel>();
+            var products = dbCon.GetDataList<ProductModel>();
+            if (language.Count ==0 || categories.Count == 0|| products.Count == 0)
+            {
+                ISharedPreferences settings = PreferenceManager.GetDefaultSharedPreferences(this);
+                string lang = settings.GetString(Utils.LANG_ID_TAG, null);
+                dbCon.SynchronizeDataBase(lang);
+            }
+            var prod = dbCon.GetDataList<ProductModel>();
+            
         }
         private void PrepareBar()
         {
+            Log.Debug(TAG, "Prepare Bar.....");
             SetSupportActionBar(toolbar);
             _bottomBar.NoNavBarGoodness();
             _bottomBar.NoTabletGoodness();
@@ -146,38 +162,12 @@ namespace NohandicapNative.Droid
             SupportActionBar.SetIcon(Utils.SetDrawableSize(this, Resource.Drawable.logo_small, 70, 70));
             SupportActionBar.SetDisplayShowTitleEnabled(true);
             SupportActionBar.SetDefaultDisplayHomeAsUpEnabled(true);
-            SupportActionBar.SetDisplayHomeAsUpEnabled(false);
-           
-            ((NohandicapApplication)Application).MainActivity = this;
-        
-
+            SupportActionBar.SetDisplayHomeAsUpEnabled(false);     
             _bottomBar.HideShadow();
-        }
-        private async void LoadProducts()
-        {
-            var prod = await RestApiService.GetData<List<ProductModel>>(NohandiLibrary.LINK_PRODUCT);
-            var product = await dbCon.LoadProductsFromInternet(Utils.ReadFromSettings(this, Utils.LANG_ID_TAG));
-        }
-        protected override void OnSaveInstanceState(Bundle outState)
-        {
-            base.OnSaveInstanceState(outState);
-             // Necessary to restore the BottomBar's state, otherwise we would
-            // lose the current tab on orientation change.
-            _bottomBar.OnSaveInstanceState(outState);
-            outState.PutInt(Utils.TAB_ID, _bottomBar.CurrentTabPosition);
-            //if (outState != null)
-            //{
-            //    homePage= (HomeFragment)SupportFragmentManager.GetFragment(outState, stringValueA);
-            //    fragmentB = (FragmentB)fragmentManager.getFragment(savedInstanceState, stringValueB);
-            //}
+            Log.Debug(TAG, "Bar prepared");
+            
         }
        
-      private  void ShowFirstWindow()
-        {
-            var myIntent = new Intent(this, typeof(FirstStartActivity));
-            StartActivityForResult(myIntent, 0);
-        }
-        
         #region IOnTabClickListener implementation
         public void SetCurrentTab(int position)
         {
@@ -216,8 +206,7 @@ namespace NohandicapNative.Droid
           SupportActionBar.Title=items[position].Title;
             if (position == 0) {        
                 SupportActionBar.Title = "Nohandicap";
-            }
-     
+            }   
 
             lastPos = position;
         }
@@ -247,8 +236,9 @@ namespace NohandicapNative.Droid
         {
           
         }
-
         #endregion
+
+        #region Menu implementation
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
             MenuInflater inflater = MenuInflater;
@@ -268,16 +258,36 @@ namespace NohandicapNative.Droid
             }
             return true;
         }
+        public void OnMenuItemSelected(int menuItemId)
+        {
+
+        }
+        #endregion
+
+        #region ActivityLifeCycle implementation
+        public MainActivity()
+        {
+            Utils.updateConfig(this);
+        }
+        protected override void OnSaveInstanceState(Bundle outState)
+        {
+            base.OnSaveInstanceState(outState);
+            // Necessary to restore the BottomBar's state, otherwise we would
+            // lose the current tab on orientation change.
+            _bottomBar.OnSaveInstanceState(outState);
+            outState.PutInt(Utils.TAB_ID, _bottomBar.CurrentTabPosition);
+        }
         protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
         {
             base.OnActivityResult(requestCode, resultCode, data);
             if (resultCode == Result.Ok)
             {
-              //  var helloLabel = FindViewById<TextView>(Resource.Id.helloLabel);
-               // helloLabel.Text = data.GetStringExtra("greeting");
+
             }
         }
-        
+       
+        #endregion
+
     }
 }
 

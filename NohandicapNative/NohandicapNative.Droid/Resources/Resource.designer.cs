@@ -3992,8 +3992,8 @@ namespace NohandicapNative.Droid
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f0900a4
-			public const int action0 = 2131296420;
+			// aapt resource value: 0x7f0900a3
+			public const int action0 = 2131296419;
 			
 			// aapt resource value: 0x7f090065
 			public const int action_bar = 2131296357;
@@ -4019,8 +4019,8 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f090066
 			public const int action_context_bar = 2131296358;
 			
-			// aapt resource value: 0x7f0900a8
-			public const int action_divider = 2131296424;
+			// aapt resource value: 0x7f0900a7
+			public const int action_divider = 2131296423;
 			
 			// aapt resource value: 0x7f090003
 			public const int action_menu_divider = 2131296259;
@@ -4097,14 +4097,14 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f09009c
 			public const int btn_sign_up = 2131296412;
 			
-			// aapt resource value: 0x7f0900bb
-			public const int btn_signup = 2131296443;
+			// aapt resource value: 0x7f0900b9
+			public const int btn_signup = 2131296441;
 			
 			// aapt resource value: 0x7f09004f
 			public const int buttonPanel = 2131296335;
 			
-			// aapt resource value: 0x7f0900a5
-			public const int cancel_action = 2131296421;
+			// aapt resource value: 0x7f0900a4
+			public const int cancel_action = 2131296420;
 			
 			// aapt resource value: 0x7f090097
 			public const int cardViewText = 2131296407;
@@ -4130,8 +4130,8 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f09005d
 			public const int checkbox = 2131296349;
 			
-			// aapt resource value: 0x7f0900ab
-			public const int chronometer = 2131296427;
+			// aapt resource value: 0x7f0900aa
+			public const int chronometer = 2131296426;
 			
 			// aapt resource value: 0x7f09003e
 			public const int clip_horizontal = 2131296318;
@@ -4178,8 +4178,8 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f09001a
 			public const int disableHome = 2131296282;
 			
-			// aapt resource value: 0x7f0900bf
-			public const int done = 2131296447;
+			// aapt resource value: 0x7f0900bd
+			public const int done = 2131296445;
 			
 			// aapt resource value: 0x7f090067
 			public const int edit_query = 2131296359;
@@ -4187,8 +4187,8 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f090027
 			public const int end = 2131296295;
 			
-			// aapt resource value: 0x7f0900b0
-			public const int end_padder = 2131296432;
+			// aapt resource value: 0x7f0900af
+			public const int end_padder = 2131296431;
 			
 			// aapt resource value: 0x7f09002e
 			public const int enterAlways = 2131296302;
@@ -4259,23 +4259,20 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f090092
 			public const int imageView3 = 2131296402;
 			
-			// aapt resource value: 0x7f0900af
-			public const int info = 2131296431;
+			// aapt resource value: 0x7f0900ae
+			public const int info = 2131296430;
 			
 			// aapt resource value: 0x7f090099
 			public const int input_email = 2131296409;
 			
-			// aapt resource value: 0x7f0900ba
-			public const int input_name = 2131296442;
+			// aapt resource value: 0x7f0900b8
+			public const int input_name = 2131296440;
 			
 			// aapt resource value: 0x7f09009a
 			public const int input_password = 2131296410;
 			
 			// aapt resource value: 0x7f090000
 			public const int item_touch_helper_previous_elevation = 2131296256;
-			
-			// aapt resource value: 0x7f0900b9
-			public const int lang_spinner = 2131296441;
 			
 			// aapt resource value: 0x7f090088
 			public const int lang_spinner_prompt = 2131296392;
@@ -4292,17 +4289,17 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f09009f
 			public const int linContent = 2131296415;
 			
-			// aapt resource value: 0x7f0900a9
-			public const int line1 = 2131296425;
+			// aapt resource value: 0x7f0900a8
+			public const int line1 = 2131296424;
 			
-			// aapt resource value: 0x7f0900ad
-			public const int line3 = 2131296429;
+			// aapt resource value: 0x7f0900ac
+			public const int line3 = 2131296428;
 			
 			// aapt resource value: 0x7f09009d
 			public const int link_later = 2131296413;
 			
-			// aapt resource value: 0x7f0900bc
-			public const int link_login = 2131296444;
+			// aapt resource value: 0x7f0900ba
+			public const int link_login = 2131296442;
 			
 			// aapt resource value: 0x7f090018
 			public const int listMode = 2131296280;
@@ -4316,17 +4313,14 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f090087
 			public const int logo = 2131296391;
 			
-			// aapt resource value: 0x7f0900a2
-			public const int map = 2131296418;
-			
 			// aapt resource value: 0x7f0900a1
 			public const int mapContent = 2131296417;
 			
-			// aapt resource value: 0x7f0900a3
-			public const int mapView = 2131296419;
+			// aapt resource value: 0x7f0900a2
+			public const int mapView = 2131296418;
 			
-			// aapt resource value: 0x7f0900a7
-			public const int media_actions = 2131296423;
+			// aapt resource value: 0x7f0900a6
+			public const int media_actions = 2131296422;
 			
 			// aapt resource value: 0x7f090028
 			public const int middle = 2131296296;
@@ -4364,29 +4358,29 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f090034
 			public const int pin = 2131296308;
 			
-			// aapt resource value: 0x7f0900b3
-			public const int place_autocomplete_clear_button = 2131296435;
-			
-			// aapt resource value: 0x7f0900b5
-			public const int place_autocomplete_powered_by_google = 2131296437;
-			
-			// aapt resource value: 0x7f0900b7
-			public const int place_autocomplete_prediction_primary_text = 2131296439;
-			
-			// aapt resource value: 0x7f0900b8
-			public const int place_autocomplete_prediction_secondary_text = 2131296440;
-			
-			// aapt resource value: 0x7f0900b6
-			public const int place_autocomplete_progress = 2131296438;
-			
-			// aapt resource value: 0x7f0900b1
-			public const int place_autocomplete_search_button = 2131296433;
-			
 			// aapt resource value: 0x7f0900b2
-			public const int place_autocomplete_search_input = 2131296434;
+			public const int place_autocomplete_clear_button = 2131296434;
 			
 			// aapt resource value: 0x7f0900b4
-			public const int place_autocomplete_separator = 2131296436;
+			public const int place_autocomplete_powered_by_google = 2131296436;
+			
+			// aapt resource value: 0x7f0900b6
+			public const int place_autocomplete_prediction_primary_text = 2131296438;
+			
+			// aapt resource value: 0x7f0900b7
+			public const int place_autocomplete_prediction_secondary_text = 2131296439;
+			
+			// aapt resource value: 0x7f0900b5
+			public const int place_autocomplete_progress = 2131296437;
+			
+			// aapt resource value: 0x7f0900b0
+			public const int place_autocomplete_search_button = 2131296432;
+			
+			// aapt resource value: 0x7f0900b1
+			public const int place_autocomplete_search_input = 2131296433;
+			
+			// aapt resource value: 0x7f0900b3
+			public const int place_autocomplete_separator = 2131296435;
 			
 			// aapt resource value: 0x7f090006
 			public const int progress_circular = 2131296262;
@@ -4457,8 +4451,8 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f090073
 			public const int select_dialog_listview = 2131296371;
 			
-			// aapt resource value: 0x7f0900be
-			public const int settings = 2131296446;
+			// aapt resource value: 0x7f0900bc
+			public const int settings = 2131296444;
 			
 			// aapt resource value: 0x7f09005e
 			public const int shortcut = 2131296350;
@@ -4502,8 +4496,8 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f09003c
 			public const int start = 2131296316;
 			
-			// aapt resource value: 0x7f0900a6
-			public const int status_bar_latest_event_content = 2131296422;
+			// aapt resource value: 0x7f0900a5
+			public const int status_bar_latest_event_content = 2131296421;
 			
 			// aapt resource value: 0x7f090070
 			public const int submit_area = 2131296368;
@@ -4514,23 +4508,23 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f09000f
 			public const int terrain = 2131296271;
 			
-			// aapt resource value: 0x7f0900ae
-			public const int text = 2131296430;
+			// aapt resource value: 0x7f0900ad
+			public const int text = 2131296429;
 			
-			// aapt resource value: 0x7f0900ac
-			public const int text2 = 2131296428;
+			// aapt resource value: 0x7f0900ab
+			public const int text2 = 2131296427;
 			
 			// aapt resource value: 0x7f090058
 			public const int textSpacerNoButtons = 2131296344;
 			
-			// aapt resource value: 0x7f0900bd
-			public const int textView = 2131296445;
+			// aapt resource value: 0x7f0900bb
+			public const int textView = 2131296443;
 			
 			// aapt resource value: 0x7f090093
 			public const int thrity_category = 2131296403;
 			
-			// aapt resource value: 0x7f0900aa
-			public const int time = 2131296426;
+			// aapt resource value: 0x7f0900a9
+			public const int time = 2131296425;
 			
 			// aapt resource value: 0x7f09004e
 			public const int title = 2131296334;

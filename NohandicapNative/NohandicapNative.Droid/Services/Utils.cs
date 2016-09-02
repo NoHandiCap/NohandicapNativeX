@@ -31,13 +31,20 @@ namespace NohandicapNative.Droid.Services
         public const string LANG_ID_TAG = "langID";
         public const string LANG_SHORT = "langShort";
         public const string TAB_ID = "tabID";
-        public const string BACKGROUND= "#FFECB3";
-       public const string TAB_COLOR = "#FF73012B";
+        public const string BACKGROUND = "#FFECB3";
+        public const string TAB_COLOR = "#FF73012B";
+        public const string IS_LOGIN = "isLogin";
+        public const string IS_LOGED = "true";
+        public const string IS_NOT_LOGED = "false";
+        public const string LOGIN_NAME = "loginName";
+        public const string LOGIN_ID = "loginID";
+
+
         public static Context mainActivity;
         public static Android.Graphics.Drawables.Drawable GetImage(Context context, string image)
 
         {
-            
+
             var id = context.Resources.GetIdentifier(image, "drawable", context.PackageName);
             return context.Resources.GetDrawable(id);
         }
@@ -60,7 +67,7 @@ namespace NohandicapNative.Droid.Services
         }
         public static Bitmap convertDrawableToBitmap(Drawable drawable)
         {
-         
+
 
             Bitmap bitmap = Bitmap.CreateBitmap(drawable.IntrinsicWidth,
             drawable.IntrinsicHeight, Bitmap.Config.Argb8888);
@@ -70,9 +77,9 @@ namespace NohandicapNative.Droid.Services
 
             return bitmap;
         }
-        public static void ReloadMainActivity(Application application,Context context)
+        public static void ReloadMainActivity(Application application, Context context)
         {
-           ((NohandicapApplication)application).MainActivity.Finish();
+            ((NohandicapApplication)application).MainActivity.Finish();
             Intent refresh = new Intent(context, typeof(MainActivity));
             context.StartActivity(refresh);
         }
@@ -86,7 +93,7 @@ namespace NohandicapNative.Droid.Services
         }
         public static SqliteService GetDatabaseConnection()
         {
-          return new SqliteService(new SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid(), Utils.PATH);
+            return new SqliteService(new SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid(), Utils.PATH);
         }
         public static bool SaveImageBitmapFromUrl(string url, string name)
         {
@@ -110,9 +117,9 @@ namespace NohandicapNative.Droid.Services
             var parentDir = new File(mainActivity.FilesDir.ToString());
             List<File> inFiles = new List<File>();
             File[] files = parentDir.ListFiles();
-           
-            
-        
+
+
+
             using (var os = new System.IO.FileStream(System.IO.Path.Combine(mainActivity.FilesDir.ToString(), name), System.IO.FileMode.Create))
             {
                 bitmap.Compress(Bitmap.CompressFormat.Png, 95, os);
@@ -123,7 +130,7 @@ namespace NohandicapNative.Droid.Services
             name = name.Replace(".jpg", "");
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.InPreferredConfig = Bitmap.Config.Argb8888;
-            
+
             Bitmap bitmap = BitmapFactory.DecodeFile(System.IO.Path.Combine(mainActivity.FilesDir.ToString(), name), options);
             return bitmap;
         }
@@ -136,7 +143,7 @@ namespace NohandicapNative.Droid.Services
             conf.Locale = myLocale;
             res.UpdateConfiguration(conf, dm);
             return res;
-       
+
         }
         protected void saveset()
         {
@@ -157,18 +164,18 @@ namespace NohandicapNative.Droid.Services
             var somePref = prefs.GetString("PrefName", null);
 
         }
-        public static void WriteToSettings(Context context,string key, string value)
+        public static void WriteToSettings(Context context, string key, string value)
         {
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
             ISharedPreferencesEditor editor = prefs.Edit();
-            editor.PutString(key, value);          
+            editor.PutString(key, value);
             editor.Apply();
         }
-        public static string ReadFromSettings(Context context, string key)
+        public static string ReadFromSettings(Context context, string key,string defValue=null)
         {
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
 
-            return prefs.GetString(key, null);
+            return prefs.GetString(key, defValue);
         }
         private static Locale sLocale;
 
@@ -177,7 +184,7 @@ namespace NohandicapNative.Droid.Services
             sLocale = locale;
             if (sLocale != null)
             {
-                Locale.Default=sLocale;
+                Locale.Default = sLocale;
             }
         }
 
@@ -199,6 +206,7 @@ namespace NohandicapNative.Droid.Services
                 Configuration config = new Configuration(configuration);
                 config.Locale = sLocale;
                 Resources res = app.BaseContext.Resources;
+         
                 res.UpdateConfiguration(config, res.DisplayMetrics);
             }
         }

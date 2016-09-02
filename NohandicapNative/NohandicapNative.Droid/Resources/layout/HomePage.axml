@@ -10,7 +10,8 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="bottom|top">
+        android:gravity="bottom|top"
+         >
     <!--<ListView
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
@@ -102,8 +103,7 @@
             android:verticalSpacing="5dp"
             android:numColumns="3"
             android:scrollbars="none"
-            android:layout_below="@+id/category_linearLayout2"
-            android:layout_marginBottom="65dp"
+            android:layout_below="@+id/category_linearLayout2"    
             android:layout_marginTop="10dp"
             android:stretchMode="columnWidth" />
     </RelativeLayout>

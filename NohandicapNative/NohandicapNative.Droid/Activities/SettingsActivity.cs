@@ -17,18 +17,20 @@ using NohandicapNative.Droid.Adapters;
 using NohandicapNative.Droid.Services;
 using Java.Util;
 using Android.Content.Res;
+using static Android.Widget.AdapterView;
 
 namespace NohandicapNative.Droid
 {
     [Activity(Label = "@string/settings")]
-    public  class SettingsActivity : AppCompatActivity, AdapterView.IOnItemSelectedListener
+    public  class SettingsActivity : AppCompatActivity, IOnItemClickListener
     {
         Android.Support.V7.Widget.Toolbar toolbar;
-        Spinner spin;
-        SqliteService dbCon;
+         SqliteService dbCon;
         int[] flags = { Resource.Drawable.german, Resource.Drawable.english, Resource.Drawable.france };
         List<LanguageModel> languageList;
+        Resources res;
         LanguageModel selectedLanguage;
+        ListView langListView;
         public SettingsActivity()
         {
             Utils.updateConfig(this);
@@ -46,18 +48,42 @@ namespace NohandicapNative.Droid
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Resources.GetColor(Resource.Color.colorDefault)));
             SupportActionBar.Title=Resources.GetString(Resource.String.settings);
-            spin = (Spinner)FindViewById(Resource.Id.lang_spinner);
-            SpinnerAdapter customAdapter = new SpinnerAdapter(ApplicationContext, flags, languageList.Select(x => x.LanguageName).ToArray());
-            spin.Adapter = customAdapter;
-            var currentLocale = Utils.ReadFromSettings(this, Utils.LANG_SHORT);
-            spin.SetSelection(languageList.FirstOrDefault(x => x.ShortName == currentLocale).ID - 1);
-            spin.OnItemSelectedListener = this;
+            langListView = FindViewById<ListView>(Resource.Id.languageList);
+            langListView.OnItemClickListener = this;
+            List<CustomRadioButton> langList = new List<CustomRadioButton>();
+            dbCon.GetDataList<LanguageModel>().ForEach(x => langList.Add(new CustomRadioButton()
+            {
+                Text = x.LanguageName
+            }));
+            var currentLocale = Utils.ReadFromSettings(this, Utils.LANG_ID_TAG);
+            langListView.Adapter = new RadioButtonListAdapter(this, flags, langList,int.Parse(currentLocale)-1);           
+         
+         
 
-                     
-           
+        }        
+        public void OnItemClick(AdapterView parent, View view, int position, long languageId)
+        {
+            if (position == 0)
+            {
+                selectedLanguage = languageList[position];
+            }
+            for (int i = 0; i < langListView.ChildCount; i++)
+            {
+                var text = langListView.GetChildAt(i).FindViewById<TextView>(Resource.Id.grid_text);
+                if (position == i)
+                {
+                    text.TextSize = 13;
+                    text.SetTypeface(null, TypefaceStyle.Bold);
+                    selectedLanguage = languageList[position];
+                }
+                else
+                {
+                    text.TextSize = 12;
+                    text.SetTypeface(null, TypefaceStyle.Normal);
+                }
+            }
         }
-       
-       
+
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
             MenuInflater inflater = MenuInflater;
@@ -76,9 +102,9 @@ namespace NohandicapNative.Droid
                     {
                         Utils.WriteToSettings(this, Utils.LANG_ID_TAG, selectedLanguage.ID.ToString());
                         Utils.WriteToSettings(this, Utils.LANG_SHORT, selectedLanguage.ShortName);
-                        Utils.SetLocale(this, selectedLanguage.ShortName);
-                   
-                    Utils.ReloadMainActivity(Application,this);
+                        res = Utils.SetLocale(this,selectedLanguage.ShortName);
+
+                        Utils.ReloadMainActivity(Application,this);
                     }
                     this.Finish();
 
@@ -87,11 +113,7 @@ namespace NohandicapNative.Droid
             }
             return base.OnOptionsItemSelected(item);
         }
-
-        public void OnItemSelected(AdapterView parent, View view, int position, long id)
-        {
-            selectedLanguage = languageList[position];
-        }
+           
 
         public void OnNothingSelected(AdapterView parent)
         {

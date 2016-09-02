@@ -48,11 +48,11 @@ namespace NohandicapNative
         [JsonProperty(PropertyName = "gpslon")]
         public string Long { get; set; }
         public string Color { get; set; }
-        [JsonProperty(PropertyName = "cat"),Ignore]
-        public List<string> categoriesList { get; set; }  
+        [JsonProperty(PropertyName = "cat"), TextBlob("categoriesBlobbed")]
+        public List<int> Categories { get; set; }  
         [flield: NonSerialized]
         private ImageJsonModel _imageCollection;
-        [JsonProperty(PropertyName = "img"),  JsonConverter(typeof(ImageDataConverter)),Ignore]
+        [JsonProperty(PropertyName = "img"), JsonConverter(typeof(ImageDataConverter)), OneToOne(CascadeOperations=CascadeOperation.All)]
         public ImageJsonModel ImageCollection
         {
             get
@@ -61,13 +61,13 @@ namespace NohandicapNative
             }
             set
             {
-                _imageCollection = value;
-                ImageJsonID = value.ID;
+                _imageCollection = value;              
             }
         }
 
         [ForeignKey(typeof(ImageJsonModel))]
         public int ImageJsonID { get; set; }
+        public string categoriesBlobbed { get; set; }
 
     }
 }

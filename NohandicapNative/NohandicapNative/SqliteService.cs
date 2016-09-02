@@ -27,7 +27,7 @@ namespace NohandicapNative
             dbCon = new SQLiteConnection(platform,path);
    
         }
-        public bool CreateDB()
+        public bool CreateTables()
         {
             try
             {
@@ -79,11 +79,31 @@ namespace NohandicapNative
             var k = s.GetHashCode();
             return s;
         }
-        public  async Task<List<ProductModel>> LoadProductsFromInternet(string langID)
+     
+        public  async Task<bool> SynchronizeDataBase(string langID)
         {
+     
+            CreateTables();      
+            var languages = await RestApiService.GetData<List<LanguageModel>>(NohandiLibrary.LINK_LANGUAGE);
+            if (languages != null)
+            {
+                dbCon.DeleteAll(typeof(LanguageModel));
+                InsertUpdateProductList(languages);
+            }
+            var categories = await RestApiService.GetData<List<CategoryModel>>(NohandiLibrary.LINK_CATEGORY + langID);
+            if(categories != null)
+            {
+                dbCon.DeleteAll(typeof(CategoryModel));
+                InsertUpdateProductList(categories);
+            }          
             var products =await RestApiService.GetData<List<ProductModel>>(NohandiLibrary.LINK_PRODUCT + langID);
-            InsertUpdateProductList(products);
-            return GetDataList<ProductModel>();
+            if (products != null)
+            {
+                dbCon.DeleteAll(typeof(ProductModel));
+                InsertUpdateProductList(products);
+            }          
+            return true;
         }
+       
     }
 }

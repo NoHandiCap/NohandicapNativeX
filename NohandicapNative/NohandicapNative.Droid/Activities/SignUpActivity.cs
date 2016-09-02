@@ -13,7 +13,9 @@ using Android.Support.V7.App;
 
 namespace NohandicapNative.Droid
 {
-    [Activity(Label = "SigUpActivity")]
+    [Activity(Label = "SigUpActivity", ConfigurationChanges = Android.Content.PM.ConfigChanges.Orientation |
+        Android.Content.PM.ConfigChanges.ScreenSize
+       )]
     public class SigUpActivity : AppCompatActivity
     {
         Button signUpButton;
@@ -26,7 +28,7 @@ namespace NohandicapNative.Droid
         {
             SetTheme(Resource.Style.AppThemeNoBar);
             base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.SignUp);
+            SetContentView(Resource.Layout.SignUp);         
             // Create your application here
             loginLinkButton = FindViewById<TextView>(Resource.Id.link_login);
             signUpButton = FindViewById<Button>(Resource.Id.btn_signup);

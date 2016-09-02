@@ -12,6 +12,8 @@ using Android.Widget;
 using Android.Support.V7.App;
 using Android.Util;
 using System.Threading.Tasks;
+using System.IO;
+using NohandicapNative.Droid.Services;
 
 namespace NohandicapNative.Droid.Activities
 {
@@ -35,14 +37,23 @@ namespace NohandicapNative.Droid.Activities
             Task startupWork = new Task(() =>
             {
                 Log.Debug(TAG, "Performing some startup work that takes a bit of time.");
-                Task.Delay(5000);  // Simulate a bit of startup work.
+                Task.Delay(4000);  // Simulate a bit of startup work.
                 Log.Debug(TAG, "Working in the background - important stuff.");
             });
 
             startupWork.ContinueWith(t =>
             {
-                Log.Debug(TAG, "Work is finished - start Activity1.");
-                StartActivity(new Intent(Application.Context, typeof(MainActivity)));
+              
+                if (!File.Exists(System.IO.Path.Combine(Utils.PATH, SqliteService.DB_NAME)))
+                {
+                    Log.Debug(TAG, "Work is finished - start FirstActivity.");
+                    StartActivity(new Intent(Application.Context, typeof(FirstStartActivity)));            
+                }else
+                {
+                    Log.Debug(TAG, "Work is finished - start MainActivity.");
+                    StartActivity(new Intent(Application.Context, typeof(MainActivity)));
+                }
+                
             }, TaskScheduler.FromCurrentSynchronizationContext());
 
             startupWork.Start();
