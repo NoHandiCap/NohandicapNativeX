@@ -11,7 +11,7 @@ namespace NohandicapNative
 {
  public class RestApiService
     {
-       public static async Task<T> GetData<T>(string dataUri, string accessToken = null, string rootName = "result")
+       public static async Task<T> GetDataFromUrl<T>(string dataUri, string accessToken = null, string rootName = "result")
         {
             var url = dataUri;
             try
@@ -35,23 +35,11 @@ namespace NohandicapNative
                             if (content.Length > 0)
                             {
                                 if(rootName==null)
-                                return JsonConvert.DeserializeObject<T>(content);
+                                return Deserializedata<T>(content);
                                 else
                                 {
-                                    var root = JObject.Parse(content).SelectToken(rootName).ToString();
-                                    var settings = new JsonSerializerSettings
-                                    {
-                                        Error = (sender, args) =>
-                                        {
-                                            if (object.Equals(args.ErrorContext.Member, "test") &&
-                                                args.ErrorContext.OriginalObject.GetType() == typeof(T))
-                                            {
-                                                args.ErrorContext.Handled = false;
-                                            }
-                                        }
-                                    };
-                                    var s = root.Replace("\n", "");
-                                    var v= JsonConvert.DeserializeObject<T>(root.Replace("\n",""), settings);
+
+                                    var v = Deserializedata<T>(content);
                                     return v;
 
                                 }
@@ -75,7 +63,28 @@ namespace NohandicapNative
             }
             return default(T);
         }
-        public static async Task<string> Login(string email,string password)
+        public static T Deserializedata<T>(string content, string accessToken = null, string rootName = "result")
+        {
+            var root = JObject.Parse(content).SelectToken(rootName);
+      
+            if (root == null||root.ToString()=="[]") return default(T);
+            var settings = new JsonSerializerSettings
+            {
+                Error = (sender, args) =>
+                {
+                    if (object.Equals(args.ErrorContext.Member, "test") &&
+                        args.ErrorContext.OriginalObject.GetType() == typeof(T))
+                    {
+                        args.ErrorContext.Handled = false;
+                    }
+                }
+            };
+            var s = root.ToString().Replace("\n", "");
+            var v = JsonConvert.DeserializeObject<T>(s, settings);
+            return v;
+
+        }
+        public static async Task<UserModel> Login(string email,string password)
         {
             using (WebClient client = new WebClient())
             {
@@ -84,7 +93,11 @@ namespace NohandicapNative
                 reqparm.Add("pwd", password);
                 byte[] responsebytes = client.UploadValues(NohandiLibrary.LINK_LOGIN, "POST", reqparm);
                 string responsebody = Encoding.UTF8.GetString(responsebytes);
-                return responsebody;
+             var user=   Deserializedata<UserModel>(responsebody,rootName: "user");
+                var fav= Deserializedata<List<int>>(responsebody, rootName: "favorites");
+                if(user!=null&&fav!=null)
+                user.Fravorites = fav;
+                return user;
             }
             return null;
         }

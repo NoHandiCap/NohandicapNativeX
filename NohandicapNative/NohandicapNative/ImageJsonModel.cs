@@ -17,7 +17,7 @@ namespace NohandicapNative
        [JsonProperty(PropertyName = "images"), TextBlob("ImagesBlobbed")]
         public List<ImageModel> Images { get; set; }
 
-        public string ThumbsBlobbed { get; set; } // serialized phone numbers
+        public string ThumbsBlobbed { get; set; } 
         public string ImagesBlobbed { get; set; }
 
     }

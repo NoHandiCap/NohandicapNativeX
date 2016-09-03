@@ -1,20 +1,189 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                 xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical">
-  <!-- The ActionBar displayed at the top -->
-  <android.support.design.widget.AppBarLayout
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content">
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+    android:layout_height="fill_parent"> 
+  <ScrollView
+      android:layout_width="fill_parent"
+      android:layout_height="match_parent"
+      android:id="@+id/scrollView"
+      android:fillViewport="true"
+      android:layout_above="@+id/link_layout">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+      <RelativeLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:paddingTop="5dp"
+          android:paddingLeft="0dp"
+          android:paddingRight="0dp"
+          android:layout_below="@+id/imageView">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="false"
+            android:layout_alignParentLeft="true"
+            android:id="@+id/title_layout"
+            android:layout_marginBottom="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp">
+          <ImageView
+              android:layout_width="50dp"
+              android:layout_height="50dp"
+              android:id="@+id/logo_image"
+              android:layout_marginRight="5dp" />
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:textAppearance="?android:attr/textAppearanceMedium"
+              android:text="Large Text"
+              android:id="@+id/title_text"
+              android:layout_alignParentTop="true"
+              android:layout_toRightOf="@+id/logo_image"
+              android:layout_alignParentRight="true"
+              android:layout_alignParentEnd="true"
+              android:textColor="#000000"
+              android:layout_marginBottom="3dp" />
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:textAppearance="?android:attr/textAppearanceSmall"
+              android:text="Medium Text"
+              android:id="@+id/adress_text"
+              android:layout_toRightOf="@+id/logo_image"
+              android:layout_below="@+id/title_text"
+              android:layout_alignParentRight="true"
+              android:layout_alignParentEnd="true"
+              android:textColor="@android:color/darker_gray" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/title_layout"
+            android:layout_marginBottom="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:id="@+id/body_layout"
+            android:layout_above="@+id/map_layout">
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:textSize="12dp"
+              android:text="LiveReload works with iOS devices out of the box if you add a correct SCRIPT tag (there are no browser extensions on mobile devices).  When your site is running on your local computer (i.e. on the same one that runs LiveReload app), the default script tag is fine."
+              android:id="@+id/body_text"
+              android:textColor="#000000" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/image_layout"
+            android:id="@+id/map_layout">
+
+          <ImageView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:id="@+id/imageView2"
+              />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/image_layout"
+            android:layout_above="@+id/link_layout"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:visibility="gone">
+          <ImageView
+              android:layout_width="50dp"
+              android:layout_height="50dp"
+              android:id="@+id/image_photo"
+              android:layout_above="@+id/link_layout"
+              android:layout_alignParentLeft="true"
+              android:layout_alignParentStart="true" />
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:textAppearance="?android:attr/textAppearanceSmall"
+              android:text="Medium Text"
+              android:id="@+id/hours_text"
+              android:layout_centerVertical="true"
+              android:layout_toRightOf="@+id/image_photo"
+              android:layout_toEndOf="@+id/image_photo"
+              android:textColor="#000000" />
+        </RelativeLayout>
+      </RelativeLayout>
+
+      <ImageView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:id="@+id/imageView"
+      
+          android:layout_alignParentTop="true"
+          android:layout_centerHorizontal="true" />
+    </RelativeLayout>
+  </ScrollView>
+
+  <RelativeLayout
+      android:orientation="horizontal"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:layout_alignParentLeft="true"
+      android:layout_alignParentStart="true"
+      android:id="@+id/link_layout"
+      android:layout_marginLeft="0dp"
+      android:layout_marginRight="0dp"
+      android:layout_gravity="bottom">
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppThemeNoBar"
-        app:popupTheme="@style/Theme.AppCompat.Light"
-        app:title="@string/app_name" />
-  </android.support.design.widget.AppBarLayout>
-  <!-- The main content view where fragments are loaded -->
-</LinearLayout>
+        android:id="@+id/bottom_layout"
+        android:background="#2b0b02">
+
+      <Button
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="New Button"
+          android:id="@+id/button"
+          android:layout_alignParentRight="true"
+          android:background="#00000000"
+          android:textColor="#ffffff" />
+
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:textAppearance="?android:attr/textAppearanceMedium"
+          android:text="Medium Text"
+          android:id="@+id/booking_link"
+          android:layout_gravity="left"
+          android:textColor="#ffffff"
+          android:textStyle="bold"
+          android:layout_centerVertical="true"
+          android:layout_alignParentLeft="true"
+          android:layout_alignParentStart="true" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/category_layout"
+        android:layout_above="@+id/bottom_layout">
+
+      <ImageView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:id="@+id/imageView3"
+         />
+    </RelativeLayout>
+  </RelativeLayout>
+</FrameLayout>

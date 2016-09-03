@@ -31,11 +31,15 @@ namespace NohandicapNative
         {
             try
             {
-                dbCon.CreateTable<ImageJsonModel>();
+                dbCon.RunInTransaction(() =>
+                {
+                    dbCon.CreateTable<ImageJsonModel>();
                 dbCon.CreateTable<ImageModel>();
                 dbCon.CreateTable<CategoryModel>();              
                 dbCon.CreateTable<LanguageModel>();
-                dbCon.CreateTable<ProductModel>();           
+                    dbCon.CreateTable<UserModel>();
+                dbCon.CreateTable<ProductModel>();
+                });
                 return true;
             }
             catch (Exception e)
@@ -46,31 +50,48 @@ namespace NohandicapNative
         }
         public string InsertUpdateProduct<T>(T data)
         {
+           
             try
-            {             
-                dbCon.InsertOrReplaceWithChildren(data, true);               
+            {
+                dbCon.RunInTransaction(() =>
+                {
+                    dbCon.InsertOrReplaceWithChildren(data, true);
+                });
                 return "Single data file inserted or updated";
             }
             catch (SQLiteException ex)
             {
                 return ex.Message;
             }
+         
         }
         public string InsertUpdateProductList<T>(List<T> data)
         {
+        
             try
             {
-                dbCon.InsertOrReplaceAllWithChildren(data, true);
+                dbCon.RunInTransaction(() =>
+                {
+                    dbCon.InsertOrReplaceAllWithChildren(data, true);
+                });
                 return "Single data file inserted or updated";
             }
             catch (SQLiteException ex)
             {
                 return ex.Message;
             }
+          
         }
         public List<T> GetDataList<T>() where T : class
-        {           
-                return dbCon.GetAllWithChildren<T>(null,true).ToList();
+        {
+            List<T> result=null;
+            dbCon.RunInTransaction(() =>
+            {
+                result = dbCon.GetAllWithChildren<T>(null, true).ToList();
+            });
+                return result;
+           
+        
             
         }           
         public T Find<T>(int pk) where T : class
@@ -82,27 +103,50 @@ namespace NohandicapNative
      
         public  async Task<bool> SynchronizeDataBase(string langID)
         {
-     
-            CreateTables();      
-            var languages = await RestApiService.GetData<List<LanguageModel>>(NohandiLibrary.LINK_LANGUAGE);
+            bool result = false;
+            dbCon.RunInTransaction( async() => { 
+            var languages = await RestApiService.GetDataFromUrl<List<LanguageModel>>(NohandiLibrary.LINK_LANGUAGE);
             if (languages != null)
             {
                 dbCon.DeleteAll(typeof(LanguageModel));
+                dbCon.CreateTable<LanguageModel>();
                 InsertUpdateProductList(languages);
             }
-            var categories = await RestApiService.GetData<List<CategoryModel>>(NohandiLibrary.LINK_CATEGORY + langID);
-            if(categories != null)
-            {
-                dbCon.DeleteAll(typeof(CategoryModel));
-                InsertUpdateProductList(categories);
-            }          
-            var products =await RestApiService.GetData<List<ProductModel>>(NohandiLibrary.LINK_PRODUCT + langID);
+            var products = await RestApiService.GetDataFromUrl<List<ProductModel>>(NohandiLibrary.LINK_PRODUCT + langID);
             if (products != null)
             {
                 dbCon.DeleteAll(typeof(ProductModel));
+                dbCon.CreateTable<ProductModel>();
                 InsertUpdateProductList(products);
-            }          
-            return true;
+            }
+            var categories = await RestApiService.GetDataFromUrl<List<CategoryModel>>(NohandiLibrary.LINK_CATEGORY + langID);
+
+            if (categories != null)
+            {
+                dbCon.DeleteAll(typeof(CategoryModel));
+                dbCon.CreateTable<CategoryModel>();
+                var localCategories = NohandiLibrary.GetAdditionalCategory();
+                categories.ForEach(x =>
+                {
+                    var cat = localCategories.FirstOrDefault(y => y.ID == x.ID);
+                    x.Icon = cat.Icon;
+                    x.Color = cat.Color;
+                });
+
+                InsertUpdateProductList(categories.OrderBy(x => x.Sort).ToList());
+            }
+                result = true;
+            });
+            return result;
+        }
+        public void Close()
+        {
+            dbCon.Close();
+            
+        }
+        public void BeginTransaction()
+        {
+            dbCon.BeginTransaction();
         }
        
     }

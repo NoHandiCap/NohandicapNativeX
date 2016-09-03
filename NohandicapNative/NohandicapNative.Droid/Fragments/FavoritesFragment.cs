@@ -15,19 +15,20 @@ using Android.App;
 using Android.Graphics;
 using NohandicapNative.Droid.Services;
 using NohandicapNative.Droid;
+using System.Threading.Tasks;
 
 namespace NohandicapNative.Droid
 {
   public class FavoritesFragment : Android.Support.V4.App.Fragment
     {
         public const string TYPE_LOGIN = "login";
-        public const string TYPE_SIGNUP = "signup";
         public const string TYPE_LIST = "list";
 
         MainActivity myContext;       
         View view;
         string TypeFragment = TYPE_LIST;
-
+        SqliteService dbCon;
+        LinearLayout rootLayout;
         #region ctor
 
         public FavoritesFragment()
@@ -42,6 +43,8 @@ namespace NohandicapNative.Droid
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
+            dbCon = Utils.GetDatabaseConnection();
+         
             if (Utils.ReadFromSettings(myContext, Utils.IS_LOGIN, Utils.IS_NOT_LOGED) == Utils.IS_NOT_LOGED)
             {
                 InitiallizeLoginFragment(inflater, container);
@@ -51,7 +54,12 @@ namespace NohandicapNative.Droid
             {
                 case TYPE_LOGIN:
                  InitiallizeLoginFragment(inflater, container);
-                    return view;               
+                    return view;
+                    break;
+                case TYPE_LIST:
+                    InitiallizeFavListFragment();
+                    return view;
+                    break;
                 default:
                     return view;
                     break;
@@ -64,46 +72,36 @@ namespace NohandicapNative.Droid
         TextView laterButton;
         EditText emailText;
         EditText passwordText;
+       
         private void InitiallizeLoginFragment(LayoutInflater inflater, ViewGroup container)
         {
             view = inflater.Inflate(Resource.Layout.Login, container, false);
             view.SetBackgroundColor(Color.ParseColor(Utils.BACKGROUND));
+           
 
             loginButton = view.FindViewById<Button>(Resource.Id.btn_login);
             laterButton = view.FindViewById<TextView>(Resource.Id.link_later);
             signUpButton = view.FindViewById<Button>(Resource.Id.btn_sign_up);
 
             emailText = view.FindViewById<EditText>(Resource.Id.input_email);
-            passwordText = view.FindViewById<EditText>(Resource.Id.input_password);
-            ////Login button click action
+            passwordText = view.FindViewById<EditText>(Resource.Id.input_password);     
             loginButton.Click += (object sender, EventArgs e) =>
             {
-                login();
-                //Intent myIntent = new Intent(this, typeof(MainActivity));
-                //myIntent.PutExtra("greeting", "Hello from the Second Activity!");
-                //SetResult(Result.Ok, myIntent);
-                //Finish();
+                login();              
             };
             signUpButton.Click += (s, e) =>
             {
-
                 StartActivityForResult(new Intent(Application.Context, typeof(SigUpActivity)), 1) ;
             };
-            //var listView = view.FindViewById<ListView>(Resource.Id.listview);
-            //List<MarkerModel> items = new List<MarkerModel>();
-            //items.Add(new MarkerModel()
-            //{
-            //    //Id = 0.ToString(),
-            //    //Properties=new PropertiesModel() { Title= "Hello", Description = "Descript" },
-
-            //    //Image = "eat"
-
-            //});
-            //var listAdapter = new ListAdapter(Activity, items);
-            //listView.Adapter = listAdapter;
+          
         }
-        public void login()
+        public override void OnHiddenChanged(bool hidden)
         {
+            base.OnHiddenChanged(hidden);
+          
+        }
+        public async void login()
+        { 
 
             if (!validate())
             {
@@ -121,19 +119,35 @@ namespace NohandicapNative.Droid
 
             string email = emailText.Text;
             string password = passwordText.Text;
+            if (await onLoginSuccess()) {
 
-            // TODO: Implement your own authentication logic here.
-            new Android.OS.Handler().PostDelayed(() => {
-                // On complete call either onLoginSuccess or onLoginFailed
-                onLoginSuccess();
-                // onLoginFailed();
+               
                 progressDialog.Dismiss();
-            }, 3000);
+                InitiallizeFavListFragment();
+            }
+            else
+            {
+                progressDialog.Dismiss();
+                onLoginFailed();
+            }
+            // TODO: Implement your own authentication logic here.
+            
         }
 
-        public void onLoginSuccess()
+        public async Task<bool> onLoginSuccess()
         {
             loginButton.Enabled = true;
+            var user = await RestApiService.Login(emailText.Text, passwordText.Text);
+            if (user != null)
+            {
+                dbCon.InsertUpdateProduct(user);
+                Utils.WriteToSettings(myContext, Utils.IS_LOGIN, Utils.IS_SUCCESS_LOGED);
+                return true;
+            }else
+            {
+                return false;
+            }          
+            
             // Finish();
         }
         public void onLoginFailed()
@@ -159,7 +173,7 @@ namespace NohandicapNative.Droid
                 emailText.Error = null;
             }
 
-            if (string.IsNullOrEmpty(password) || password.Length < 4 || password.Length > 10)
+            if (string.IsNullOrEmpty(password) || password.Length < 0 || password.Length > 10)
             {
                 passwordText.Error = "between 4 and 10 alphanumeric characters";
                 valid = false;
@@ -172,11 +186,21 @@ namespace NohandicapNative.Droid
             return valid;
         }
         #endregion
-       
-    public override void OnAttach(Activity activity)
+
+        #region FavListFragment
+        private void InitiallizeFavListFragment()
+        {
+            var favLis = new ListFragment(ListFragment.PRODUCT_FAVORITES);      
+            Android.Support.V4.App.FragmentManager fragmentManager = myContext.SupportFragmentManager;
+            myContext.ShowFragment(favLis, "fav");
+        }
+        #endregion
+        public override void OnAttach(Activity activity)
         {
             myContext = (MainActivity)activity;
             base.OnAttach(activity);
+            if(TypeFragment==TYPE_LOGIN)
+                InitiallizeFavListFragment();
         }
       
     }

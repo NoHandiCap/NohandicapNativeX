@@ -78,7 +78,7 @@ namespace NohandicapNative.Droid
         }
         private async void LoadData()
         {
-            ObservableCollection<ProductModel> markers = await RestApiService.GetData<ObservableCollection<ProductModel>>(null, null, "features");
+            ObservableCollection<ProductModel> markers = await RestApiService.GetDataFromUrl<ObservableCollection<ProductModel>>(null, null, "features");
           //  var s = new SqliteService(Utils.PATH);
             for (int i = 0; i < 20; i++)
             {

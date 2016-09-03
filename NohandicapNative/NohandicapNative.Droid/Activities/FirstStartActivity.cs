@@ -128,7 +128,7 @@ namespace NohandicapNative.Droid
         }
         private async void FillCategoryTable()
         {
-            var categories = await RestApiService.GetData<List<CategoryModel>>(NohandiLibrary.LINK_CATEGORY + _selecteLangID);
+            var categories = await RestApiService.GetDataFromUrl<List<CategoryModel>>(NohandiLibrary.LINK_CATEGORY + _selecteLangID);
             string[] defaultCategories = Resources.GetStringArray(Resource.Array.additional_category_array);
 
             if (categories == null)

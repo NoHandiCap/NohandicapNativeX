@@ -18,38 +18,79 @@ namespace NohandicapNative.Droid
 {
   public  class ListFragment : Android.Support.V4.App.Fragment
     {
-        MainActivity myContext;
-        ListView listView;
+        public const string PRODUCT_ALL = "allproducts";
+        public const string PRODUCT_FAVORITES = "productFavorites";
+        public string _currentProductType;
+        MainActivity _myContext;
+        ListView _listView;
+        List<ProductModel> _products;
+        SqliteService dbCon;
+        CardViewAdapter cardViewAdapter;
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             var view = inflater.Inflate(Resource.Layout.ListPage, container, false);
-         listView = view.FindViewById<ListView>(Resource.Id.listview);    
+         _listView = view.FindViewById<ListView>(Resource.Id.listview);    
           view.SetBackgroundColor(Color.ParseColor(Utils.BACKGROUND));
-
-            listView.ItemClick += (s, e) =>
+          
+            _listView.ItemClick += (s, e) =>
             {
                 int position = e.Position;
-                //    var detailIntent = new Intent(myContext, typeof(DetailActivity));
-                  //  detailIntent.PutExtra("Title", items[position].FirmName);
-             //   myContext.StartActivity(detailIntent);
+                var detailIntent = new Intent(_myContext, typeof(DetailActivity));
+                 detailIntent.PutExtra("Title", _products[position].FirmName);
+             _myContext.StartActivity(detailIntent);
                
             };
          LoadData();
             return view;
         }
-       private async void LoadData()
+        public ListFragment()
         {
-            var dbCon = Utils.GetDatabaseConnection();
-            var product =dbCon.GetDataList<ProductModel>();
-            var listAdapter = new CardViewAdapter(myContext, product);
 
-            //var listAdapter = new ListAdapter(myContext, product);
-            listView.Adapter = listAdapter;
+        }
+        public ListFragment(string productType)
+        {
+            _currentProductType = productType;
+        }
+        public override void OnHiddenChanged(bool hidden)
+        {
+            base.OnHiddenChanged(hidden);
+          if(!hidden)
+                LoadData();
+        }
+        private async void LoadData()
+        {
+        
+            if (await _myContext.CheckDataBase())
+            {
+                if (_currentProductType == PRODUCT_ALL)
+                {
+                    _products = dbCon.GetDataList<ProductModel>();
+                }
+                else
+                {
+                    var user = dbCon.GetDataList<UserModel>();
+                    _products = dbCon.GetDataList<ProductModel>().Where(x => user.Any(y => y.ID == x.ID)).ToList();
+                }
+                cardViewAdapter = new CardViewAdapter(_myContext, _products);
+
+                //var listAdapter = new ListAdapter(myContext, product);
+                _listView.Adapter = cardViewAdapter;
+            }
+            if (_products.Count != 0)
+            {
+                cardViewAdapter = new CardViewAdapter(_myContext, _products);
+
+                //var listAdapter = new ListAdapter(myContext, product);
+                _listView.Adapter = cardViewAdapter;
+            }
         }
         public override void OnAttach(Activity activity)
         {
-            myContext = (MainActivity)activity;
+            _myContext = (MainActivity)activity;
             base.OnAttach(activity);
+            dbCon = Utils.GetDatabaseConnection();
+            _products = dbCon.GetDataList<ProductModel>();
+
         }
     }
 }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:layout_height="match_parent" 
+            android:paddingBottom="15dp"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
@@ -10,8 +10,7 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="bottom|top"
-         >
+        android:gravity="bottom|top">
     <!--<ListView
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
@@ -25,8 +24,9 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
-            android:layout_height="30dp"
+            android:layout_height="35dp"
             android:id="@+id/category_linearLayout"
+                android:layout_marginTop="5dp"
             android:background="#ffffff">
             <ImageView
                 android:layout_width="wrap_content"
@@ -42,11 +42,10 @@
                 android:layout_gravity="center"
                 android:textColor="#000000" />
         </LinearLayout>
-        <LinearLayout
-            android:layout_marginBottom="5dp"
+        <LinearLayout        
             android:orientation="horizontal"
             android:layout_width="fill_parent"
-            android:layout_height="30dp"
+            android:layout_height="35dp"
             android:id="@+id/category_linearLayout2"
             android:layout_below="@+id/category_linearLayout3"
             android:layout_alignParentLeft="true"
@@ -71,7 +70,7 @@
             android:layout_marginTop="5dp"
             android:orientation="horizontal"
             android:layout_width="fill_parent"
-            android:layout_height="30dp"
+            android:layout_height="35dp"
             android:id="@+id/category_linearLayout3"
             android:layout_below="@+id/category_linearLayout"
             android:layout_alignParentLeft="true"
@@ -103,7 +102,8 @@
             android:verticalSpacing="5dp"
             android:numColumns="3"
             android:scrollbars="none"
-            android:layout_below="@+id/category_linearLayout2"    
+            android:layout_below="@+id/category_linearLayout2"
+
             android:layout_marginTop="10dp"
             android:stretchMode="columnWidth" />
     </RelativeLayout>

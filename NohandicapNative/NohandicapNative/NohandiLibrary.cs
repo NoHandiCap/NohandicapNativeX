@@ -31,22 +31,24 @@ namespace NohandicapNative
             }
             return items;
         }
-        public static List<TabItem> GetAdditionalCategory()
+        public static List<CategoryModel> GetAdditionalCategory()
         {
-            List<TabItem> items = new List<TabItem>();
+            List<CategoryModel> items = new List<CategoryModel>();
             string[] buttonTitles = { "Kunsnt&Kultur", "Museen", "Shoppen", "Sport&Welsness", "Essen&Trinken", "Nächtigen", "Nützliches", "Events", "Location" };
 
             string[] buttonColors = { "#D71C61", "#8D26AB", "#FA89DD", "#36449D", "#2186E2", "#01ACC0", "#02887D", "#43A047", "#7BB242" };
 
             string[] buttonImage = { "kunst", "museum", "shop", "sport", "eat", "sleep", "search", "event", "location" };
+            int[] buttonId = { 130, 133, 131, 132, 129, 128, 136, 135, 134 };
+
             for (int i = 0; i < buttonTitles.Length; ++i)
             {
-                items.Add(new TabItem()
+                items.Add(new CategoryModel()
                 {
-                    Id = i,
-                    Title = buttonTitles[i],
+                    ID =buttonId[i],
+                    Name = buttonTitles[i],
                     Color = buttonColors[i],
-                    Image = buttonImage[i]
+                    Icon = buttonImage[i]
                 });
             }
             return items;

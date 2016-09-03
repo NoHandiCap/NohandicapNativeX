@@ -99,7 +99,7 @@ namespace NohandicapNative.Droid
             additionalCategory = view.FindViewById<ButtonGridView>(Resource.Id.additionalCategory);
             GridRotation();
 
-            List<TabItem> additItems = NohandiLibrary.GetAdditionalCategory();
+            List<CategoryModel> additItems = NohandiLibrary.GetAdditionalCategory();
    
             //  List<TabItem> mainItems = NohandiLibrary.GetMainCategory();
             //  mainCategory.Adapter = new GridViewAdapter(myContext, mainItems);

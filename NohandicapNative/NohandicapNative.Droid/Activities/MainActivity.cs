@@ -33,6 +33,7 @@ using Android.Preferences;
 using Android.Content.PM;
 using Android.Util;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace NohandicapNative.Droid
 {
@@ -77,7 +78,7 @@ namespace NohandicapNative.Droid
     }
     #endregion
 
-    [Activity(Label = "Nohandicap", Icon = "@drawable/logo_small", ConfigurationChanges =Android.Content.PM.ConfigChanges.Orientation | 
+    [Activity(Label = "Nohandicap", WindowSoftInputMode = SoftInput.AdjustPan, Icon = "@drawable/logo_small", ConfigurationChanges =Android.Content.PM.ConfigChanges.Orientation | 
         Android.Content.PM.ConfigChanges.ScreenSize
        )]
 	public class MainActivity : AppCompatActivity, IOnMenuTabSelectedListener, IOnTabClickListener
@@ -117,10 +118,10 @@ namespace NohandicapNative.Droid
                 _bottomBar.SelectTabAtPosition(postion, false);
             }
            ((NohandicapApplication)Application).MainActivity = this;
-            RestApiService.Login("brstwu2@gmail.com", "1");
+   
             ThreadPool.QueueUserWorkItem(o => CheckDataBase());
         }
-        private void CheckDataBase()
+        public async Task<bool> CheckDataBase()
         {
             var language = dbCon.GetDataList<LanguageModel>();
             var categories = dbCon.GetDataList<CategoryModel>();
@@ -129,9 +130,10 @@ namespace NohandicapNative.Droid
             {
                 ISharedPreferences settings = PreferenceManager.GetDefaultSharedPreferences(this);
                 string lang = settings.GetString(Utils.LANG_ID_TAG, null);
-                dbCon.SynchronizeDataBase(lang);
+            return await  dbCon.SynchronizeDataBase(lang);            
+               
             }
-            var prod = dbCon.GetDataList<ProductModel>();
+            return false;
             
         }
         private void PrepareBar()
@@ -146,7 +148,7 @@ namespace NohandicapNative.Droid
                 var tab = items[i];
                 var icon = Utils.GetImage(this, tab.Image);
 
-                tabItems[i] = new BottomBarTab(icon, tab.Title);
+                tabItems[i] = new BottomBarTab(Utils.SetDrawableSize(this,icon, 45, 45), tab.Title);
                 _bottomBar.SetActiveTabColor(Color.Red);
 
             }

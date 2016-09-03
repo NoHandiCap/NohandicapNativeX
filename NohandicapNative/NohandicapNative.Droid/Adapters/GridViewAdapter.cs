@@ -14,14 +14,15 @@ using NohandicapNative.Droid.Services;
 using Android.Graphics;
 using Android.Support.V4.App;
 using static Android.Views.View;
+using Android.Util;
 
 namespace NohandicapNative.Droid.Adapters
 {
     public class GridViewAdapter : BaseAdapter, IOnTouchListener
     {
         private MainActivity context;
-        private List<TabItem> items;
-        public GridViewAdapter(MainActivity context, List<TabItem> items)
+        private List<CategoryModel> items;
+        public GridViewAdapter(MainActivity context, List<CategoryModel> items)
         {
             this.context = context;
             this.items = items;
@@ -40,11 +41,11 @@ namespace NohandicapNative.Droid.Adapters
         }
         public  string GetItemText(int position)
         {
-            return items[position].Title;
+            return items[position].Name.ToString();
         }
         public override long GetItemId(int position)
         {
-            return items[position].Id;
+            return items[position].ID;
         }
 
         public override View GetView(int position, View convertView, ViewGroup parent)
@@ -58,9 +59,21 @@ namespace NohandicapNative.Droid.Adapters
                 grid = inflater.Inflate(Resource.Layout.grid_item, null);
                 TextView textView = (TextView)grid.FindViewById(Resource.Id.grid_text);
                 ImageView imageView = (ImageView)grid.FindViewById(Resource.Id.grid_image);
-                textView.Text = item.Title;
-                imageView.SetImageDrawable(Utils.GetImage(context, item.Image));
+                textView.Text = item.Name;
+                imageView.SetImageDrawable(Utils.GetImage(context, item.Icon));
                 grid.SetBackgroundColor(Color.ParseColor(item.Color));
+            DisplayMetrics displaymetrics = new DisplayMetrics();
+            context.WindowManager.DefaultDisplay.GetMetrics(displaymetrics);
+            int width = displaymetrics.WidthPixels;
+            var orientation = context.Resources.Configuration.Orientation;
+            int imageWidth;
+            if (orientation == Android.Content.Res.Orientation.Portrait)
+                imageWidth = width / 8;
+            else
+                imageWidth = width / 11;
+            imageView.LayoutParameters.Height = imageWidth;
+            imageView.LayoutParameters.Width = imageWidth;
+
 
             grid.Click += (s, e) =>
                {

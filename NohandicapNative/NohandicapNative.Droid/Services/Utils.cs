@@ -34,7 +34,7 @@ namespace NohandicapNative.Droid.Services
         public const string BACKGROUND = "#FFECB3";
         public const string TAB_COLOR = "#FF73012B";
         public const string IS_LOGIN = "isLogin";
-        public const string IS_LOGED = "true";
+        public const string IS_SUCCESS_LOGED = "true";
         public const string IS_NOT_LOGED = "false";
         public const string LOGIN_NAME = "loginName";
         public const string LOGIN_ID = "loginID";
@@ -87,6 +87,14 @@ namespace NohandicapNative.Droid.Services
         {
             Drawable dr = context.Resources.GetDrawable(res);
             Bitmap bitmap = ((BitmapDrawable)dr).Bitmap;
+            // Scale it to 50 x 50
+            Drawable d = new BitmapDrawable(context.Resources, Bitmap.CreateScaledBitmap(bitmap, width, height, true));
+            return d;
+        }
+        public static Drawable SetDrawableSize(Context context, Drawable drawable, int width, int height)
+        {
+           
+            Bitmap bitmap = ((BitmapDrawable)drawable).Bitmap;
             // Scale it to 50 x 50
             Drawable d = new BitmapDrawable(context.Resources, Bitmap.CreateScaledBitmap(bitmap, width, height, true));
             return d;

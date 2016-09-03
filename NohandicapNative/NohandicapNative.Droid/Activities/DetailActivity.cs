@@ -24,11 +24,11 @@ namespace NohandicapNative.Droid
             SetTheme(Resource.Style.AppThemeNoBar);
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.DetailPage);
-            toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
-            SetSupportActionBar(toolbar);
-            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
-            SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Resources.GetColor(Resource.Color.colorDefault)));
-            SupportActionBar.Title = Intent.GetStringExtra("Title");
+            //toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
+            //SetSupportActionBar(toolbar);
+            //SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+            //SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Resources.GetColor(Resource.Color.colorDefault)));
+            //SupportActionBar.Title = Intent.GetStringExtra("Title");
         }
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
