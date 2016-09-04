@@ -11,10 +11,10 @@
 
     <item name="colorControlActivated">?attr/colorAccent</item>
     <item name="android:textColorPrimary">@color/abc_primary_text_material_dark</item>
-    <item name="android:textColorSecondary">@android:color/white</item>
-    <item name="actionMenuTextColor">@android:color/white</item>
+    <item name="android:textColorSecondary">@android:color/white</item>  
     <item name="colorControlNormal">@android:color/white</item>
     <item name="android:windowFullscreen">true</item>
+    <item name="actionMenuTextColor">@color/white</item>
   </style>
   <style name="AppThemeDarkDialog" parent="Theme.AppCompat.Dialog">
     <item name="colorAccent">@color/white</item>
@@ -31,7 +31,8 @@
     <item name="colorControlActivated">?attr/colorAccent</item>
     <item name="android:textColorPrimary">@color/abc_primary_text_material_dark</item>
     <item name="android:textColorSecondary">@android:color/white</item>
-    <item name="actionMenuTextColor">@android:color/white</item>
+    <item name="actionMenuTextColor">@color/white</item>
+
     <item name="colorControlNormal">@android:color/white</item>
   </style>
   <style name="AppThemeNoBar.Button" parent="Widget.AppCompat.Button.Colored">

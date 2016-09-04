@@ -3958,8 +3958,8 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f020096
 			public const int museum = 2130837654;
 			
-			// aapt resource value: 0x7f0200a7
-			public const int notification_template_icon_bg = 2130837671;
+			// aapt resource value: 0x7f0200a8
+			public const int notification_template_icon_bg = 2130837672;
 			
 			// aapt resource value: 0x7f020097
 			public const int pin = 2130837655;
@@ -3980,34 +3980,37 @@ namespace NohandicapNative.Droid
 			public const int search = 2130837660;
 			
 			// aapt resource value: 0x7f02009d
-			public const int settings = 2130837661;
+			public const int select_all = 2130837661;
 			
 			// aapt resource value: 0x7f02009e
-			public const int settingsBar = 2130837662;
+			public const int settings = 2130837662;
 			
 			// aapt resource value: 0x7f02009f
-			public const int shop = 2130837663;
+			public const int settingsBar = 2130837663;
 			
 			// aapt resource value: 0x7f0200a0
-			public const int sleep = 2130837664;
+			public const int shop = 2130837664;
 			
 			// aapt resource value: 0x7f0200a1
-			public const int splash_screen = 2130837665;
+			public const int sleep = 2130837665;
 			
 			// aapt resource value: 0x7f0200a2
-			public const int sport = 2130837666;
+			public const int splash_screen = 2130837666;
 			
 			// aapt resource value: 0x7f0200a3
-			public const int wheelchair1 = 2130837667;
+			public const int sport = 2130837667;
 			
 			// aapt resource value: 0x7f0200a4
-			public const int wheelchair2 = 2130837668;
+			public const int wheelchair1 = 2130837668;
 			
 			// aapt resource value: 0x7f0200a5
-			public const int wheelchair3 = 2130837669;
+			public const int wheelchair2 = 2130837669;
 			
 			// aapt resource value: 0x7f0200a6
-			public const int wheelchaisdr = 2130837670;
+			public const int wheelchair3 = 2130837670;
+			
+			// aapt resource value: 0x7f0200a7
+			public const int wheelchaisdr = 2130837671;
 			
 			static Drawable()
 			{
@@ -4226,8 +4229,8 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f09001a
 			public const int disableHome = 2131296282;
 			
-			// aapt resource value: 0x7f0900d2
-			public const int done = 2131296466;
+			// aapt resource value: 0x7f0900d3
+			public const int done = 2131296467;
 			
 			// aapt resource value: 0x7f090067
 			public const int edit_query = 2131296359;
@@ -4534,6 +4537,9 @@ namespace NohandicapNative.Droid
 			
 			// aapt resource value: 0x7f0900a3
 			public const int second_category = 2131296419;
+			
+			// aapt resource value: 0x7f0900d2
+			public const int select_all = 2131296466;
 			
 			// aapt resource value: 0x7f090073
 			public const int select_dialog_listview = 2131296371;
@@ -4947,7 +4953,10 @@ namespace NohandicapNative.Droid
 			public const int main_menu = 2131558402;
 			
 			// aapt resource value: 0x7f0d0003
-			public const int settings_menu = 2131558403;
+			public const int map_menu = 2131558403;
+			
+			// aapt resource value: 0x7f0d0004
+			public const int settings_menu = 2131558404;
 			
 			static Menu()
 			{

@@ -19,10 +19,11 @@ using System.Collections;
 using NohandicapNative.Droid.Services;
 using Android.Graphics;
 using Android.Content.PM;
+using NohandicapNative.Droid.Adapters;
 
 namespace NohandicapNative.Droid
 {
-    class GMapFragment : Android.Support.V4.App.Fragment, GoogleMap.IInfoWindowAdapter
+   public class GMapFragment : Android.Support.V4.App.Fragment, GoogleMap.IInfoWindowAdapter
     {
         
         MainActivity myContext;
@@ -32,13 +33,15 @@ namespace NohandicapNative.Droid
         SqliteService dbCon;
         List<Marker> markersList;
         List<ProductModel> products;
+        List<MarkerOptions> markerOptons;
+       
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             this.inflater = inflater;
             var view = inflater.Inflate(Resource.Layout.MapPage, container, false);
           view.SetBackgroundColor(Color.ParseColor(Utils.BACKGROUND));
-            dbCon = Utils.GetDatabaseConnection();
-            markersList = new List<Marker>();
+            HasOptionsMenu = true;
+          
             // Gets the MapView from the XML layout and creates it
             mapView = (MapView)view.FindViewById(Resource.Id.mapView);
             mapView.OnCreate(savedInstanceState);
@@ -56,9 +59,6 @@ namespace NohandicapNative.Droid
                
        
             }
-           
-
-            // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
             try
             {
                 MapsInitializer.Initialize(this.Activity);
@@ -67,32 +67,61 @@ namespace NohandicapNative.Droid
             {
                 e.PrintStackTrace();
             }
-           LoadData();
+
+            // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
+            if(products.Count==0)
+            SetData(dbCon.GetDataList<ProductModel>());
+            LoadData();
             // Updates the location and zoom of the MapView
             
             return view;
         }
-        private async void LoadData()
+        public GMapFragment()
         {
-         
-             products = dbCon.GetDataList<ProductModel>();
-            var category = dbCon.GetDataList<CategoryModel>();
-            products.ForEach(product => {
-              var options = new MarkerOptions().SetPosition(new LatLng(double.Parse(product.Lat), double.Parse(product.Long))).SetTitle(product.FirmName);
-                var cat = category.FirstOrDefault(y => y.ID == product.Categories[0]).Marker;
-                var drawImage =Utils.SetDrawableSize(myContext,Utils.GetImage(myContext, cat),35,42);                
-                var bitmap = Utils.convertDrawableToBitmap(drawImage);
-                options.SetIcon(BitmapDescriptorFactory.FromBitmap(bitmap));
-                var marke = map.AddMarker(options);
-                
-                markersList.Add(map.AddMarker(options));
-               
-            });
-            if (products.Count != 0)
+            dbCon = Utils.GetDatabaseConnection();
+            markersList = new List<Marker>();
+            markerOptons = new List<MarkerOptions>();
+            products = new List<ProductModel>();
+        }
+        private void LoadData()
+        {
+          
+            if (myContext != null)
             {
-                CameraUpdate cameraUpdate = CameraUpdateFactory.NewLatLngZoom(markersList[2].Position, 11);
+                map.Clear();
+                markersList.Clear();
+                
+                var category = dbCon.GetDataList<CategoryModel>();
+                products.ForEach(product =>
+                {
+                    var options = new MarkerOptions().SetPosition(new LatLng(double.Parse(product.Lat), double.Parse(product.Long))).SetTitle(product.FirmName);
+                    var cat = category.FirstOrDefault(y => y.ID == product.Categories[0]).Marker;
+                    var drawImage = Utils.SetDrawableSize(myContext, Utils.GetImage(myContext, cat), 35, 42);
+                    var bitmap = Utils.convertDrawableToBitmap(drawImage);
+                    options.SetIcon(BitmapDescriptorFactory.FromBitmap(bitmap));
+                    markerOptons.Add(options);
+
+
+                });
+                markerOptons.ForEach(x => {
+
+                    var marker = map.AddMarker(x);
+                    markersList.Add(marker);
+
+                });
+
+            }
+            if (markersList.Count != 0)
+            {
+                CameraUpdate cameraUpdate = CameraUpdateFactory.NewLatLngZoom(markersList[0].Position, 11);
                 map.AnimateCamera(cameraUpdate);
             }
+        }
+        public void SetData(List<ProductModel> data)
+        {
+           markerOptons.Clear();            
+            products = data;
+            LoadData();
         }
         public override void OnResume()
         {
@@ -125,6 +154,7 @@ namespace NohandicapNative.Droid
         {
             myContext = (MainActivity)activity;
             base.OnAttach(activity);
+           
         }
         public override void OnDestroy()
         {
@@ -136,9 +166,9 @@ namespace NohandicapNative.Droid
             base.OnHiddenChanged(hidden);
             if (!hidden && markersList.Count == 0)
             {
-                
+
                 LoadData();
-               
+
             }
         }
 
@@ -163,7 +193,7 @@ namespace NohandicapNative.Droid
             };
             return info;
         }
-
+        #region InfoWindowAdapter
         public View GetInfoWindow(Marker marker)
         {
             return null;
@@ -172,5 +202,32 @@ namespace NohandicapNative.Droid
         {
             return products.FirstOrDefault(x => x.FirmName == marker.Title);
         }
+        #endregion
+        #region Menu implementation
+        public override void OnCreateOptionsMenu(IMenu menu, MenuInflater inflater)
+        {
+            inflater.Inflate(Resource.Menu.map_menu, menu);
+            base.OnCreateOptionsMenu(menu, inflater);
+        }
+
+        public override bool OnOptionsItemSelected(IMenuItem item)
+        {
+            switch (item.ItemId)
+            {
+                case Android.Resource.Id.Home:
+                    myContext.SetCurrentTab(0);
+                    break;
+                case Resource.Id.select_all:
+                    SetData(dbCon.GetDataList<ProductModel>());
+                    myContext.SupportActionBar.Title = "Map";
+                    break;
+            }
+            return true;
+        }
+        public void OnMenuItemSelected(int menuItemId)
+        {
+
+        }
+        #endregion
     }
 }

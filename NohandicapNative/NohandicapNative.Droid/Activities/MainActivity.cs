@@ -81,7 +81,7 @@ namespace NohandicapNative.Droid
     [Activity(Label = "Nohandicap", WindowSoftInputMode = SoftInput.AdjustPan, Icon = "@drawable/logo_small", ConfigurationChanges =Android.Content.PM.ConfigChanges.Orientation | 
         Android.Content.PM.ConfigChanges.ScreenSize
        )]
-	public class MainActivity : AppCompatActivity, IOnMenuTabSelectedListener, IOnTabClickListener
+	public class MainActivity : AppCompatActivity,  IOnTabClickListener
     {
         #region Properties
         static readonly string TAG = "X:" + typeof(MainActivity).Name;
@@ -89,10 +89,10 @@ namespace NohandicapNative.Droid
         private BottomBar _bottomBar;
         Android.Support.V7.Widget.Toolbar toolbar;
         List<TabItem> items;
-        HomeFragment homePage;
-        GMapFragment mapPage;
-        ListFragment listPage;
-        FavoritesFragment favorites;
+        public HomeFragment HomePage { get; set; }
+        public GMapFragment MapPage { get; set; }
+        public ListFragment ListPage { get; set; }
+        public FavoritesFragment Favorites { get; set; }
         SqliteService dbCon;
         int lastPos = 0;
         #endregion      
@@ -105,10 +105,10 @@ namespace NohandicapNative.Droid
             Utils.mainActivity = this;
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);          
             _bottomBar = BottomBar.AttachShy(FindViewById<CoordinatorLayout>(Resource.Id.myCoordinator), FindViewById<LinearLayout>(Resource.Id.linContent), bundle);
-            mapPage = new GMapFragment();
-            listPage = new ListFragment();
-            homePage = new HomeFragment();
-            favorites = new FavoritesFragment();
+            MapPage = new GMapFragment();
+            ListPage = new ListFragment();
+            HomePage = new HomeFragment();
+            Favorites = new FavoritesFragment();
             items = NohandiLibrary.GetTabs();
             dbCon = Utils.GetDatabaseConnection();
             PrepareBar();
@@ -117,7 +117,7 @@ namespace NohandicapNative.Droid
                 var postion = bundle.GetInt(Utils.TAB_ID);
                 _bottomBar.SelectTabAtPosition(postion, false);
             }
-           ((NohandicapApplication)Application).MainActivity = this;
+            Utils.mainActivity = this;
    
             ThreadPool.QueueUserWorkItem(o => CheckDataBase());
         }
@@ -169,7 +169,7 @@ namespace NohandicapNative.Droid
             Log.Debug(TAG, "Bar prepared");
             
         }
-       
+
         #region IOnTabClickListener implementation
         public void SetCurrentTab(int position)
         {
@@ -180,17 +180,17 @@ namespace NohandicapNative.Droid
             switch (position)
             {
                 case 0:                  
-                        ShowFragment(homePage,position.ToString());
+                        ShowFragment(HomePage,position.ToString());
                     break;
-                case 1:                   
-                        ShowFragment(mapPage, position.ToString());                
+                case 1:                    
+                        ShowFragment(MapPage, position.ToString());                          
 
                     break;
                 case 2:
-                    ShowFragment(listPage, position.ToString());
+                    ShowFragment(ListPage, position.ToString());
                     break;
                 case 3:
-                    ShowFragment(favorites, position.ToString());
+                    ShowFragment(Favorites, position.ToString());
                     break;
                 default:
                     break;
@@ -240,31 +240,7 @@ namespace NohandicapNative.Droid
         }
         #endregion
 
-        #region Menu implementation
-        public override bool OnCreateOptionsMenu(IMenu menu)
-        {
-            MenuInflater inflater = MenuInflater;
-            inflater.Inflate(Resource.Menu.main_menu, menu);
-            return true;
-        }
-        public override bool OnOptionsItemSelected(IMenuItem item)
-        {
-            switch (item.ItemId)
-            {
-                case Android.Resource.Id.Home:
-                    SetCurrentTab(0);
-            break;
-                case Resource.Id.settings:
-                    StartActivity(typeof(SettingsActivity));
-                    break;
-            }
-            return true;
-        }
-        public void OnMenuItemSelected(int menuItemId)
-        {
-
-        }
-        #endregion
+       
 
         #region ActivityLifeCycle implementation
        

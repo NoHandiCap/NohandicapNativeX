@@ -59,6 +59,7 @@ namespace NohandicapNative.Droid
 
             };
             langListView.OnItemClickListener = this;
+            Utils.mainActivity = this;
         }
         private void SetLocale(int position)
         {

@@ -4,7 +4,9 @@
     <color android:color="@color/white"/>
   </item>
   <item>
+ 
     <bitmap
+     
         android:src="@drawable/logo_handicap"
         android:tileMode="disabled"
         android:gravity="center"/>

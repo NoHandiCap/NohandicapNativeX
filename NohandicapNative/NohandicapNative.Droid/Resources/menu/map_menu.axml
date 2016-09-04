@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:handicap="http://schemas.android.com/apk/res-auto">
+  <item
+      android:id="@+id/select_all"
+      android:icon="@drawable/select_all"
+      android:title="Show All"
+     
+    handicap:showAsAction="always"
+   />
+</menu>

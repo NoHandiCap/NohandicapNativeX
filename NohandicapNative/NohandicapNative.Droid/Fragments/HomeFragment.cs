@@ -20,10 +20,11 @@ using Android.Graphics.Drawables;
 using Android.Content.PM;
 using Android.Content.Res;
 using static Android.Widget.AdapterView;
+using BottomNavigationBar.Listeners;
 
 namespace NohandicapNative.Droid
 {
-  public  class HomeFragment: Android.Support.V4.App.Fragment
+  public  class HomeFragment: Android.Support.V4.App.Fragment, IOnMenuTabSelectedListener
     {
         MainActivity myContext;
         int[] mainCategoriesText = { Resource.Id.first_category, Resource.Id.second_category, Resource.Id.thrity_category };
@@ -38,8 +39,8 @@ namespace NohandicapNative.Droid
             var view = inflater.Inflate(Resource.Layout.HomePage,container,false);
           view.SetBackgroundColor(Color.ParseColor(Utils.BACKGROUND));
             dbCon = Utils.GetDatabaseConnection();
-          // mainCategory = view.FindViewById<ListView>(Resource.Id.mainCategory);
-         //   string[] mainItems = Resources.GetStringArray(Resource.Array.main_category_array);
+            // mainCategory = view.FindViewById<ListView>(Resource.Id.mainCategory);
+            //   string[] mainItems = Resources.GetStringArray(Resource.Array.main_category_array);
             //List<CustomRadioButton> main = new List<CustomRadioButton>();
             //for (int i = 0; i < mainItems.Length; i++)
             //{
@@ -49,8 +50,9 @@ namespace NohandicapNative.Droid
 
             //    });
             //}
-           // mainCategory.Adapter = new RadioButtonListAdapter(myContext, main);
+            // mainCategory.Adapter = new RadioButtonListAdapter(myContext, main);
 
+            this.HasOptionsMenu = true;
             TextView[] mainCat = new TextView[mainCategoriesText.Length];
             ImageView[] mainImg = new ImageView[mainCategoriesImgView.Length];
             LinearLayout[] mainLayout = new LinearLayout[mainCategoriesLayout.Length];
@@ -68,6 +70,15 @@ namespace NohandicapNative.Droid
             }
             for (int i = 0; i < mainCat.Length; i++)
             {
+                mainCat[i].SetTextColor(Color.Gray);
+                mainCat[i].SetTypeface(null, TypefaceStyle.Normal);
+                mainLayout[i].Selected = false;
+                if (i == 0)
+                {
+                    mainCat[i].SetTextColor(Color.Black);
+                    mainCat[i].SetTypeface(null, TypefaceStyle.Bold);
+                    mainLayout[i].Selected = true;
+                }
                 mainLayout[i].Click += (s, e) =>
                 {
                     var layout = (LinearLayout)s;
@@ -92,12 +103,10 @@ namespace NohandicapNative.Droid
                     }
                 };
 
-            }
-            var imgHeight = (int)myContext.Resources.GetDimension(Resource.Dimension.main_category_image);
-            mainImg[0].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair1, 100,imgHeight ));
-            mainImg[1].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair2, 100, imgHeight));
-            mainImg[2].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair3, 100, imgHeight));
-
+            }  
+            mainImg[0].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair1, 65,30 ));
+            mainImg[1].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair2, 65, 30));
+            mainImg[2].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair3, 65, 30));
 
             additionalCategory = view.FindViewById<ButtonGridView>(Resource.Id.additionalCategory);
             GridRotation();
@@ -131,7 +140,31 @@ namespace NohandicapNative.Droid
             base.OnConfigurationChanged(newConfig);
             GridRotation();
         }
-
+        #region Menu implementation
+        public override void OnCreateOptionsMenu(IMenu menu, MenuInflater inflater)
+        {          
+            inflater.Inflate(Resource.Menu.main_menu, menu);
+            base.OnCreateOptionsMenu(menu, inflater);
+        }
        
+        public override bool OnOptionsItemSelected(IMenuItem item)
+        {
+            switch (item.ItemId)
+            {
+                case Android.Resource.Id.Home:
+                 myContext.SetCurrentTab(0);
+                    break;
+                case Resource.Id.settings:
+                   myContext.StartActivity(typeof(SettingsActivity));
+                    break;
+            }
+            return true;
+        }
+        public void OnMenuItemSelected(int menuItemId)
+        {
+
+        }
+        #endregion
+
     }
 }

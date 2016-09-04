@@ -105,11 +105,11 @@ namespace NohandicapNative.Droid
                 progressDialog.Dismiss();
                 
                 var fav = new FavoritesFragment();
-                _myContext.ShowFragment(fav, "fav");
+              //  _myContext.ShowFragment(fav, "fav");
                 Android.Support.V4.App.FragmentManager fragmentManager = _myContext.SupportFragmentManager;
-                //var trans = fragmentManager.BeginTransaction();
-                //trans.Replace(Resource.Id.flContent, fav);
-                //trans.Commit();
+               var trans = fragmentManager.BeginTransaction();
+                trans.Replace(Resource.Id.flContent, fav);
+                trans.Commit();
             }
             else
             {

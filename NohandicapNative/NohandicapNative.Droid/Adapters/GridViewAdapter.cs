@@ -21,17 +21,19 @@ namespace NohandicapNative.Droid.Adapters
     public class GridViewAdapter : BaseAdapter, IOnTouchListener
     {
         private MainActivity context;
-        private List<CategoryModel> items;
+        private List<CategoryModel> categories;
+        private SqliteService dbCon;
         public GridViewAdapter(MainActivity context, List<CategoryModel> items)
         {
             this.context = context;
-            this.items = items;
+            this.categories = items;
+            dbCon = Utils.GetDatabaseConnection();
         }
         public override int Count
         {
             get
             {
-              return  items.Count;
+              return  categories.Count;
             }
         }
 
@@ -41,11 +43,11 @@ namespace NohandicapNative.Droid.Adapters
         }
         public  string GetItemText(int position)
         {
-            return items[position].Name.ToString();
+            return categories[position].Name.ToString();
         }
         public override long GetItemId(int position)
         {
-            return items[position].ID;
+            return categories[position].ID;
         }
 
         public override View GetView(int position, View convertView, ViewGroup parent)
@@ -54,7 +56,7 @@ namespace NohandicapNative.Droid.Adapters
             LayoutInflater inflater = (LayoutInflater)context
                 .GetSystemService(Context.LayoutInflaterService);
           
-                var item = items[position];
+                var item = categories[position];
                 grid = new View(context);
                 grid = inflater.Inflate(Resource.Layout.grid_item, null);
                 TextView textView = (TextView)grid.FindViewById(Resource.Id.grid_text);
@@ -77,9 +79,11 @@ namespace NohandicapNative.Droid.Adapters
 
             grid.Click += (s, e) =>
                {
-                   var activity = (MainActivity)context;
-                   Android.Support.V4.App.FragmentManager fragmentManager = activity.SupportFragmentManager;
-                   activity.SetCurrentTab(1);
+                   var mainActivity = (MainActivity)context;
+                   var products = dbCon.GetDataList<ProductModel>();
+                   var currentProducts = products.Where(prod => prod.Categories.Any(cat => cat == categories[position].ID)).ToList();
+                   mainActivity.MapPage.SetData(currentProducts);         
+                   mainActivity.SetCurrentTab(1);
                    context.SupportActionBar.Title = GetItemText(position);
 
 

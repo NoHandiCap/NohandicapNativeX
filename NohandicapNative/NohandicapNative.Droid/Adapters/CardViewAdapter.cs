@@ -71,6 +71,7 @@ namespace NohandicapNative.Droid.Adapters
             var mainimage = products[position].ImageCollection.Images;
             if (mainimage.Count != 0)
             {
+                
               //  image.SetImageDrawable(new BitmapDrawable(Utils.GetBitmap(mainimage[0].LocalImage)));
                 photo.SetImageDrawable(new BitmapDrawable(Utils.GetBitmap(mainimage[0].LocalImage)));
             }
