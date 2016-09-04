@@ -267,10 +267,7 @@ namespace NohandicapNative.Droid
         #endregion
 
         #region ActivityLifeCycle implementation
-        public MainActivity()
-        {
-            Utils.updateConfig(this);
-        }
+       
         protected override void OnSaveInstanceState(Bundle outState)
         {
             base.OnSaveInstanceState(outState);
@@ -278,6 +275,10 @@ namespace NohandicapNative.Droid
             // lose the current tab on orientation change.
             _bottomBar.OnSaveInstanceState(outState);
             outState.PutInt(Utils.TAB_ID, _bottomBar.CurrentTabPosition);
+        }
+        public MainActivity()
+        {
+            Utils.updateConfig(this);
         }
         protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
         {

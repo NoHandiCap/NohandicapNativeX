@@ -20,7 +20,7 @@ namespace NohandicapNative.Droid
     {
         public const string PRODUCT_ALL = "allproducts";
         public const string PRODUCT_FAVORITES = "productFavorites";
-        public string _currentProductType;
+        public string _currentProductType = PRODUCT_ALL;
         MainActivity _myContext;
         ListView _listView;
         List<ProductModel> _products;
@@ -31,7 +31,7 @@ namespace NohandicapNative.Droid
             var view = inflater.Inflate(Resource.Layout.ListPage, container, false);
          _listView = view.FindViewById<ListView>(Resource.Id.listview);    
           view.SetBackgroundColor(Color.ParseColor(Utils.BACKGROUND));
-          
+           
             _listView.ItemClick += (s, e) =>
             {
                 int position = e.Position;
@@ -40,56 +40,44 @@ namespace NohandicapNative.Droid
              _myContext.StartActivity(detailIntent);
                
             };
-         LoadData();
+            LoadData();
+            _listView.Adapter = cardViewAdapter;
             return view;
         }
         public ListFragment()
         {
-
+            dbCon = Utils.GetDatabaseConnection();
         }
         public ListFragment(string productType)
         {
             _currentProductType = productType;
+            dbCon = Utils.GetDatabaseConnection();
+         
         }
         public override void OnHiddenChanged(bool hidden)
         {
             base.OnHiddenChanged(hidden);
-          if(!hidden)
+            if (!hidden)
+            {
                 LoadData();
+                _listView.Adapter = cardViewAdapter;
+            }
         }
         private async void LoadData()
         {
-        
-            if (await _myContext.CheckDataBase())
-            {
-                if (_currentProductType == PRODUCT_ALL)
-                {
                     _products = dbCon.GetDataList<ProductModel>();
-                }
-                else
-                {
-                    var user = dbCon.GetDataList<UserModel>();
-                    _products = dbCon.GetDataList<ProductModel>().Where(x => user.Any(y => y.ID == x.ID)).ToList();
-                }
+                
                 cardViewAdapter = new CardViewAdapter(_myContext, _products);
 
                 //var listAdapter = new ListAdapter(myContext, product);
-                _listView.Adapter = cardViewAdapter;
-            }
-            if (_products.Count != 0)
-            {
-                cardViewAdapter = new CardViewAdapter(_myContext, _products);
-
-                //var listAdapter = new ListAdapter(myContext, product);
-                _listView.Adapter = cardViewAdapter;
-            }
+         
+         
         }
         public override void OnAttach(Activity activity)
         {
             _myContext = (MainActivity)activity;
-            base.OnAttach(activity);
-            dbCon = Utils.GetDatabaseConnection();
-            _products = dbCon.GetDataList<ProductModel>();
+            base.OnAttach(activity);     
+          
 
         }
     }

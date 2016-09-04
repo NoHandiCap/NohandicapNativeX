@@ -84,7 +84,7 @@ namespace NohandicapNative
         }
         public List<T> GetDataList<T>() where T : class
         {
-            List<T> result=null;
+            List<T> result=default(List<T>);
             dbCon.RunInTransaction(() =>
             {
                 result = dbCon.GetAllWithChildren<T>(null, true).ToList();
@@ -103,8 +103,8 @@ namespace NohandicapNative
      
         public  async Task<bool> SynchronizeDataBase(string langID)
         {
-            bool result = false;
-            dbCon.RunInTransaction( async() => { 
+      
+        
             var languages = await RestApiService.GetDataFromUrl<List<LanguageModel>>(NohandiLibrary.LINK_LANGUAGE);
             if (languages != null)
             {
@@ -131,13 +131,16 @@ namespace NohandicapNative
                     var cat = localCategories.FirstOrDefault(y => y.ID == x.ID);
                     x.Icon = cat.Icon;
                     x.Color = cat.Color;
+                    x.Marker = "marker_" + cat.Icon;
                 });
 
                 InsertUpdateProductList(categories.OrderBy(x => x.Sort).ToList());
             }
-                result = true;
-            });
-            return result;
+            if (languages == null || products == null || categories == null)
+                return false;
+            return true;
+         
+           
         }
         public void Close()
         {

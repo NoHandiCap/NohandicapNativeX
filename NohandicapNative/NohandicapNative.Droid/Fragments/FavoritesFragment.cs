@@ -21,49 +21,29 @@ namespace NohandicapNative.Droid
 {
   public class FavoritesFragment : Android.Support.V4.App.Fragment
     {
-        public const string TYPE_LOGIN = "login";
-        public const string TYPE_LIST = "list";
-
-        MainActivity myContext;       
+        MainActivity _myContext;       
         View view;
-        string TypeFragment = TYPE_LIST;
-        SqliteService dbCon;
-        LinearLayout rootLayout;
-        #region ctor
-
-        public FavoritesFragment()
-        {
-
-        }
-        public FavoritesFragment(string TypeFragment)
-        {
-            this.TypeFragment = TypeFragment;
-        }
-#endregion
+        SqliteService dbCon;       
+        ListView _listView;
+        List<ProductModel> _products;
+      
+        CardViewAdapter cardViewAdapter;    
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             dbCon = Utils.GetDatabaseConnection();
          
-            if (Utils.ReadFromSettings(myContext, Utils.IS_LOGIN, Utils.IS_NOT_LOGED) == Utils.IS_NOT_LOGED)
+            if (Utils.ReadFromSettings(_myContext, Utils.IS_LOGIN, Utils.IS_NOT_LOGED) == Utils.IS_NOT_LOGED)
             {
                 InitiallizeLoginFragment(inflater, container);
                 return view;
             }
-            switch (TypeFragment)
+            else
             {
-                case TYPE_LOGIN:
-                 InitiallizeLoginFragment(inflater, container);
-                    return view;
-                    break;
-                case TYPE_LIST:
-                    InitiallizeFavListFragment();
-                    return view;
-                    break;
-                default:
-                    return view;
-                    break;
+                InitiallizeFavListFragment(inflater, container);
+                return view;
             }
+            
 
         }
         #region LoginFragment
@@ -111,7 +91,7 @@ namespace NohandicapNative.Droid
 
             loginButton.Enabled = false;
 
-            ProgressDialog progressDialog = new ProgressDialog(myContext,
+            ProgressDialog progressDialog = new ProgressDialog(_myContext,
                      Resource.Style.AppThemeDarkDialog);
             progressDialog.Indeterminate = true;
             progressDialog.SetMessage("Authenticating...");
@@ -123,7 +103,13 @@ namespace NohandicapNative.Droid
 
                
                 progressDialog.Dismiss();
-                InitiallizeFavListFragment();
+                
+                var fav = new FavoritesFragment();
+                _myContext.ShowFragment(fav, "fav");
+                Android.Support.V4.App.FragmentManager fragmentManager = _myContext.SupportFragmentManager;
+                //var trans = fragmentManager.BeginTransaction();
+                //trans.Replace(Resource.Id.flContent, fav);
+                //trans.Commit();
             }
             else
             {
@@ -141,7 +127,7 @@ namespace NohandicapNative.Droid
             if (user != null)
             {
                 dbCon.InsertUpdateProduct(user);
-                Utils.WriteToSettings(myContext, Utils.IS_LOGIN, Utils.IS_SUCCESS_LOGED);
+                Utils.WriteToSettings(_myContext, Utils.IS_LOGIN, Utils.IS_SUCCESS_LOGED);
                 return true;
             }else
             {
@@ -152,7 +138,7 @@ namespace NohandicapNative.Droid
         }
         public void onLoginFailed()
         {
-            Toast.MakeText(myContext, "Login failed", ToastLength.Short).Show();
+            Toast.MakeText(_myContext, "Login failed", ToastLength.Short).Show();
 
             loginButton.Enabled = true;
         }
@@ -188,19 +174,40 @@ namespace NohandicapNative.Droid
         #endregion
 
         #region FavListFragment
-        private void InitiallizeFavListFragment()
+        private void InitiallizeFavListFragment(LayoutInflater inflater, ViewGroup container)
         {
-            var favLis = new ListFragment(ListFragment.PRODUCT_FAVORITES);      
-            Android.Support.V4.App.FragmentManager fragmentManager = myContext.SupportFragmentManager;
-            myContext.ShowFragment(favLis, "fav");
+            view = inflater.Inflate(Resource.Layout.ListPage, container, false);
+            _listView = view.FindViewById<ListView>(Resource.Id.listview);
+            view.SetBackgroundColor(Color.ParseColor(Utils.BACKGROUND));
+
+            _listView.ItemClick += (s, e) =>
+            {
+                int position = e.Position;
+                var detailIntent = new Intent(_myContext, typeof(DetailActivity));
+                detailIntent.PutExtra("Title", _products[position].FirmName);
+                _myContext.StartActivity(detailIntent);
+
+            };
+            LoadData();
+            _listView.Adapter = cardViewAdapter;
+          
+        }
+        private async void LoadData()
+        {          
+                var user = dbCon.GetDataList<UserModel>().FirstOrDefault();
+                _products = dbCon.GetDataList<ProductModel>().Where(x => user.Fravorites.Any(y => y == x.ID)).ToList();
+         
+            cardViewAdapter = new CardViewAdapter(_myContext, _products);
+
+            //var listAdapter = new ListAdapter(myContext, product);
+
+
         }
         #endregion
         public override void OnAttach(Activity activity)
         {
-            myContext = (MainActivity)activity;
-            base.OnAttach(activity);
-            if(TypeFragment==TYPE_LOGIN)
-                InitiallizeFavListFragment();
+           _myContext = (MainActivity)activity;
+            base.OnAttach(activity);           
         }
       
     }

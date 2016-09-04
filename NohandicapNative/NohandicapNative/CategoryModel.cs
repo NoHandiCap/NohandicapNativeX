@@ -25,7 +25,8 @@ namespace NohandicapNative
        
         public string Color { get; set; }
         public string Icon { get; set; }
-       
+        public string Marker { get; set; }
+
         public bool IsSelected { get; set; }
        
     }

@@ -54,7 +54,7 @@ namespace NohandicapNative.Droid
             nextButton.Text = Resources.GetString(Resource.String.next);
             nextButton.Click += (s, e) =>
             {
-                FillCategoryTable();
+              
                 LoadData();
 
             };
@@ -125,41 +125,18 @@ namespace NohandicapNative.Droid
             langListView.PerformItemClick(langListView, 0, 0);
             OnItemClick(null, null, 0, 0);
 
-        }
-        private async void FillCategoryTable()
-        {
-            var categories = await RestApiService.GetDataFromUrl<List<CategoryModel>>(NohandiLibrary.LINK_CATEGORY + _selecteLangID);
-            string[] defaultCategories = Resources.GetStringArray(Resource.Array.additional_category_array);
-
-            if (categories == null)
-            {
-                for (int i = 0; i < defaultCategories.Length; i++)
-                {
-                    CategoryModel cat = new CategoryModel();
-                    cat.ID = i;
-                    cat.Name = defaultCategories[i];
-                    cat.Sort = i;
-                    cat.LangID = _selecteLangID;
-                    dbCon.InsertUpdateProduct(cat);
-                }
-            }
-            else
-            {
-                foreach (CategoryModel cat in categories)
-                {
-                    dbCon.InsertUpdateProduct(cat);
-                }
-            }
-        }
+        }       
         private async Task<bool> LoadData()
         {
             ProgressDialog progressDialog = new ProgressDialog(this,
-            Resource.Style.AppThemeDarkDialog);
+           Resource.Style.AppThemeDarkDialog);
             progressDialog.Indeterminate = true;
             progressDialog.SetMessage(res.GetString(Resource.String.load_data));
             progressDialog.Show();
-            new Android.OS.Handler().PostDelayed(() =>
-            {
+            bool result = await dbCon.SynchronizeDataBase(_selecteLangID.ToString());
+            if (result)
+            {     
+                   
                 // On complete call either onLoginSuccess or onLoginFailed
 
                 // onLoginFailed();
@@ -168,8 +145,17 @@ namespace NohandicapNative.Droid
 
                 StartActivity(new Intent(Application.Context, typeof(MainActivity)));
                 Finish();
-            }, 3000);
+
             return true;
+            }
+            else
+            {
+                progressDialog.Dismiss();
+                Toast.MakeText(this, "No internet connection", ToastLength.Short).Show();
+                StartActivity(new Intent(Application.Context, typeof(MainActivity)));
+                Finish();
+                return false;
+            }
         }
         protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
         {

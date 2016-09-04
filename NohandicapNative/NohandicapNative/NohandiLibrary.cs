@@ -39,7 +39,7 @@ namespace NohandicapNative
             string[] buttonColors = { "#D71C61", "#8D26AB", "#FA89DD", "#36449D", "#2186E2", "#01ACC0", "#02887D", "#43A047", "#7BB242" };
 
             string[] buttonImage = { "kunst", "museum", "shop", "sport", "eat", "sleep", "search", "event", "location" };
-            int[] buttonId = { 130, 133, 131, 132, 129, 128, 136, 135, 134 };
+            int[] buttonId = {6, 9,7, 8, 5, 4,12, 11, 10 };
 
             for (int i = 0; i < buttonTitles.Length; ++i)
             {

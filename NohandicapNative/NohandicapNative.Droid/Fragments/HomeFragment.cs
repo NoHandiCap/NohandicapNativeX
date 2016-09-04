@@ -56,12 +56,14 @@ namespace NohandicapNative.Droid
             LinearLayout[] mainLayout = new LinearLayout[mainCategoriesLayout.Length];
 
             string[] mainItems = Resources.GetStringArray(Resource.Array.main_category_array);
+          
             for (int i = 0; i < mainCat.Length; i++)
             {
                 mainCat[i] = view.FindViewById<TextView>(mainCategoriesText[i]);
                 mainCat[i].Text = mainItems[i];
                 mainImg[i] = view.FindViewById<ImageView>(mainCategoriesImgView[i]);
                 mainLayout[i] = view.FindViewById<LinearLayout>(mainCategoriesLayout[i]);
+          
 
             }
             for (int i = 0; i < mainCat.Length; i++)
@@ -91,9 +93,10 @@ namespace NohandicapNative.Droid
                 };
 
             }
-            mainImg[0].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair1, 100, 30));
-            mainImg[1].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair2, 100, 30));
-            mainImg[2].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair3, 100, 30));
+            var imgHeight = (int)myContext.Resources.GetDimension(Resource.Dimension.main_category_image);
+            mainImg[0].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair1, 100,imgHeight ));
+            mainImg[1].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair2, 100, imgHeight));
+            mainImg[2].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair3, 100, imgHeight));
 
 
             additionalCategory = view.FindViewById<ButtonGridView>(Resource.Id.additionalCategory);
@@ -110,14 +113,13 @@ namespace NohandicapNative.Droid
         }
         private void GridRotation()
         {
-            Display display = myContext.WindowManager.DefaultDisplay;
-            Point size = new Point();
-            display.GetSize(size);
-            int width = size.X;
-            if (width > 800)
-                additionalCategory.NumColumns = 5;
-            else
+            var orientation = myContext.Resources.Configuration.Orientation;
+            if(orientation==Android.Content.Res.Orientation.Portrait)
                 additionalCategory.NumColumns = 3;
+            else
+                additionalCategory.NumColumns = 5;
+
+         
         }
         public override void OnAttach(Activity activity)
         {

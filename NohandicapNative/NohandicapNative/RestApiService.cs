@@ -11,58 +11,54 @@ namespace NohandicapNative
 {
  public class RestApiService
     {
-       public static async Task<T> GetDataFromUrl<T>(string dataUri, string accessToken = null, string rootName = "result")
+        public static async Task<T> GetDataFromUrl<T>(string dataUri, string accessToken = null, string rootName = "result")
         {
             var url = dataUri;
-            try
+            using (var httpClient = new HttpClient() { Timeout = TimeSpan.FromSeconds(10) })
             {
-                using (var httpClient = new HttpClient() { Timeout = TimeSpan.FromSeconds(10) })
+                //// Set OAuth authentication header
+                //if (!string.IsNullOrEmpty(accessToken))
+                //    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                using (HttpResponseMessage response = await httpClient.GetAsync(url))
                 {
-                    //// Set OAuth authentication header
-                    //if (!string.IsNullOrEmpty(accessToken))
-                    //    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-                    using (HttpResponseMessage response = await httpClient.GetAsync(url))
+                    string content = null;
+                    if (response != null && response.Content != null)
+                        content = await response.Content.ReadAsStringAsync();
+
+                    if (response.StatusCode == HttpStatusCode.OK ||
+                        response.StatusCode == HttpStatusCode.Created)
                     {
-                        
-                        string content = null;
-                        if (response != null && response.Content != null)
-                            content = await response.Content.ReadAsStringAsync();
-
-                        if (response.StatusCode == HttpStatusCode.OK ||
-                            response.StatusCode == HttpStatusCode.Created)
+                        if (content.Length > 0)
                         {
-                            if (content.Length > 0)
+                            if (rootName == null)
                             {
-                                if(rootName==null)
                                 return Deserializedata<T>(content);
-                                else
-                                {
-
-                                    var v = Deserializedata<T>(content);
-                                    return v;
-
-                                }
                             }
-                        }
-                        else if (response.StatusCode == HttpStatusCode.InternalServerError)
-                        {
-                          //  throw new Exception("Internal server error received (" + url + "). " + content);
+                            else
+                            {
+
+                                var v = Deserializedata<T>(content);
+                                return v;
+
+                            }
                         }
                         else
                         {
-                           // throw new Exception("Bad or invalid request received (" + url + "). " + content);
+                            return default(T);
                         }
                     }
+                    else
+                    {
+                        return default(T);
+                    }
+
                 }
             }
-            catch (Exception ex)
-            {
-                // Log.Error("Could not fetch data via GetData (" + url + ").", ex.ToString());
-                return default(T);
-            }
-            return default(T);
         }
+           
+        
         public static T Deserializedata<T>(string content, string accessToken = null, string rootName = "result")
         {
             var root = JObject.Parse(content).SelectToken(rootName);

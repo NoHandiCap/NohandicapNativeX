@@ -22,22 +22,23 @@ using Android.Content.PM;
 
 namespace NohandicapNative.Droid
 {
-    class GMapFragment : Android.Support.V4.App.Fragment
+    class GMapFragment : Android.Support.V4.App.Fragment, GoogleMap.IInfoWindowAdapter
     {
-        IEnumerable<ProductModel> lists;
-        private MainActivity myContext;
+        
+        MainActivity myContext;
+        LayoutInflater inflater;
         MapView mapView;
         GoogleMap map;
-        public void SetData(string title)
-        {
-            myContext.SupportActionBar.Title = title;
-        }
-        
+        SqliteService dbCon;
+        List<Marker> markersList;
+        List<ProductModel> products;
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
+            this.inflater = inflater;
             var view = inflater.Inflate(Resource.Layout.MapPage, container, false);
           view.SetBackgroundColor(Color.ParseColor(Utils.BACKGROUND));
-
+            dbCon = Utils.GetDatabaseConnection();
+            markersList = new List<Marker>();
             // Gets the MapView from the XML layout and creates it
             mapView = (MapView)view.FindViewById(Resource.Id.mapView);
             mapView.OnCreate(savedInstanceState);
@@ -51,16 +52,11 @@ namespace NohandicapNative.Droid
                 map.MyLocationEnabled = true;
                 map.UiSettings.MapToolbarEnabled = true;
                 map.UiSettings.ZoomControlsEnabled = true;
-                CameraUpdate cameraUpdate = CameraUpdateFactory.NewLatLngZoom(new LatLng(48.219406, 16.387580), 10);
-                map.AnimateCamera(cameraUpdate);
-                MarkerOptions options = new MarkerOptions().SetPosition(new LatLng(48.219506, 16.388480)).SetTitle("Restaurant");
-                options.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.marker_eat));
-                map.AddMarker(options);
-                MarkerOptions options2 = new MarkerOptions().SetPosition(new LatLng(48.210606, 16.380480)).SetTitle("Event");
-                options2.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.marker_event));
-
-                map.AddMarker(options2);
+                map.SetInfoWindowAdapter(this);
+               
+       
             }
+           
 
             // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
             try
@@ -71,35 +67,32 @@ namespace NohandicapNative.Droid
             {
                 e.PrintStackTrace();
             }
-            //  LoadData();
+           LoadData();
             // Updates the location and zoom of the MapView
             
             return view;
         }
         private async void LoadData()
         {
-            ObservableCollection<ProductModel> markers = await RestApiService.GetDataFromUrl<ObservableCollection<ProductModel>>(null, null, "features");
-          //  var s = new SqliteService(Utils.PATH);
-            for (int i = 0; i < 20; i++)
+         
+             products = dbCon.GetDataList<ProductModel>();
+            var category = dbCon.GetDataList<CategoryModel>();
+            products.ForEach(product => {
+              var options = new MarkerOptions().SetPosition(new LatLng(double.Parse(product.Lat), double.Parse(product.Long))).SetTitle(product.FirmName);
+                var cat = category.FirstOrDefault(y => y.ID == product.Categories[0]).Marker;
+                var drawImage =Utils.SetDrawableSize(myContext,Utils.GetImage(myContext, cat),35,42);                
+                var bitmap = Utils.convertDrawableToBitmap(drawImage);
+                options.SetIcon(BitmapDescriptorFactory.FromBitmap(bitmap));
+                var marke = map.AddMarker(options);
+                
+                markersList.Add(map.AddMarker(options));
+               
+            });
+            if (products.Count != 0)
             {
-                try
-                {
-                    //string[] coordinat = ((IEnumerable)markers[i].Coordinates.coordinates).Cast<object>()
-                  //                   .Select(x => x.ToString())
-                   //                  .ToArray();
-                  //  LatLng latlng = new LatLng(double.Parse(coordinat[1]), double.Parse(coordinat[0]));
-                   // MarkerOptions options = new MarkerOptions().SetPosition(latlng).SetTitle(markers[i].Title);
-                   // map.AddMarker(options);
-
-                }
-                catch (Exception e)
-                {
-
-                }
-
+                CameraUpdate cameraUpdate = CameraUpdateFactory.NewLatLngZoom(markersList[2].Position, 11);
+                map.AnimateCamera(cameraUpdate);
             }
-           // s.insertUpdateData(markers[1]);
-           // var v = await s.GetData(1);
         }
         public override void OnResume()
         {
@@ -137,6 +130,47 @@ namespace NohandicapNative.Droid
         {
             base.OnDestroy();
         
+        }
+        public override void OnHiddenChanged(bool hidden)
+        {
+            base.OnHiddenChanged(hidden);
+            if (!hidden && markersList.Count == 0)
+            {
+                
+                LoadData();
+               
+            }
+        }
+
+        public View GetInfoContents(Marker marker)
+        {
+            var info = inflater.Inflate(Resource.Layout.infoWindow, null);
+            var product = FindProductFromMarker(marker);
+            var img = info.FindViewById<ImageView>(Resource.Id.info_mainImageView);
+            var title= info.FindViewById<TextView>(Resource.Id.info_titleTextView);
+            var adress = info.FindViewById<TextView>(Resource.Id.info_adressTextView);
+            var button = info.FindViewById<TextView>(Resource.Id.info_detailButton);
+            var mainimage = product.ImageCollection.Images;
+            if (mainimage.Count != 0)
+            {
+                //  image.SetImageDrawable(new BitmapDrawable(Utils.GetBitmap(mainimage[0].LocalImage)));
+                img.SetImageDrawable(new Android.Graphics.Drawables.BitmapDrawable(Utils.GetBitmap(mainimage[0].LocalImage)));
+            }
+            title.Text = product.FirmName;
+            adress.Text = product.Adress;
+            button.Click += (s, e) => {
+
+            };
+            return info;
+        }
+
+        public View GetInfoWindow(Marker marker)
+        {
+            return null;
+        }
+        private ProductModel FindProductFromMarker (Marker marker)
+        {
+            return products.FirstOrDefault(x => x.FirmName == marker.Title);
         }
     }
 }
