@@ -39,7 +39,7 @@ namespace NohandicapNative.Droid
         {
             this.inflater = inflater;
             var view = inflater.Inflate(Resource.Layout.MapPage, container, false);
-          view.SetBackgroundColor(Color.ParseColor(Utils.BACKGROUND));
+            view.SetBackgroundColor(myContext.Resources.GetColor(Resource.Color.backgroundColor));
             HasOptionsMenu = true;
           
             // Gets the MapView from the XML layout and creates it

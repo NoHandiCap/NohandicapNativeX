@@ -38,6 +38,7 @@ namespace NohandicapNative.Droid.Services
         public const string IS_NOT_LOGED = "false";
         public const string LOGIN_NAME = "loginName";
         public const string LOGIN_ID = "loginID";
+        public const string PRODUCT_ID = "productId";
 
 
         public static Context mainActivity;
@@ -103,7 +104,7 @@ namespace NohandicapNative.Droid.Services
         {
             return new SqliteService(new SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid(), Utils.PATH);
         }
-        public static bool SaveImageBitmapFromUrl(string url, string name)
+        public static Bitmap SaveImageBitmapFromUrl(string url, string name)
         {
 
             Bitmap imageBitmap = null;
@@ -117,7 +118,7 @@ namespace NohandicapNative.Droid.Services
                 }
             }
             Save(imageBitmap, name);
-            return true;
+            return imageBitmap;
         }
         public static void Save(Bitmap bitmap, string name)
         {

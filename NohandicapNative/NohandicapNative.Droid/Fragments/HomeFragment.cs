@@ -37,7 +37,7 @@ namespace NohandicapNative.Droid
         {
 
             var view = inflater.Inflate(Resource.Layout.HomePage,container,false);
-          view.SetBackgroundColor(Color.ParseColor(Utils.BACKGROUND));
+          view.SetBackgroundColor(myContext.Resources.GetColor(Resource.Color.backgroundColor));
             dbCon = Utils.GetDatabaseConnection();
             // mainCategory = view.FindViewById<ListView>(Resource.Id.mainCategory);
             //   string[] mainItems = Resources.GetStringArray(Resource.Array.main_category_array);

@@ -41,6 +41,7 @@ namespace NohandicapNative.Droid
             SetTheme(Resource.Style.AppThemeNoBar);
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.SettingsPage);
+
             dbCon = Utils.GetDatabaseConnection();
             languageList = dbCon.GetDataList<LanguageModel>();
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);

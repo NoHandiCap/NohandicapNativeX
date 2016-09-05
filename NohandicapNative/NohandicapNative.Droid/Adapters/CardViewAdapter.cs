@@ -55,11 +55,21 @@ namespace NohandicapNative.Droid.Adapters
             var view = convertView;
 
             if (view == null)
-            {
-                view = context.LayoutInflater.Inflate(Resource.Layout.list_item, parent, false);
+            { view = context.LayoutInflater.Inflate(Resource.Layout.list_item, parent, false);
+              //  view = context.LayoutInflater.Inflate(Resource.Layout.list_item_background, parent, false);
             }
-            
-            var categories=dbCon.GetDataList<CategoryModel>();
+            //var frame = view.FindViewById<LinearLayout>(Resource.Id.itemFrame);
+            //var mainimage = products[position].ImageCollection.Images;
+            //if (mainimage.Count != 0)
+            //{
+            //    var bitmap = Utils.GetBitmap(mainimage[0].LocalImage);
+            //    frame.SetBackgroundDrawable(new BitmapDrawable(bitmap));
+            //        }
+
+            //var title= view.FindViewById<TextView>(Resource.Id.titleTextViewItem);
+            //title.Text = products[position].FirmName;
+            #region DefaultStyle      
+            var categories = dbCon.GetDataList<CategoryModel>();
             var titleTextView = view.FindViewById<TextView>(Resource.Id.title_text);
             var image = view.FindViewById<ImageView>(Resource.Id.logo_image);
             var adress = view.FindViewById<TextView>(Resource.Id.adress_text);
@@ -71,24 +81,26 @@ namespace NohandicapNative.Droid.Adapters
             var mainimage = products[position].ImageCollection.Images;
             if (mainimage.Count != 0)
             {
-                
-              //  image.SetImageDrawable(new BitmapDrawable(Utils.GetBitmap(mainimage[0].LocalImage)));
+
+                //  image.SetImageDrawable(new BitmapDrawable(Utils.GetBitmap(mainimage[0].LocalImage)));
                 photo.SetImageDrawable(new BitmapDrawable(Utils.GetBitmap(mainimage[0].LocalImage)));
             }
-            
+
             var catImage = categories.FirstOrDefault(x => x.ID == products[position].Categories[0]);
-            
-            if (catImage != null) {
+
+            if (catImage != null)
+            {
                 image.SetImageDrawable(Utils.GetImage(context, catImage.Icon));
-                image.SetBackgroundColor( Color.ParseColor(catImage.Color));
-                    }
+                image.SetBackgroundColor(Color.ParseColor(catImage.Color));
+            }
             image.SetPadding(5, 0, 5, 0);
-             titleTextView.Text = products[position].FirmName;
-           adress.Text = products[position].Adress;
-            body.TextFormatted=Html.FromHtml(products[position].Description);
-          if(products[position].OpenTime!="")  hours.Text = products[position].OpenTime;
+            titleTextView.Text = products[position].FirmName;
+            adress.Text = products[position].Adress;
+            body.TextFormatted = Html.FromHtml(products[position].Description);
+            if (products[position].OpenTime != "") hours.Text = products[position].OpenTime;
             if (products[position].BookingPage != "") booking.Text = products[position].BookingPage;
-            if (products[position].HomePage !="") homeLink.Text = products[position].HomePage;
+            if (products[position].HomePage != "") homeLink.Text = products[position].HomePage;
+            #endregion
             return view;
         }
     }

@@ -22,8 +22,9 @@ namespace NohandicapNative.Droid
         TextView loginLinkButton;
         EditText emailText;
         EditText passwordText;
-        EditText nameText;
-
+        EditText nameText;     
+        EditText phoneText;
+        EditText nachNameText;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             SetTheme(Resource.Style.AppThemeNoBar);
@@ -35,6 +36,8 @@ namespace NohandicapNative.Droid
 
             emailText = FindViewById<EditText>(Resource.Id.input_email);
             passwordText = FindViewById<EditText>(Resource.Id.input_password);
+            phoneText = FindViewById<EditText>(Resource.Id.input_mobile);
+            nachNameText = FindViewById<EditText>(Resource.Id.input_nachName);
             nameText = FindViewById<EditText>(Resource.Id.input_name);
             signUpButton.Click += (s, e) =>
             {
@@ -95,10 +98,11 @@ namespace NohandicapNative.Droid
         {
             bool valid = true;
 
-            String name = nameText.Text;
-            String email = emailText.Text;
-            String password = passwordText.Text;
-
+            string name = nameText.Text;
+            string email = emailText.Text;
+            string password = passwordText.Text;
+            string phone = phoneText.Text;
+            string nachName = nachNameText.Text;
             if (string.IsNullOrEmpty(name) || name.Length < 3)
             {
                 nameText.Error="at least 3 characters";
@@ -127,6 +131,25 @@ namespace NohandicapNative.Droid
             else
             {
                 passwordText.Error=null;
+            }
+
+            if (string.IsNullOrEmpty(phone) || !Android.Util.Patterns.Phone.Matcher(phone).Matches())
+            {
+                phoneText.Error = "enter a valid phone";
+                valid = false;
+            }
+            else
+            {
+                phoneText.Error = null;
+            }
+            if (string.IsNullOrEmpty(nachName) )
+            {
+               nachNameText.Error = "enter a Name";
+                valid = false;
+            }
+            else
+            {
+                nachNameText.Error = null;
             }
 
             return valid;

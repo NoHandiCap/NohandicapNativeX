@@ -21,26 +21,28 @@ namespace NohandicapNative.Droid
 {
   public class FavoritesFragment : Android.Support.V4.App.Fragment
     {
-        MainActivity _myContext;       
+        MainActivity myContext;       
         View view;
         SqliteService dbCon;       
-        ListView _listView;
-        List<ProductModel> _products;
+        ListView listView;
+        List<ProductModel> products;
       
         CardViewAdapter cardViewAdapter;    
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             dbCon = Utils.GetDatabaseConnection();
-         
-            if (Utils.ReadFromSettings(_myContext, Utils.IS_LOGIN, Utils.IS_NOT_LOGED) == Utils.IS_NOT_LOGED)
+          
+            if (Utils.ReadFromSettings(myContext, Utils.IS_LOGIN, Utils.IS_NOT_LOGED) == Utils.IS_NOT_LOGED)
             {
                 InitiallizeLoginFragment(inflater, container);
+                view.SetBackgroundColor(myContext.Resources.GetColor(Resource.Color.backgroundColor));
                 return view;
             }
             else
             {
                 InitiallizeFavListFragment(inflater, container);
+                view.SetBackgroundColor(myContext.Resources.GetColor(Resource.Color.backgroundColor));
                 return view;
             }
             
@@ -56,7 +58,7 @@ namespace NohandicapNative.Droid
         private void InitiallizeLoginFragment(LayoutInflater inflater, ViewGroup container)
         {
             view = inflater.Inflate(Resource.Layout.Login, container, false);
-            view.SetBackgroundColor(Color.ParseColor(Utils.BACKGROUND));
+           
            
 
             loginButton = view.FindViewById<Button>(Resource.Id.btn_login);
@@ -91,7 +93,7 @@ namespace NohandicapNative.Droid
 
             loginButton.Enabled = false;
 
-            ProgressDialog progressDialog = new ProgressDialog(_myContext,
+            ProgressDialog progressDialog = new ProgressDialog(myContext,
                      Resource.Style.AppThemeDarkDialog);
             progressDialog.Indeterminate = true;
             progressDialog.SetMessage("Authenticating...");
@@ -106,7 +108,7 @@ namespace NohandicapNative.Droid
                 
                 var fav = new FavoritesFragment();
               //  _myContext.ShowFragment(fav, "fav");
-                Android.Support.V4.App.FragmentManager fragmentManager = _myContext.SupportFragmentManager;
+                Android.Support.V4.App.FragmentManager fragmentManager = myContext.SupportFragmentManager;
                var trans = fragmentManager.BeginTransaction();
                 trans.Replace(Resource.Id.flContent, fav);
                 trans.Commit();
@@ -127,7 +129,7 @@ namespace NohandicapNative.Droid
             if (user != null)
             {
                 dbCon.InsertUpdateProduct(user);
-                Utils.WriteToSettings(_myContext, Utils.IS_LOGIN, Utils.IS_SUCCESS_LOGED);
+                Utils.WriteToSettings(myContext, Utils.IS_LOGIN, Utils.IS_SUCCESS_LOGED);
                 return true;
             }else
             {
@@ -138,7 +140,7 @@ namespace NohandicapNative.Droid
         }
         public void onLoginFailed()
         {
-            Toast.MakeText(_myContext, "Login failed", ToastLength.Short).Show();
+            Toast.MakeText(myContext, "Login failed", ToastLength.Short).Show();
 
             loginButton.Enabled = true;
         }
@@ -177,27 +179,27 @@ namespace NohandicapNative.Droid
         private void InitiallizeFavListFragment(LayoutInflater inflater, ViewGroup container)
         {
             view = inflater.Inflate(Resource.Layout.ListPage, container, false);
-            _listView = view.FindViewById<ListView>(Resource.Id.listview);
-            view.SetBackgroundColor(Color.ParseColor(Utils.BACKGROUND));
+           listView = view.FindViewById<ListView>(Resource.Id.listview);
+         
 
-            _listView.ItemClick += (s, e) =>
+            listView.ItemClick += (s, e) =>
             {
                 int position = e.Position;
-                var detailIntent = new Intent(_myContext, typeof(DetailActivity));
-                detailIntent.PutExtra("Title", _products[position].FirmName);
-                _myContext.StartActivity(detailIntent);
 
+                var activity = new Intent(myContext, typeof(DetailActivity));
+                activity.PutExtra(Utils.PRODUCT_ID, products[position].ID);
+                myContext.StartActivity(activity);
             };
             LoadData();
-            _listView.Adapter = cardViewAdapter;
+            listView.Adapter = cardViewAdapter;
           
         }
         private async void LoadData()
         {          
                 var user = dbCon.GetDataList<UserModel>().FirstOrDefault();
-                _products = dbCon.GetDataList<ProductModel>().Where(x => user.Fravorites.Any(y => y == x.ID)).ToList();
+                products = dbCon.GetDataList<ProductModel>().Where(x => user.Fravorites.Any(y => y == x.ID)).ToList();
          
-            cardViewAdapter = new CardViewAdapter(_myContext, _products);
+            cardViewAdapter = new CardViewAdapter(myContext, products);
 
             //var listAdapter = new ListAdapter(myContext, product);
 
@@ -206,7 +208,7 @@ namespace NohandicapNative.Droid
         #endregion
         public override void OnAttach(Activity activity)
         {
-           _myContext = (MainActivity)activity;
+           myContext = (MainActivity)activity;
             base.OnAttach(activity);           
         }
       

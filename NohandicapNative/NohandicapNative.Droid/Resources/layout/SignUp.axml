@@ -29,6 +29,30 @@
                 android:inputType="textCapWords"
                 android:hint="Name" />
         </android.support.design.widget.TextInputLayout>
+      <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+        <EditText
+            android:id="@+id/input_nachName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapWords"
+            android:hint="Nachname" />
+      </android.support.design.widget.TextInputLayout>
+      <android.support.design.widget.TextInputLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="8dp"
+      android:layout_marginBottom="8dp">
+        <EditText
+            android:id="@+id/input_mobile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="phone"
+            android:hint="Telefonnummer" />
+      </android.support.design.widget.TextInputLayout>
     <!-- Email Label -->
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
