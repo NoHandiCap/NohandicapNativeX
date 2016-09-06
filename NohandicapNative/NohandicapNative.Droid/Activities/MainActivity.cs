@@ -153,7 +153,7 @@ namespace NohandicapNative.Droid
                 var tab = items[i];
                 var icon = Utils.GetImage(this, tab.Image);
 
-                tabItems[i] = new BottomBarTab(Utils.SetDrawableSize(this,icon, 45, 45), tab.Title);
+                tabItems[i] = new BottomBarTab(Utils.SetDrawableSize(this,icon, 50, 50), tab.Title);
                 _bottomBar.SetActiveTabColor(Color.Red);
 
             }
@@ -166,7 +166,7 @@ namespace NohandicapNative.Droid
 
             }
             _bottomBar.SetOnTabClickListener(this);
-            SupportActionBar.SetIcon(Utils.SetDrawableSize(this, Resource.Drawable.logo_small, 70, 70));
+            SupportActionBar.SetIcon(Utils.SetDrawableSize(this, Resource.Drawable.logo_small, 80, 80));
             SupportActionBar.SetDisplayShowTitleEnabled(true);
             SupportActionBar.SetDefaultDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetDisplayHomeAsUpEnabled(false);     

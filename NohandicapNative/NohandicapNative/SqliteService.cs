@@ -1,10 +1,4 @@
-﻿
-
-
-
-
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -82,12 +76,13 @@ namespace NohandicapNative
             }
           
         }
-        public List<T> GetDataList<T>() where T : class
+        public List<T> GetDataList<T>(bool r=true) where T : class
         {
+
             List<T> result=default(List<T>);
             dbCon.RunInTransaction(() =>
             {
-                result = dbCon.GetAllWithChildren<T>(null, true).ToList();
+                result = dbCon.GetAllWithChildren<T>(null, r).ToList();
             });
                 return result;
            
@@ -134,7 +129,7 @@ namespace NohandicapNative
                     x.Marker = "marker_" + cat.Icon;
                 });
 
-                InsertUpdateProductList(categories.OrderBy(x => x.Sort).ToList());
+                InsertUpdateProductList(categories.OrderByDescending(x => x.Sort).ToList());
             }
             if (languages == null || products == null || categories == null)
                 return false;

@@ -61,41 +61,54 @@ namespace NohandicapNative
         
         public static T Deserializedata<T>(string content, string accessToken = null, string rootName = "result")
         {
-            var root = JObject.Parse(content).SelectToken(rootName);
-      
-            if (root == null||root.ToString()=="[]") return default(T);
-            var settings = new JsonSerializerSettings
+            try
             {
-                Error = (sender, args) =>
+                var root = JObject.Parse(content).SelectToken(rootName);
+
+                if (root == null || root.ToString() == "[]") return default(T);
+                var settings = new JsonSerializerSettings
                 {
-                    if (object.Equals(args.ErrorContext.Member, "test") &&
-                        args.ErrorContext.OriginalObject.GetType() == typeof(T))
+                    Error = (sender, args) =>
                     {
-                        args.ErrorContext.Handled = false;
+                        if (object.Equals(args.ErrorContext.Member, "test") &&
+                            args.ErrorContext.OriginalObject.GetType() == typeof(T))
+                        {
+                            args.ErrorContext.Handled = false;
+                        }
                     }
-                }
-            };
-            var s = root.ToString().Replace("\n", "");
-            var v = JsonConvert.DeserializeObject<T>(s, settings);
-            return v;
+                };
+                var s = root.ToString().Replace("\n", "");
+                var v = JsonConvert.DeserializeObject<T>(s, settings);
+                return v;
+            }catch(Exception e)
+            {
+                
+                return default(T);
+            }
 
         }
         public static async Task<UserModel> Login(string email,string password)
         {
-            using (WebClient client = new WebClient())
+            try
             {
-                var reqparm = new System.Collections.Specialized.NameValueCollection();
-                reqparm.Add("user", email);
-                reqparm.Add("pwd", password);
-                byte[] responsebytes = client.UploadValues(NohandiLibrary.LINK_LOGIN, "POST", reqparm);
-                string responsebody = Encoding.UTF8.GetString(responsebytes);
-             var user=   Deserializedata<UserModel>(responsebody,rootName: "user");
-                var fav= Deserializedata<List<int>>(responsebody, rootName: "favorites");
-                if(user!=null&&fav!=null)
-                user.Fravorites = fav;
-                return user;
+                using (WebClient client = new WebClient())
+                {
+                    var reqparm = new System.Collections.Specialized.NameValueCollection();
+                    reqparm.Add("user", email);
+                    reqparm.Add("pwd", password);
+                    byte[] responsebytes = client.UploadValues(NohandiLibrary.LINK_LOGIN, "POST", reqparm);
+                    string responsebody = Encoding.UTF8.GetString(responsebytes);
+                    var user = Deserializedata<UserModel>(responsebody, rootName: "user");
+                    var fav = Deserializedata<List<int>>(responsebody, rootName: "favorites");
+                    if (user != null && fav != null)
+                        user.Fravorites = fav;
+                    return user;
+                }
+            }catch(Exception e)
+            {
+                return null;
             }
-            return null;
+            
         }
        
     }

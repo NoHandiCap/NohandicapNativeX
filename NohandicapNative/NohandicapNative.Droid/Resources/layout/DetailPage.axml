@@ -42,9 +42,9 @@
             android:layout_gravity="left|bottom"
             android:rating="3"
             android:stepSize="0"
-            android:progressTint="@color/starColor"           
+            android:progressTint="@color/starColor"
             android:layout_marginBottom="10dp"
-         />
+            android:visibility="gone" />
       </FrameLayout>
       <LinearLayout
           android:orientation="horizontal"
@@ -216,6 +216,6 @@
       android:layout_height="wrap_content"
       android:layout_gravity="bottom|end"
       app:backgroundTint="@color/favoritesButtonColor"
-      android:layout_margin="5dp"
-      android:src="@drawable/empty_star" />
+      android:src="@drawable/empty_star"
+      android:layout_marginBottom="60dp" />
 </FrameLayout>

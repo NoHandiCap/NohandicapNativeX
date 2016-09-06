@@ -107,14 +107,14 @@ namespace NohandicapNative.Droid
                 };
 
             }  
-            mainImg[0].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair1, 65,30 ));
-            mainImg[1].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair2, 65, 30));
-            mainImg[2].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair3, 65, 30));
+            mainImg[0].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair1, 140,65 ));
+            mainImg[1].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair2, 140, 65));
+            mainImg[2].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair3, 140, 65));
 
             additionalCategory = view.FindViewById<ButtonGridView>(Resource.Id.additionalCategory);
             GridRotation();
 
-            List<CategoryModel> additItems = NohandiLibrary.GetAdditionalCategory();
+            List<CategoryModel> additItems = dbCon.GetDataList<CategoryModel>(false);
    
             //  List<TabItem> mainItems = NohandiLibrary.GetMainCategory();
             //  mainCategory.Adapter = new GridViewAdapter(myContext, mainItems);

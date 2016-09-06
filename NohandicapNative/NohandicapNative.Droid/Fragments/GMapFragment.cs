@@ -20,12 +20,13 @@ using NohandicapNative.Droid.Services;
 using Android.Graphics;
 using Android.Content.PM;
 using NohandicapNative.Droid.Adapters;
+using Android.Util;
 
 namespace NohandicapNative.Droid
 {
-   public class GMapFragment : Android.Support.V4.App.Fragment, GoogleMap.IInfoWindowAdapter
+   public class GMapFragment : Android.Support.V4.App.Fragment, GoogleMap.IInfoWindowAdapter, IOnMapReadyCallback
     {
-        
+        static readonly string TAG = "X:" + typeof(GMapFragment).Name;
         MainActivity myContext;
         LayoutInflater inflater;
         MapView mapView;
@@ -45,33 +46,33 @@ namespace NohandicapNative.Droid
             // Gets the MapView from the XML layout and creates it
             mapView = (MapView)view.FindViewById(Resource.Id.mapView);
             mapView.OnCreate(savedInstanceState);
-            mapView.OnResume();
+            mapView.GetMapAsync(this);
             // Gets to GoogleMap from the MapView and does initialization stuff
-            map = mapView.Map;
-            if (map != null)
-            {
+            //map = mapView.Map;
+            //if (map != null)
+            //{
           
-                map.UiSettings.MyLocationButtonEnabled = true;
-                map.MyLocationEnabled = true;
-                map.UiSettings.MapToolbarEnabled = true;
-                map.UiSettings.ZoomControlsEnabled = true;
-                map.SetInfoWindowAdapter(this);
+            //    map.UiSettings.MyLocationButtonEnabled = true;
+            //    map.MyLocationEnabled = true;
+            //    map.UiSettings.MapToolbarEnabled = true;
+            //    map.UiSettings.ZoomControlsEnabled = true;
+            //    map.SetInfoWindowAdapter(this);
                
        
-            }
-            try
-            {
-                MapsInitializer.Initialize(this.Activity);
-            }
-            catch (GooglePlayServicesNotAvailableException e)
-            {
-                e.PrintStackTrace();
-            }
+            //}
+            //try
+            //{
+            //    MapsInitializer.Initialize(this.Activity);
+            //}
+            //catch (GooglePlayServicesNotAvailableException e)
+            //{
+            //    e.PrintStackTrace();
+            //}
 
             // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
             if(products.Count==0)
             SetData(dbCon.GetDataList<ProductModel>());
-            LoadData();
+        
             // Updates the location and zoom of the MapView
             
             return view;
@@ -85,46 +86,53 @@ namespace NohandicapNative.Droid
         }
         private void LoadData(bool filter = true)
         {
-          
-            if (myContext != null)
+            try
             {
-                
-                map.Clear();
-                markersList.Clear();
-                
-                var category = dbCon.GetDataList<CategoryModel>();
-                int categorySelected;
-                if (filter) {
-                    categorySelected = int.Parse(Utils.ReadFromSettings(myContext, Utils.MAIN_CAT_SELECTED_ID, "0"));
-                                    }
-                else
+                if (myContext != null)
                 {
-                    categorySelected = 0;
+
+                    map.Clear();
+                    markersList.Clear();
+
+                    var category = dbCon.GetDataList<CategoryModel>();
+                    int categorySelected;
+                    if (filter)
+                    {
+                        categorySelected = int.Parse(Utils.ReadFromSettings(myContext, Utils.MAIN_CAT_SELECTED_ID, "0"));
+                    }
+                    else
+                    {
+                        categorySelected = 0;
+                    }
+                    products = products.Where(x => x.MainCategoryID >= categorySelected).ToList();
+                    products.ForEach(product =>
+                    {
+                        var options = new MarkerOptions().SetPosition(new LatLng(double.Parse(product.Lat), double.Parse(product.Long))).SetTitle(product.FirmName);
+                        var cat = category.FirstOrDefault(y => y.ID == product.Categories[0]).Marker;
+                        var drawImage = Utils.SetDrawableSize(myContext, Utils.GetImage(myContext, cat), 60, 70);
+                        var bitmap = Utils.convertDrawableToBitmap(drawImage);
+                        options.SetIcon(BitmapDescriptorFactory.FromBitmap(bitmap));
+                        markerOptons.Add(options);
+
+
+                    });
+                    markerOptons.ForEach(x =>
+                    {
+
+                        var marker = map.AddMarker(x);
+                        markersList.Add(marker);
+
+                    });
+
                 }
-                products = products.Where(x => x.MainCategoryID >= categorySelected).ToList();
-                products.ForEach(product =>
+                if (markersList.Count != 0)
                 {
-                    var options = new MarkerOptions().SetPosition(new LatLng(double.Parse(product.Lat), double.Parse(product.Long))).SetTitle(product.FirmName);
-                    var cat = category.FirstOrDefault(y => y.ID == product.Categories[0]).Marker;
-                    var drawImage = Utils.SetDrawableSize(myContext, Utils.GetImage(myContext, cat), 35, 42);
-                    var bitmap = Utils.convertDrawableToBitmap(drawImage);
-                    options.SetIcon(BitmapDescriptorFactory.FromBitmap(bitmap));
-                    markerOptons.Add(options);
-
-
-                });
-                markerOptons.ForEach(x => {
-
-                    var marker = map.AddMarker(x);
-                    markersList.Add(marker);
-
-                });
-
-            }
-            if (markersList.Count != 0)
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.NewLatLngZoom(markersList[0].Position, 11);
+                    map.AnimateCamera(cameraUpdate);
+                }
+            }catch(Exception e)
             {
-                CameraUpdate cameraUpdate = CameraUpdateFactory.NewLatLngZoom(markersList[0].Position, 11);
-                map.AnimateCamera(cameraUpdate);
+                Log.Debug(TAG, e.Message);
             }
         }
         public void SetData(List<ProductModel> data,bool filter=true)
@@ -182,7 +190,16 @@ namespace NohandicapNative.Droid
 
             }
         }
-
+        public void OnMapReady(GoogleMap googleMap)
+        {
+            map = googleMap;
+            map.UiSettings.MyLocationButtonEnabled = true;
+            map.MyLocationEnabled = true;
+            map.UiSettings.MapToolbarEnabled = true;
+            map.UiSettings.ZoomControlsEnabled = true;
+            map.SetInfoWindowAdapter(this);
+            LoadData();
+        }
         public View GetInfoContents(Marker marker)
         {
             var info = inflater.Inflate(Resource.Layout.infoWindow, null);

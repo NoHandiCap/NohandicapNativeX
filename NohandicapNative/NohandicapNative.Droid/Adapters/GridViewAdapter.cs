@@ -56,7 +56,7 @@ namespace NohandicapNative.Droid.Adapters
             LayoutInflater inflater = (LayoutInflater)context
                 .GetSystemService(Context.LayoutInflaterService);
           
-                var item = categories[position];
+                var item = categories.FirstOrDefault(x=>x.Sort==position+1);
                 grid = new View(context);
                 grid = inflater.Inflate(Resource.Layout.grid_item, null);
                 TextView textView = (TextView)grid.FindViewById(Resource.Id.grid_text);
@@ -81,10 +81,10 @@ namespace NohandicapNative.Droid.Adapters
                {
                    var mainActivity = (MainActivity)context;
                    var products = dbCon.GetDataList<ProductModel>();
-                   var currentProducts = products.Where(prod => prod.Categories.Any(cat => cat == categories[position].ID)).ToList();
+                   var currentProducts = products.Where(prod => prod.Categories.Any(cat => cat == categories.FirstOrDefault(x => x.Sort == position + 1).ID)).ToList();
                    mainActivity.MapPage.SetData(currentProducts);         
                    mainActivity.SetCurrentTab(1);
-                   context.SupportActionBar.Title = GetItemText(position);
+                   context.SupportActionBar.Title =item.Name;
 
 
 

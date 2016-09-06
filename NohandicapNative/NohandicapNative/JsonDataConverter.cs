@@ -28,51 +28,59 @@ namespace NohandicapNative
                 ImageJsonModel model = new ImageJsonModel();
                 model.Thumbs = new List<ImageModel>();
                 model.Images = new List<ImageModel>();
-
+                
 #if __ANDROID__
                 var dbCon = Utils.GetDatabaseConnection();
-
-                foreach (var item in thumbs)
+                if (thumbs != null)
                 {
-                    try
+                    foreach (var item in thumbs)
                     {
-                        string filename="none";
-                        Uri uri = new Uri(item);                        
-                        filename = System.IO.Path.GetFileName(uri.LocalPath);
-                                            
-               
-                        ImageModel thumb = new ImageModel();
-                        Utils.SaveImageBitmapFromUrl(item, filename);
-                        thumb.LocalImage = filename;
-                        thumb.LinkImage = item;
-                       // dbCon.InsertUpdateProduct(thumb);
-
-                        model.Thumbs.Add(thumb);
-                    }catch(Exception e) {
-                        var s = e.Message;
-                    }
-                }           
-
-                foreach (var item in images)
-                {
-                    try {
-                        string filename = "none";
-                        Uri uri = new Uri(item);                       
+                        try
+                        {
+                            string filename = "none";
+                            Uri uri = new Uri(item);
                             filename = System.IO.Path.GetFileName(uri.LocalPath);
-                                          
-                    ImageModel img = new ImageModel();                 
-                    Utils.SaveImageBitmapFromUrl(item, filename);
-                    img.LocalImage = filename;
-                    img.LinkImage = item;
-                //  dbCon.InsertUpdateProduct(img);
-                        model.Images.Add(img);
-                    }
-                    catch (Exception e) {
-                        var s = e.Message;
-                       
+
+
+                            ImageModel thumb = new ImageModel();
+                            Utils.SaveImageBitmapFromUrl(item, filename);
+                            thumb.LocalImage = filename;
+                            thumb.LinkImage = item;
+                            // dbCon.InsertUpdateProduct(thumb);
+
+                            model.Thumbs.Add(thumb);
+                        }
+                        catch (Exception e)
+                        {
+                            var s = e.Message;
+                        }
                     }
                 }
-               
+                if (images != null)
+                {
+
+                    foreach (var item in images)
+                    {
+                        try
+                        {
+                            string filename = "none";
+                            Uri uri = new Uri(item);
+                            filename = System.IO.Path.GetFileName(uri.LocalPath);
+
+                            ImageModel img = new ImageModel();
+                            Utils.SaveImageBitmapFromUrl(item, filename);
+                            img.LocalImage = filename;
+                            img.LinkImage = item;
+                            //  dbCon.InsertUpdateProduct(img);
+                            model.Images.Add(img);
+                        }
+                        catch (Exception e)
+                        {
+                            var s = e.Message;
+
+                        }
+                    }
+                }
 
            //     dbCon.InsertUpdateProduct(model);
             ///    thumbsList.ForEach(x => x.ImageJsonID = model.ID);

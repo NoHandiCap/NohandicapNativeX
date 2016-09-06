@@ -177,18 +177,13 @@ namespace NohandicapNative.Droid
         {
             var options = new MarkerOptions().SetPosition(new LatLng(double.Parse(product.Lat), double.Parse(product.Long))).SetTitle(product.FirmName);
             var cat = categories.FirstOrDefault(y => y.ID == product.Categories[0]).Marker;
-            var drawImage = Utils.SetDrawableSize(this, Utils.GetImage(this, cat), 35, 42);
+            var drawImage = Utils.SetDrawableSize(this, Utils.GetImage(this, cat), 70, 80);
             var bitmap = Utils.convertDrawableToBitmap(drawImage);
             options.SetIcon(BitmapDescriptorFactory.FromBitmap(bitmap));
             googleMap.AddMarker(options);
             CameraPosition cameraPosition = new CameraPosition.Builder().Target(options.Position).Zoom(15.0f).Build();
             CameraUpdate cameraUpdate = CameraUpdateFactory.NewCameraPosition(cameraPosition);
-            googleMap.MoveCamera(cameraUpdate);
-            googleMap.UiSettings.ScrollGesturesEnabled = false;
-            googleMap.UiSettings.ZoomGesturesEnabled = false;
-            googleMap.UiSettings.MapToolbarEnabled = false;            
-            googleMap.MapClick += GoogleMap_MapClick;
-            googleMap.MarkerClick += GoogleMap_MapClick;
+            googleMap.MoveCamera(cameraUpdate);          
             
         }
 

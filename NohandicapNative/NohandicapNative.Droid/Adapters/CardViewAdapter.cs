@@ -85,6 +85,10 @@ namespace NohandicapNative.Droid.Adapters
                 //  image.SetImageDrawable(new BitmapDrawable(Utils.GetBitmap(mainimage[0].LocalImage)));
                 photo.SetImageDrawable(new BitmapDrawable(Utils.GetBitmap(mainimage[0].LocalImage)));
             }
+            else
+            {
+                photo.Visibility = ViewStates.Gone;
+            }
 
             var catImage = categories.FirstOrDefault(x => x.ID == products[position].Categories[0]);
 
@@ -97,7 +101,7 @@ namespace NohandicapNative.Droid.Adapters
             titleTextView.Text = products[position].FirmName;
             adress.Text = products[position].Adress;
             body.TextFormatted = Html.FromHtml(products[position].Description);
-            if (products[position].OpenTime != "") hours.Text = products[position].OpenTime;
+            if (products[position].OpenTime != "") hours.TextFormatted = Html.FromHtml(products[position].OpenTime.Replace("\r\n",""));
             if (products[position].BookingPage != "") booking.Text = products[position].BookingPage;
             if (products[position].HomePage != "") homeLink.Text = products[position].HomePage;
             #endregion

@@ -61,8 +61,7 @@ namespace NohandicapNative.Droid
            
            
 
-            loginButton = view.FindViewById<Button>(Resource.Id.btn_login);
-            laterButton = view.FindViewById<TextView>(Resource.Id.link_later);
+            loginButton = view.FindViewById<Button>(Resource.Id.btn_login);         
             signUpButton = view.FindViewById<Button>(Resource.Id.btn_sign_up);
 
             emailText = view.FindViewById<EditText>(Resource.Id.input_email);
