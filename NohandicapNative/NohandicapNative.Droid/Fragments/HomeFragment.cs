@@ -58,6 +58,7 @@ namespace NohandicapNative.Droid
             LinearLayout[] mainLayout = new LinearLayout[mainCategoriesLayout.Length];
 
             string[] mainItems = Resources.GetStringArray(Resource.Array.main_category_array);
+
           
             for (int i = 0; i < mainCat.Length; i++)
             {
@@ -73,11 +74,12 @@ namespace NohandicapNative.Droid
                 mainCat[i].SetTextColor(Color.Gray);
                 mainCat[i].SetTypeface(null, TypefaceStyle.Normal);
                 mainLayout[i].Selected = false;
+                var categorySelected =int.Parse(Utils.ReadFromSettings(myContext, Utils.MAIN_CAT_SELECTED_ID, "0"));
                 if (i == 0)
                 {
-                    mainCat[i].SetTextColor(Color.Black);
-                    mainCat[i].SetTypeface(null, TypefaceStyle.Bold);
-                    mainLayout[i].Selected = true;
+                    mainCat[categorySelected].SetTextColor(Color.Black);
+                    mainCat[categorySelected].SetTypeface(null, TypefaceStyle.Bold);
+                    mainLayout[categorySelected].Selected = true;
                 }
                 mainLayout[i].Click += (s, e) =>
                 {
@@ -98,6 +100,7 @@ namespace NohandicapNative.Droid
                                 mainCat[y].SetTextColor(Color.Black);
                                 mainCat[y].SetTypeface(null, TypefaceStyle.Bold);
                                 mainLayout[y].Selected = true;
+                                Utils.WriteToSettings(myContext,Utils.MAIN_CAT_SELECTED_ID, y.ToString());
                             }
                         }
                     }

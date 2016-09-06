@@ -34,11 +34,17 @@ using Android.Content.PM;
 using Android.Util;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace NohandicapNative.Droid
 {
     #region Application region
-    [Application]
+    #if DEBUG
+[Application(Debuggable=true)]
+#else
+[Application(Debuggable = false)]
+#endif
+
     public class NohandicapApplication : Application
     {
         static readonly string TAG = "X:" + typeof(NohandicapApplication).Name;
@@ -61,7 +67,6 @@ namespace NohandicapNative.Droid
         {
             base.OnCreate();
             Log.Debug(TAG, "Configure locale");
-
             ISharedPreferences settings = PreferenceManager.GetDefaultSharedPreferences(this);
             string lang = settings.GetString(Utils.LANG_SHORT, null);
             if (lang != null)
@@ -259,9 +264,20 @@ namespace NohandicapNative.Droid
         protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
         {
             base.OnActivityResult(requestCode, resultCode, data);
-            if (resultCode == Result.Ok)
+            if (requestCode == 1)
             {
-
+                if (resultCode == Result.Ok)
+                {
+                  var currentProductId= data.GetIntExtra(Utils.PRODUCT_ID,-1);
+                    if (currentProductId != -1)
+                    {
+                        var products = dbCon.GetDataList<ProductModel>();
+                        var currentProduct = dbCon.GetDataList<ProductModel>().Where(x => x.ID == currentProductId).ToList();
+                        MapPage.SetData(currentProduct);
+                        SetCurrentTab(1);
+                        SupportActionBar.Title = currentProduct[0].FirmName;
+                    }
+                }
             }
         }
        

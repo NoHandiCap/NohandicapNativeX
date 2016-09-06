@@ -23,7 +23,7 @@ using Android.Graphics;
 
 namespace NohandicapNative.Droid
 {
-    [Activity(Label = "FirstStartActivity", Theme = "@style/android:Theme.Holo.Light.NoActionBar")]
+    [Activity(Label = "FirstStartActivity")]
     public class FirstStartActivity : AppCompatActivity, AdapterView.IOnItemSelectedListener, IOnItemClickListener
     {
         static readonly string TAG = "X:" + typeof(FirstStartActivity).Name;
@@ -38,28 +38,42 @@ namespace NohandicapNative.Droid
         List<LanguageModel> Languages;
         protected override void OnCreate(Bundle bundle)
         {
+            Log.Debug(TAG, "Set Theme");
+
             SetTheme(Resource.Style.AppThemeNoBar);
 
             base.OnCreate(bundle);
+            Log.Debug(TAG, "Set view");
             // Set our view from the "main" layout resource
-            SetContentView(Resource.Layout.FirstStart);
-            Languages = new List<LanguageModel>();
-            dbCon = Utils.GetDatabaseConnection();
-            dbCon.CreateTables();
-        
-            nextButton = FindViewById<Button>(Resource.Id.next_button);
-            spinnerPrompt = FindViewById<TextView>(Resource.Id.lang_spinner_prompt);
-            langListView = FindViewById<ListView>(Resource.Id.languageList);
-            FillLanguageTable();
-            nextButton.Text = Resources.GetString(Resource.String.next);
-            nextButton.Click += (s, e) =>
+            try
             {
-              
-                LoadData();
+                SetContentView(Resource.Layout.FirstStart);
+            Log.Debug(TAG, "Set loadContent");
+            
+                Languages = new List<LanguageModel>();
 
-            };
-            langListView.OnItemClickListener = this;
-            Utils.mainActivity = this;
+                dbCon = Utils.GetDatabaseConnection();
+                Log.Debug(TAG, "Get database");
+
+                dbCon.CreateTables();
+                Log.Debug(TAG, "Creat Table");
+                nextButton = FindViewById<Button>(Resource.Id.next_button);
+                spinnerPrompt = FindViewById<TextView>(Resource.Id.lang_spinner_prompt);
+                langListView = FindViewById<ListView>(Resource.Id.languageList);
+                FillLanguageTable();
+                nextButton.Text = Resources.GetString(Resource.String.next);
+                nextButton.Click += (s, e) =>
+                {
+
+                    LoadData();
+
+                };
+                langListView.OnItemClickListener = this;
+                Utils.mainActivity = this;
+            }catch(Exception e)
+            {
+                Log.Debug(TAG, e.Message);
+            }
         }
         private void SetLocale(int position)
         {

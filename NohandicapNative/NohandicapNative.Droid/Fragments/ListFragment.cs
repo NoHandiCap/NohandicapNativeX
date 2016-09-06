@@ -13,6 +13,7 @@ using NohandicapNative.Droid.Adapters;
 using Android.App;
 using NohandicapNative.Droid.Services;
 using Android.Graphics;
+using Android.Util;
 
 namespace NohandicapNative.Droid
 {
@@ -28,6 +29,7 @@ namespace NohandicapNative.Droid
         CardViewAdapter cardViewAdapter;
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
+
             var view = inflater.Inflate(Resource.Layout.ListPage, container, false);
          listView = view.FindViewById<ListView>(Resource.Id.listview);
             view.SetBackgroundColor(myContext.Resources.GetColor(Resource.Color.backgroundColor));
@@ -38,7 +40,7 @@ namespace NohandicapNative.Droid
 
                 var activity = new Intent(myContext, typeof(DetailActivity));
                 activity.PutExtra(Utils.PRODUCT_ID, products[position].ID);
-                myContext.StartActivity(activity);
+                myContext.StartActivityForResult(activity,1);
               
            
                

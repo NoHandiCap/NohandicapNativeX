@@ -39,7 +39,7 @@ namespace NohandicapNative.Droid.Services
         public const string LOGIN_NAME = "loginName";
         public const string LOGIN_ID = "loginID";
         public const string PRODUCT_ID = "productId";
-
+        public const string MAIN_CAT_SELECTED_ID = "maincat";
 
         public static Context mainActivity;
         public static Android.Graphics.Drawables.Drawable GetImage(Context context, string image)
@@ -80,7 +80,7 @@ namespace NohandicapNative.Droid.Services
         }
         public static void ReloadMainActivity(Application application, Context context)
         {
-            ((NohandicapApplication)application).MainActivity.Finish();
+            ((MainActivity)mainActivity).Finish();
             Intent refresh = new Intent(context, typeof(MainActivity));
             context.StartActivity(refresh);
         }
@@ -102,7 +102,15 @@ namespace NohandicapNative.Droid.Services
         }
         public static SqliteService GetDatabaseConnection()
         {
-            return new SqliteService(new SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid(), Utils.PATH);
+            try
+            {
+                return new SqliteService(new SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid(), Utils.PATH);
+
+            }catch(Exception e)
+            {
+                Log.Debug("UTILS: ", e.Message);
+                return null;
+            }
         }
         public static Bitmap SaveImageBitmapFromUrl(string url, string name)
         {

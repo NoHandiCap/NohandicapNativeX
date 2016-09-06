@@ -43,16 +43,26 @@ namespace NohandicapNative.Droid.Activities
 
             startupWork.ContinueWith(t =>
             {
-              
-                if (!File.Exists(System.IO.Path.Combine(Utils.PATH, SqliteService.DB_NAME)))
+                try
                 {
-                    Log.Debug(TAG, "Work is finished - start FirstActivity.");
-                    StartActivity(new Intent(Application.Context, typeof(FirstStartActivity)));            
-                }else
-                {
-                    Log.Debug(TAG, "Work is finished - start MainActivity.");
-                    StartActivity(new Intent(Application.Context, typeof(MainActivity)));
+                    Log.Debug(TAG, "Check DataBase.");             
+                    if (!File.Exists(System.IO.Path.Combine(Utils.PATH, SqliteService.DB_NAME)))
+                    {
+                        Log.Debug(TAG, "Work is finished - start FirstActivity.");
+                        StartActivity(new Intent(Application.Context, typeof(FirstStartActivity)));
+                    }
+                    else
+                    {
+                        Log.Debug(TAG, "Work is finished - start MainActivity.");
+                        StartActivity(new Intent(Application.Context, typeof(MainActivity)));
+                    }
+
                 }
+                catch(Exception e)
+                {
+                    Log.Debug(TAG, e.Message);
+                }
+              
                 
             }, TaskScheduler.FromCurrentSynchronizationContext());
 

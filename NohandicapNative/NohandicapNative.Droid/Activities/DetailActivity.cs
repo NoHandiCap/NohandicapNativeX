@@ -185,7 +185,19 @@ namespace NohandicapNative.Droid
             CameraUpdate cameraUpdate = CameraUpdateFactory.NewCameraPosition(cameraPosition);
             googleMap.MoveCamera(cameraUpdate);
             googleMap.UiSettings.ScrollGesturesEnabled = false;
+            googleMap.UiSettings.ZoomGesturesEnabled = false;
+            googleMap.UiSettings.MapToolbarEnabled = false;            
+            googleMap.MapClick += GoogleMap_MapClick;
+            googleMap.MarkerClick += GoogleMap_MapClick;
             
+        }
+
+        private void GoogleMap_MapClick(object sender, object e)
+        {
+            Intent intent = new Intent();
+            intent.PutExtra(Utils.PRODUCT_ID, product.ID);
+            SetResult(Result.Ok, intent);
+            Finish();
         }
     }
 

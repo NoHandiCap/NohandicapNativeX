@@ -34,7 +34,7 @@ namespace NohandicapNative.Droid
         List<Marker> markersList;
         List<ProductModel> products;
         List<MarkerOptions> markerOptons;
-       
+
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             this.inflater = inflater;
@@ -83,15 +83,25 @@ namespace NohandicapNative.Droid
             markerOptons = new List<MarkerOptions>();
             products = new List<ProductModel>();
         }
-        private void LoadData()
+        private void LoadData(bool filter = true)
         {
           
             if (myContext != null)
             {
+                
                 map.Clear();
                 markersList.Clear();
                 
                 var category = dbCon.GetDataList<CategoryModel>();
+                int categorySelected;
+                if (filter) {
+                    categorySelected = int.Parse(Utils.ReadFromSettings(myContext, Utils.MAIN_CAT_SELECTED_ID, "0"));
+                                    }
+                else
+                {
+                    categorySelected = 0;
+                }
+                products = products.Where(x => x.MainCategoryID >= categorySelected).ToList();
                 products.ForEach(product =>
                 {
                     var options = new MarkerOptions().SetPosition(new LatLng(double.Parse(product.Lat), double.Parse(product.Long))).SetTitle(product.FirmName);
@@ -117,12 +127,13 @@ namespace NohandicapNative.Droid
                 map.AnimateCamera(cameraUpdate);
             }
         }
-        public void SetData(List<ProductModel> data)
+        public void SetData(List<ProductModel> data,bool filter=true)
         {
-           markerOptons.Clear();            
+           markerOptons.Clear();
             products = data;
             LoadData();
         }
+       
         public override void OnResume()
         {
             base.OnResume();
