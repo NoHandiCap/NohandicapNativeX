@@ -11,7 +11,7 @@ namespace NohandicapNative
 {
  public class RestApiService
     {
-        public static async Task<T> GetDataFromUrl<T>(string dataUri, string accessToken = null, string rootName = "result")
+        public static async Task<T> GetDataFromUrl<T>(string dataUri, string rootName = "result",bool readBack=true)
         {
             var url = dataUri;
             using (var httpClient = new HttpClient() { Timeout = TimeSpan.FromSeconds(10) })
@@ -30,7 +30,7 @@ namespace NohandicapNative
                     if (response.StatusCode == HttpStatusCode.OK ||
                         response.StatusCode == HttpStatusCode.Created)
                     {
-                        if (content.Length > 0)
+                        if (content.Length > 0&&readBack)
                         {
                             if (rootName == null)
                             {
@@ -59,7 +59,7 @@ namespace NohandicapNative
         }
            
         
-        public static T Deserializedata<T>(string content, string accessToken = null, string rootName = "result")
+        public static T Deserializedata<T>(string content,  string rootName = "result")
         {
             try
             {

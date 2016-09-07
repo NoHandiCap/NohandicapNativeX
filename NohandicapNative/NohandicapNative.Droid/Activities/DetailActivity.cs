@@ -39,40 +39,27 @@ namespace NohandicapNative.Droid
         TextView categoriesTextView;
         ImageView mapImageView;
 
-        MapView mapView;
+       // MapView mapView;
         GoogleMap map;
+        MapFragment mapFragment;
         protected override void OnCreate(Bundle bundle)
         {
             SetTheme(Resource.Style.AppThemeNoBar);
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.DetailPage);  
             dbCon = Utils.GetDatabaseConnection();
-            mapView = (MapView)FindViewById(Resource.Id.mapViewDetail);
-            mapView.OnCreate(bundle);
-            mapView.GetMapAsync(this);
+            mapFragment =FragmentManager.FindFragmentById(Resource.Id.map) as MapFragment;
+
+            mapFragment.GetMapAsync(this);
+         
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             FloatingActionButton fab = FindViewById<FloatingActionButton>(Resource.Id.fab);
             descriptionTextView = (TextView)FindViewById(Resource.Id.descriptionTextView);
             adressTextView = (TextView)FindViewById(Resource.Id.adressTextView);
             phoneTextView = (TextView)FindViewById(Resource.Id.phoneTextView);          
             categoriesTextView = (TextView)FindViewById(Resource.Id.categoriesTextView);
-          //  mapImageView = (ImageView)FindViewById(Resource.Id.mapImageView);
-            fab.Selected = false;
-            fab.Click += (s, e) =>
-            {
-                if (!fab.Selected)
-                {
-                    fab.SetImageResource(Resource.Drawable.filled_star);
-                    fab.Selected = true;
-                }
-                else
-                {
-                    fab.SetImageResource(Resource.Drawable.empty_star);
-                    fab.Selected = false;
-
-                }
-
-            };
+            //  mapImageView = (ImageView)FindViewById(Resource.Id.mapImageView);
+           
             SetSupportActionBar(toolbar);
        
             SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Resources.GetColor(Resource.Color.detailBarColor)));
@@ -100,12 +87,45 @@ namespace NohandicapNative.Droid
                 bulledList += "&#8226;" + categories.FirstOrDefault(y => y.ID == x).Name + "<br/>";
             });
             categoriesTextView.TextFormatted=Html.FromHtml(bulledList);
-          //  DisplayMetrics displaymetrics = new DisplayMetrics();
-          //   WindowManager.DefaultDisplay.GetMetrics(displaymetrics);
-          //  int width = displaymetrics.WidthPixels;
-          //  string url = "http://maps.googleapis.com/maps/api/staticmap?zoom=17&size="+width + "x300&maptype=normal&markers=icon:https://maps.gstatic.com/mapfiles/ms2/micons/red-dot.png|"+product.Lat+"," + product.Long;
-          //  var img = Utils.SaveImageBitmapFromUrl(url, product.FirmName + "map");
-          //  mapImageView.SetImageBitmap(img);   
+            var user = dbCon.GetDataList<UserModel>().FirstOrDefault();
+            if (user != null)
+            {
+                var userFavorites = user.Fravorites;
+                if (userFavorites.Any(x => x == product.ID))
+                {
+                    fab.SetImageResource(Resource.Drawable.filled_star);
+                    fab.Selected = true;
+                }
+            }
+            fab.Click += (s, e) =>
+            {
+                if (user != null)
+                {
+                    if (!fab.Selected)
+                    {
+                        fab.SetImageResource(Resource.Drawable.filled_star);
+                        fab.Selected = true;
+                        user.Fravorites.Add(product.ID);
+                        dbCon.InsertUpdateProduct(user);
+                        var url = String.Format(NohandiLibrary.LINK_SAVEFAV, user.ID, product.ID);
+                        RestApiService.GetDataFromUrl<UserModel>(url, readBack: false);         
+                    }
+                    else
+                    {
+                        fab.SetImageResource(Resource.Drawable.empty_star);
+                        fab.Selected = false;
+                        user.Fravorites.Remove(product.ID);
+                        dbCon.InsertUpdateProduct(user);
+                        ((MainActivity)Utils.mainActivity).Favorites.ReloadData();
+                    }
+                }
+                else
+                {
+                    Toast.MakeText(this, "Please login", ToastLength.Short).Show();
+                }
+
+            };
+   
         }    
         private void MapInitialize()
         {
@@ -156,21 +176,21 @@ namespace NohandicapNative.Droid
 
         protected override void OnResume()
         {
-            mapView.OnResume();
+          //  mapView.OnResume();
             base.OnResume();
         }
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            mapView.OnDestroy();
+         //   mapView.OnDestroy();
 
         }
 
         public override void OnLowMemory()
         {
             base.OnLowMemory();
-            mapView.OnLowMemory();
+         //   mapView.OnLowMemory();
         }
 
         public void OnMapReady(GoogleMap googleMap)

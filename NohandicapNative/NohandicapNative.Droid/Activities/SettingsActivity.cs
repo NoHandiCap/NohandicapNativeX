@@ -18,6 +18,7 @@ using NohandicapNative.Droid.Services;
 using Java.Util;
 using Android.Content.Res;
 using static Android.Widget.AdapterView;
+using Android.Util;
 
 namespace NohandicapNative.Droid
 {
@@ -31,6 +32,7 @@ namespace NohandicapNative.Droid
         Resources res;
         LanguageModel selectedLanguage;
         ListView langListView;
+        Button syncButton;
         public SettingsActivity()
         {
             Utils.updateConfig(this);
@@ -41,7 +43,7 @@ namespace NohandicapNative.Droid
             SetTheme(Resource.Style.AppThemeNoBar);
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.SettingsPage);
-
+            syncButton = (Button)FindViewById(Resource.Id.syncButton);
             dbCon = Utils.GetDatabaseConnection();
             languageList = dbCon.GetDataList<LanguageModel>();
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
@@ -57,8 +59,34 @@ namespace NohandicapNative.Droid
                 Text = x.LanguageName
             }));
             var currentLocale = Utils.ReadFromSettings(this, Utils.LANG_ID_TAG);
-            langListView.Adapter = new RadioButtonListAdapter(this, flags, langList,int.Parse(currentLocale)-1);           
-         
+            langListView.Adapter = new RadioButtonListAdapter(this, flags, langList,int.Parse(currentLocale)-1);
+            syncButton.Click += async(s,e)=>{
+                ProgressDialog progressDialog = new ProgressDialog(this,
+          Resource.Style.AppThemeDarkDialog);
+                progressDialog.Indeterminate = true;
+                var a = Resources.GetString(Resource.String.load_data);
+                progressDialog.SetMessage(a);
+                progressDialog.Show();
+                var _selectedLangID = Utils.ReadFromSettings(this,Utils.LANG_ID_TAG);
+                bool result = await dbCon.SynchronizeDataBase(_selectedLangID);
+                if (result)
+                {
+
+                    // On complete call either onLoginSuccess or onLoginFailed
+
+                    // onLoginFailed();
+                    progressDialog.Dismiss();
+                    Toast.MakeText(this, "Synchronized", ToastLength.Short).Show();
+
+
+
+                }
+                else
+                {
+                    progressDialog.Dismiss();
+                    Toast.MakeText(this, "Failed", ToastLength.Short).Show();                  
+                }
+            };
          
 
         }        

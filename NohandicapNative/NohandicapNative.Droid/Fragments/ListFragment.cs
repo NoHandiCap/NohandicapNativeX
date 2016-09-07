@@ -45,8 +45,7 @@ namespace NohandicapNative.Droid
            
                
             };
-            LoadData();
-            listView.Adapter = cardViewAdapter;
+            ReloadData();
             return view;
         }
         public ListFragment()
@@ -64,19 +63,20 @@ namespace NohandicapNative.Droid
             base.OnHiddenChanged(hidden);
             if (!hidden)
             {
-                LoadData();
-                listView.Adapter = cardViewAdapter;
+                ReloadData();
+               
             }
         }
-        private async void LoadData()
+        private async void ReloadData()
         {
-                    products = dbCon.GetDataList<ProductModel>();
-                
-                cardViewAdapter = new CardViewAdapter(myContext, products);
+            var category = dbCon.GetDataList<CategoryModel>();
+            int categorySelected = int.Parse(Utils.ReadFromSettings(myContext, Utils.MAIN_CAT_SELECTED_ID, "0"));                    
+            products = dbCon.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= categorySelected).ToList();                
+            cardViewAdapter = new CardViewAdapter(myContext, products);
+            listView.Adapter = cardViewAdapter;
+            //var listAdapter = new ListAdapter(myContext, product);
 
-                //var listAdapter = new ListAdapter(myContext, product);
-         
-         
+
         }
         public override void OnAttach(Activity activity)
         {

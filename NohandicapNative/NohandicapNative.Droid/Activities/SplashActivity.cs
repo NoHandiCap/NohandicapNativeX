@@ -14,6 +14,7 @@ using Android.Util;
 using System.Threading.Tasks;
 using System.IO;
 using NohandicapNative.Droid.Services;
+using HockeyApp.Android;
 
 namespace NohandicapNative.Droid.Activities
 {
@@ -27,7 +28,9 @@ namespace NohandicapNative.Droid.Activities
         public override void OnCreate(Bundle savedInstanceState, PersistableBundle persistentState)
         {
             base.OnCreate(savedInstanceState, persistentState);
+           // CrashManager.Register(this);
             Log.Debug(TAG, "SplashActivity.OnCreate");
+         
         }
 
         protected override void OnResume()

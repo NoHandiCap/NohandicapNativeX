@@ -51,7 +51,7 @@ namespace NohandicapNative.Droid
             //    });
             //}
             // mainCategory.Adapter = new RadioButtonListAdapter(myContext, main);
-
+            
             this.HasOptionsMenu = true;
             TextView[] mainCat = new TextView[mainCategoriesText.Length];
             ImageView[] mainImg = new ImageView[mainCategoriesImgView.Length];

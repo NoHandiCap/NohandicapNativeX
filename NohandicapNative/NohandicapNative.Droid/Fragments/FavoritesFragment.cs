@@ -79,6 +79,11 @@ namespace NohandicapNative.Droid
         public override void OnHiddenChanged(bool hidden)
         {
             base.OnHiddenChanged(hidden);
+            if (!hidden)
+            {
+                ReloadData();
+              
+            }
           
         }
         public async void login()
@@ -189,19 +194,16 @@ namespace NohandicapNative.Droid
                 activity.PutExtra(Utils.PRODUCT_ID, products[position].ID);
                 myContext.StartActivity(activity);
             };
-            LoadData();
-            listView.Adapter = cardViewAdapter;
+            ReloadData();
+        
           
         }
-        private async void LoadData()
+        public async void ReloadData()
         {          
                 var user = dbCon.GetDataList<UserModel>().FirstOrDefault();
-                products = dbCon.GetDataList<ProductModel>().Where(x => user.Fravorites.Any(y => y == x.ID)).ToList();
-         
-            cardViewAdapter = new CardViewAdapter(myContext, products);
-
-            //var listAdapter = new ListAdapter(myContext, product);
-
+                products = dbCon.GetDataList<ProductModel>().Where(x => user.Fravorites.Any(y => y == x.ID)).ToList();         
+             cardViewAdapter = new CardViewAdapter(myContext, products);
+            listView.Adapter = cardViewAdapter;
 
         }
         #endregion

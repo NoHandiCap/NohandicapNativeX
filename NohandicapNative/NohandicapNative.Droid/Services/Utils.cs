@@ -22,6 +22,7 @@ namespace NohandicapNative.Droid.Services
 {
     public class Utils
     {
+       
         public const string HOME_TAG = "0";
         public const string MAP_TAG = "1";
         public const string LIST_TAG = "2";

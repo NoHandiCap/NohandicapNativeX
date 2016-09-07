@@ -8,41 +8,30 @@ using Android.Views;
 using Android.OS;
 using Android.Support.V7.App;
 using BottomNavigationBar;
-using Android.Support.V4.Content;
 using Android.Graphics;
 using BottomNavigationBar.Listeners;
-
 using System.Collections.Generic;
-using NohandicapNative;
-using NohandicapNative.Droid;
-
 using Android.Graphics.Drawables;
-
-using Android.Support.V7.Widget;
 using Android.Widget;
-using Java.Lang;
-using Android.Support.V4.App;
 using Android.App;
-
 using Android.Support.Design.Widget;
 using NohandicapNative.Droid.Services;
-using System.IO;
 using Android.Content.Res;
 using Java.Util;
 using Android.Preferences;
-using Android.Content.PM;
 using Android.Util;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
+using HockeyApp.Android;
 
 namespace NohandicapNative.Droid
 {
     #region Application region
-    #if DEBUG
+#if DEBUG
 [Application(Debuggable=true)]
 #else
-[Application(Debuggable = false)]
+    [Application(Debuggable = true)]
 #endif
 
     public class NohandicapApplication : Application
@@ -76,7 +65,7 @@ namespace NohandicapNative.Droid
                 Utils.updateConfig(this, BaseContext.Resources.Configuration);
             }     
             Log.Debug(TAG, "Locale configuration finished");
-
+           
 
 
         }
@@ -106,6 +95,7 @@ namespace NohandicapNative.Droid
         {
             SetTheme(Resource.Style.AppThemeNoBar);
             base.OnCreate(bundle);
+         //   CrashManager.Register(this);
             SetContentView(Resource.Layout.Main);
             Utils.mainActivity = this;
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);          
@@ -123,7 +113,6 @@ namespace NohandicapNative.Droid
                 _bottomBar.SelectTabAtPosition(postion, false);
             }
             Utils.mainActivity = this;
-   
             ThreadPool.QueueUserWorkItem(o => CheckDataBase());
         }
         public async Task<bool> CheckDataBase()
@@ -170,6 +159,8 @@ namespace NohandicapNative.Droid
             SupportActionBar.SetDisplayShowTitleEnabled(true);
             SupportActionBar.SetDefaultDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetDisplayHomeAsUpEnabled(false);     
+            SupportActionBar.SetHomeButtonEnabled(true);
+
             _bottomBar.HideShadow();
             Log.Debug(TAG, "Bar prepared");
             
