@@ -72,7 +72,7 @@ namespace NohandicapNative.Droid
     }
     #endregion
 
-    [Activity(Label = "Nohandicap", WindowSoftInputMode = SoftInput.AdjustPan, Icon = "@drawable/logo_small", ConfigurationChanges =Android.Content.PM.ConfigChanges.Orientation | 
+    [Activity(Label = "Nohandicap", WindowSoftInputMode = SoftInput.AdjustPan,LaunchMode =Android.Content.PM.LaunchMode.SingleTop, Icon = "@drawable/logo_small", ConfigurationChanges =Android.Content.PM.ConfigChanges.Orientation | 
         Android.Content.PM.ConfigChanges.ScreenSize
        )]
 	public class MainActivity : AppCompatActivity,  IOnTabClickListener
@@ -114,6 +114,8 @@ namespace NohandicapNative.Droid
             }
             Utils.mainActivity = this;
             ThreadPool.QueueUserWorkItem(o => CheckDataBase());
+            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+            SupportActionBar.SetHomeButtonEnabled(true);
         }
         public async Task<bool> CheckDataBase()
         {
@@ -136,6 +138,7 @@ namespace NohandicapNative.Droid
             SetSupportActionBar(toolbar);
             _bottomBar.NoNavBarGoodness();
             _bottomBar.NoTabletGoodness();
+          
             var tabItems = new BottomBarTab[items.Count];
             for (int i = 0; i < tabItems.Length; i++)
             {
@@ -153,13 +156,10 @@ namespace NohandicapNative.Droid
                 _bottomBar.MapColorForTab(i, tab.Color);
                 //  _bottomBar.MapColorForTab(i, Color.ParseColor(Utils.BACKGROUND));
 
-            }
+            }    
             _bottomBar.SetOnTabClickListener(this);
-            SupportActionBar.SetIcon(Utils.SetDrawableSize(this, Resource.Drawable.logo_small, 80, 80));
-            SupportActionBar.SetDisplayShowTitleEnabled(true);
-            SupportActionBar.SetDefaultDisplayHomeAsUpEnabled(true);
-            SupportActionBar.SetDisplayHomeAsUpEnabled(false);     
-            SupportActionBar.SetHomeButtonEnabled(true);
+         //   SupportActionBar.SetIcon(Utils.SetDrawableSize(this, Resource.Drawable.logo_small, 80, 80));
+            SupportActionBar.SetHomeAsUpIndicator(Utils.SetDrawableSize(this, Resource.Drawable.logo_small, 80, 80));
 
             _bottomBar.HideShadow();
             Log.Debug(TAG, "Bar prepared");
@@ -169,7 +169,7 @@ namespace NohandicapNative.Droid
         #region IOnTabClickListener implementation
         public void SetCurrentTab(int position)
         {
-            _bottomBar.SelectTabAtPosition(position, true);
+            _bottomBar.SelectTabAtPosition(position, false);
         }
         public void OnTabSelected(int position)
         {
@@ -235,11 +235,22 @@ namespace NohandicapNative.Droid
           
         }
         #endregion
+        public override bool OnOptionsItemSelected(IMenuItem item)
+        {
+            switch (item.ItemId)
+            {
+                // Respond to the action bar's Up/Home button
+                case Android.Resource.Id.Home:
+                    SetCurrentTab(0);
+                    return true;
+            }
+            return base.OnOptionsItemSelected(item);
+        }
 
-       
+      
 
         #region ActivityLifeCycle implementation
-       
+
         protected override void OnSaveInstanceState(Bundle outState)
         {
             base.OnSaveInstanceState(outState);

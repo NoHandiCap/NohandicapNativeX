@@ -13,14 +13,19 @@ namespace NohandicapNative
         [PrimaryKey]
         [JsonProperty(PropertyName = "id")]
         public int ID { get; set; }
-
+        [JsonProperty(PropertyName = "fullname")]
+        public string Vname { get; set; }  
+        public string Nname { get; set; }       
+        public string Phone { get; set; } 
         [JsonProperty(PropertyName = "username")]
+        public string Login { get; set; }  
+        public string Sex { get; set; }       
         public string Name { get; set; }
+        public string Password { get; set; }
         [JsonProperty(PropertyName = "mail")]
-        public string E_mail { get; set; }
-        [TextBlob("FavoritesBlobbed")]
+        public string Email { get; set; }
+        [TextBlob("FavoritesBlobbed"),JsonProperty(PropertyName = " favorites")]
         public List<int> Fravorites { get; set; }
-
-       public string FavoritesBlobbed { get; set; }
+       public string FavoritesBlobbed { get; set; }//for database
     }
 }

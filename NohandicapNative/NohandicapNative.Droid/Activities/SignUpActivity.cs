@@ -10,6 +10,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.Support.V7.App;
+using NohandicapNative.Droid.Services;
 
 namespace NohandicapNative.Droid
 {
@@ -18,24 +19,32 @@ namespace NohandicapNative.Droid
        )]
     public class SigUpActivity : AppCompatActivity
     {
+        SqliteService dbCon;
         Button signUpButton;
         TextView loginLinkButton;
         EditText emailText;
         EditText passwordText;
+        EditText passwordText2;
+
         EditText nameText;     
         EditText phoneText;
         EditText nachNameText;
+        UserModel createdUser;
+        RadioGroup radioSex;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             SetTheme(Resource.Style.AppThemeNoBar);
             base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.SignUp);         
+            SetContentView(Resource.Layout.SignUp);
+            dbCon = Utils.GetDatabaseConnection();
             // Create your application here
             loginLinkButton = FindViewById<TextView>(Resource.Id.link_login);
             signUpButton = FindViewById<Button>(Resource.Id.btn_signup);
-
+            radioSex= FindViewById<RadioGroup>(Resource.Id.radioSex);
             emailText = FindViewById<EditText>(Resource.Id.input_email);
             passwordText = FindViewById<EditText>(Resource.Id.input_password);
+            passwordText2 = FindViewById<EditText>(Resource.Id.input_password2);
             phoneText = FindViewById<EditText>(Resource.Id.input_mobile);
             nachNameText = FindViewById<EditText>(Resource.Id.input_nachName);
             nameText = FindViewById<EditText>(Resource.Id.input_name);
@@ -48,7 +57,7 @@ namespace NohandicapNative.Droid
                 Finish();
             };
         }
-        public void signup()
+        public async void signup()
         {
 
 
@@ -66,19 +75,16 @@ namespace NohandicapNative.Droid
             progressDialog.SetMessage("Creating Account...");
             progressDialog.Show();
 
-            String name = nameText.Text;
-            String email = emailText.Text;
-            String password = passwordText.Text;
-            new Android.OS.Handler().PostDelayed(() =>
+           var result = await RestApiService.SignUp(createdUser);
+            if (result)
             {
-
-                // On complete call either onSignupSuccess or onSignupFailed 
-                // depending on success
                 onSignupSuccess();
-                // onSignupFailed();
-                progressDialog.Dismiss();
-
-            }, 3000);
+            }
+            else
+            {
+                onSignupFailed();
+            }
+          
         }
         public void onSignupSuccess()
         {
@@ -97,12 +103,16 @@ namespace NohandicapNative.Droid
         public bool validate()
         {
             bool valid = true;
-
+            createdUser = new UserModel();
             string name = nameText.Text;
             string email = emailText.Text;
             string password = passwordText.Text;
+            string password2 = passwordText2.Text;
+
             string phone = phoneText.Text;
             string nachName = nachNameText.Text;
+            int radioButtonID = radioSex.CheckedRadioButtonId;
+            RadioButton radioButton = (RadioButton)radioSex.FindViewById(radioButtonID);
             if (string.IsNullOrEmpty(name) || name.Length < 3)
             {
                 nameText.Error="at least 3 characters";
@@ -132,6 +142,13 @@ namespace NohandicapNative.Droid
             {
                 passwordText.Error=null;
             }
+            if (password2 != password2)
+            {
+                passwordText.Error = "Password not ";
+                passwordText2.Error = "Password not ";
+                valid = false;
+            }
+
 
             if (string.IsNullOrEmpty(phone) || !Android.Util.Patterns.Phone.Matcher(phone).Matches())
             {
@@ -151,7 +168,27 @@ namespace NohandicapNative.Droid
             {
                 nachNameText.Error = null;
             }
+            createdUser.Nname = nachName;
+            createdUser.Vname = name;
+            createdUser.Phone = phone.Replace("+","00");
+            createdUser.Password = password;
+            createdUser.Email = email;
+            createdUser.Login = email.Substring(0,email.LastIndexOf('@') );
+            if (radioButton == null)
+            {
+               Toast.MakeText(this,"Geschlecht",ToastLength.Short).Show();
+                valid = false;
+            }            
+            if (radioButtonID == Resource.Id.radioM)
+            {
+                createdUser.Sex = "m";
 
+            }
+            else
+            {
+                createdUser.Sex = "w";
+
+            }
             return valid;
         }
     }

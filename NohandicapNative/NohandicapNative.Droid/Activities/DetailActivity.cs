@@ -21,12 +21,15 @@ using Android.Gms.Maps;
 using Android.Gms.Common;
 using Android.Gms.Maps.Model;
 using Android.Util;
+using System.Globalization;
 
 namespace NohandicapNative.Droid
 {
     [Activity(Label = "DetailActivity", ParentActivity = typeof(MainActivity))]
     public class DetailActivity : AppCompatActivity, IOnMapReadyCallback
+       
     {
+        static readonly string TAG = "X:" + typeof(DetailActivity).Name;
         Android.Support.V7.Widget.Toolbar toolbar;
         List<CategoryModel> categories;
 
@@ -48,6 +51,10 @@ namespace NohandicapNative.Droid
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.DetailPage);  
             dbCon = Utils.GetDatabaseConnection();
+            try
+            {
+
+
             mapFragment =FragmentManager.FindFragmentById(Resource.Id.map) as MapFragment;
 
             mapFragment.GetMapAsync(this);
@@ -125,11 +132,15 @@ namespace NohandicapNative.Droid
                 }
 
             };
-   
+            }
+            catch (Exception e) {
+                Log.Error(TAG,"OnCreate: "+ e.Message + " " + e.StackTrace);
+
+            }
         }    
         private void MapInitialize()
         {
-          
+
             // Gets the MapView from the XML layout and creates it
 
             //mapView.OnResume();
@@ -147,12 +158,19 @@ namespace NohandicapNative.Droid
             //{
             //    e.PrintStackTrace();
             //}
-            var options = new MarkerOptions().SetPosition(new LatLng(double.Parse(product.Lat), double.Parse(product.Long))).SetTitle(product.FirmName);
+            try { 
+            var options = new MarkerOptions().SetPosition(new LatLng(double.Parse(product.Lat, CultureInfo.InvariantCulture), double.Parse(product.Long, CultureInfo.InvariantCulture))).SetTitle(product.FirmName);
             var cat = categories.FirstOrDefault(y => y.ID == product.Categories[0]).Marker;
             var drawImage = Utils.SetDrawableSize(this, Utils.GetImage(this, cat), 35, 42);
             var bitmap = Utils.convertDrawableToBitmap(drawImage);
             options.SetIcon(BitmapDescriptorFactory.FromBitmap(bitmap));
             map.AddMarker(options);
+            }
+            catch (Exception e)
+            {
+                Log.Error(TAG, "MapInitialize: "+e.Message + " " + e.StackTrace);
+
+            }
         }  
       
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -195,7 +213,8 @@ namespace NohandicapNative.Droid
 
         public void OnMapReady(GoogleMap googleMap)
         {
-            var options = new MarkerOptions().SetPosition(new LatLng(double.Parse(product.Lat), double.Parse(product.Long))).SetTitle(product.FirmName);
+            try { 
+            var options = new MarkerOptions().SetPosition(new LatLng(double.Parse(product.Lat, CultureInfo.InvariantCulture), double.Parse(product.Long, CultureInfo.InvariantCulture))).SetTitle(product.FirmName);
             var cat = categories.FirstOrDefault(y => y.ID == product.Categories[0]).Marker;
             var drawImage = Utils.SetDrawableSize(this, Utils.GetImage(this, cat), 70, 80);
             var bitmap = Utils.convertDrawableToBitmap(drawImage);
@@ -203,8 +222,14 @@ namespace NohandicapNative.Droid
             googleMap.AddMarker(options);
             CameraPosition cameraPosition = new CameraPosition.Builder().Target(options.Position).Zoom(15.0f).Build();
             CameraUpdate cameraUpdate = CameraUpdateFactory.NewCameraPosition(cameraPosition);
-            googleMap.MoveCamera(cameraUpdate);          
-            
+            googleMap.MoveCamera(cameraUpdate);
+
+            }
+            catch (Exception e)
+            {
+                Log.Error(TAG, "OnMapReady: " + e.Message + " " + e.StackTrace);
+
+            }
         }
 
         private void GoogleMap_MapClick(object sender, object e)

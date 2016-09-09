@@ -22,6 +22,7 @@ using Android.Content.PM;
 using NohandicapNative.Droid.Adapters;
 using Android.Util;
 using Android.Gms.Maps;
+using System.Globalization;
 
 namespace NohandicapNative.Droid
 {
@@ -42,10 +43,13 @@ namespace NohandicapNative.Droid
             this.inflater = inflater;
             var view = inflater.Inflate(Resource.Layout.MapPage, container, false);
             view.SetBackgroundColor(myContext.Resources.GetColor(Resource.Color.backgroundColor));
-            HasOptionsMenu = true;
-            mapFragment = myContext.FragmentManager.FindFragmentById(Resource.Id.map) as MapFragment;
+            HasOptionsMenu = true;           
 
-            mapFragment.GetMapAsync(this);
+
+                mapFragment = myContext.FragmentManager.FindFragmentById(Resource.Id.map).JavaCast<MapFragment>();
+
+                mapFragment.GetMapAsync(this);
+           
             //  // Gets the MapView from the XML layout and creates it
             //  mapView = (MapView)view.FindViewById(Resource.Id.mapView);
             //  mapView.OnCreate(savedInstanceState);
@@ -89,14 +93,15 @@ namespace NohandicapNative.Droid
         }
         private void LoadData(bool filter = true)
         {
-          
+            try { 
+            Toast.MakeText(myContext, "Load Data", ToastLength.Short).Show();
                 if (myContext != null&map!=null)
-                {
-
-                    map.Clear();
+                {                    
                     markersList.Clear();
+                    map.Clear();
 
-                    var category = dbCon.GetDataList<CategoryModel>();
+
+                var category = dbCon.GetDataList<CategoryModel>();
                     int categorySelected;
                     if (filter)
                     {
@@ -106,10 +111,20 @@ namespace NohandicapNative.Droid
                     {
                         categorySelected = 0;
                     }
-                    products = products.Where(x => x.MainCategoryID >= categorySelected).ToList();
+
+
+                products = products.Where(x => x.MainCategoryID >= categorySelected).ToList();
                     products.ForEach(product =>
                     {
-                        var options = new MarkerOptions().SetPosition(new LatLng(double.Parse(product.Lat), double.Parse(product.Long))).SetTitle(product.FirmName);
+                       
+                       // Toast.MakeText(myContext, double.Parse(product.Lat).ToString() + "  " + double.Parse(product.Long).ToString(), ToastLength.Short).Show();
+                     //   Toast.MakeText(myContext, double.Parse(product.Lat, CultureInfo.InvariantCulture).ToString() + "  " + double.Parse(product.Long, CultureInfo.InvariantCulture).ToString(), ToastLength.Short).Show();
+
+                        var pos = new LatLng(double.Parse(product.Lat, CultureInfo.InvariantCulture), double.Parse(product.Long, CultureInfo.InvariantCulture));
+                  
+                        var title = product.FirmName;
+         
+                        var options = new MarkerOptions().SetPosition(pos).SetTitle(product.FirmName);          
                         var cat = category.FirstOrDefault(y => y.ID == product.Categories[0]).Marker;
                         var drawImage = Utils.SetDrawableSize(myContext, Utils.GetImage(myContext, cat), 60, 70);
                         var bitmap = Utils.convertDrawableToBitmap(drawImage);
@@ -117,12 +132,14 @@ namespace NohandicapNative.Droid
                         markerOptons.Add(options);
 
 
-                    });
-                    markerOptons.ForEach(x =>
+                    });     
+                
+                markerOptons.ForEach(x =>
                     {
 
                         var marker = map.AddMarker(x);
                         markersList.Add(marker);
+                   //    Toast.MakeText(myContext, marker.Position.Latitude +"  "+marker.Position.Longitude, ToastLength.Short).Show();
 
                     });
 
@@ -130,14 +147,18 @@ namespace NohandicapNative.Droid
                 if (markersList.Count != 0)
                 {
                     CameraPosition.Builder builder = CameraPosition.InvokeBuilder();
-                    builder.Target(new LatLng(double.Parse(products[0].Lat), double.Parse(products[0].Long))).Zoom(8);
+                    builder.Target(new LatLng(double.Parse(products[0].Lat, CultureInfo.InvariantCulture), double.Parse(products[0].Long, CultureInfo.InvariantCulture))).Zoom(10);
                     CameraPosition cameraPosition = builder.Build();
                     CameraUpdate cameraUpdate = CameraUpdateFactory.NewCameraPosition(cameraPosition);
+                    map.AnimateCamera(cameraUpdate);
+                       // Toast.MakeText(myContext, "Camera", ToastLength.Short).Show();
 
-                    map.MoveCamera(cameraUpdate);
-                 
-                }
-          
+            }
+            }
+            catch (Exception e)
+            {
+                Log.Error(TAG, e.Message," "+e.InnerException+ " "+e.StackTrace);
+            }
         }
         public void SetData(List<ProductModel> data,bool filter=true)
         {
@@ -187,10 +208,10 @@ namespace NohandicapNative.Droid
         public override void OnHiddenChanged(bool hidden)
         {
             base.OnHiddenChanged(hidden);
-            if (!hidden && markersList.Count == 0)
+            if (!hidden)
             {
 
-               
+                LoadData();
 
             }
         }
@@ -202,6 +223,13 @@ namespace NohandicapNative.Droid
             map.UiSettings.MapToolbarEnabled = true;
             map.UiSettings.ZoomControlsEnabled = true;
             map.SetInfoWindowAdapter(this);
+            map.InfoWindowClick += (s, e) =>
+            {
+                var product = FindProductFromMarker(e.Marker);
+                var activity = new Intent(myContext, typeof(DetailActivity));
+                activity.PutExtra(Utils.PRODUCT_ID, product.ID);
+                myContext.StartActivity(activity);
+            };
             LoadData();
         }
         public View GetInfoContents(Marker marker)
@@ -210,8 +238,7 @@ namespace NohandicapNative.Droid
             var product = FindProductFromMarker(marker);
             var img = info.FindViewById<ImageView>(Resource.Id.info_mainImageView);
             var title= info.FindViewById<TextView>(Resource.Id.info_titleTextView);
-            var adress = info.FindViewById<TextView>(Resource.Id.info_adressTextView);
-            var button = info.FindViewById<TextView>(Resource.Id.info_detailButton);
+            var adress = info.FindViewById<TextView>(Resource.Id.info_adressTextView);          
             var mainimage = product.ImageCollection.Images;
             if (mainimage.Count != 0)
             {
@@ -220,9 +247,7 @@ namespace NohandicapNative.Droid
             }
             title.Text = product.FirmName;
             adress.Text = product.Adress;
-            button.Click += (s, e) => {
-
-            };
+         
             return info;
         }
         #region InfoWindowAdapter
@@ -252,6 +277,7 @@ namespace NohandicapNative.Droid
                 case Resource.Id.select_all:
                     SetData(dbCon.GetDataList<ProductModel>());
                     myContext.SupportActionBar.Title = "Map";
+                    LoadData();
                     break;
             }
             return true;

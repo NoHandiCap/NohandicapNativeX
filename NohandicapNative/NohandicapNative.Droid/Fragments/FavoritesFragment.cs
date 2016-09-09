@@ -201,10 +201,12 @@ namespace NohandicapNative.Droid
         public async void ReloadData()
         {          
                 var user = dbCon.GetDataList<UserModel>().FirstOrDefault();
-                products = dbCon.GetDataList<ProductModel>().Where(x => user.Fravorites.Any(y => y == x.ID)).ToList();         
-             cardViewAdapter = new CardViewAdapter(myContext, products);
-            listView.Adapter = cardViewAdapter;
-
+            if (user != null)
+            {
+                products = dbCon.GetDataList<ProductModel>().Where(x => user.Fravorites.Any(y => y == x.ID)).ToList();
+                cardViewAdapter = new CardViewAdapter(myContext, products);
+                listView.Adapter = cardViewAdapter;
+            }
         }
         #endregion
         public override void OnAttach(Activity activity)

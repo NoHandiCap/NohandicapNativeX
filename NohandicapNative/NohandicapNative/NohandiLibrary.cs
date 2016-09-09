@@ -14,6 +14,8 @@ namespace NohandicapNative
         public const string LINK_PRODUCT = "http://www.stage.nohandicap.net/cms/component/shopmap/ajax/api.php?action=getprod&idlang=";
         public const string LINK_LOGIN = "http://www.stage.nohandicap.net/cms/index.php?item=artikel&id=1&com=login&action=login&type=app";
         public const string LINK_SAVEFAV = "http://www.stage.nohandicap.net/cms/component/shopmap/ajax/api.php?action=savefave&iduser={0}&idprod={1}";
+        public const string LINK_SIGN_UP = "http://www.stage.nohandicap.net/cms/index.php?item=artikel&id=&com=login&action=register&type=app";
+
         public static List<TabItem> GetTabs()
         {
             List<TabItem> items = new List<TabItem>();

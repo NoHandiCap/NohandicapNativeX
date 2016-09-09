@@ -80,10 +80,9 @@ namespace NohandicapNative
         {
 
             List<T> result=default(List<T>);
-            dbCon.RunInTransaction(() =>
-            {
+           
                 result = dbCon.GetAllWithChildren<T>(null, r).ToList();
-            });
+          
                 return result;
            
         

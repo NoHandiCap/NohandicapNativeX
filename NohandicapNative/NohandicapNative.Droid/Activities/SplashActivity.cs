@@ -28,7 +28,7 @@ namespace NohandicapNative.Droid.Activities
         public override void OnCreate(Bundle savedInstanceState, PersistableBundle persistentState)
         {
             base.OnCreate(savedInstanceState, persistentState);
-           // CrashManager.Register(this);
+        // CrashManager.Register(this);
             Log.Debug(TAG, "SplashActivity.OnCreate");
          
         }

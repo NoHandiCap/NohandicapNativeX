@@ -110,6 +110,37 @@ namespace NohandicapNative
             }
             
         }
-       
+        public static async Task<bool> SignUp(UserModel user)
+        {
+            try
+            {
+                using (WebClient client = new WebClient())
+                {
+                    var reqparm = new System.Collections.Specialized.NameValueCollection();
+                    reqparm.Add("vname",user.Vname );
+                    reqparm.Add("nname", user.Nname);
+                    reqparm.Add("email", user.Email);
+                    reqparm.Add("mobil", user.Phone);
+                    reqparm.Add("uname", user.Login);
+                    reqparm.Add("pwd", user.Password);
+                    reqparm.Add("pwd2", user.Password);
+                    reqparm.Add("geschlecht", user.Sex);
+                    byte[] responsebytes = client.UploadValues(NohandiLibrary.LINK_SIGN_UP, "POST", reqparm);
+                    string responsebody = Encoding.UTF8.GetString(responsebytes);
+                    var root = JObject.Parse(responsebody).SelectToken("status").ToString();
+                  var code=  JsonConvert.DeserializeObject<int>(root);
+                    if (code == 1) return true;
+                    else
+                      return false;
+                    
+                }
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+
+        }
+
     }
 }
