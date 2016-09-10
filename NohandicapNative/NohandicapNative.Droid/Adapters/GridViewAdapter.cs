@@ -82,7 +82,7 @@ namespace NohandicapNative.Droid.Adapters
                    var mainActivity = (MainActivity)context;
                    var products = dbCon.GetDataList<ProductModel>();
                    var currentProducts = products.Where(prod => prod.Categories.Any(cat => cat == categories[position].ID)).ToList();
-                   mainActivity.MapPage.SetData(currentProducts);         
+                   mainActivity.MapPage.SetData(currentProducts, categories[position]);         
                    mainActivity.SetCurrentTab(1);
                    context.SupportActionBar.Title =item.Name;
 

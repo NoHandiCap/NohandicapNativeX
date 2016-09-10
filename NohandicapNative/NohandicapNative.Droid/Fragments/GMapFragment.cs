@@ -67,7 +67,7 @@ namespace NohandicapNative.Droid
         private void LoadData(bool filter = true)
         {
             try { 
-            Toast.MakeText(myContext, "Load Data", ToastLength.Short).Show();
+         
                 if (myContext != null&map!=null)
                 {                    
                     markersList.Clear();
@@ -90,15 +90,23 @@ namespace NohandicapNative.Droid
                     products.ForEach(product =>
                     {
                        
-                       // Toast.MakeText(myContext, double.Parse(product.Lat).ToString() + "  " + double.Parse(product.Long).ToString(), ToastLength.Short).Show();
-                     //   Toast.MakeText(myContext, double.Parse(product.Lat, CultureInfo.InvariantCulture).ToString() + "  " + double.Parse(product.Long, CultureInfo.InvariantCulture).ToString(), ToastLength.Short).Show();
-
+                      
                         var pos = new LatLng(double.Parse(product.Lat, CultureInfo.InvariantCulture), double.Parse(product.Long, CultureInfo.InvariantCulture));
                   
                         var title = product.FirmName;
          
-                        var options = new MarkerOptions().SetPosition(pos).SetTitle(product.FirmName);          
-                        var cat = category.FirstOrDefault(y => y.ID == product.Categories[0]).Marker;
+                        var options = new MarkerOptions().SetPosition(pos).SetTitle(product.FirmName);
+                        string cat;
+                        if (currentCategory != null)
+                        {
+                            cat = currentCategory.Marker;
+                        }
+                        else
+                        {
+
+                            cat = category.FirstOrDefault(y => y.ID == product.Categories[0]).Marker;
+
+                        }
                         var drawImage = Utils.SetDrawableSize(myContext, Utils.GetImage(myContext, cat), 60, 70);
                         var bitmap = Utils.convertDrawableToBitmap(drawImage);
                         options.SetIcon(BitmapDescriptorFactory.FromBitmap(bitmap));
@@ -112,7 +120,7 @@ namespace NohandicapNative.Droid
 
                         var marker = map.AddMarker(x);
                         markersList.Add(marker);
-                   //    Toast.MakeText(myContext, marker.Position.Latitude +"  "+marker.Position.Longitude, ToastLength.Short).Show();
+                  
 
                     });
 
@@ -124,7 +132,7 @@ namespace NohandicapNative.Droid
                     CameraPosition cameraPosition = builder.Build();
                     CameraUpdate cameraUpdate = CameraUpdateFactory.NewCameraPosition(cameraPosition);
                     map.AnimateCamera(cameraUpdate);
-                       // Toast.MakeText(myContext, "Camera", ToastLength.Short).Show();
+                    
 
             }
             }
@@ -133,11 +141,11 @@ namespace NohandicapNative.Droid
                 Log.Error(TAG, e.Message," "+e.InnerException+ " "+e.StackTrace);
             }
         }
-        public void SetData(List<ProductModel> data,CategoryModel category=null,bool filter=true)
+        public void SetData(List<ProductModel> data,CategoryModel currentCategory=null,bool filter=true)
         {
            markerOptons.Clear();
             products = data;
-            currentCategory = category;
+            this.currentCategory = currentCategory;
         }
        
         public override void OnResume()
