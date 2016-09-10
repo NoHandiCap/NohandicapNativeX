@@ -14,11 +14,13 @@ using Android.Graphics.Drawables;
 using NohandicapNative.Droid.Services;
 using Android.Graphics;
 using Android.Text;
+using Android.Util;
 
 namespace NohandicapNative.Droid.Adapters
 {
     public class CardViewAdapter : BaseAdapter<ProductModel>
     {
+        string TAG = "X: " + typeof(CardView).Name;
         private readonly Activity context;
         private readonly List<ProductModel> products;
         SqliteService dbCon;
@@ -81,8 +83,22 @@ namespace NohandicapNative.Droid.Adapters
             var mainimage = products[position].ImageCollection.Images;
             if (mainimage.Count != 0)
             {
-
-                //  image.SetImageDrawable(new BitmapDrawable(Utils.GetBitmap(mainimage[0].LocalImage)));
+                var img = mainimage[0];                       
+                    try
+                    {
+                        if (string.IsNullOrWhiteSpace(img.LocalImage))
+                        {
+                            string filename = "none";
+                            Uri uri = new Uri(img.LinkImage);
+                            filename = System.IO.Path.GetFileName(uri.LocalPath);                           
+                            Utils.SaveImageBitmapFromUrl(img.LinkImage, filename);
+                            img.LocalImage = filename;
+                            dbCon.InsertUpdateProduct(products[position].ImageCollection);
+                        }
+                    }catch(Exception e)
+                    {
+                        Log.Error(TAG, e.Message);
+                    }                            
                 photo.SetImageDrawable(new BitmapDrawable(Utils.GetBitmap(mainimage[0].LocalImage)));
             }
             else
@@ -101,7 +117,10 @@ namespace NohandicapNative.Droid.Adapters
             titleTextView.Text = products[position].FirmName;
             adress.Text = products[position].Adress;
             body.TextFormatted = Html.FromHtml(products[position].Description);
-            if (products[position].OpenTime != "") hours.TextFormatted = Html.FromHtml(products[position].OpenTime.Replace("\r\n",""));
+            if (products[position].OpenTime != "") {
+                var time = products[position].OpenTime.Replace("</p><p>", "\n").Replace("<p>","").Replace("</p>", "");
+                hours.TextFormatted = Html.FromHtml(time);                    
+                    };
             if (products[position].BookingPage != "") booking.Text = products[position].BookingPage;
             if (products[position].HomePage != "") homeLink.Text = products[position].HomePage;
             #endregion

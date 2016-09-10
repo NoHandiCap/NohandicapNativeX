@@ -49,130 +49,93 @@ namespace NohandicapNative.Droid
         {
             SetTheme(Resource.Style.AppThemeNoBar);
             base.OnCreate(bundle);
-            SetContentView(Resource.Layout.DetailPage);  
+            SetContentView(Resource.Layout.DetailPage);
             dbCon = Utils.GetDatabaseConnection();
             try
             {
 
 
-            mapFragment =FragmentManager.FindFragmentById(Resource.Id.map) as MapFragment;
+                mapFragment = FragmentManager.FindFragmentById(Resource.Id.map) as MapFragment;
 
-            mapFragment.GetMapAsync(this);
-         
-            toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
-            FloatingActionButton fab = FindViewById<FloatingActionButton>(Resource.Id.fab);
-            descriptionTextView = (TextView)FindViewById(Resource.Id.descriptionTextView);
-            adressTextView = (TextView)FindViewById(Resource.Id.adressTextView);
-            phoneTextView = (TextView)FindViewById(Resource.Id.phoneTextView);          
-            categoriesTextView = (TextView)FindViewById(Resource.Id.categoriesTextView);
-            //  mapImageView = (ImageView)FindViewById(Resource.Id.mapImageView);
-           
-            SetSupportActionBar(toolbar);
-       
-            SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Resources.GetColor(Resource.Color.detailBarColor)));
-            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
-            //toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
-            //SetSupportActionBar(toolbar);
-            //SupportActionBar.SetDisplayHomeAsUpEnabled(true);
-            //SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Resources.GetColor(Resource.Color.colorDefault)));
-            //SupportActionBar.Title = Intent.GetStringExtra("Title");
-
-            var productId = Intent.GetIntExtra(Utils.PRODUCT_ID,-1);
-            product = dbCon.GetDataList<ProductModel>().FirstOrDefault(x => x.ID == productId);
-            SupportActionBar.Title = product.FirmName;
-            var viewPager = FindViewById<ViewPager>(Resource.Id.viewPager);
-            SliderAdapter adapter = new SliderAdapter(this,product.ImageCollection.Images);
-            viewPager.Adapter = adapter;           
-            categories = dbCon.GetDataList<CategoryModel>();
-            var icon = Utils.GetImage(this, categories.FirstOrDefault(x => x.ID == product.Categories[0]).Icon);
-            SupportActionBar.SetIcon(Utils.SetDrawableSize(this, icon, 70, 70));
-            descriptionTextView.TextFormatted = Html.FromHtml(product.Description);
-            adressTextView.Text = product.Adress;
-            phoneTextView.Text = product.Telefon;
-            string bulledList="";
-            product.Categories.ForEach(x => {
-                bulledList += "&#8226;" + categories.FirstOrDefault(y => y.ID == x).Name + "<br/>";
-            });
-            categoriesTextView.TextFormatted=Html.FromHtml(bulledList);
-            var user = dbCon.GetDataList<UserModel>().FirstOrDefault();
-            if (user != null)
-            {
-                var userFavorites = user.Fravorites;
-                if (userFavorites.Any(x => x == product.ID))
+                mapFragment.GetMapAsync(this);
+               
+                toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
+                FloatingActionButton fab = FindViewById<FloatingActionButton>(Resource.Id.fab);
+                descriptionTextView = (TextView)FindViewById(Resource.Id.descriptionTextView);
+                adressTextView = (TextView)FindViewById(Resource.Id.adressTextView);
+                phoneTextView = (TextView)FindViewById(Resource.Id.phoneTextView);
+                categoriesTextView = (TextView)FindViewById(Resource.Id.categoriesTextView);         
+                SetSupportActionBar(toolbar);
+                SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Resources.GetColor(Resource.Color.detailBarColor)));
+                SupportActionBar.SetDisplayHomeAsUpEnabled(true);                
+                var productId = Intent.GetIntExtra(Utils.PRODUCT_ID, -1);
+                product = dbCon.GetDataList<ProductModel>().FirstOrDefault(x => x.ID == productId);
+                SupportActionBar.Title = product.FirmName;
+                var viewPager = FindViewById<ViewPager>(Resource.Id.viewPager);
+                if (product.ImageCollection.Images.Count == 0)
                 {
-                    fab.SetImageResource(Resource.Drawable.filled_star);
-                    fab.Selected = true;
-                }
-            }
-            fab.Click += (s, e) =>
-            {
-                if (user != null)
-                {
-                    if (!fab.Selected)
-                    {
-                        fab.SetImageResource(Resource.Drawable.filled_star);
-                        fab.Selected = true;
-                        user.Fravorites.Add(product.ID);
-                        dbCon.InsertUpdateProduct(user);
-                        var url = String.Format(NohandiLibrary.LINK_SAVEFAV, user.ID, product.ID);
-                        RestApiService.GetDataFromUrl<UserModel>(url, readBack: false);         
-                    }
-                    else
-                    {
-                        fab.SetImageResource(Resource.Drawable.empty_star);
-                        fab.Selected = false;
-                        user.Fravorites.Remove(product.ID);
-                        dbCon.InsertUpdateProduct(user);
-                        ((MainActivity)Utils.mainActivity).Favorites.ReloadData();
-                    }
+                    viewPager.Visibility = ViewStates.Gone;
                 }
                 else
                 {
-                    Toast.MakeText(this, "Please login", ToastLength.Short).Show();
+                    SliderAdapter adapter = new SliderAdapter(this, product);
+                    viewPager.Adapter = adapter;
                 }
-
-            };
-            }
-            catch (Exception e) {
-                Log.Error(TAG,"OnCreate: "+ e.Message + " " + e.StackTrace);
-
-            }
-        }    
-        private void MapInitialize()
-        {
-
-            // Gets the MapView from the XML layout and creates it
-
-            //mapView.OnResume();
-            //// Gets to GoogleMap from the MapView and does initialization stuff
-            //map = mapView.Map;
-            //if (map != null)
-            //{
-            //    map.UiSettings.ScrollGesturesEnabled = false;
-            //}
-            //try
-            //{
-            //    MapsInitializer.Initialize(this);
-            //}
-            //catch (GooglePlayServicesNotAvailableException e)
-            //{
-            //    e.PrintStackTrace();
-            //}
-            try { 
-            var options = new MarkerOptions().SetPosition(new LatLng(double.Parse(product.Lat, CultureInfo.InvariantCulture), double.Parse(product.Long, CultureInfo.InvariantCulture))).SetTitle(product.FirmName);
-            var cat = categories.FirstOrDefault(y => y.ID == product.Categories[0]).Marker;
-            var drawImage = Utils.SetDrawableSize(this, Utils.GetImage(this, cat), 35, 42);
-            var bitmap = Utils.convertDrawableToBitmap(drawImage);
-            options.SetIcon(BitmapDescriptorFactory.FromBitmap(bitmap));
-            map.AddMarker(options);
+                categories = dbCon.GetDataList<CategoryModel>();
+                var icon = Utils.GetImage(this, categories.FirstOrDefault(x => x.ID == product.Categories[0]).Icon);
+                SupportActionBar.SetIcon(Utils.SetDrawableSize(this, icon, 70, 70));
+                descriptionTextView.TextFormatted = Html.FromHtml(product.Description);
+                adressTextView.Text = product.Adress;
+                phoneTextView.Text = product.Telefon;
+                string bulledList = "";
+                product.Categories.ForEach(x =>
+                {
+                    bulledList += "&#8226;" + categories.FirstOrDefault(y => y.ID == x).Name + "<br/>";
+                });
+                categoriesTextView.TextFormatted = Html.FromHtml(bulledList);
+                var user = dbCon.GetDataList<UserModel>().FirstOrDefault();
+                if (user != null)
+                {
+                    var userFavorites = user.Fravorites;
+                    if (userFavorites.Any(x => x == product.ID))
+                    {
+                        fab.SetImageResource(Resource.Drawable.filled_star);
+                        fab.Selected = true;
+                    }
+                }
+                fab.Click += (s, e) =>
+                {
+                    if (user != null)
+                    {
+                        if (!fab.Selected)
+                        {
+                            fab.SetImageResource(Resource.Drawable.filled_star);
+                            fab.Selected = true;
+                            user.Fravorites.Add(product.ID);
+                            dbCon.InsertUpdateProduct(user);
+                            var url = String.Format(NohandiLibrary.LINK_SAVEFAV, user.ID, product.ID);
+                            RestApiService.GetDataFromUrl<UserModel>(url, readBack: false);
+                        }
+                        else
+                        {
+                            fab.SetImageResource(Resource.Drawable.empty_star);
+                            fab.Selected = false;
+                            user.Fravorites.Remove(product.ID);
+                            dbCon.InsertUpdateProduct(user);
+                            ((MainActivity)Utils.mainActivity).Favorites.ReloadData();
+                        }
+                    }
+                    else
+                    {
+                        Toast.MakeText(this, "Please login", ToastLength.Short).Show();
+                    }
+                };
             }
             catch (Exception e)
             {
-                Log.Error(TAG, "MapInitialize: "+e.Message + " " + e.StackTrace);
-
+                Log.Error(TAG, "OnCreate: " + e.Message + " " + e.StackTrace);
             }
-        }  
-      
+        }           
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
             MenuInflater inflater = MenuInflater;
@@ -185,44 +148,36 @@ namespace NohandicapNative.Droid
             {
                 case Android.Resource.Id.Home:
                     Finish();
-                    break;
-               
-
+                    break;           
             }
             return true;
-        }
-
-        protected override void OnResume()
-        {
-          //  mapView.OnResume();
-            base.OnResume();
-        }
-
-        protected override void OnDestroy()
-        {
-            base.OnDestroy();
-         //   mapView.OnDestroy();
-
-        }
-
-        public override void OnLowMemory()
-        {
-            base.OnLowMemory();
-         //   mapView.OnLowMemory();
         }
 
         public void OnMapReady(GoogleMap googleMap)
         {
             try { 
+               
             var options = new MarkerOptions().SetPosition(new LatLng(double.Parse(product.Lat, CultureInfo.InvariantCulture), double.Parse(product.Long, CultureInfo.InvariantCulture))).SetTitle(product.FirmName);
             var cat = categories.FirstOrDefault(y => y.ID == product.Categories[0]).Marker;
             var drawImage = Utils.SetDrawableSize(this, Utils.GetImage(this, cat), 70, 80);
             var bitmap = Utils.convertDrawableToBitmap(drawImage);
             options.SetIcon(BitmapDescriptorFactory.FromBitmap(bitmap));
             googleMap.AddMarker(options);
-            CameraPosition cameraPosition = new CameraPosition.Builder().Target(options.Position).Zoom(15.0f).Build();
+                googleMap.UiSettings.ScrollGesturesEnabled=false;
+                CameraPosition cameraPosition = new CameraPosition.Builder().Target(options.Position).Zoom(14.0f).Build();
             CameraUpdate cameraUpdate = CameraUpdateFactory.NewCameraPosition(cameraPosition);
             googleMap.MoveCamera(cameraUpdate);
+                
+                View toolbar = ((View)mapFragment.View.FindViewById(int.Parse("1")).
+            Parent).FindViewById(int.Parse("4"));
+
+                // and next place it, for example, on bottom right (as Google Maps app)
+                RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams)toolbar.LayoutParameters;
+                // position on right bottom
+                rlp.AddRule(LayoutRules.AlignParentTop, 0);
+               rlp.AddRule(LayoutRules.AlignParentBottom,(int)LayoutRules.True);  
+               rlp.AddRule(LayoutRules.AlignParentLeft,(int)LayoutRules.True);
+                rlp.SetMargins(100, 0, 0,30);
 
             }
             catch (Exception e)

@@ -74,13 +74,8 @@ namespace NohandicapNative.Droid
                 mainCat[i].SetTextColor(Color.Gray);
                 mainCat[i].SetTypeface(null, TypefaceStyle.Normal);
                 mainLayout[i].Selected = false;
-                var categorySelected =int.Parse(Utils.ReadFromSettings(myContext, Utils.MAIN_CAT_SELECTED_ID, "0"));
-                if (i == 0)
-                {
-                    mainCat[categorySelected].SetTextColor(Color.Black);
-                    mainCat[categorySelected].SetTypeface(null, TypefaceStyle.Bold);
-                    mainLayout[categorySelected].Selected = true;
-                }
+                
+             
                 mainLayout[i].Click += (s, e) =>
                 {
                     var layout = (LinearLayout)s;
@@ -106,7 +101,12 @@ namespace NohandicapNative.Droid
                     }
                 };
 
-            }  
+            }
+            var categorySelected = int.Parse(Utils.ReadFromSettings(myContext, Utils.MAIN_CAT_SELECTED_ID, "0"));
+
+            mainCat[categorySelected].SetTextColor(Color.Black);
+            mainCat[categorySelected].SetTypeface(null, TypefaceStyle.Bold);
+            mainLayout[categorySelected].Selected = true;
             mainImg[0].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair1, 140,65 ));
             mainImg[1].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair2, 140, 65));
             mainImg[2].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair3, 140, 65));
@@ -115,10 +115,27 @@ namespace NohandicapNative.Droid
             GridRotation();
 
             List<CategoryModel> additItems = dbCon.GetDataList<CategoryModel>(false);
-   
+            if (additItems.Count == 0)
+            {
+                var localCategories = NohandiLibrary.GetAdditionalCategory();
+                var localCategoriesLocalization = Resources.GetStringArray(Resource.Array.additional_category_array);
+                for (int i = 0; i < localCategories.Count; i++)
+                {
+                    var cat = localCategories[i];
+                    var loc = localCategoriesLocalization[i];
+                    additItems.Add(new CategoryModel() {
+                        ID = cat.ID,
+                        Name = loc,
+                        Color = cat.Color,
+                        Icon=cat.Icon,
+                         Sort=i+1
+                    });
+                }
+            }
             //  List<TabItem> mainItems = NohandiLibrary.GetMainCategory();
             //  mainCategory.Adapter = new GridViewAdapter(myContext, mainItems);
-              additionalCategory.Adapter= new GridViewAdapter(myContext, additItems);
+        
+              additionalCategory.Adapter= new GridViewAdapter(myContext, additItems.OrderBy(x => x.Sort).ToList());
             //mainCategory.OnItemClickListener = this;
             
             return view;

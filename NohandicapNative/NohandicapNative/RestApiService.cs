@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NohandicapNative
@@ -14,13 +15,15 @@ namespace NohandicapNative
         public static async Task<T> GetDataFromUrl<T>(string dataUri, string rootName = "result",bool readBack=true)
         {
             var url = dataUri;
-            using (var httpClient = new HttpClient() { Timeout = TimeSpan.FromSeconds(10) })
-            {
+            var httpClient = new HttpClient() { Timeout = TimeSpan.FromMilliseconds(1000) };
+            var cts = new CancellationTokenSource();     
+            try
+            {            
                 //// Set OAuth authentication header
                 //if (!string.IsNullOrEmpty(accessToken))
                 //    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-                using (HttpResponseMessage response = await httpClient.GetAsync(url))
+                using (HttpResponseMessage response = await httpClient.GetAsync(url, cts.Token))
                 {
 
                     string content = null;
@@ -30,7 +33,7 @@ namespace NohandicapNative
                     if (response.StatusCode == HttpStatusCode.OK ||
                         response.StatusCode == HttpStatusCode.Created)
                     {
-                        if (content.Length > 0&&readBack)
+                        if (content.Length > 0 && readBack)
                         {
                             if (rootName == null)
                             {
@@ -54,6 +57,22 @@ namespace NohandicapNative
                         return default(T);
                     }
 
+                }
+            }
+
+            catch (WebException ex)
+            {
+                return default(T);
+            }
+            catch (TaskCanceledException ex)
+            {
+                if (ex.CancellationToken == cts.Token)
+                {
+                    return default(T);
+                }
+                else
+                {
+                    return default(T);
                 }
             }
         }

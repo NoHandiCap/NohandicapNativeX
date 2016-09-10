@@ -11,23 +11,28 @@ using Android.Views;
 using Android.Widget;
 using Android.Support.V4.View;
 using NohandicapNative.Droid.Services;
+using Android.Util;
 
 namespace NohandicapNative.Droid.Adapters
 {
   public class SliderAdapter : PagerAdapter
     {
+        string TAG = "X: " + typeof(SliderAdapter).Name;
+
         private Context context;
-        List<ImageModel> imageList;
-        public SliderAdapter(Context context, List<ImageModel> imageList)
+       ProductModel product;
+        SqliteService dbCon;
+        public SliderAdapter(Context context, ProductModel product)
         {
             this.context = context;
-            this.imageList = imageList;
+            this.product = product;
+            dbCon = Utils.GetDatabaseConnection();
         }
         public override int Count
         {
             get
             {
-                return imageList.Count;
+                return product.ImageCollection.Images.Count;
             }
         }
 
@@ -40,7 +45,27 @@ namespace NohandicapNative.Droid.Adapters
         {
             ImageView imageView = new ImageView(context);
             imageView.SetScaleType(ImageView.ScaleType.CenterCrop);
-            imageView.SetImageBitmap(Utils.GetBitmap(imageList[position].LocalImage));
+           
+            var img = product.ImageCollection.Images[position];
+
+            try
+            {
+                if (string.IsNullOrWhiteSpace(img.LocalImage))
+                {
+
+                    string filename = "none";
+                    Uri uri = new Uri(img.LinkImage);
+                    filename = System.IO.Path.GetFileName(uri.LocalPath);
+                    Utils.SaveImageBitmapFromUrl(img.LinkImage, filename);
+                    img.LocalImage = filename;
+                    dbCon.InsertUpdateProduct(product);
+
+                }
+                imageView.SetImageBitmap(Utils.GetBitmap(img.LocalImage));
+            }catch(Exception e)
+            {
+                Log.Error(TAG, e.Message);
+            }
             ((ViewPager)container).AddView(imageView, 0);
             return imageView;
         }

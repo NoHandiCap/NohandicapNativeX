@@ -21,39 +21,24 @@ namespace NohandicapNative
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             JToken token = JToken.Load(reader);
+            ImageJsonModel model = new ImageJsonModel();
             if (token.Type == JTokenType.Object)
             {
                 var thumbs = token["thumbs"].ToObject<List<string>>();
                 var images = token["images"].ToObject<List<string>>();
-                ImageJsonModel model = new ImageJsonModel();
+             
                 model.Thumbs = new List<ImageModel>();
                 model.Images = new List<ImageModel>();
-                
-#if __ANDROID__
+
                 var dbCon = Utils.GetDatabaseConnection();
                 if (thumbs != null)
                 {
                     foreach (var item in thumbs)
                     {
-                        try
-                        {
-                            string filename = "none";
-                            Uri uri = new Uri(item);
-                            filename = System.IO.Path.GetFileName(uri.LocalPath);
+                        ImageModel thumb = new ImageModel();
+                        thumb.LinkImage = item;
+                        model.Thumbs.Add(thumb);
 
-
-                            ImageModel thumb = new ImageModel();
-                            Utils.SaveImageBitmapFromUrl(item, filename);
-                            thumb.LocalImage = filename;
-                            thumb.LinkImage = item;
-                            // dbCon.InsertUpdateProduct(thumb);
-
-                            model.Thumbs.Add(thumb);
-                        }
-                        catch (Exception e)
-                        {
-                            var s = e.Message;
-                        }
                     }
                 }
                 if (images != null)
@@ -61,40 +46,19 @@ namespace NohandicapNative
 
                     foreach (var item in images)
                     {
-                        try
-                        {
-                            string filename = "none";
-                            Uri uri = new Uri(item);
-                            filename = System.IO.Path.GetFileName(uri.LocalPath);
 
-                            ImageModel img = new ImageModel();
-                            Utils.SaveImageBitmapFromUrl(item, filename);
-                            img.LocalImage = filename;
-                            img.LinkImage = item;
-                            //  dbCon.InsertUpdateProduct(img);
-                            model.Images.Add(img);
-                        }
-                        catch (Exception e)
-                        {
-                            var s = e.Message;
-
-                        }
+                        ImageModel img = new ImageModel();
+                        img.LinkImage = item;
+                        model.Images.Add(img);
                     }
                 }
 
-           //     dbCon.InsertUpdateProduct(model);
-            ///    thumbsList.ForEach(x => x.ImageJsonID = model.ID);
-              //  imgList.ForEach(x => x.ImageJsonID = model.ID);
-               // dbCon.InsertUpdateProductList(thumbsList);
-               // dbCon.InsertUpdateProductList(imgList);
-              //  var v = dbCon.GetDataList<ImageJsonModel>();
-                return model;
-#else
-            new NotImplementedException("Mehtod not Implement");
-#endif
+
+                
+
 
             }
-            return null;
+            return model;
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)

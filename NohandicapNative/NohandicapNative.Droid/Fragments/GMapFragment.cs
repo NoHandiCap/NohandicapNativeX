@@ -38,6 +38,7 @@ namespace NohandicapNative.Droid
         List<ProductModel> products;
         List<MarkerOptions> markerOptons;
       MapFragment mapFragment;
+        CategoryModel currentCategory;
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             this.inflater = inflater;
@@ -48,35 +49,7 @@ namespace NohandicapNative.Droid
 
                 mapFragment = myContext.FragmentManager.FindFragmentById(Resource.Id.map).JavaCast<MapFragment>();
 
-                mapFragment.GetMapAsync(this);
-           
-            //  // Gets the MapView from the XML layout and creates it
-            //  mapView = (MapView)view.FindViewById(Resource.Id.mapView);
-            //  mapView.OnCreate(savedInstanceState);
-            ////  mapView.GetMapAsync(this);
-            //  // Gets to GoogleMap from the MapView and does initialization stuff
-            //  map = mapView.Map;
-            //  if (map != null)
-            //  {
-
-            //      map.UiSettings.MyLocationButtonEnabled = true;
-            //      map.MyLocationEnabled = true;
-            //      map.UiSettings.MapToolbarEnabled = true;
-            //      map.UiSettings.ZoomControlsEnabled = true;
-            //      map.SetInfoWindowAdapter(this);
-
-
-            //  }
-            //  try
-            //  {
-            //      MapsInitializer.Initialize(this.Activity);
-            //  }
-            //  catch (GooglePlayServicesNotAvailableException e)
-            //  {
-            //      e.PrintStackTrace();
-            //  }
-
-            // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
+                mapFragment.GetMapAsync(this);        
             if (products.Count==0)
             SetData(dbCon.GetDataList<ProductModel>());
 
@@ -160,11 +133,11 @@ namespace NohandicapNative.Droid
                 Log.Error(TAG, e.Message," "+e.InnerException+ " "+e.StackTrace);
             }
         }
-        public void SetData(List<ProductModel> data,bool filter=true)
+        public void SetData(List<ProductModel> data,CategoryModel category=null,bool filter=true)
         {
            markerOptons.Clear();
             products = data;
-        
+            currentCategory = category;
         }
        
         public override void OnResume()
@@ -236,15 +209,32 @@ namespace NohandicapNative.Droid
         {
             var info = inflater.Inflate(Resource.Layout.infoWindow, null);
             var product = FindProductFromMarker(marker);
-            var img = info.FindViewById<ImageView>(Resource.Id.info_mainImageView);
+            var image = info.FindViewById<ImageView>(Resource.Id.info_mainImageView);
             var title= info.FindViewById<TextView>(Resource.Id.info_titleTextView);
             var adress = info.FindViewById<TextView>(Resource.Id.info_adressTextView);          
             var mainimage = product.ImageCollection.Images;
             if (mainimage.Count != 0)
             {
-                //  image.SetImageDrawable(new BitmapDrawable(Utils.GetBitmap(mainimage[0].LocalImage)));
-                img.SetImageDrawable(new Android.Graphics.Drawables.BitmapDrawable(Utils.GetBitmap(mainimage[0].LocalImage)));
+                var img = mainimage[0];
+                try
+                {
+                    if (string.IsNullOrWhiteSpace(img.LocalImage))
+                    {
+                        string filename = "none";
+                        Uri uri = new Uri(img.LinkImage);
+                        filename = System.IO.Path.GetFileName(uri.LocalPath);
+                        Utils.SaveImageBitmapFromUrl(img.LinkImage, filename);
+                        img.LocalImage = filename;
+                        dbCon.InsertUpdateProduct(product.ImageCollection);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Error(TAG, e.Message);
+                }
+                image.SetImageDrawable(new Android.Graphics.Drawables.BitmapDrawable(Utils.GetBitmap(mainimage[0].LocalImage)));
             }
+           
             title.Text = product.FirmName;
             adress.Text = product.Adress;
          
