@@ -1,16 +1,44 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>	
-	<string name="app_name">Nohandicap</string>
-  <string name="current_language_short">fr</string>
-
-  <string name="settings">Réglages</string>
   
-  <string name="next">Plus</string>
+	<string name="app_name">NoHandicap</string>
+  <string name="current_language_short">fr</string>
+  <string name="settings">Réglages</string>
   <string name="load_data">Licence de serveur ...</string>
+  <string name="authentication">Authentifier</string>
   <string name="lang_prompt">Choisissez votre langue:</string>
   <string name="main_cat1">Invalidité</string>
   <string name="main_cat2">Personnes partiellement handicapées</string>
   <string name="main_cat3">Nombre total de personnes handicapées</string>
+  <string name="description">La description</string>
+  <string name="information">INFORMATION</string>
+  <string name="medium_text">Texte Moyen</string>
+  <string name="contact">Contact</string>
+  <string name="categories">Catégories</string>
+  <string name="location">EMPLACEMENT</string>
+  <string name="next">Prochain</string>
+  <string name="label">Étiquette</string>
+  <string name="large_text">Grand texte</string>
+  <string name="bookingcom">Booking.com</string>
+  <string name="home_page">Home Page</string>
+  <string name="live_reload">LiveReload works with iOS devices out of the box if you add a correct SCRIPT tag (there are no browser extensions on mobile devices).  When your site is running on your local computer (i.e. on the same one that runs LiveReload app), the default script tag is fine.</string>
+  <string name="open_hours">Heures d'ouverture</string>
+  <string name="email">Email</string>
+  <string name="password">Mot de passe</string>
+  <string name="login">S'identifier</string>
+  <string name="sign_up">S'inscrire</string>
+  <string name="demo">Demo</string>
+  <string name="synchronize">Synchroniser</string>
+  <string name="name">Prénom</string>
+  <string name="lastname">Nom de famille</string>
+  <string name="phone">Téléphone</string>
+  <string name="weiblich">Femelle</string>
+  <string name="maennlich">Mâle</string>
+  <string name="create_account">Créer un compte</string>
+  <string name="already_login">Déjà membre? S'identifier</string>
+ 
+  
+  
   <string-array name="lang_array">
     <item>Allemand</item>
     <item>Anglais</item>
