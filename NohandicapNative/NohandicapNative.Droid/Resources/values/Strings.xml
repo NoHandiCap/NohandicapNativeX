@@ -32,9 +32,9 @@
   <string name="synchronize">Synchronize</string>
   <string name="name">Name</string>
   <string name="lastname">Lastname</string>
-  <string name="phone">Telefonnummer</string>
-  <string name="weiblich">Weiblich</string>
-  <string name="maennlich">Männlich</string>
+  <string name="phone">Phone</string>
+  <string name="weiblich">Female</string>
+  <string name="maennlich">Male</string>
   <string name="create_account">Create Account</string>
   <string name="already_login">Already a member? Login</string>
   
