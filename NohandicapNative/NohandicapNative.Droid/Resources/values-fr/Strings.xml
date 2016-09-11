@@ -36,7 +36,7 @@
   <string name="maennlich">Mâle</string>
   <string name="create_account">Créer un compte</string>
   <string name="already_login">Déjà membre? S\'identifier</string>
- 
+  <string name="please_login">S\'il vous plaît vous connecter</string>
   
   
   <string-array name="lang_array">

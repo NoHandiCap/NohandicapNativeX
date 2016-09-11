@@ -5775,6 +5775,9 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f070000
 			public const int place_autocomplete_search_hint = 2131165184;
 			
+			// aapt resource value: 0x7f0700a5
+			public const int please_login = 2131165349;
+			
 			// aapt resource value: 0x7f070084
 			public const int settings = 2131165316;
 			
