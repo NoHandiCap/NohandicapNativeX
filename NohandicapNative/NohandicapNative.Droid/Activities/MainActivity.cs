@@ -113,7 +113,7 @@ namespace NohandicapNative.Droid
                 _bottomBar.SelectTabAtPosition(postion, false);
             }
             Utils.mainActivity = this;
-            ThreadPool.QueueUserWorkItem(o => CheckUpdate());
+          //  ThreadPool.QueueUserWorkItem(o => CheckUpdate());
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetHomeButtonEnabled(true);
         }

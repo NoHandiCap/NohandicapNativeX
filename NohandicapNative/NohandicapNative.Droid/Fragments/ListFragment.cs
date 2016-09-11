@@ -21,19 +21,23 @@ namespace NohandicapNative.Droid
     {
         public const string PRODUCT_ALL = "allproducts";
         public const string PRODUCT_FAVORITES = "productFavorites";
+        int[] mainCategoriesText = { Resource.String.main_cat1, Resource.String.main_cat2, Resource.String.main_cat3};
         public string _currentProductType = PRODUCT_ALL;
         MainActivity myContext;
         ListView listView;
         List<ProductModel> products;
         SqliteService dbCon;
         CardViewAdapter cardViewAdapter;
+        TextView categoryName;
+        ImageView categoryImage;
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
 
             var view = inflater.Inflate(Resource.Layout.ListPage, container, false);
          listView = view.FindViewById<ListView>(Resource.Id.listview);
             view.SetBackgroundColor(myContext.Resources.GetColor(Resource.Color.backgroundColor));
-
+             categoryName = view.FindViewById<TextView>(Resource.Id.first_categoryTextView);
+             categoryImage = view.FindViewById<ImageView>(Resource.Id.categoryImageView);           
             listView.ItemClick += (s, e) =>
             {
                 int position = e.Position;
@@ -70,10 +74,14 @@ namespace NohandicapNative.Droid
         private async void ReloadData()
         {
             var category = dbCon.GetDataList<CategoryModel>();
-            int categorySelected = int.Parse(Utils.ReadFromSettings(myContext, Utils.MAIN_CAT_SELECTED_ID, "0"));                    
-            products = dbCon.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= categorySelected).ToList();                
+            int categorySelectedId = int.Parse(Utils.ReadFromSettings(myContext, Utils.MAIN_CAT_SELECTED_ID, "0"));                    
+            products = dbCon.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= categorySelectedId).ToList();
+            categoryName.Text = Resources.GetString(mainCategoriesText[categorySelectedId]);
+            var image = Utils.GetImage(myContext, "wheelchair" + (categorySelectedId + 1));
+            categoryImage.SetImageDrawable(Utils.SetDrawableSize(myContext, image, 140, 65));
             cardViewAdapter = new CardViewAdapter(myContext, products);
             listView.Adapter = cardViewAdapter;
+
             //var listAdapter = new ListAdapter(myContext, product);
 
 
