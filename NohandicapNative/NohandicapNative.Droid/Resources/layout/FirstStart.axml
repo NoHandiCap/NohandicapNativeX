@@ -53,7 +53,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Next"
+            android:text="@string/next"
             android:id="@+id/next_button"
             style="@style/AppThemeNoBar.Button"
             android:layout_alignParentBottom="true"

@@ -19,7 +19,7 @@
         android:layout_marginTop="20dp"
         android:textSize="12dp"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Label"
+        android:text="@string/label"
         android:layout_alignParentBottom="false"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/grid_image"

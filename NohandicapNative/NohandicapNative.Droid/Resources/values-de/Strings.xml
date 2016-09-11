@@ -10,10 +10,37 @@
   <string name="main_cat1">Barrierenfrei</string>
   <string name="main_cat2">Teilweise Behinderten gerecht</string>
   <string name="main_cat3">Total Behinderten gerecht</string>
+  <string name="description">Beschreibung</string>
+  <string name="information">INFORMATION</string>
+  <string name="medium_text">Mittel Text</string>
+  <string name="contact">Kontakt</string>
+  <string name="categories">Categories</string>
+  <string name="location">LOCATION</string>
+  <string name="next">Next</string>
+  <string name="label">Label</string>
+  <string name="large_text">Large Text</string>
+  <string name="bookingcom">Booking.com</string>
+  <string name="home_page">Home Page</string>
+  <string name="live_reload">LiveReload works with iOS devices out of the box if you add a correct SCRIPT tag (there are no browser extensions on mobile devices).  When your site is running on your local computer (i.e. on the same one that runs LiveReload app), the default script tag is fine.</string>
+  <string name="open_hours">Open Hours</string>
+  <string name="email">Email</string>
+  <string name="password">Password</string>
+  <string name="login">Login</string>
+  <string name="sign_up">Sign Up</string>
+  <string name="demo">Demo</string>
+  <string name="synchronize">Synchronize</string>
+  <string name="name">Name</string>
+  <string name="lastname">Lastname</string>
+  <string name="phone">Telefonnummer</string>
+  <string name="weiblich">Weiblich</string>
+  <string name="maennlich">Männlich</string>
+  <string name="create_account">Create Account</string>
+  <string name="already_login">Already a member? Login</string>
+
   <string-array name="lang_array">
     <item>Deutsch</item>
     <item>English</item>
-    <item>Francosisch</item>  
+    <item>Französisch</item>  
   </string-array>
   <string-array name="lang_short_array">
     <item>de</item>

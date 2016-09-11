@@ -47,7 +47,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Synchronize"
+        android:text="@string/synchronize"
         android:id="@+id/syncButton"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="30dp" />
