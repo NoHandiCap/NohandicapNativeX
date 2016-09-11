@@ -113,7 +113,7 @@ namespace NohandicapNative.Droid
                 _bottomBar.SelectTabAtPosition(postion, false);
             }
             Utils.mainActivity = this;
-          //  ThreadPool.QueueUserWorkItem(o => CheckUpdate());
+           ThreadPool.QueueUserWorkItem(o => CheckUpdate());
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetHomeButtonEnabled(true);
         }
@@ -122,11 +122,13 @@ namespace NohandicapNative.Droid
             ISharedPreferences settings = PreferenceManager.GetDefaultSharedPreferences(this);
             string langId = settings.GetString(Utils.LANG_ID_TAG, "1");
            
-            var updateList= await RestApiService.CheckUpdate(dbCon, langId,Utils.GetLatUpadte(this));
-            Utils.WriteToSettings(this, NohandicapLibrary.PRODUCT_TABLE, updateList[NohandicapLibrary.PRODUCT_TABLE]);
-            Utils.WriteToSettings(this, NohandicapLibrary.CATEGORY_TABLE, updateList[NohandicapLibrary.CATEGORY_TABLE]);
-            Utils.WriteToSettings(this, NohandicapLibrary.LANGUAGE_TABLE, updateList[NohandicapLibrary.LANGUAGE_TABLE]);
-        }
+            var updateList= await RestApiService.CheckUpdate(dbCon, langId,Utils.GetLastUpadte(this));
+            if (updateList != null)
+            {
+                Utils.WriteToSettings(this, NohandicapLibrary.PRODUCT_TABLE, updateList[NohandicapLibrary.PRODUCT_TABLE]);
+                Utils.WriteToSettings(this, NohandicapLibrary.CATEGORY_TABLE, updateList[NohandicapLibrary.CATEGORY_TABLE]);
+                Utils.WriteToSettings(this, NohandicapLibrary.LANGUAGE_TABLE, updateList[NohandicapLibrary.LANGUAGE_TABLE]);
+            }        }
         private void PrepareBar()
         {
             Log.Debug(TAG, "Prepare Bar.....");

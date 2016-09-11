@@ -44,7 +44,7 @@ namespace NohandicapNative.Droid.Services
 
 
         public static Context mainActivity;
-        public static  Dictionary<string,string> GetLatUpadte(Context context)
+        public static  Dictionary<string,string> GetLastUpadte(Context context)
         {
             Dictionary<string, string> lastUpdate = new Dictionary<string, string>();
             lastUpdate.Add(NohandicapLibrary.PRODUCT_TABLE, Utils.ReadFromSettings(context, NohandicapLibrary.PRODUCT_TABLE));

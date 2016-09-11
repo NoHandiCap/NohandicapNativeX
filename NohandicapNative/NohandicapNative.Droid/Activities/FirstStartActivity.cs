@@ -153,7 +153,7 @@ namespace NohandicapNative.Droid
             progressDialog.Indeterminate = true;
             progressDialog.SetMessage(res.GetString(Resource.String.load_data));
             progressDialog.Show();
-           var result = await RestApiService.CheckUpdate(dbCon,_selecteLangID.ToString(),Utils.GetLatUpadte(this));
+           var result = await RestApiService.CheckUpdate(dbCon,_selecteLangID.ToString(),Utils.GetLastUpadte(this));
             if (result!=null)
             {     
                    
