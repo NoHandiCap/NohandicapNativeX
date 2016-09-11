@@ -1,10 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>	
-	<string name="app_name">Nohandicap</string>
+  
+	<string name="app_name">NoHandicap</string>
   <string name="current_language_short">de</string>
-
   <string name="settings">Einstellungen</string>
-  <string name="next">Weiter</string>
   <string name="load_data">Daten synchronizieren..</string>
   <string name="authentication">Authentifizieren...</string>
   <string name="lang_prompt">Wählen Sie Ihre Sprache aus:</string>
