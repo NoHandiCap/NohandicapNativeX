@@ -95,18 +95,18 @@ namespace NohandicapNative.Droid
                                 mainCat[y].SetTextColor(Color.Black);
                                 mainCat[y].SetTypeface(null, TypefaceStyle.Bold);
                                 mainLayout[y].Selected = true;
-                                Utils.WriteToSettings(myContext,Utils.MAIN_CAT_SELECTED_ID, y.ToString());
+                                Utils.WriteToSettings(myContext,Utils.MAIN_CAT_SELECTED_ID, (y+1).ToString());
                             }
                         }
                     }
                 };
 
             }
-            var categorySelected = int.Parse(Utils.ReadFromSettings(myContext, Utils.MAIN_CAT_SELECTED_ID, "0"));
+            var categorySelected = int.Parse(Utils.ReadFromSettings(myContext, Utils.MAIN_CAT_SELECTED_ID, "1"))-1;
 
-            mainCat[categorySelected].SetTextColor(Color.Black);
-            mainCat[categorySelected].SetTypeface(null, TypefaceStyle.Bold);
-            mainLayout[categorySelected].Selected = true;
+            mainCat[categorySelected-1].SetTextColor(Color.Black);
+            mainCat[categorySelected-1].SetTypeface(null, TypefaceStyle.Bold);
+            mainLayout[categorySelected-1].Selected = true;
             mainImg[0].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair1, 140,65 ));
             mainImg[1].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair2, 140, 65));
             mainImg[2].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair3, 140, 65));

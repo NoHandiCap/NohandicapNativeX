@@ -5373,8 +5373,8 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f070002
 			public const int auth_google_play_services_client_google_display_name = 2131165186;
 			
-			// aapt resource value: 0x7f070087
-			public const int authentication = 2131165319;
+			// aapt resource value: 0x7f070086
+			public const int authentication = 2131165318;
 			
 			// aapt resource value: 0x7f070094
 			public const int bookingcom = 2131165332;
@@ -5382,8 +5382,8 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f070036
 			public const int bottom_sheet_behavior = 2131165238;
 			
-			// aapt resource value: 0x7f070090
-			public const int categories = 2131165328;
+			// aapt resource value: 0x7f07008f
+			public const int categories = 2131165327;
 			
 			// aapt resource value: 0x7f070037
 			public const int character_counter_pattern = 2131165239;
@@ -5475,8 +5475,8 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f070020
 			public const int common_signin_button_text_long = 2131165216;
 			
-			// aapt resource value: 0x7f07008f
-			public const int contact = 2131165327;
+			// aapt resource value: 0x7f07008e
+			public const int contact = 2131165326;
 			
 			// aapt resource value: 0x7f0700a3
 			public const int create_account = 2131165347;
@@ -5487,8 +5487,8 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f07009c
 			public const int demo = 2131165340;
 			
-			// aapt resource value: 0x7f07008c
-			public const int description = 2131165324;
+			// aapt resource value: 0x7f07008b
+			public const int description = 2131165323;
 			
 			// aapt resource value: 0x7f070098
 			public const int email = 2131165336;
@@ -5709,14 +5709,14 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f070095
 			public const int home_page = 2131165333;
 			
-			// aapt resource value: 0x7f07008d
-			public const int information = 2131165325;
+			// aapt resource value: 0x7f07008c
+			public const int information = 2131165324;
 			
 			// aapt resource value: 0x7f070092
 			public const int label = 2131165330;
 			
-			// aapt resource value: 0x7f070088
-			public const int lang_prompt = 2131165320;
+			// aapt resource value: 0x7f070087
+			public const int lang_prompt = 2131165319;
 			
 			// aapt resource value: 0x7f070093
 			public const int large_text = 2131165331;
@@ -5730,11 +5730,11 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f070096
 			public const int live_reload = 2131165334;
 			
-			// aapt resource value: 0x7f070086
-			public const int load_data = 2131165318;
+			// aapt resource value: 0x7f070085
+			public const int load_data = 2131165317;
 			
-			// aapt resource value: 0x7f070091
-			public const int location = 2131165329;
+			// aapt resource value: 0x7f070090
+			public const int location = 2131165328;
 			
 			// aapt resource value: 0x7f07009a
 			public const int login = 2131165338;
@@ -5742,23 +5742,23 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f0700a2
 			public const int maennlich = 2131165346;
 			
+			// aapt resource value: 0x7f070088
+			public const int main_cat1 = 2131165320;
+			
 			// aapt resource value: 0x7f070089
-			public const int main_cat1 = 2131165321;
+			public const int main_cat2 = 2131165321;
 			
 			// aapt resource value: 0x7f07008a
-			public const int main_cat2 = 2131165322;
+			public const int main_cat3 = 2131165322;
 			
-			// aapt resource value: 0x7f07008b
-			public const int main_cat3 = 2131165323;
-			
-			// aapt resource value: 0x7f07008e
-			public const int medium_text = 2131165326;
+			// aapt resource value: 0x7f07008d
+			public const int medium_text = 2131165325;
 			
 			// aapt resource value: 0x7f07009e
 			public const int name = 2131165342;
 			
-			// aapt resource value: 0x7f070085
-			public const int next = 2131165317;
+			// aapt resource value: 0x7f070091
+			public const int next = 2131165329;
 			
 			// aapt resource value: 0x7f070097
 			public const int open_hours = 2131165335;

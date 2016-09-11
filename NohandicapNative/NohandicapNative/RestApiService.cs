@@ -15,14 +15,13 @@ namespace NohandicapNative
         public static async Task<string> GetStringContent(string dataUri, string rootName = "result")
         {
             var url = dataUri;
-            var httpClient = new HttpClient() { Timeout = TimeSpan.FromMilliseconds(1000) };
+            var httpClient = new HttpClient() ;
             var cts = new CancellationTokenSource();
-            cts.CancelAfter(1000);
+            cts.CancelAfter(TimeSpan.FromMilliseconds(10000));
             try
             {
                 using (HttpResponseMessage response = await httpClient.GetAsync(url, cts.Token))
                 {
-
                     string content = null;
                     if (response != null && response.Content != null)
                         content = await response.Content.ReadAsStringAsync();
@@ -32,6 +31,7 @@ namespace NohandicapNative
                     {
                         if (content.Length > 0)
                         {
+                       
                             return content;
                         }
 
@@ -63,19 +63,13 @@ namespace NohandicapNative
             var content = await GetStringContent(dataUri, rootName);
             if (content != null)
             {
-
-
                 var v = Deserializedata<T>(content);
                 return v;
-
-
             }
             else
             {
                 return default(T);
             }
-
-
         }
 
 
@@ -172,6 +166,10 @@ namespace NohandicapNative
             bool cat = false;
             bool lang = false;
             var result = await GetStringContent(NohandicapLibrary.LINK_GET_UPDATE);
+            if (result == null)
+            {
+                return null;
+            }
             var token = JObject.Parse(result).SelectToken("result");
             var productTable= token.SelectToken("prod").ToString();
             var categoryTable = token.SelectToken("cat").ToString();

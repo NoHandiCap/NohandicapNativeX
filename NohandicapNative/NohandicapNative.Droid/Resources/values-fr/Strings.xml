@@ -22,11 +22,11 @@
   <string name="bookingcom">Booking.com</string>
   <string name="home_page">Home Page</string>
   <string name="live_reload">LiveReload works with iOS devices out of the box if you add a correct SCRIPT tag (there are no browser extensions on mobile devices).  When your site is running on your local computer (i.e. on the same one that runs LiveReload app), the default script tag is fine.</string>
-  <string name="open_hours">Heures d'ouverture</string>
+  <string name="open_hours">Heures d\'ouverture</string>
   <string name="email">Email</string>
   <string name="password">Mot de passe</string>
-  <string name="login">S'identifier</string>
-  <string name="sign_up">S'inscrire</string>
+  <string name="login">S\'identifier</string>
+  <string name="sign_up">S\'inscrire</string>
   <string name="demo">Demo</string>
   <string name="synchronize">Synchroniser</string>
   <string name="name">Prénom</string>
@@ -35,7 +35,7 @@
   <string name="weiblich">Femelle</string>
   <string name="maennlich">Mâle</string>
   <string name="create_account">Créer un compte</string>
-  <string name="already_login">Déjà membre? S'identifier</string>
+  <string name="already_login">Déjà membre? S\'identifier</string>
  
   
   

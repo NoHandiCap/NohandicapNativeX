@@ -77,7 +77,7 @@ namespace NohandicapNative.Droid
                     int categorySelected;
                     if (filter)
                     {
-                        categorySelected = int.Parse(Utils.ReadFromSettings(myContext, Utils.MAIN_CAT_SELECTED_ID, "0"));
+                        categorySelected = int.Parse(Utils.ReadFromSettings(myContext, Utils.MAIN_CAT_SELECTED_ID, "1"));
                     }
                     else
                     {

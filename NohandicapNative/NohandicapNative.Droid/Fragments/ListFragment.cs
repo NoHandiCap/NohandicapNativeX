@@ -74,10 +74,10 @@ namespace NohandicapNative.Droid
         private async void ReloadData()
         {
             var category = dbCon.GetDataList<CategoryModel>();
-            int categorySelectedId = int.Parse(Utils.ReadFromSettings(myContext, Utils.MAIN_CAT_SELECTED_ID, "0"));                    
+            int categorySelectedId = int.Parse(Utils.ReadFromSettings(myContext, Utils.MAIN_CAT_SELECTED_ID, "1"));                    
             products = dbCon.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= categorySelectedId).ToList();
-            categoryName.Text = Resources.GetString(mainCategoriesText[categorySelectedId]);
-            var image = Utils.GetImage(myContext, "wheelchair" + (categorySelectedId + 1));
+            categoryName.Text = Resources.GetString(mainCategoriesText[categorySelectedId-1]);
+            var image = Utils.GetImage(myContext, "wheelchair" + categorySelectedId);
             categoryImage.SetImageDrawable(Utils.SetDrawableSize(myContext, image, 140, 65));
             cardViewAdapter = new CardViewAdapter(myContext, products);
             listView.Adapter = cardViewAdapter;

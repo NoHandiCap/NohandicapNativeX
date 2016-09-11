@@ -64,11 +64,7 @@ namespace NohandicapNative.Droid
                 nextButton.Text = Resources.GetString(Resource.String.next);
                 nextButton.Click += (s, e) =>
                 {
-                    dbCon = Utils.GetDatabaseConnection();
-                    dbCon.CreateTables();
-                    Languages.ForEach(x => {
-                        dbCon.InsertUpdateProduct(x);
-                    });
+                   
                  
                     LoadData();
 
@@ -153,10 +149,15 @@ namespace NohandicapNative.Droid
             progressDialog.Indeterminate = true;
             progressDialog.SetMessage(res.GetString(Resource.String.load_data));
             progressDialog.Show();
-           var result = await RestApiService.CheckUpdate(dbCon,_selecteLangID.ToString(),Utils.GetLastUpadte(this));
+            dbCon = Utils.GetDatabaseConnection();
+            dbCon.CreateTables();
+            Languages.ForEach(x => {
+                dbCon.InsertUpdateProduct(x);
+            });
+            var result = await RestApiService.CheckUpdate(dbCon,_selecteLangID.ToString(),Utils.GetLastUpadte(this));
             if (result!=null)
-            {     
-                   
+            {
+               
                 // On complete call either onLoginSuccess or onLoginFailed
 
                 // onLoginFailed();
@@ -176,6 +177,7 @@ namespace NohandicapNative.Droid
                 Finish();
                 return false;
             }
+           
         }
         protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
         {
