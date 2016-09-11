@@ -22,6 +22,7 @@ namespace NohandicapNative
         {
             JToken token = JToken.Load(reader);
             ImageJsonModel model = new ImageJsonModel();
+#if __ANDROID__
             if (token.Type == JTokenType.Object)
             {
                 var thumbs = token["thumbs"].ToObject<List<string>>();
@@ -58,6 +59,7 @@ namespace NohandicapNative
 
 
             }
+#endif
             return model;
         }
 

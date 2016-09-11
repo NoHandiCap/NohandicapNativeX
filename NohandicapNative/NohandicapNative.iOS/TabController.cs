@@ -13,7 +13,7 @@ namespace NohandicapNative.iOS
 
         public TabController()
         {
-            var items = NohandiLibrary.GetTabs();
+            var items = NohandicapLibrary.GetTabs();
             var tabItems = new UIViewController[items.Count];
             for (int i = 0; i < tabItems.Length; i++)
             {

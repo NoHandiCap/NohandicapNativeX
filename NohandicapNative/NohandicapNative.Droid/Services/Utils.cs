@@ -21,8 +21,7 @@ using Java.IO;
 namespace NohandicapNative.Droid.Services
 {
     public class Utils
-    {
-       
+    {       
         public const string HOME_TAG = "0";
         public const string MAP_TAG = "1";
         public const string LIST_TAG = "2";
@@ -41,8 +40,18 @@ namespace NohandicapNative.Droid.Services
         public const string LOGIN_ID = "loginID";
         public const string PRODUCT_ID = "productId";
         public const string MAIN_CAT_SELECTED_ID = "maincat";
+      
+
 
         public static Context mainActivity;
+        public static  Dictionary<string,string> GetLatUpadte(Context context)
+        {
+            Dictionary<string, string> lastUpdate = new Dictionary<string, string>();
+            lastUpdate.Add(NohandicapLibrary.PRODUCT_TABLE, Utils.ReadFromSettings(context, NohandicapLibrary.PRODUCT_TABLE));
+            lastUpdate.Add(NohandicapLibrary.CATEGORY_TABLE, Utils.ReadFromSettings(context, NohandicapLibrary.CATEGORY_TABLE));
+            lastUpdate.Add(NohandicapLibrary.LANGUAGE_TABLE, Utils.ReadFromSettings(context, NohandicapLibrary.LANGUAGE_TABLE));
+            return lastUpdate;
+        }
         public static Android.Graphics.Drawables.Drawable GetImage(Context context, string image)
 
         {

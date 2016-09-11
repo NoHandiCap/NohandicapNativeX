@@ -66,8 +66,7 @@ namespace NohandicapNative.Droid
         }
         private void LoadData(bool filter = true)
         {
-            try { 
-         
+            try {          
                 if (myContext != null&map!=null)
                 {                    
                     markersList.Clear();

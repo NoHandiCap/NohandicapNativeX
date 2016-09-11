@@ -113,7 +113,7 @@ namespace NohandicapNative.Droid
                             fab.Selected = true;
                             user.Fravorites.Add(product.ID);
                             dbCon.InsertUpdateProduct(user);
-                            var url = String.Format(NohandiLibrary.LINK_SAVEFAV, user.ID, product.ID);
+                            var url = String.Format(NohandicapLibrary.LINK_SAVEFAV, user.ID, product.ID);
                             RestApiService.GetDataFromUrl<UserModel>(url, readBack: false);
                         }
                         else

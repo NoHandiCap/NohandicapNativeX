@@ -104,7 +104,7 @@ namespace NohandicapNative.Droid
             ListPage = new ListFragment();
             HomePage = new HomeFragment();
             Favorites = new FavoritesFragment();
-            items = NohandiLibrary.GetTabs();
+            items = NohandicapLibrary.GetTabs();
             dbCon = Utils.GetDatabaseConnection();
             PrepareBar();
             if (bundle != null)
@@ -113,24 +113,19 @@ namespace NohandicapNative.Droid
                 _bottomBar.SelectTabAtPosition(postion, false);
             }
             Utils.mainActivity = this;
-            ThreadPool.QueueUserWorkItem(o => CheckDataBase());
+            ThreadPool.QueueUserWorkItem(o => CheckUpdate());
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetHomeButtonEnabled(true);
         }
-        public async Task<bool> CheckDataBase()
+        public async void CheckUpdate()
         {
-            var language = dbCon.GetDataList<LanguageModel>();
-            var categories = dbCon.GetDataList<CategoryModel>();
-            var products = dbCon.GetDataList<ProductModel>();
-            if (language.Count ==0 || categories.Count == 0|| products.Count == 0)
-            {
-                ISharedPreferences settings = PreferenceManager.GetDefaultSharedPreferences(this);
-                string lang = settings.GetString(Utils.LANG_ID_TAG, null);
-            return await  dbCon.SynchronizeDataBase(lang);            
-               
-            }
-            return false;
-            
+            ISharedPreferences settings = PreferenceManager.GetDefaultSharedPreferences(this);
+            string langId = settings.GetString(Utils.LANG_ID_TAG, "1");
+           
+            var updateList= await RestApiService.CheckUpdate(dbCon, langId,Utils.GetLatUpadte(this));
+            Utils.WriteToSettings(this, NohandicapLibrary.PRODUCT_TABLE, updateList[NohandicapLibrary.PRODUCT_TABLE]);
+            Utils.WriteToSettings(this, NohandicapLibrary.CATEGORY_TABLE, updateList[NohandicapLibrary.CATEGORY_TABLE]);
+            Utils.WriteToSettings(this, NohandicapLibrary.LANGUAGE_TABLE, updateList[NohandicapLibrary.LANGUAGE_TABLE]);
         }
         private void PrepareBar()
         {
@@ -169,7 +164,7 @@ namespace NohandicapNative.Droid
         #region IOnTabClickListener implementation
         public void SetCurrentTab(int position)
         {
-            _bottomBar.SelectTabAtPosition(position, false);
+            _bottomBar.SelectTabAtPosition(position, true);
         }
         public void OnTabSelected(int position)
         {

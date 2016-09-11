@@ -50,7 +50,7 @@
     <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
     <JavaMaximumHeapSize>1G</JavaMaximumHeapSize>
     <AndroidLinkSkip>Xamarin.Android.Support.Design;Xamarin.Android.Support.Animated.Vector.Drawable;Xamarin.Android.Support.v4;Xamarin.Android.Support.v7.AppCompat;Xamarin.Android.Support.v7.CardView;Xamarin.Android.Support.v7.RecyclerView;Xamarin.Android.Support.Vector.Drawable;</AndroidLinkSkip>
-    <AndroidSupportedAbis>armeabi,armeabi-v7a</AndroidSupportedAbis>
+    <AndroidSupportedAbis>armeabi,x86</AndroidSupportedAbis>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BottomNavigationBar, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
@@ -142,7 +142,6 @@
     <Compile Include="Activities\FirstStartActivity.cs" />
     <Compile Include="Activities\MainActivity.cs" />
     <Compile Include="Fragments\GMapFragment.cs" />
-    <Compile Include="Model\CustomRadioButton.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Fragments\HomeFragment.cs" />

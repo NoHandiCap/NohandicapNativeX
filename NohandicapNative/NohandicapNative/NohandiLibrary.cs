@@ -7,7 +7,7 @@ using System.Text;
 
 namespace NohandicapNative
 {
-    public class NohandiLibrary
+    public class NohandicapLibrary
     {
         public const string LINK_MAIN= "http://www.stage.nohandicap.net";
         public const string LINK_LANGUAGE = "http://www.stage.nohandicap.net/cms/component/shopmap/ajax/api.php?action=getlang";
@@ -16,6 +16,10 @@ namespace NohandicapNative
         public const string LINK_LOGIN = "http://www.stage.nohandicap.net/cms/index.php?item=artikel&id=1&com=login&action=login&type=app";
         public const string LINK_SAVEFAV = "http://www.stage.nohandicap.net/cms/component/shopmap/ajax/api.php?action=savefave&iduser={0}&idprod={1}";
         public const string LINK_SIGN_UP = "http://www.stage.nohandicap.net/cms/index.php?item=artikel&id=&com=login&action=register&type=app";
+        public const string LINK_GET_UPDATE = "http://www.stage.nohandicap.net/cms/component/shopmap/ajax/api.php?action=getlastupdated";
+        public const string PRODUCT_TABLE = "Products";
+        public const string CATEGORY_TABLE = "Categories";
+        public const string LANGUAGE_TABLE = "Language";
 
         public static List<TabItem> GetTabs()
         {

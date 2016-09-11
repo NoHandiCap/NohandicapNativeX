@@ -52,10 +52,10 @@ namespace NohandicapNative.Droid
             
                 Languages = new List<LanguageModel>();
 
-                dbCon = Utils.GetDatabaseConnection();
+               
                 Log.Debug(TAG, "Get database");
 
-                dbCon.CreateTables();
+              
                 Log.Debug(TAG, "Creat Table");
                 nextButton = FindViewById<Button>(Resource.Id.next_button);
                 spinnerPrompt = FindViewById<TextView>(Resource.Id.lang_spinner_prompt);
@@ -64,7 +64,12 @@ namespace NohandicapNative.Droid
                 nextButton.Text = Resources.GetString(Resource.String.next);
                 nextButton.Click += (s, e) =>
                 {
-
+                    dbCon = Utils.GetDatabaseConnection();
+                    dbCon.CreateTables();
+                    Languages.ForEach(x => {
+                        dbCon.InsertUpdateProduct(x);
+                    });
+                 
                     LoadData();
 
                 };
@@ -118,7 +123,7 @@ namespace NohandicapNative.Droid
                     lang.ID = i + 1;
                     lang.ShortName = defaultShortLanguages[i];
                     lang.LanguageName = defaultLanguages[i];
-                    dbCon.InsertUpdateProduct(lang);
+                   // dbCon.InsertUpdateProduct(lang);
                     Languages.Add(lang);
                 }
             //}
@@ -132,7 +137,7 @@ namespace NohandicapNative.Droid
             //    defaultShortLanguages = languages.Select(x => x.ShortName).ToArray();
             //}
             List<CustomRadioButton> langList = new List<CustomRadioButton>();
-            dbCon.GetDataList<LanguageModel>().ForEach(x => langList.Add(new CustomRadioButton()
+            Languages.ForEach(x => langList.Add(new CustomRadioButton()
             {
                 Text = x.LanguageName
             }));
@@ -148,8 +153,8 @@ namespace NohandicapNative.Droid
             progressDialog.Indeterminate = true;
             progressDialog.SetMessage(res.GetString(Resource.String.load_data));
             progressDialog.Show();
-            bool result = await dbCon.SynchronizeDataBase(_selecteLangID.ToString());
-            if (result)
+           var result = await RestApiService.CheckUpdate(dbCon,_selecteLangID.ToString(),Utils.GetLatUpadte(this));
+            if (result!=null)
             {     
                    
                 // On complete call either onLoginSuccess or onLoginFailed

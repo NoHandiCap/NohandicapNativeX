@@ -117,7 +117,7 @@ namespace NohandicapNative.Droid
             List<CategoryModel> additItems = dbCon.GetDataList<CategoryModel>(false);
             if (additItems.Count == 0)
             {
-                var localCategories = NohandiLibrary.GetAdditionalCategory();
+                var localCategories = NohandicapLibrary.GetAdditionalCategory();
                 var localCategoriesLocalization = Resources.GetStringArray(Resource.Array.additional_category_array);
                 for (int i = 0; i < localCategories.Count; i++)
                 {

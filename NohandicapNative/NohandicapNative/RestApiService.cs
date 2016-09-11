@@ -10,19 +10,16 @@ using System.Threading.Tasks;
 
 namespace NohandicapNative
 {
- public class RestApiService
+    public class RestApiService
     {
-        public static async Task<T> GetDataFromUrl<T>(string dataUri, string rootName = "result",bool readBack=true)
+        public static async Task<string> GetStringContent(string dataUri, string rootName = "result")
         {
             var url = dataUri;
             var httpClient = new HttpClient() { Timeout = TimeSpan.FromMilliseconds(1000) };
-            var cts = new CancellationTokenSource();     
+            var cts = new CancellationTokenSource();
+            cts.CancelAfter(1000);
             try
-            {            
-                //// Set OAuth authentication header
-                //if (!string.IsNullOrEmpty(accessToken))
-                //    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-
+            {
                 using (HttpResponseMessage response = await httpClient.GetAsync(url, cts.Token))
                 {
 
@@ -33,52 +30,58 @@ namespace NohandicapNative
                     if (response.StatusCode == HttpStatusCode.OK ||
                         response.StatusCode == HttpStatusCode.Created)
                     {
-                        if (content.Length > 0 && readBack)
+                        if (content.Length > 0)
                         {
-                            if (rootName == null)
-                            {
-                                return Deserializedata<T>(content);
-                            }
-                            else
-                            {
-
-                                var v = Deserializedata<T>(content);
-                                return v;
-
-                            }
+                            return content;
                         }
-                        else
-                        {
-                            return default(T);
-                        }
-                    }
-                    else
-                    {
-                        return default(T);
-                    }
 
+
+                    }
+                    return null;
                 }
             }
-
             catch (WebException ex)
             {
-                return default(T);
+                return null;
             }
             catch (TaskCanceledException ex)
             {
                 if (ex.CancellationToken == cts.Token)
                 {
-                    return default(T);
+                    return null;
                 }
                 else
                 {
-                    return default(T);
+                    return null;
                 }
             }
         }
-           
-        
-        public static T Deserializedata<T>(string content,  string rootName = "result")
+
+
+        public static async Task<T> GetDataFromUrl<T>(string dataUri, string rootName = "result", bool readBack = true)
+        {
+            var content = await GetStringContent(dataUri, rootName);
+            if (content != null)
+            {
+
+
+                var v = Deserializedata<T>(content);
+                return v;
+
+
+            }
+            else
+            {
+                return default(T);
+            }
+
+
+        }
+
+
+
+
+        public static T Deserializedata<T>(string content, string rootName = "result")
         {
             try
             {
@@ -99,14 +102,15 @@ namespace NohandicapNative
                 var s = root.ToString().Replace("\n", "");
                 var v = JsonConvert.DeserializeObject<T>(s, settings);
                 return v;
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
-                
+
                 return default(T);
             }
 
         }
-        public static async Task<UserModel> Login(string email,string password)
+        public static async Task<UserModel> Login(string email, string password)
         {
             try
             {
@@ -115,7 +119,7 @@ namespace NohandicapNative
                     var reqparm = new System.Collections.Specialized.NameValueCollection();
                     reqparm.Add("user", email);
                     reqparm.Add("pwd", password);
-                    byte[] responsebytes = client.UploadValues(NohandiLibrary.LINK_LOGIN, "POST", reqparm);
+                    byte[] responsebytes = client.UploadValues(NohandicapLibrary.LINK_LOGIN, "POST", reqparm);
                     string responsebody = Encoding.UTF8.GetString(responsebytes);
                     var user = Deserializedata<UserModel>(responsebody, rootName: "user");
                     var fav = Deserializedata<List<int>>(responsebody, rootName: "favorites");
@@ -123,11 +127,12 @@ namespace NohandicapNative
                         user.Fravorites = fav;
                     return user;
                 }
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 return null;
             }
-            
+
         }
         public static async Task<bool> SignUp(UserModel user)
         {
@@ -136,7 +141,7 @@ namespace NohandicapNative
                 using (WebClient client = new WebClient())
                 {
                     var reqparm = new System.Collections.Specialized.NameValueCollection();
-                    reqparm.Add("vname",user.Vname );
+                    reqparm.Add("vname", user.Vname);
                     reqparm.Add("nname", user.Nname);
                     reqparm.Add("email", user.Email);
                     reqparm.Add("mobil", user.Phone);
@@ -144,14 +149,14 @@ namespace NohandicapNative
                     reqparm.Add("pwd", user.Password);
                     reqparm.Add("pwd2", user.Password);
                     reqparm.Add("geschlecht", user.Sex);
-                    byte[] responsebytes = client.UploadValues(NohandiLibrary.LINK_SIGN_UP, "POST", reqparm);
+                    byte[] responsebytes = client.UploadValues(NohandicapLibrary.LINK_SIGN_UP, "POST", reqparm);
                     string responsebody = Encoding.UTF8.GetString(responsebytes);
                     var root = JObject.Parse(responsebody).SelectToken("status").ToString();
-                  var code=  JsonConvert.DeserializeObject<int>(root);
+                    var code = JsonConvert.DeserializeObject<int>(root);
                     if (code == 1) return true;
                     else
-                      return false;
-                    
+                        return false;
+
                 }
             }
             catch (Exception e)
@@ -159,6 +164,45 @@ namespace NohandicapNative
                 return false;
             }
 
+        }
+
+        public static async Task<Dictionary<string,string>> CheckUpdate(SqliteService dbCon,string langID, Dictionary<string, string> lastUpdate)
+        {
+            bool prod = false;
+            bool cat = false;
+            bool lang = false;
+            var result = await GetStringContent(NohandicapLibrary.LINK_GET_UPDATE);
+            var token = JObject.Parse(result).SelectToken("result");
+            var productTable= token.SelectToken("prod").ToString();
+            var categoryTable = token.SelectToken("cat").ToString();
+            var langTable = token.SelectToken("lang").ToString();
+
+            if (productTable !=lastUpdate[NohandicapLibrary.PRODUCT_TABLE])
+            {
+             prod = await dbCon.SynchronizeDataBase(langID, NohandicapLibrary.PRODUCT_TABLE);
+            }
+            
+            if (categoryTable != lastUpdate[NohandicapLibrary.CATEGORY_TABLE])
+            {
+            cat=  await  dbCon.SynchronizeDataBase(langID, NohandicapLibrary.CATEGORY_TABLE);
+            }
+            if (langTable != lastUpdate[NohandicapLibrary.LANGUAGE_TABLE])
+            {
+             lang=  await dbCon.SynchronizeDataBase(langID, NohandicapLibrary.LANGUAGE_TABLE);
+            }
+            if (lang || prod || cat)
+            {
+                Dictionary<string, string> updateList = new Dictionary<string, string>();
+                updateList.Add(NohandicapLibrary.PRODUCT_TABLE, productTable);
+                updateList.Add(NohandicapLibrary.CATEGORY_TABLE, categoryTable);
+                updateList.Add(NohandicapLibrary.LANGUAGE_TABLE, langTable);
+                return updateList;
+            }
+            else
+            {
+                return null;
+            }
+   
         }
 
     }
