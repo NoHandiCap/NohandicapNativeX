@@ -127,7 +127,7 @@ namespace NohandicapNative.Droid
                     }
                     else
                     {
-                        Toast.MakeText(this, "Please login", ToastLength.Short).Show();
+                        Toast.MakeText(this, Resources.GetString(Resource.String.please_login), ToastLength.Short).Show();
                     }
                 };
             }

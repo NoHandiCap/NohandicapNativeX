@@ -100,7 +100,7 @@ namespace NohandicapNative.Droid
             ProgressDialog progressDialog = new ProgressDialog(myContext,
                      Resource.Style.AppThemeDarkDialog);
             progressDialog.Indeterminate = true;
-            progressDialog.SetMessage("Authenticating...");
+            progressDialog.SetMessage(Resources.GetString(Resource.String.authentication));
             progressDialog.Show();
 
             string email = emailText.Text;

@@ -36,7 +36,9 @@
   <string name="maennlich">Male</string>
   <string name="create_account">Create Account</string>
   <string name="already_login">Already a member? Login</string>
+  <string name="please_login">Please login</string>
   
+
   <string-array name="lang_array">
     <item>German</item>
     <item>English</item>
