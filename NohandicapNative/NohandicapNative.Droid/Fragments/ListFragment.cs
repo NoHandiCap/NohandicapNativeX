@@ -14,6 +14,8 @@ using Android.App;
 using NohandicapNative.Droid.Services;
 using Android.Graphics;
 using Android.Util;
+using Android.Locations;
+using System.Globalization;
 
 namespace NohandicapNative.Droid
 {
@@ -25,7 +27,7 @@ namespace NohandicapNative.Droid
         public string _currentProductType = PRODUCT_ALL;
         MainActivity myContext;
         ListView listView;
-        List<ProductModel> products;
+        List<ProductModel> Products;
         SqliteService dbCon;
         CardViewAdapter cardViewAdapter;
         TextView categoryName;
@@ -43,7 +45,7 @@ namespace NohandicapNative.Droid
                 int position = e.Position;
 
                 var activity = new Intent(myContext, typeof(DetailActivity));
-                activity.PutExtra(Utils.PRODUCT_ID, products[position].ID);
+                activity.PutExtra(Utils.PRODUCT_ID, Products[position].ID);
                 myContext.StartActivityForResult(activity,1);
               
            
@@ -75,16 +77,34 @@ namespace NohandicapNative.Droid
         {
             var category = dbCon.GetDataList<CategoryModel>();
             int categorySelectedId = int.Parse(Utils.ReadFromSettings(myContext, Utils.MAIN_CAT_SELECTED_ID, "1"));                    
-            products = dbCon.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= categorySelectedId).ToList();
+            Products = dbCon.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= categorySelectedId).ToList();
             categoryName.Text = Resources.GetString(mainCategoriesText[categorySelectedId-1]);
             var image = Utils.GetImage(myContext, "wheelchair" + categorySelectedId);
-            categoryImage.SetImageDrawable(Utils.SetDrawableSize(myContext, image, 140, 65));
-            cardViewAdapter = new CardViewAdapter(myContext, products);
+            categoryImage.SetImageDrawable(Utils.SetDrawableSize(myContext, image, 140, 65));         
+            cardViewAdapter = new CardViewAdapter(myContext, SortProductsByDistance(Products));
             listView.Adapter = cardViewAdapter;
 
             //var listAdapter = new ListAdapter(myContext, product);
 
 
+        }
+        public List<ProductModel> SortProductsByDistance(List<ProductModel> products)
+        {
+            var myLocation = myContext.CurrentLocation;
+            if (myLocation != null)
+            {
+             var sorted=   products.Select(product =>
+                {
+                    var point = new Location("");
+                    point.Latitude = double.Parse(product.Lat, CultureInfo.InvariantCulture);
+                    point.Longitude = double.Parse(product.Long, CultureInfo.InvariantCulture);
+                    var distance = Utils.GetDistance(myLocation, point);
+                    product.DistanceToMyLocation = distance;
+                    return product;
+                }).OrderBy(x => x.DistanceToMyLocation).ToList();
+                return sorted;
+            }
+            return products;
         }
         public override void OnAttach(Activity activity)
         {

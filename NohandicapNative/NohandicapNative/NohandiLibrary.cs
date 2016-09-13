@@ -82,6 +82,17 @@ namespace NohandicapNative
             }
             return items;
         }
+        public static string ConvertMetersToKilometers(float meters)
+        {
+            if (meters < 1000)
+            {
+                return meters + " m";
+            }
+            else
+            {
+                return String.Format("{0:0.00}km", meters / 1000);
+            }
+        }
 
     }
 }

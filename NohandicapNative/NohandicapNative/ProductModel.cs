@@ -69,5 +69,8 @@ namespace NohandicapNative
         public int ImageJsonID { get; set; }
         public string categoriesBlobbed { get; set; }
 
+        [Ignore, JsonIgnore]
+        public float DistanceToMyLocation { get; set; }
+
     }
 }

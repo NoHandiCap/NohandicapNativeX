@@ -13,8 +13,7 @@ using Android.Support.V7.Widget;
 using Android.Graphics.Drawables;
 using NohandicapNative.Droid.Services;
 using Android.Graphics;
-using Android.Text;
-using Android.Util;
+using System.Threading.Tasks;
 
 namespace NohandicapNative.Droid.Adapters
 {
@@ -32,6 +31,7 @@ namespace NohandicapNative.Droid.Adapters
             dbCon = Utils.GetDatabaseConnection();
             categories = dbCon.GetDataList<CategoryModel>();
         }
+      
 
         public override ProductModel this[int position]
         {
@@ -67,17 +67,27 @@ namespace NohandicapNative.Droid.Adapters
             var title = view.FindViewById<TextView>(Resource.Id.titleTextView);
             var adress = view.FindViewById<TextView>(Resource.Id.adressTextView);
             var positionTextView = view.FindViewById<TextView>(Resource.Id.positionTextView);
+            var distanceLayout = view.FindViewById<LinearLayout>(Resource.Id.distanceLayout);
             title.Text = products[position].FirmName;
             adress.Text = products[position].Adress;
-            positionTextView.Text = "1,6 km";
+            if (products[position].DistanceToMyLocation != 0)
+            {
+                positionTextView.Text = NohandicapLibrary.ConvertMetersToKilometers(products[position].DistanceToMyLocation);
+            }
+            else
+            {
+                distanceLayout.Visibility = ViewStates.Gone;
+            }
+            Task.Run(() => {
 
+         
             var catImage = categories.FirstOrDefault(x => x.ID == products[position].Categories[0]);
-
             if (catImage != null)
             {
                 imageView.SetImageDrawable(Utils.GetImage(context, catImage.Icon));
                 imageView.SetBackgroundColor(Color.ParseColor(catImage.Color));
             }
+            });
             //var frame = view.FindViewById<LinearLayout>(Resource.Id.itemFrame);
             //var mainimage = products[position].ImageCollection.Images;
             //if (mainimage.Count != 0)
@@ -144,5 +154,6 @@ namespace NohandicapNative.Droid.Adapters
             #endregion
             return view;
         }
+
     }
 }

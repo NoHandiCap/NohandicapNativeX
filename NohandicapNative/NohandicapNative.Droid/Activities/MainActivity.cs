@@ -24,6 +24,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
 using HockeyApp.Android;
+using Android.Locations;
 
 namespace NohandicapNative.Droid
 {
@@ -75,7 +76,7 @@ namespace NohandicapNative.Droid
     [Activity(Label = "Nohandicap", WindowSoftInputMode = SoftInput.AdjustPan,LaunchMode =Android.Content.PM.LaunchMode.SingleTop, Icon = "@drawable/logo_small", ConfigurationChanges =Android.Content.PM.ConfigChanges.Orientation | 
         Android.Content.PM.ConfigChanges.ScreenSize
        )]
-	public class MainActivity : AppCompatActivity,  IOnTabClickListener
+	public class MainActivity : AppCompatActivity,  IOnTabClickListener, ILocationListener
     {
         #region Properties
         static readonly string TAG = "X:" + typeof(MainActivity).Name;
@@ -89,8 +90,12 @@ namespace NohandicapNative.Droid
         public FavoritesFragment Favorites { get; set; }       
         SqliteService dbCon;
         int lastPos = 0;
-        #endregion      
-       
+        public  Location CurrentLocation { get; set; }
+          LocationManager _locationManager;
+
+        string _locationProvider;
+        #endregion
+
         protected override void OnCreate(Bundle bundle)
         {
             SetTheme(Resource.Style.AppThemeNoBar);
@@ -116,6 +121,7 @@ namespace NohandicapNative.Droid
            ThreadPool.QueueUserWorkItem(o => CheckUpdate());
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetHomeButtonEnabled(true);
+            InitializeLocationManager();
         }
         public async void CheckUpdate()
         {
@@ -245,8 +251,53 @@ namespace NohandicapNative.Droid
             }
             return base.OnOptionsItemSelected(item);
         }
+        void InitializeLocationManager()
+        {
+            _locationManager = (LocationManager)GetSystemService(LocationService);
+            Criteria criteriaForLocationService = new Criteria
+            {
+                Accuracy = Accuracy.Fine
+            };
+            IList<string> acceptableLocationProviders = _locationManager.GetProviders(criteriaForLocationService, true);
 
-      
+            if (acceptableLocationProviders.Any())
+            {
+                _locationProvider = acceptableLocationProviders.First();
+            }
+            else
+            {
+                _locationProvider = string.Empty;
+            }
+            Log.Debug(TAG, "Using " + _locationProvider + ".");
+        }
+        public async void OnLocationChanged(Location location)
+        {
+            CurrentLocation = location;
+            if (CurrentLocation == null)
+            {
+               var s= "Unable to determine your location. Try again in a short while.";
+            }
+            else
+            {
+                var v= string.Format("{0:f6},{1:f6}", CurrentLocation.Latitude, CurrentLocation.Longitude);        
+            }
+        }
+
+        public void OnProviderDisabled(string provider)
+        {
+           
+        }
+
+        public void OnProviderEnabled(string provider)
+        {
+          
+        }
+
+        public void OnStatusChanged(string provider, [GeneratedEnum] Availability status, Bundle extras)
+        {
+           
+        }
+     
 
         #region ActivityLifeCycle implementation
 
@@ -281,7 +332,18 @@ namespace NohandicapNative.Droid
                 }
             }
         }
-       
+
+        protected override void OnResume()
+        {
+            base.OnResume();
+            _locationManager.RequestLocationUpdates(_locationProvider, 0, 0, this);
+        }
+        protected override void OnPause()
+        {
+            base.OnPause();
+            _locationManager.RemoveUpdates(this);
+        }
+
         #endregion
 
     }

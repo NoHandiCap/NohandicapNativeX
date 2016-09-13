@@ -38,7 +38,7 @@
   <string name="already_login">Déjà membre? S\'identifier</string>
   <string name="please_login">S\'il vous plaît vous connecter</string>
   <string name="accept">Acceptez</string>
-  
+  <string name="distance">Enlèvement: </string>
   
   <string-array name="lang_array">
     <item>Allemand</item>

@@ -17,6 +17,8 @@ using Android.Content.Res;
 using Android.Util;
 using Android.Preferences;
 using Java.IO;
+using Android.Gms.Maps.Model;
+using Android.Locations;
 
 namespace NohandicapNative.Droid.Services
 {
@@ -214,7 +216,11 @@ namespace NohandicapNative.Droid.Services
                 Locale.Default = sLocale;
             }
         }
-
+        public static float GetDistance(Location myLocation, Location point)
+        {
+            var d = myLocation.DistanceTo(point);
+            return d;
+        }
         public static void updateConfig(ContextThemeWrapper wrapper)
         {
             if (sLocale != null && Build.VERSION.SdkInt >= Build.VERSION_CODES.JellyBeanMr1)

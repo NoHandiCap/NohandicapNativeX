@@ -22,6 +22,7 @@ using Android.Gms.Common;
 using Android.Gms.Maps.Model;
 using Android.Util;
 using System.Globalization;
+using System.Threading.Tasks;
 
 namespace NohandicapNative.Droid
 {
@@ -32,19 +33,20 @@ namespace NohandicapNative.Droid
         static readonly string TAG = "X:" + typeof(DetailActivity).Name;
         Android.Support.V7.Widget.Toolbar toolbar;
         List<CategoryModel> categories;
-
+        UserModel user;
         ProductModel product;
         SqliteService dbCon;
         TextView descriptionTextView;
         TextView adressTextView;
         TextView phoneTextView;
+        TextView openHoursTextView;
         TextView categoriesTitleTextView;
         TextView categoriesTextView;
         ImageView mapImageView;
-
-       // MapView mapView;
         GoogleMap map;
         MapFragment mapFragment;
+        // MapView mapView;
+
 
         public DetailActivity()
         {
@@ -69,7 +71,8 @@ namespace NohandicapNative.Droid
                 descriptionTextView = (TextView)FindViewById(Resource.Id.descriptionTextView);
                 adressTextView = (TextView)FindViewById(Resource.Id.adressTextView);
                 phoneTextView = (TextView)FindViewById(Resource.Id.phoneTextView);
-                categoriesTextView = (TextView)FindViewById(Resource.Id.categoriesTextView);         
+                categoriesTextView = (TextView)FindViewById(Resource.Id.categoriesTextView);
+                openHoursTextView = (TextView)FindViewById(Resource.Id.openHoursTextView);    
                 SetSupportActionBar(toolbar);
                 SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Resources.GetColor(Resource.Color.themeColor)));
                 SupportActionBar.SetDisplayHomeAsUpEnabled(true);                
@@ -92,6 +95,7 @@ namespace NohandicapNative.Droid
                 descriptionTextView.TextFormatted = Html.FromHtml(product.Description);
                 adressTextView.Text = product.Adress;
                 phoneTextView.Text = product.Telefon;
+                openHoursTextView.TextFormatted = Html.FromHtml(product.OpenTime);
                 string bulledList = "";
                 product.Categories.ForEach(x =>
                 {
@@ -162,8 +166,8 @@ namespace NohandicapNative.Droid
 
         public void OnMapReady(GoogleMap googleMap)
         {
-            try { 
-               
+            try {
+              
             var options = new MarkerOptions().SetPosition(new LatLng(double.Parse(product.Lat, CultureInfo.InvariantCulture), double.Parse(product.Long, CultureInfo.InvariantCulture))).SetTitle(product.FirmName);
             var cat = categories.FirstOrDefault(y => y.ID == product.Categories[0]).Marker;
             var drawImage = Utils.SetDrawableSize(this, Utils.GetImage(this, cat), 70, 80);
@@ -185,7 +189,7 @@ namespace NohandicapNative.Droid
                rlp.AddRule(LayoutRules.AlignParentBottom,(int)LayoutRules.True);  
                rlp.AddRule(LayoutRules.AlignParentLeft,(int)LayoutRules.True);
                 rlp.SetMargins(100, 0, 0,30);
-
+          
             }
             catch (Exception e)
             {
