@@ -84,8 +84,7 @@ namespace NohandicapNative.Droid.Adapters
                    var currentProducts = products.Where(prod => prod.Categories.Any(cat => cat == categories[position].ID)).ToList();
                    mainActivity.MapPage.SetData(currentProducts, categories[position]);         
                    mainActivity.SetCurrentTab(1);
-                   context.SupportActionBar.Title =item.Name;
-
+                   context.SupportActionBar.Title =item.Name;   
 
 
                };

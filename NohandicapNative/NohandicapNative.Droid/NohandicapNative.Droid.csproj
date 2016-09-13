@@ -49,8 +49,8 @@
     <EnableLLVM>False</EnableLLVM>
     <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
     <JavaMaximumHeapSize>1G</JavaMaximumHeapSize>
-    <AndroidLinkSkip>Xamarin.Android.Support.Design;Xamarin.Android.Support.Animated.Vector.Drawable;Xamarin.Android.Support.v4;Xamarin.Android.Support.v7.AppCompat;Xamarin.Android.Support.v7.CardView;Xamarin.Android.Support.v7.RecyclerView;Xamarin.Android.Support.Vector.Drawable;</AndroidLinkSkip>
-    <AndroidSupportedAbis>armeabi,x86</AndroidSupportedAbis>
+    <AndroidLinkSkip>Xamarin.Android.Support.Design;Xamarin.Android.Support.Animated.Vector.Drawable;Xamarin.Android.Support.v4;Xamarin.Android.Support.v7.AppCompat;Xamarin.Android.Support.v7.CardView;Xamarin.Android.Support.v7.RecyclerView;Xamarin.Android.Support.Vector.Drawable;Square.OkHttp;Square.OkIO;Square.Picasso;</AndroidLinkSkip>
+    <AndroidSupportedAbis>armeabi,armeabi-v7a,x86</AndroidSupportedAbis>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BottomNavigationBar, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
@@ -152,7 +152,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Proguard.cfg" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Properties\AndroidManifest.xml">
@@ -208,6 +210,9 @@
     </AndroidResource>
     <AndroidResource Include="Resources\drawable\love.png" />
     <AndroidResource Include="Resources\layout\agreement_view.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\list_item_first.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
@@ -362,18 +367,14 @@
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\splash_screen.xml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Agreement.txt" />
+  </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\logo_handicap.png" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values-large\dimens.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\values-fr\dimens.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\values-de\dimens.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values-large\Strings.xml" />
@@ -428,6 +429,9 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-xxxhdpi\logo_handicap.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\placeholder.png" />
   </ItemGroup>
   <Import Project="..\NohandicapNative\NohandicapNative.projitems" Label="Shared" Condition="Exists('..\NohandicapNative\NohandicapNative.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

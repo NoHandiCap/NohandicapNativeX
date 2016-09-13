@@ -102,7 +102,7 @@ namespace NohandicapNative.Droid
                 };
 
             }
-            var categorySelected = int.Parse(Utils.ReadFromSettings(myContext, Utils.MAIN_CAT_SELECTED_ID, "1"))-1;
+            var categorySelected = int.Parse(Utils.ReadFromSettings(myContext, Utils.MAIN_CAT_SELECTED_ID, "1"));
 
             mainCat[categorySelected-1].SetTextColor(Color.Black);
             mainCat[categorySelected-1].SetTypeface(null, TypefaceStyle.Bold);

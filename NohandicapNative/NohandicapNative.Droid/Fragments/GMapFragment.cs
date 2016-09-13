@@ -155,22 +155,7 @@ namespace NohandicapNative.Droid
         public override void OnActivityCreated(Bundle savedInstanceState)
         {
             base.OnActivityCreated(savedInstanceState);
-            //var _myMapFragment = FragmentManager.FindFragmentByTag("map") as SupportMapFragment;
-            //if (_myMapFragment == null)
-            //{
-            //    GoogleMapOptions mapOptions = new GoogleMapOptions()
-            //        .InvokeMapType(GoogleMap.MapTypeNormal)
-            //        .InvokeZoomControlsEnabled(true)
-            //        .InvokeAmbientEnabled(true)
-            //        .InvokeCompassEnabled(true);
-
-            //    Android.Support.V4.App.FragmentTransaction fragTx = FragmentManager.BeginTransaction();
-            //    _myMapFragment = SupportMapFragment.NewInstance(mapOptions);
-               
-            //    fragTx.Add(Resource.Id.map, _myMapFragment, "map");
-            //    fragTx.Commit();
-            //    _myMapFragment.
-           // }
+        
 
         }
         
@@ -190,7 +175,10 @@ namespace NohandicapNative.Droid
             base.OnHiddenChanged(hidden);
             if (!hidden)
             {
-
+                if (products.Count == 0)
+                {
+                    products = dbCon.GetDataList<ProductModel>();
+                }
                 LoadData();
 
             }
@@ -227,6 +215,7 @@ namespace NohandicapNative.Droid
                 {
                     if (string.IsNullOrWhiteSpace(img.LocalImage))
                     {
+
                         string filename = "none";
                         Uri uri = new Uri(img.LinkImage);
                         filename = System.IO.Path.GetFileName(uri.LocalPath);

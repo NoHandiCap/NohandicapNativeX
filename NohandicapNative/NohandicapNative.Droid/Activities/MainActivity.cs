@@ -86,7 +86,7 @@ namespace NohandicapNative.Droid
         public HomeFragment HomePage { get; set; }
         public GMapFragment MapPage { get; set; }
         public ListFragment ListPage { get; set; }
-        public FavoritesFragment Favorites { get; set; }
+        public FavoritesFragment Favorites { get; set; }       
         SqliteService dbCon;
         int lastPos = 0;
         #endregion      
@@ -131,6 +131,7 @@ namespace NohandicapNative.Droid
             }        }
         private void PrepareBar()
         {
+           
             Log.Debug(TAG, "Prepare Bar.....");
             SetSupportActionBar(toolbar);
             _bottomBar.NoNavBarGoodness();
@@ -163,6 +164,7 @@ namespace NohandicapNative.Droid
             
         }
 
+        
         #region IOnTabClickListener implementation
         public void SetCurrentTab(int position)
         {

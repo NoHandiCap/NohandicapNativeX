@@ -41,15 +41,17 @@ namespace NohandicapNative.Droid
         {
 
             SetTheme(Resource.Style.AppThemeNoBar);
+            
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.SettingsPage);
+            Window.DecorView.SetBackgroundColor(Resources.GetColor(Resource.Color.backgroundColor));
             syncButton = (Button)FindViewById(Resource.Id.syncButton);
             dbCon = Utils.GetDatabaseConnection();
             languageList = dbCon.GetDataList<LanguageModel>();
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
-            SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Resources.GetColor(Resource.Color.colorDefault)));
+            SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Resources.GetColor(Resource.Color.themeColor)));
             SupportActionBar.Title=Resources.GetString(Resource.String.settings);
             langListView = FindViewById<ListView>(Resource.Id.languageList);
             langListView.OnItemClickListener = this;

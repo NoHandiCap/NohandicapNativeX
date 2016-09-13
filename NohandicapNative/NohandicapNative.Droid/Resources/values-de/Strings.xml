@@ -37,7 +37,9 @@
   <string name="create_account">Konto anlegen</string>
   <string name="already_login">Schon ein Mitglied? Anmeldung</string>
   <string name="please_login">Bitte Einloggen</string>
-  
+  <string name="accept">akzeptieren</string>
+
+
   <string-array name="lang_array">
     <item>Deutsch</item>
     <item>English</item>

@@ -7,7 +7,7 @@
     <item name="android:windowNoTitle">true</item>
     <item name="colorPrimaryDark">#FFFFFF</item>
     <item name="colorPrimary">#FFFFFF</item>\
-    <item name="colorAccent">@color/colorAccent</item>
+    <item name="colorAccent">@color/themeColor</item>
 
     <item name="colorControlActivated">?attr/colorAccent</item>
     <item name="android:textColorPrimary">@color/abc_primary_text_material_dark</item>
@@ -36,8 +36,7 @@
     <item name="colorControlNormal">@android:color/white</item>
   </style>
   <style name="AppThemeNoBar.Button" parent="Widget.AppCompat.Button.Colored">
-    <item name="colorButtonNormal">@color/blue</item>
-    <item name="android:textColor">@color/white</item>
+    <item name="colorButtonNormal">?attr/colorAccent</item>
   </style>
   <style name="AppThemeNoBar.ActionBar.Text" parent="@android:style/TextAppearance">
     <item name="android:textColor">#FFFFFF</item>
@@ -59,5 +58,21 @@
   <style name="MyTheme.Splash" parent ="Theme.AppCompat.Light">
     <item name="android:windowBackground">@drawable/splash_screen</item>
     <item name="android:windowNoTitle">true</item>
+  </style>
+  <style name="CustomAlertDialogStyle">
+    <item name="android:bottomBright">@color/transparent</item>
+    <item name="android:bottomDark">@color/transparent</item>
+    <item name="android:bottomMedium">@color/transparent</item>
+    <item name="android:centerBright">@color/transparent</item>
+    <item name="android:centerDark">@color/transparent</item>
+    <item name="android:centerMedium">@color/transparent</item>
+    <item name="android:fullBright">@color/transparent</item>
+    <item name="android:fullDark">@color/transparent</item>
+    <item name="android:topBright">@color/transparent</item>
+    <item name="android:topDark">@color/transparent</item>
+  </style>
+  <style name="StyledDialog" parent="@android:style/Theme.Panel">
+    <item name="android:alertDialogStyle">@style/CustomAlertDialogStyle</item>
+    <item name="android:background">@color/themeColor</item>
   </style>
 </resources>

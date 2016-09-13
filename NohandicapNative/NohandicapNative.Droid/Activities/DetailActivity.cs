@@ -45,6 +45,11 @@ namespace NohandicapNative.Droid
        // MapView mapView;
         GoogleMap map;
         MapFragment mapFragment;
+
+        public DetailActivity()
+        {
+            Utils.updateConfig(this);
+        }
         protected override void OnCreate(Bundle bundle)
         {
             SetTheme(Resource.Style.AppThemeNoBar);
@@ -66,7 +71,7 @@ namespace NohandicapNative.Droid
                 phoneTextView = (TextView)FindViewById(Resource.Id.phoneTextView);
                 categoriesTextView = (TextView)FindViewById(Resource.Id.categoriesTextView);         
                 SetSupportActionBar(toolbar);
-                SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Resources.GetColor(Resource.Color.detailBarColor)));
+                SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Resources.GetColor(Resource.Color.themeColor)));
                 SupportActionBar.SetDisplayHomeAsUpEnabled(true);                
                 var productId = Intent.GetIntExtra(Utils.PRODUCT_ID, -1);
                 product = dbCon.GetDataList<ProductModel>().FirstOrDefault(x => x.ID == productId);
@@ -123,6 +128,8 @@ namespace NohandicapNative.Droid
                             user.Fravorites.Remove(product.ID);
                             dbCon.InsertUpdateProduct(user);
                             ((MainActivity)Utils.mainActivity).Favorites.ReloadData();
+                            var url = String.Format(NohandicapLibrary.LINK_DELFAV, user.ID, product.ID);
+                            RestApiService.GetDataFromUrl<UserModel>(url, readBack: false);
                         }
                     }
                     else

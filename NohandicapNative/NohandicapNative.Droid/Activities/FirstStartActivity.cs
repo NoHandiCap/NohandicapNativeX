@@ -20,6 +20,10 @@ using System.Linq;
 using Android.Content.Res;
 using static Android.Widget.AdapterView;
 using Android.Graphics;
+using Java.IO;
+using System.IO;
+using System.Globalization;
+using System.Text;
 
 namespace NohandicapNative.Droid
 {
@@ -36,6 +40,8 @@ namespace NohandicapNative.Droid
         ListView langListView;
         Resources res;
         List<LanguageModel> Languages;
+        RelativeLayout languageLayout;
+        LinearLayout agreementLayout;
         protected override void OnCreate(Bundle bundle)
         {
             Log.Debug(TAG, "Set Theme");
@@ -43,19 +49,42 @@ namespace NohandicapNative.Droid
             SetTheme(Resource.Style.AppThemeNoBar);
 
             base.OnCreate(bundle);
-            Log.Debug(TAG, "Set view");
-            // Set our view from the "main" layout resource
+           
+                Log.Debug(TAG, "Set view");
+                // Set our view from the "main" layout resource
+
+                SetContentView(Resource.Layout.FirstStart);
+            Window.DecorView.SetBackgroundColor(Resources.GetColor(Resource.Color.backgroundColor));
+            Log.Debug(TAG, "Set loadContent");
             try
             {
-                SetContentView(Resource.Layout.FirstStart);
-            Log.Debug(TAG, "Set loadContent");
-            
+                agreementLayout = FindViewById<LinearLayout>(Resource.Id.agreementLayout);
+                languageLayout = FindViewById<RelativeLayout>(Resource.Id.languageLayout);
+                var agreementTextView = FindViewById<TextView>(Resource.Id.agreementTextView);
+                var agreeButton = agreementLayout.FindViewById<Button>(Resource.Id.agreeButton);
+                agreeButton.Click += (s, e) =>
+                {
+                    agreementLayout.Visibility = ViewStates.Gone;
+                    languageLayout.Visibility = ViewStates.Visible;
+                };
+         
+                string content;
+                AssetManager assets = this.Assets;
+                using (StreamReader sr = new StreamReader(assets.Open("Agreement.txt")))
+                {
+                    content = sr.ReadToEnd();
+                }
+
+                // Set TextView.Text to our asset content
+                agreementTextView.Text = content;
+
+
                 Languages = new List<LanguageModel>();
 
-               
+
                 Log.Debug(TAG, "Get database");
 
-              
+
                 Log.Debug(TAG, "Creat Table");
                 nextButton = FindViewById<Button>(Resource.Id.next_button);
                 spinnerPrompt = FindViewById<TextView>(Resource.Id.lang_spinner_prompt);
@@ -64,8 +93,8 @@ namespace NohandicapNative.Droid
                 nextButton.Text = Resources.GetString(Resource.String.next);
                 nextButton.Click += (s, e) =>
                 {
-                   
-                 
+
+
                     LoadData();
 
                 };
@@ -73,7 +102,7 @@ namespace NohandicapNative.Droid
                 Utils.mainActivity = this;
             }catch(Exception e)
             {
-                Log.Debug(TAG, e.Message);
+                Log.Error(TAG, e.Message + " " + e.StackTrace);
             }
         }
         private void SetLocale(int position)
@@ -141,23 +170,25 @@ namespace NohandicapNative.Droid
             langListView.PerformItemClick(langListView, 0, 0);
             OnItemClick(null, null, 0, 0);
 
-        }       
-        private async Task<bool> LoadData()
+        }
+        private async void LoadData()
         {
             ProgressDialog progressDialog = new ProgressDialog(this,
-           Resource.Style.AppThemeDarkDialog);
+           Resource.Style.StyledDialog);
+        
             progressDialog.Indeterminate = true;
             progressDialog.SetMessage(res.GetString(Resource.String.load_data));
             progressDialog.Show();
             dbCon = Utils.GetDatabaseConnection();
             dbCon.CreateTables();
-            Languages.ForEach(x => {
+            Languages.ForEach(x =>
+            {
                 dbCon.InsertUpdateProduct(x);
             });
-            var result = await RestApiService.CheckUpdate(dbCon,_selecteLangID.ToString(),Utils.GetLastUpadte(this));
-            if (result!=null)
+            var result = await RestApiService.CheckUpdate(dbCon, _selecteLangID.ToString(), Utils.GetLastUpadte(this));
+            if (result != null)
             {
-               
+
                 // On complete call either onLoginSuccess or onLoginFailed
 
                 // onLoginFailed();
@@ -167,17 +198,31 @@ namespace NohandicapNative.Droid
                 StartActivity(new Intent(Application.Context, typeof(MainActivity)));
                 Finish();
 
-            return true;
+
             }
             else
             {
                 progressDialog.Dismiss();
-                Toast.MakeText(this, "No internet connection", ToastLength.Short).Show();
-                StartActivity(new Intent(Application.Context, typeof(MainActivity)));
-                Finish();
-                return false;
+                new Android.Support.V7.App.AlertDialog.Builder(this)
+     .SetPositiveButton("Try", (sender, args) =>
+     {
+         LoadData();
+
+     })
+     .SetNegativeButton("Weiter", (sender, args) =>
+     {
+
+         StartActivity(new Intent(Application.Context, typeof(MainActivity)));
+         Finish();
+
+     })
+     .SetMessage("Kein Internetverbindung!")
+     .SetTitle("Fehler")
+     .Show();
+
+
             }
-           
+
         }
         protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
         {

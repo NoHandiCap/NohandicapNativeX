@@ -12,6 +12,7 @@ using Android.Widget;
 using Android.Support.V4.View;
 using NohandicapNative.Droid.Services;
 using Android.Util;
+using System.Threading.Tasks;
 
 namespace NohandicapNative.Droid.Adapters
 {
@@ -52,21 +53,28 @@ namespace NohandicapNative.Droid.Adapters
             {
                 if (string.IsNullOrWhiteSpace(img.LocalImage))
                 {
-
+                    Task.Run(() => { 
                     string filename = "none";
                     Uri uri = new Uri(img.LinkImage);
                     filename = System.IO.Path.GetFileName(uri.LocalPath);
-                    Utils.SaveImageBitmapFromUrl(img.LinkImage, filename);
+                  var bitmap=  Utils.SaveImageBitmapFromUrl(img.LinkImage, filename);
                     img.LocalImage = filename;
                     dbCon.InsertUpdateProduct(product);
-
+                    imageView.SetImageBitmap(bitmap);                   
+                    });
                 }
-                imageView.SetImageBitmap(Utils.GetBitmap(img.LocalImage));
-            }catch(Exception e)
+                else
+                {
+                    imageView.SetImageBitmap(Utils.GetBitmap(img.LocalImage));
+                    
+                }
+                
+            }
+            catch(Exception e)
             {
                 Log.Error(TAG, e.Message);
             }
-            ((ViewPager)container).AddView(imageView, 0);
+           ((ViewPager)container).AddView(imageView, 0);
             return imageView;
         }
 

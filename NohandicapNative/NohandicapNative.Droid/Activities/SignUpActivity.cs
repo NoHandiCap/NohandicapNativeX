@@ -37,6 +37,8 @@ namespace NohandicapNative.Droid
             SetTheme(Resource.Style.AppThemeNoBar);
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.SignUp);
+            Window.DecorView.SetBackgroundColor(Resources.GetColor(Resource.Color.backgroundColor));
+
             dbCon = Utils.GetDatabaseConnection();
             // Create your application here
             loginLinkButton = FindViewById<TextView>(Resource.Id.link_login);

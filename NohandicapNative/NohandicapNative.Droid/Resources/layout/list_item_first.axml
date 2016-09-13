@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="5dp"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp"
+    android:paddingTop="5dp"
+    android:id="@+id/rootView">
+  <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:id="@+id/mainImageView"
+        android:layout_marginRight="10dp" />
+    <TextView
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:textAppearance="?android:attr/textAppearanceMedium"
+           android:text="Title"
+           android:id="@+id/titleTextView"
+           android:layout_alignParentTop="true"
+           android:layout_toRightOf="@+id/mainImageView"
+           android:layout_toEndOf="@+id/mainImageView"
+           android:textColor="#000000"
+           android:textSize="16dp"
+           android:lines="1"
+           android:singleLine="true" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Adress"
+        android:id="@+id/adressTextView"
+        android:layout_below="@+id/titleTextView"
+        android:layout_alignLeft="@+id/titleTextView"
+        android:layout_alignStart="@+id/titleTextView"
+        android:textSize="14dp" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/adressTextView"
+        android:layout_toRightOf="@+id/mainImageView"
+        android:layout_toEndOf="@+id/mainImageView">
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:textAppearance="?android:attr/textAppearanceSmall"
+          android:text="Entfernung:"
+          android:id="@+id/textView"
+          android:layout_below="@+id/adressTextView"
+          android:layout_alignLeft="@+id/adressTextView"
+          android:layout_alignStart="@+id/adressTextView"
+          android:textSize="12dp" />
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:textAppearance="?android:attr/textAppearanceSmall"
+          android:text="12"
+          android:id="@+id/positionTextView"
+          android:layout_marginLeft="5dp"
+          android:textSize="12dp" />
+    </LinearLayout>
+  </RelativeLayout>
+</RelativeLayout>
