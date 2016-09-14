@@ -11,8 +11,8 @@ using UIKit;
 
 namespace NohandicapNative.iOS
 {
-    [Register ("HomeController")]
-    partial class HomeController
+    [Register ("ButtonGridController")]
+    partial class ButtonGridController
     {
         void ReleaseDesignerOutlets ()
         {

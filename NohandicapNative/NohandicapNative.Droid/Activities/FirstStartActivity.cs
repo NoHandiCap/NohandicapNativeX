@@ -54,7 +54,7 @@ namespace NohandicapNative.Droid
                 // Set our view from the "main" layout resource
 
                 SetContentView(Resource.Layout.FirstStart);
-            Window.DecorView.SetBackgroundColor(Resources.GetColor(Resource.Color.backgroundColor));
+        //    Window.DecorView.SetBackgroundColor(Resources.GetColor(Resource.Color.backgroundColor));
             Log.Debug(TAG, "Set loadContent");
             try
             {
@@ -204,20 +204,20 @@ namespace NohandicapNative.Droid
             {
                 progressDialog.Dismiss();
                 new Android.Support.V7.App.AlertDialog.Builder(this)
-     .SetPositiveButton("Try", (sender, args) =>
+     .SetPositiveButton(Resources.GetString(Resource.String.try_text), (sender, args) =>
      {
          LoadData();
 
      })
-     .SetNegativeButton("Weiter", (sender, args) =>
+     .SetNegativeButton(Resources.GetString(Resource.String.continue_text), (sender, args) =>
      {
 
          StartActivity(new Intent(Application.Context, typeof(MainActivity)));
          Finish();
 
      })
-     .SetMessage("Kein Internetverbindung!")
-     .SetTitle("Fehler")
+     .SetMessage(Resources.GetString(Resource.String.server_not_responding))
+     .SetTitle(Resources.GetString(Resource.String.error))
      .Show();
 
 

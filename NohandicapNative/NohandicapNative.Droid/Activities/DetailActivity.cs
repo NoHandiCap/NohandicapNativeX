@@ -23,6 +23,7 @@ using Android.Gms.Maps.Model;
 using Android.Util;
 using System.Globalization;
 using System.Threading.Tasks;
+using Android.Text.Method;
 
 namespace NohandicapNative.Droid
 {
@@ -39,6 +40,9 @@ namespace NohandicapNative.Droid
         TextView descriptionTextView;
         TextView adressTextView;
         TextView phoneTextView;
+        TextView emailTextView;
+        TextView linkTextView;
+        TextView bookingTextView;
         TextView openHoursTextView;
         TextView categoriesTitleTextView;
         TextView categoriesTextView;
@@ -58,6 +62,7 @@ namespace NohandicapNative.Droid
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.DetailPage);
             dbCon = Utils.GetDatabaseConnection();
+         Window.DecorView.SetBackgroundColor(Color.White);
             try
             {
 
@@ -70,6 +75,10 @@ namespace NohandicapNative.Droid
                 FloatingActionButton fab = FindViewById<FloatingActionButton>(Resource.Id.fab);
                 descriptionTextView = (TextView)FindViewById(Resource.Id.descriptionTextView);
                 adressTextView = (TextView)FindViewById(Resource.Id.adressTextView);
+                phoneTextView = (TextView)FindViewById(Resource.Id.phoneTextView);
+                emailTextView = (TextView)FindViewById(Resource.Id.emailTextView);
+                linkTextView = (TextView)FindViewById(Resource.Id.linkTextView);
+                bookingTextView = (TextView)FindViewById(Resource.Id.bookingTextView);
                 phoneTextView = (TextView)FindViewById(Resource.Id.phoneTextView);
                 categoriesTextView = (TextView)FindViewById(Resource.Id.categoriesTextView);
                 openHoursTextView = (TextView)FindViewById(Resource.Id.openHoursTextView);    
@@ -94,7 +103,11 @@ namespace NohandicapNative.Droid
                 SupportActionBar.SetIcon(Utils.SetDrawableSize(this, icon, 70, 70));
                 descriptionTextView.TextFormatted = Html.FromHtml(product.Description);
                 adressTextView.Text = product.Adress;
-                phoneTextView.Text = product.Telefon;
+                phoneTextView.Text = product.Telefon.Replace(" ","");
+                emailTextView.Text = product.Email;
+                linkTextView.Text = product.HomePage;
+                string bookingLink =string.Format("<a href='{0}'> booking.com </a>",product.HomePage);
+                bookingTextView.TextFormatted = Html.FromHtml(bookingLink);
                 openHoursTextView.TextFormatted = Html.FromHtml(product.OpenTime);
                 string bulledList = "";
                 product.Categories.ForEach(x =>
@@ -141,12 +154,33 @@ namespace NohandicapNative.Droid
                         Toast.MakeText(this, Resources.GetString(Resource.String.please_login), ToastLength.Short).Show();
                     }
                 };
+                HideEmptyTextView();
             }
             catch (Exception e)
             {
                 Log.Error(TAG, "OnCreate: " + e.Message + " " + e.StackTrace);
             }
-        }           
+        }        
+      private void HideEmptyTextView()
+        {
+            CheckTextView(adressTextView);
+            CheckTextView(phoneTextView);
+            CheckTextView(emailTextView);
+            CheckTextView(linkTextView);
+            CheckTextView(bookingTextView);
+            CheckTextView(openHoursTextView);
+        }
+        private static void CheckTextView(TextView textView)
+        {
+            if (string.IsNullOrEmpty(textView.Text))
+            {
+                textView.Visibility = ViewStates.Gone;
+            }
+            else
+            {
+                textView.Visibility = ViewStates.Visible;
+            }
+        }
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
             MenuInflater inflater = MenuInflater;

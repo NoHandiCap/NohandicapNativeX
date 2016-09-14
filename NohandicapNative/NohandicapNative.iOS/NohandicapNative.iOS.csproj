@@ -152,8 +152,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ButtonCell.cs" />
-    <Compile Include="ButtonCollectionController.cs" />
+    <Compile Include="ButtonGridController.cs" />
+    <Compile Include="ButtonGridController.designer.cs">
+      <DependentUpon>ButtonGridController.cs</DependentUpon>
+    </Compile>
     <Compile Include="HomeController.cs" />
     <Compile Include="HomeController.designer.cs">
       <DependentUpon>HomeController.cs</DependentUpon>
@@ -210,9 +212,6 @@
     <BundleResource Include="Resources\location.png" />
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="Resources\logo_handicap.png" />
-  </ItemGroup>
-  <ItemGroup>
     <BundleResource Include="Resources\marker_eat.png" />
   </ItemGroup>
   <ItemGroup>
@@ -253,6 +252,63 @@
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\wheelchair3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\empty_star.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\english.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\filled_star.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\france.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\german.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\logo_handicap.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\logo_small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\love.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\marker_kunst.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\marker_location.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\marker_museum.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\marker_search.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\marker_shop.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\marker_sleep.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\marker_sport.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\placeholder.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\select_all.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\wheelchair1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\wheelchaisdr.png" />
   </ItemGroup>
   <Import Project="..\NohandicapNative\NohandicapNative.projitems" Label="Shared" Condition="Exists('..\NohandicapNative\NohandicapNative.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />

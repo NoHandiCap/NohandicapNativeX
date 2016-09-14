@@ -39,7 +39,12 @@
   <string name="please_login">S\'il vous plaît vous connecter</string>
   <string name="accept">Acceptez</string>
   <string name="distance">Enlèvement: </string>
-  
+  <string name="server_not_responding">Server est inaccessible</string>
+  <string name="try_text">répétition</string>
+  <string name="continue_text">plus</string>
+  <string name="error">erreur</string>
+
+
   <string-array name="lang_array">
     <item>Allemand</item>
     <item>Anglais</item>

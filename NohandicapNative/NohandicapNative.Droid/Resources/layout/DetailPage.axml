@@ -4,7 +4,6 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/backgroundColor"
     android:minWidth="25px"
     android:minHeight="25px">
   <LinearLayout
@@ -54,7 +53,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:background="@color/detailBarColor"
-            android:padding="3dp">
+            android:padding="3dp"
+            android:visibility="gone">
           <LinearLayout
               android:orientation="vertical"
               android:layout_width="fill_parent"
@@ -73,6 +73,36 @@
                 android:textAlignment="center" />
           </LinearLayout>
         </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/detailBarColor"
+            android:padding="3dp"
+            android:layout_marginLeft="-10dp"
+            android:layout_marginRight="-10dp">
+
+          <LinearLayout
+              android:orientation="vertical"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/detailBarColor"
+              android:padding="3dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/description"
+                android:id="@+id/textView4"
+                android:textColor="#ffffff"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:textAlignment="center" />
+          </LinearLayout>
+        </LinearLayout>
+
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="fill_parent"
@@ -80,13 +110,15 @@
             android:layout_marginTop="10dp"
             android:paddingRight="10dp"
             android:paddingLeft="10dp">
+
           <TextView
               android:layout_width="fill_parent"
               android:layout_height="wrap_content"
               android:textAppearance="?android:attr/textAppearanceMedium"
               android:text="@string/description"
               android:id="@+id/TextView1"
-              android:textColor="#000000" />
+              android:textColor="#000000"
+              android:visibility="gone" />
           <TextView
               android:layout_width="fill_parent"
               android:layout_height="wrap_content"
@@ -98,11 +130,41 @@
               android:layout_marginTop="5dp"
               android:textColor="#000000" />
         </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/detailBarColor"
+            android:padding="3dp"
+            android:layout_marginLeft="-10dp"
+            android:layout_marginRight="-10dp">
+
+          <LinearLayout
+              android:orientation="vertical"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/detailBarColor"
+              android:padding="3dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/contact"
+                android:id="@+id/textView5"
+                android:textColor="#ffffff"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:textAlignment="center" />
+          </LinearLayout>
+        </LinearLayout>
+
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp">
           <LinearLayout
@@ -115,7 +177,9 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="@string/contact"
                 android:id="@+id/infoTextView"
-                android:textColor="#000000" />
+                android:textColor="#000000"
+                android:visibility="gone" />
+
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
@@ -136,24 +200,50 @@
                   android:textAppearance="?android:attr/textAppearanceSmall"
                   android:text="@string/medium_text"
                   android:id="@+id/phoneTextView"
-                  android:textColor="#000000" />
+                  android:textColor="#000000"
+                  android:autoLink="phone" />
+
+              <TextView
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:textAppearance="?android:attr/textAppearanceSmall"
+                  android:text="@string/medium_text"
+                  android:id="@+id/emailTextView"
+                  android:textColor="#000000"
+                  android:autoLink="email" />
+
+              <TextView
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:textAppearance="?android:attr/textAppearanceSmall"
+                  android:text="@string/medium_text"
+                  android:id="@+id/linkTextView"
+                  android:textColor="#000000"
+                  android:autoLink="web" />
+
+              <TextView
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:textAppearance="?android:attr/textAppearanceSmall"
+                  android:text="booking.com"
+                  android:id="@+id/bookingTextView"
+                  android:textColor="#000000"
+                  android:autoLink="web" />
             </LinearLayout>
           </LinearLayout>
-        </LinearLayout>
 
+        </LinearLayout>
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:paddingLeft="10dp"
-            android:paddingRight="10dp" >
-
+            android:paddingRight="10dp">
           <LinearLayout
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent" >
-
+              android:layout_height="match_parent">
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -161,15 +251,13 @@
                 android:text="@string/open_hours"
                 android:id="@+id/textView"
                 android:textColor="#000000" />
-
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
-                android:paddingTop="5dp" >
-
+                android:paddingTop="5dp">
               <TextView
                   android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
@@ -177,8 +265,37 @@
                   android:text="@string/medium_text"
                   android:id="@+id/openHoursTextView"
                   android:textColor="#000000" />
-
             </LinearLayout>
+          </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/detailBarColor"
+            android:padding="3dp"
+            android:visibility="visible" >
+
+          <LinearLayout
+              android:orientation="vertical"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/detailBarColor"
+              android:padding="3dp"
+              android:layout_marginLeft="-10dp"
+              android:layout_marginRight="-10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/categories"
+                android:id="@+id/textView6"
+                android:textColor="#ffffff"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:textAlignment="center" />
           </LinearLayout>
         </LinearLayout>
 
@@ -186,7 +303,7 @@
             android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp">
           <LinearLayout
@@ -199,7 +316,9 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="@string/categories"
                 android:id="@+id/categoriesTitleTextView"
-                android:textColor="#000000" />
+                android:textColor="#000000"
+                android:visibility="gone" />
+
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
