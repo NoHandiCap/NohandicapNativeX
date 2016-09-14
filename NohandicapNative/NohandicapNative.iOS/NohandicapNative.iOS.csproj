@@ -57,7 +57,7 @@
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <MtouchProfiling>true</MtouchProfiling>
-    <CodesignKey>iPhone Developer</CodesignKey>
+    <CodesignKey>iPhone Developer: vladik1996@live.ru (ZYVY73EE3M)</CodesignKey>
     <MtouchDebug>true</MtouchDebug>
   </PropertyGroup>
   <ItemGroup>

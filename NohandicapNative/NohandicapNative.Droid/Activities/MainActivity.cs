@@ -91,6 +91,7 @@ namespace NohandicapNative.Droid
         SqliteService dbCon;
         int lastPos = 0;
         public  Location CurrentLocation { get; set; }
+
           LocationManager _locationManager;
 
         string _locationProvider;
@@ -253,22 +254,47 @@ namespace NohandicapNative.Droid
         }
         void InitializeLocationManager()
         {
-            _locationManager = (LocationManager)GetSystemService(LocationService);
-            Criteria criteriaForLocationService = new Criteria
+            try
             {
-                Accuracy = Accuracy.Fine
-            };
-            IList<string> acceptableLocationProviders = _locationManager.GetProviders(criteriaForLocationService, true);
+                LocationManager lm = (LocationManager)GetSystemService(LocationService);
 
-            if (acceptableLocationProviders.Any())
-            {
-                _locationProvider = acceptableLocationProviders.First();
+                IList<String> providers = lm.GetProviders(true);
+               
+                foreach (String provider in providers)
+                {
+                    Location l = lm.GetLastKnownLocation(provider);
+                    if (l == null)
+                    {
+                        continue;
+                    }
+                    if (CurrentLocation == null || l.Accuracy < CurrentLocation.Accuracy)
+                    {
+                        CurrentLocation = l;
+                    }
+                }
+
+                _locationManager = (LocationManager)GetSystemService(LocationService);
+                Criteria criteriaForLocationService = new Criteria
+                {
+                    Accuracy = Accuracy.Fine
+                };
+                IList<string> acceptableLocationProviders = _locationManager.GetProviders(criteriaForLocationService, true);
+
+                if (acceptableLocationProviders.Any())
+                {
+                    _locationProvider = acceptableLocationProviders.First();
+                }
+                else
+                {
+                    _locationProvider = string.Empty;
+                }
+                Log.Debug(TAG, "Using " + _locationProvider + ".");
             }
-            else
+            catch (Exception e)
             {
-                _locationProvider = string.Empty;
+                Log.Error(TAG, "InitializeLocationManager: " + e.Message);
+
             }
-            Log.Debug(TAG, "Using " + _locationProvider + ".");
         }
         public async void OnLocationChanged(Location location)
         {
@@ -279,7 +305,8 @@ namespace NohandicapNative.Droid
             }
             else
             {
-                var v= string.Format("{0:f6},{1:f6}", CurrentLocation.Latitude, CurrentLocation.Longitude);        
+                var v= string.Format("{0:f6},{1:f6}", CurrentLocation.Latitude, CurrentLocation.Longitude);
+                Log.Debug(TAG, "Coordinate: " + v);
             }
         }
 
@@ -336,12 +363,27 @@ namespace NohandicapNative.Droid
         protected override void OnResume()
         {
             base.OnResume();
-            _locationManager.RequestLocationUpdates(_locationProvider, 0, 0, this);
+            try
+            {
+                _locationManager.RequestLocationUpdates(_locationProvider, 0, 0, this);
+            }catch(Exception e)
+            {
+                Log.Error(TAG, "OnResume(): " +e.Message);
+
+            }
         }
         protected override void OnPause()
         {
             base.OnPause();
-            _locationManager.RemoveUpdates(this);
+            try
+            {
+                _locationManager.RemoveUpdates(this);
+            }
+            catch (Exception e)
+            {
+                Log.Error(TAG, "OnPause(): " +e.Message);
+            }
+       
         }
 
         #endregion
