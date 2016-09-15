@@ -5,7 +5,7 @@
     android:paddingTop="5dp"
     android:paddingLeft="24dp"
     android:paddingRight="24dp"
-  android:scrollbars="none">
+    android:scrollbars="none">
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"

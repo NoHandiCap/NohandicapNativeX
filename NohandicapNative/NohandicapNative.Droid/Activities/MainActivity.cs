@@ -106,23 +106,25 @@ namespace NohandicapNative.Droid
             Utils.mainActivity = this;
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);          
             _bottomBar = BottomBar.AttachShy(FindViewById<CoordinatorLayout>(Resource.Id.myCoordinator), FindViewById<LinearLayout>(Resource.Id.linContent), bundle);
+            Task.Run(() => {
             MapPage = new GMapFragment();
             ListPage = new ListFragment();
             HomePage = new HomeFragment();
             Favorites = new FavoritesFragment();
+            });
             items = NohandicapLibrary.GetTabs();
             dbCon = Utils.GetDatabaseConnection();
             PrepareBar();
+            //   PrepareBar();
             if (bundle != null)
             {
                 var postion = bundle.GetInt(Utils.TAB_ID);
                 _bottomBar.SelectTabAtPosition(postion, false);
             }
             Utils.mainActivity = this;
-           ThreadPool.QueueUserWorkItem(o => CheckUpdate());
-            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
-            SupportActionBar.SetHomeButtonEnabled(true);
-            InitializeLocationManager();
+           ThreadPool.QueueUserWorkItem(o => CheckUpdate());      
+            ThreadPool.QueueUserWorkItem(o => InitializeLocationManager());
+
         }
         public async void CheckUpdate()
         {
@@ -165,7 +167,8 @@ namespace NohandicapNative.Droid
             _bottomBar.SetOnTabClickListener(this);
          //   SupportActionBar.SetIcon(Utils.SetDrawableSize(this, Resource.Drawable.logo_small, 80, 80));
             SupportActionBar.SetHomeAsUpIndicator(Utils.SetDrawableSize(this, Resource.Drawable.logo_small, 80, 80));
-
+            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+            SupportActionBar.SetHomeButtonEnabled(true);
             _bottomBar.HideShadow();
             Log.Debug(TAG, "Bar prepared");
             

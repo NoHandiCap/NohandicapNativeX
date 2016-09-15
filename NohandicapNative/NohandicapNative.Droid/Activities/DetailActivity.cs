@@ -98,6 +98,7 @@ namespace NohandicapNative.Droid
                     SliderAdapter adapter = new SliderAdapter(this, product);
                     viewPager.Adapter = adapter;
                 }
+                Task.Run(() => { 
                 categories = dbCon.GetDataList<CategoryModel>();
                 var icon = Utils.GetImage(this, categories.FirstOrDefault(x => x.ID == product.Categories[0]).Icon);
                 SupportActionBar.SetIcon(Utils.SetDrawableSize(this, icon, 70, 70));
@@ -154,7 +155,9 @@ namespace NohandicapNative.Droid
                         Toast.MakeText(this, Resources.GetString(Resource.String.please_login), ToastLength.Short).Show();
                     }
                 };
+
                 HideEmptyTextView();
+                });
             }
             catch (Exception e)
             {
@@ -163,12 +166,14 @@ namespace NohandicapNative.Droid
         }        
       private void HideEmptyTextView()
         {
+            Task.Run(() => { 
             CheckTextView(adressTextView);
             CheckTextView(phoneTextView);
             CheckTextView(emailTextView);
             CheckTextView(linkTextView);
             CheckTextView(bookingTextView);
             CheckTextView(openHoursTextView);
+            });
         }
         private static void CheckTextView(TextView textView)
         {
@@ -216,6 +221,7 @@ namespace NohandicapNative.Droid
                 View toolbar = ((View)mapFragment.View.FindViewById(int.Parse("1")).
             Parent).FindViewById(int.Parse("4"));
 
+                Task.Run(() => {
                 // and next place it, for example, on bottom right (as Google Maps app)
                 RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams)toolbar.LayoutParameters;
                 // position on right bottom
@@ -223,7 +229,7 @@ namespace NohandicapNative.Droid
                rlp.AddRule(LayoutRules.AlignParentBottom,(int)LayoutRules.True);  
                rlp.AddRule(LayoutRules.AlignParentLeft,(int)LayoutRules.True);
                 rlp.SetMargins(100, 0, 0,30);
-          
+                });
             }
             catch (Exception e)
             {

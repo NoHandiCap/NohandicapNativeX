@@ -48,11 +48,12 @@ namespace NohandicapNative.Droid.Adapters
             imageView.SetScaleType(ImageView.ScaleType.CenterCrop);
            
             var img = product.ImageCollection.Images[position];
-
+          
             try
             {
                 if (string.IsNullOrWhiteSpace(img.LocalImage))
                 {
+                    imageView.SetBackgroundResource(Resource.Drawable.placeholder);
                     Task.Run(() => { 
                     string filename = "none";
                     Uri uri = new Uri(img.LinkImage);

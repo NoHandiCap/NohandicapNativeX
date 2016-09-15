@@ -31,7 +31,10 @@ namespace NohandicapNative.Droid
         EditText nachNameText;
         UserModel createdUser;
         RadioGroup radioSex;
-
+        public SigUpActivity()
+        {
+            Utils.updateConfig(this);
+        }
         protected override void OnCreate(Bundle savedInstanceState)
         {
             SetTheme(Resource.Style.AppThemeNoBar);

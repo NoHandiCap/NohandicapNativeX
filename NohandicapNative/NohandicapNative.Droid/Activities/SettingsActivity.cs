@@ -19,6 +19,7 @@ using Java.Util;
 using Android.Content.Res;
 using static Android.Widget.AdapterView;
 using Android.Util;
+using System.Threading.Tasks;
 
 namespace NohandicapNative.Droid
 {
@@ -64,7 +65,7 @@ namespace NohandicapNative.Droid
             langListView.Adapter = new RadioButtonListAdapter(this, flags, langList,int.Parse(currentLocale)-1);
             syncButton.Click += async(s,e)=>{
                 ProgressDialog progressDialog = new ProgressDialog(this,
-          Resource.Style.AppThemeDarkDialog);
+                Resource.Style.AppThemeDarkDialog);
                 progressDialog.Indeterminate = true;
                 var a = Resources.GetString(Resource.String.load_data);
                 progressDialog.SetMessage(a);
@@ -91,7 +92,40 @@ namespace NohandicapNative.Droid
             };
          
 
-        }        
+        }
+        private async Task<bool> ReloadData()
+        {
+            
+            ProgressDialog progressDialog = new ProgressDialog(this,
+           Resource.Style.StyledDialog);
+
+            progressDialog.Indeterminate = true;
+            progressDialog.SetMessage(Resources.GetString(Resource.String.load_data));
+            progressDialog.Show();
+
+            var result = await dbCon.SynchronizeDataBase(selectedLanguage.ID.ToString());
+            if (result)
+            {
+
+                // On complete call either onLoginSuccess or onLoginFailed
+
+                // onLoginFailed();
+                progressDialog.Dismiss();
+
+               
+                Finish();
+                return true;
+
+            }
+            else
+            {
+              
+                progressDialog.Dismiss();
+                return false;
+
+            }
+           
+        }
         public void OnItemClick(AdapterView parent, View view, int position, long languageId)
         {
             if (position == 0)
@@ -129,26 +163,53 @@ namespace NohandicapNative.Droid
                     this.Finish();
                     break;
                 case Resource.Id.done:
-                    if (selectedLanguage != null)
-                    {
-                        Utils.WriteToSettings(this, Utils.LANG_ID_TAG, selectedLanguage.ID.ToString());
-                        Utils.WriteToSettings(this, Utils.LANG_SHORT, selectedLanguage.ShortName);
-                        res = Utils.SetLocale(this,selectedLanguage.ShortName);
-
-                        Utils.ReloadMainActivity(Application,this);
-                    }
-                    this.Finish();
-
+                    SaveSettings();                
                     break;
 
             }
             return base.OnOptionsItemSelected(item);
         }
-           
+      private async void SaveSettings()
+        {
+            if (selectedLanguage != null)
+            {
+                if (await ReloadData())
+                {
+
+                    Utils.WriteToSettings(this, Utils.LANG_ID_TAG, selectedLanguage.ID.ToString());
+                    Utils.WriteToSettings(this, Utils.LANG_SHORT, selectedLanguage.ShortName);
+                    res = Utils.SetLocale(this, selectedLanguage.ShortName);
+                    Utils.ReloadMainActivity(Application, this);
+                    Finish();
+                }
+                else
+                {
+                    new Android.Support.V7.App.AlertDialog.Builder(this)
+   .SetPositiveButton(Resources.GetString(Resource.String.try_text), (sender, args) =>
+   {
+       SaveSettings();
+   })
+   .SetNegativeButton(Resources.GetString(Resource.String.continue_text), (sender, args) =>
+   {
+       this.Finish();
+   })
+   .SetMessage(Resources.GetString(Resource.String.server_not_responding))
+   .SetTitle(Resources.GetString(Resource.String.error))
+   .Show();
+
+                }
+
+            }
+            else
+            {
+                Finish();
+            }
+          
+        }
 
         public void OnNothingSelected(AdapterView parent)
         {
-            throw new NotImplementedException();
+           
         }
     }
 }
