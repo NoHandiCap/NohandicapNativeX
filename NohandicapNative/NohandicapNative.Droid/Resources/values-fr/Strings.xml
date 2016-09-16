@@ -43,6 +43,18 @@
   <string name="try_text">répétition</string>
   <string name="continue_text">plus</string>
   <string name="error">erreur</string>
+  <string name="login_facebook">Relier</string>
+  <string name="error_char">au moins 3 caractères</string>
+  <string name="error_valid_email">Entrez une adresse mail valide</string>
+  <string name="error_password_char">entre 4 et 10 caractères alphanumériques</string>
+  <string name="error_password_equal">Les mots de passe ne sont pas égaux</string>
+  <string name="error_valid_phone">entrer un téléphone valide</string>
+  <string name="error_valid_name">entrez un nom</string>
+  <string name="error_valid_sex">S\'il vous plaît choisir un le sexe</string>
+  <string name="error_login">échec de la connexion</string>
+  <string name="no_favorites">Vous n\'êtes pas encore ajouté de favoris!</string>
+  <string name="last_update">Dernière mise à jour: </string>
+  <string name="sync">synchronisé</string>
 
 
   <string-array name="lang_array">

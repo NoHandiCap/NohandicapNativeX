@@ -22,4 +22,7 @@
   <color name="primary">#E43F3F</color>
   <color name="blue">#2196F3</color>
   <color name="transparent">#000000</color>
+  <color name="fb_button_color">#3B5998</color>
+  <color name="fb_button_pressed_color">#2b3f6e</color>
+
 </resources>

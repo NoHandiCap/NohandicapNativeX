@@ -34,6 +34,10 @@ namespace NohandicapNative.Droid
         LanguageModel selectedLanguage;
         ListView langListView;
         Button syncButton;
+        Button logoutButton;
+        TextView lastUpdateTextView;
+        TextView userTextView;
+        LinearLayout loginLayout;
         public SettingsActivity()
         {
             Utils.updateConfig(this);
@@ -45,8 +49,13 @@ namespace NohandicapNative.Droid
             
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.SettingsPage);
-            Window.DecorView.SetBackgroundColor(Resources.GetColor(Resource.Color.backgroundColor));
+            // Window.DecorView.SetBackgroundColor(Resources.GetColor(Resource.Color.backgroundColor));
+            loginLayout = (LinearLayout)FindViewById(Resource.Id.loginLayout);
             syncButton = (Button)FindViewById(Resource.Id.syncButton);
+            logoutButton= (Button)FindViewById(Resource.Id.logoutButton);
+            userTextView = (TextView)FindViewById(Resource.Id.userTextView);
+            lastUpdateTextView= (TextView)FindViewById(Resource.Id.lastUpdateTextView);
+            lastUpdateTextView.Text = Resources.GetString(Resource.String.last_update) + Utils.ReadFromSettings(this, Utils.LAST_UPDATE_DATE);
             dbCon = Utils.GetDatabaseConnection();
             languageList = dbCon.GetDataList<LanguageModel>();
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
@@ -79,7 +88,7 @@ namespace NohandicapNative.Droid
 
                     // onLoginFailed();
                     progressDialog.Dismiss();
-                    Toast.MakeText(this, "Synchronized", ToastLength.Short).Show();
+                    Toast.MakeText(this, Resources.GetString(Resource.String.sync), ToastLength.Short).Show();
 
 
 
@@ -87,12 +96,32 @@ namespace NohandicapNative.Droid
                 else
                 {
                     progressDialog.Dismiss();
-                    Toast.MakeText(this, "Failed", ToastLength.Short).Show();                  
+                    Toast.MakeText(this, Resources.GetString(Resource.String.error), ToastLength.Short).Show();                  
                 }
             };
-         
+            SetLoginLayout();
 
         }
+        private void SetLoginLayout()
+        {
+            var user = dbCon.GetDataList<UserModel>().FirstOrDefault();
+            if (user != null)
+            {
+                userTextView.Text = user.Name;
+                logoutButton.Click += (s, e) =>
+                {
+                    dbCon.Logout();
+                    Utils.WriteToSettings(this, Utils.IS_LOGIN, Utils.IS_NOT_LOGED);
+                    loginLayout.Visibility = ViewStates.Gone;
+                };
+            }
+            else
+            {
+                loginLayout.Visibility = ViewStates.Gone;
+            }
+            
+        }
+
         private async Task<bool> ReloadData()
         {
             
@@ -138,7 +167,7 @@ namespace NohandicapNative.Droid
                 if (position == i)
                 {
                     text.TextSize = 13;
-                    text.SetTypeface(null, TypefaceStyle.Bold);
+                    text.SetTypeface(null, TypefaceStyle.Bold);                
                     selectedLanguage = languageList[position];
                 }
                 else

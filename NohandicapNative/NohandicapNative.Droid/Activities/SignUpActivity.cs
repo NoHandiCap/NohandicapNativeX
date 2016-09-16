@@ -67,27 +67,27 @@ namespace NohandicapNative.Droid
 
 
             if (!validate())
-            {
-                onSignupFailed();
+            { 
                 return;
             }
 
             signUpButton.Enabled = false;
 
             ProgressDialog progressDialog = new ProgressDialog(this,
-                   Resource.Style.AppThemeDarkDialog);
+                        Resource.Style.StyledDialog);
             progressDialog.Indeterminate = true;
             progressDialog.SetMessage("Creating Account...");
             progressDialog.Show();
 
            var result = await RestApiService.SignUp(createdUser);
-            if (result)
+            if (result=="OK")
             {
                 onSignupSuccess();
             }
             else
             {
-                onSignupFailed();
+                progressDialog.Dismiss();
+                onSignupFailed(result);
             }
           
         }
@@ -98,9 +98,9 @@ namespace NohandicapNative.Droid
             Finish();
         }
 
-        public void onSignupFailed()
+        public void onSignupFailed(string message)
         {
-            Toast.MakeText(BaseContext, "Login failed", ToastLength.Short).Show();
+            Toast.MakeText(BaseContext, message, ToastLength.Long).Show();
 
             signUpButton.Enabled=true;
         }
@@ -120,7 +120,7 @@ namespace NohandicapNative.Droid
             RadioButton radioButton = (RadioButton)radioSex.FindViewById(radioButtonID);
             if (string.IsNullOrEmpty(name) || name.Length < 3)
             {
-                nameText.Error="at least 3 characters";
+                nameText.Error=Resources.GetString(Resource.String.error_char);
                 valid = false;
             }
             else
@@ -130,7 +130,7 @@ namespace NohandicapNative.Droid
 
             if (string.IsNullOrEmpty(email) || !Android.Util.Patterns.EmailAddress.Matcher(email).Matches())
             {
-                emailText.Error="enter a valid email address";
+                emailText.Error= Resources.GetString(Resource.String.error_valid_email);
                 valid = false;
             }
             else
@@ -140,24 +140,24 @@ namespace NohandicapNative.Droid
 
             if (string.IsNullOrEmpty(password) || password.Length < 4 || password.Length > 10)
             {
-                passwordText.Error="between 4 and 10 alphanumeric characters";
+                passwordText.Error = Resources.GetString(Resource.String.error_password_char);
                 valid = false;
             }
             else
             {
                 passwordText.Error=null;
             }
-            if (password2 != password2)
+            if (password != password2)
             {
-                passwordText.Error = "Password not ";
-                passwordText2.Error = "Password not ";
+                passwordText.Error = Resources.GetString(Resource.String.error_password_equal);
+                passwordText2.Error = Resources.GetString(Resource.String.error_password_equal);
                 valid = false;
             }
 
 
             if (string.IsNullOrEmpty(phone) || !Android.Util.Patterns.Phone.Matcher(phone).Matches())
             {
-                phoneText.Error = "enter a valid phone";
+                phoneText.Error = Resources.GetString(Resource.String.error_valid_phone);
                 valid = false;
             }
             else
@@ -166,7 +166,7 @@ namespace NohandicapNative.Droid
             }
             if (string.IsNullOrEmpty(nachName) )
             {
-               nachNameText.Error = "enter a Name";
+               nachNameText.Error = Resources.GetString(Resource.String.error_valid_name);
                 valid = false;
             }
             else
@@ -178,10 +178,13 @@ namespace NohandicapNative.Droid
             createdUser.Phone = phone.Replace("+","00");
             createdUser.Password = password;
             createdUser.Email = email;
-            createdUser.Login = email.Substring(0,email.LastIndexOf('@') );
+            if (!string.IsNullOrEmpty(email))
+            {
+                createdUser.Login = email.Substring(0, email.LastIndexOf('@'));
+            }
             if (radioButton == null)
             {
-               Toast.MakeText(this,"Geschlecht",ToastLength.Short).Show();
+               Toast.MakeText(this, Resources.GetString(Resource.String.error_valid_sex),ToastLength.Short).Show();
                 valid = false;
             }            
             if (radioButtonID == Resource.Id.radioM)

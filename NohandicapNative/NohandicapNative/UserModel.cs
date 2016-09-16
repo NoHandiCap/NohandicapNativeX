@@ -12,7 +12,7 @@ namespace NohandicapNative
     {
         [PrimaryKey]
         [JsonProperty(PropertyName = "id")]
-        public int ID { get; set; }
+        public string ID { get; set; }
         [JsonProperty(PropertyName = "fullname")]
         public string Vname { get; set; }  
         public string Nname { get; set; }       
@@ -25,7 +25,7 @@ namespace NohandicapNative
         [JsonProperty(PropertyName = "mail")]
         public string Email { get; set; }
         [TextBlob("FavoritesBlobbed"),JsonProperty(PropertyName = " favorites")]
-        public List<int> Fravorites { get; set; }
+        public List<int> Favorites { get; set; }
        public string FavoritesBlobbed { get; set; }//for database
     }
 }

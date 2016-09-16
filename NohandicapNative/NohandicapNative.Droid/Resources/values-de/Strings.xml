@@ -25,7 +25,7 @@
   <string name="open_hours">Öffnungszeiten</string>
   <string name="email">Email</string>
   <string name="password">Kennwort</string>
-  <string name="login">Login</string>
+  <string name="login">Anmelden</string>
   <string name="sign_up">Anmelden</string>
   <string name="demo">Demo</string>
   <string name="synchronize">Synchronisieren</string>
@@ -43,6 +43,19 @@
   <string name="try_text">Wiederholen</string>
   <string name="continue_text">Weiter</string>
   <string name="error">Fehler</string>
+  <string name="login_facebook">Verbinden</string>
+  <string name="error_char">Mindestens 3 Zeichen</string>
+  <string name="error_valid_email">Geben sie eine gültige E-Mail-Adresse</string>
+  <string name="error_password_char">Zwischen 4 und 10 alphanumerischen Zeichen</string>
+  <string name="error_password_equal">Kennwörter sind nicht gleich</string>
+  <string name="error_valid_phone">Geben Sie eine gültige Telefon</string>
+  <string name="error_valid_name">Geben Sie einen Namen</string>
+  <string name="error_valid_sex">Bitte wählen Sie ein Geschlecht</string>
+  <string name="error_login">Anmeldung fehlgeschlagen</string>
+  <string name="no_favorites">Sie haben noch keine Favoriten hinzugefügt!</string>
+  <string name="last_update">Letztes Update: </string>
+  <string name="sync">synchronisiert</string>
+
 
   <string-array name="lang_array">
     <item>Deutsch</item>

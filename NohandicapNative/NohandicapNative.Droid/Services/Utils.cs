@@ -42,7 +42,9 @@ namespace NohandicapNative.Droid.Services
         public const string LOGIN_ID = "loginID";
         public const string PRODUCT_ID = "productId";
         public const string MAIN_CAT_SELECTED_ID = "maincat";
-      
+        public const string LAST_UPDATE_DATE = "lastUp";
+
+
 
 
         public static Context mainActivity;

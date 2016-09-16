@@ -10,7 +10,7 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="bottom|top">  
+        android:gravity="bottom|top">
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
@@ -93,7 +93,7 @@
             android:layout_alignParentEnd="false"
             android:horizontalSpacing="5dp"
             android:verticalSpacing="5dp"
-              android:layout_marginBottom="5dp"
+            android:layout_marginBottom="5dp"
             android:numColumns="3"
             android:scrollbars="none"
             android:layout_below="@+id/category_linearLayout2"

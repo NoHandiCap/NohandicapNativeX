@@ -16,6 +16,11 @@ using Android.Graphics;
 using NohandicapNative.Droid.Services;
 using NohandicapNative.Droid;
 using System.Threading.Tasks;
+using Xamarin.Auth;
+using System.Json;
+using Android.Graphics.Drawables;
+using Android.Support.V7.Widget;
+using Android.Content.Res;
 
 namespace NohandicapNative.Droid
 {
@@ -26,13 +31,17 @@ namespace NohandicapNative.Droid
         SqliteService dbCon;       
         ListView listView;
         List<ProductModel> products;
-      
-        CardViewAdapter cardViewAdapter;    
-
-        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        TextView noFav;
+        CardViewAdapter cardViewAdapter;
+        public FavoritesFragment()
         {
             dbCon = Utils.GetDatabaseConnection();
+            products = new List<ProductModel>();
+        }
+        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        {
           
+         
             if (Utils.ReadFromSettings(myContext, Utils.IS_LOGIN, Utils.IS_NOT_LOGED) == Utils.IS_NOT_LOGED)
             {
                 InitiallizeLoginFragment(inflater, container);
@@ -50,6 +59,8 @@ namespace NohandicapNative.Droid
         }
         #region LoginFragment
         Button loginButton;
+        AppCompatButton fbButton;
+
         Button signUpButton;
         TextView laterButton;
         EditText emailText;
@@ -60,12 +71,17 @@ namespace NohandicapNative.Droid
             view = inflater.Inflate(Resource.Layout.Login, container, false);
            
            
-
+            fbButton = view.FindViewById<AppCompatButton>(Resource.Id.btn_login_facebook);
             loginButton = view.FindViewById<Button>(Resource.Id.btn_login);         
             signUpButton = view.FindViewById<Button>(Resource.Id.btn_sign_up);
 
             emailText = view.FindViewById<EditText>(Resource.Id.input_email);
-            passwordText = view.FindViewById<EditText>(Resource.Id.input_password);     
+            passwordText = view.FindViewById<EditText>(Resource.Id.input_password);
+            var fbImg = Resources.GetDrawable(Resource.Drawable.facebook);
+            Drawable[] drawables = fbButton.GetCompoundDrawables();
+            fbButton.SetCompoundDrawablesWithIntrinsicBounds(Utils.SetDrawableSize(myContext,fbImg, 35, 35),drawables[1], drawables[2],drawables[3]);
+            ColorStateList csl = new ColorStateList(new int[][] { new int[0] }, new int[] { Resources.GetColor(Resource.Color.fb_button_color)});
+            fbButton.SupportBackgroundTintList=csl;
             loginButton.Click += (object sender, EventArgs e) =>
             {
                 login();              
@@ -73,6 +89,9 @@ namespace NohandicapNative.Droid
             signUpButton.Click += (s, e) =>
             {
                 StartActivityForResult(new Intent(Application.Context, typeof(SigUpActivity)), 1) ;
+            };
+            fbButton.Click +=  (s, e) => {
+             myContext.LoginToFacebook(this,true);               
             };
           
         }
@@ -85,6 +104,25 @@ namespace NohandicapNative.Droid
               
             }
           
+        }
+        public void UserLoginSuccess(UserModel user)
+        {
+            if (user != null)
+            {
+                dbCon.InsertUpdateProduct(user);
+                Utils.WriteToSettings(myContext, Utils.IS_LOGIN, Utils.IS_SUCCESS_LOGED);
+                ReloadFragment();
+            }
+        }
+        public void ReloadFragment()
+        {
+            var fav = new FavoritesFragment();
+            //  _myContext.ShowFragment(fav, "fav");
+            Android.Support.V4.App.FragmentManager fragmentManager = myContext.SupportFragmentManager;
+            var trans = fragmentManager.BeginTransaction();
+            trans.Replace(Resource.Id.flContent, fav);
+            trans.Commit();
+
         }
         public async void login()
         { 
@@ -109,13 +147,8 @@ namespace NohandicapNative.Droid
 
                
                 progressDialog.Dismiss();
-                
-                var fav = new FavoritesFragment();
-              //  _myContext.ShowFragment(fav, "fav");
-                Android.Support.V4.App.FragmentManager fragmentManager = myContext.SupportFragmentManager;
-               var trans = fragmentManager.BeginTransaction();
-                trans.Replace(Resource.Id.flContent, fav);
-                trans.Commit();
+                ReloadFragment();
+               
             }
             else
             {
@@ -144,7 +177,7 @@ namespace NohandicapNative.Droid
         }
         public void onLoginFailed()
         {
-            Toast.MakeText(myContext, "Login failed", ToastLength.Short).Show();
+            Toast.MakeText(myContext, Resources.GetString(Resource.String.error_login), ToastLength.Short).Show();
 
             loginButton.Enabled = true;
         }
@@ -157,7 +190,7 @@ namespace NohandicapNative.Droid
 
             if (string.IsNullOrEmpty(email) || !Android.Util.Patterns.EmailAddress.Matcher(email).Matches())
             {
-                emailText.Error = "enter a valid email address";
+                emailText.Error = Resources.GetString(Resource.String.error_valid_email);
                 valid = false;
             }
             else
@@ -167,7 +200,7 @@ namespace NohandicapNative.Droid
 
             if (string.IsNullOrEmpty(password) || password.Length < 0 || password.Length > 10)
             {
-                passwordText.Error = "between 4 and 10 alphanumeric characters";
+                passwordText.Error = Resources.GetString(Resource.String.error_password_char);
                 valid = false;
             }
             else
@@ -181,34 +214,49 @@ namespace NohandicapNative.Droid
 
         #region FavListFragment
         private void InitiallizeFavListFragment(LayoutInflater inflater, ViewGroup container)
-        {
-            view = inflater.Inflate(Resource.Layout.ListPage, container, false);
-           listView = view.FindViewById<ListView>(Resource.Id.listview);
+        {          
          
+                view = inflater.Inflate(Resource.Layout.ListPage, container, false);
+                listView = view.FindViewById<ListView>(Resource.Id.listview);
 
-            listView.ItemClick += (s, e) =>
-            {
-                int position = e.Position;
 
-                var activity = new Intent(myContext, typeof(DetailActivity));
-                activity.PutExtra(Utils.PRODUCT_ID, products[position].ID);
-                myContext.StartActivity(activity);
-            };
+                listView.ItemClick += (s, e) =>
+                {
+                    int position = e.Position;
+
+                    var activity = new Intent(myContext, typeof(DetailActivity));
+                    activity.PutExtra(Utils.PRODUCT_ID, products[position].ID);
+                    myContext.StartActivity(activity);
+                };
+            noFav = view.FindViewById<TextView>(Resource.Id.noFavoritesTextView);
+       
+
             ReloadData();
-        
-          
+
+
         }
         public async void ReloadData()
         {          
                 var user = dbCon.GetDataList<UserModel>().FirstOrDefault();
             if (user != null)
             {
-                products = dbCon.GetDataList<ProductModel>().Where(x => user.Fravorites.Any(y => y == x.ID)).ToList();
+                products = dbCon.GetDataList<ProductModel>().Where(x => user.Favorites.Any(y => y == x.ID)).ToList();
+                if (products.Count == 0)
+                {
+                    noFav.Visibility = ViewStates.Visible;
+                }
+                else
+                {
+                    noFav.Visibility = ViewStates.Gone;
+
+                }
                 cardViewAdapter = new CardViewAdapter(myContext, products);
                 listView.Adapter = cardViewAdapter;
             }
         }
         #endregion
+
+
         public override void OnAttach(Activity activity)
         {
            myContext = (MainActivity)activity;

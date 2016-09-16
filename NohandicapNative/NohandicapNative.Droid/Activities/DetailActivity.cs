@@ -24,11 +24,13 @@ using Android.Util;
 using System.Globalization;
 using System.Threading.Tasks;
 using Android.Text.Method;
+using static Android.Views.View;
+using System.Threading;
 
 namespace NohandicapNative.Droid
 {
     [Activity(Label = "DetailActivity", ParentActivity = typeof(MainActivity))]
-    public class DetailActivity : AppCompatActivity, IOnMapReadyCallback
+    public class DetailActivity : AppCompatActivity, IOnMapReadyCallback,IOnClickListener
        
     {
         static readonly string TAG = "X:" + typeof(DetailActivity).Name;
@@ -49,6 +51,8 @@ namespace NohandicapNative.Droid
         ImageView mapImageView;
         GoogleMap map;
         MapFragment mapFragment;
+        FloatingActionButton fab;
+        ViewPager viewPager;
         // MapView mapView;
 
 
@@ -61,18 +65,14 @@ namespace NohandicapNative.Droid
             SetTheme(Resource.Style.AppThemeNoBar);
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.DetailPage);
+
             dbCon = Utils.GetDatabaseConnection();
-         Window.DecorView.SetBackgroundColor(Color.White);
-            try
-            {
-
-
+                Window.DecorView.SetBackgroundColor(Color.White);        
                 mapFragment = FragmentManager.FindFragmentById(Resource.Id.map) as MapFragment;
-
                 mapFragment.GetMapAsync(this);
-               
+          
                 toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
-                FloatingActionButton fab = FindViewById<FloatingActionButton>(Resource.Id.fab);
+                fab = FindViewById<FloatingActionButton>(Resource.Id.fab);
                 descriptionTextView = (TextView)FindViewById(Resource.Id.descriptionTextView);
                 adressTextView = (TextView)FindViewById(Resource.Id.adressTextView);
                 phoneTextView = (TextView)FindViewById(Resource.Id.phoneTextView);
@@ -81,33 +81,46 @@ namespace NohandicapNative.Droid
                 bookingTextView = (TextView)FindViewById(Resource.Id.bookingTextView);
                 phoneTextView = (TextView)FindViewById(Resource.Id.phoneTextView);
                 categoriesTextView = (TextView)FindViewById(Resource.Id.categoriesTextView);
-                openHoursTextView = (TextView)FindViewById(Resource.Id.openHoursTextView);    
+                openHoursTextView = (TextView)FindViewById(Resource.Id.openHoursTextView);
+                viewPager = FindViewById<ViewPager>(Resource.Id.viewPager);
                 SetSupportActionBar(toolbar);
                 SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Resources.GetColor(Resource.Color.themeColor)));
-                SupportActionBar.SetDisplayHomeAsUpEnabled(true);                
-                var productId = Intent.GetIntExtra(Utils.PRODUCT_ID, -1);
-                product = dbCon.GetDataList<ProductModel>().FirstOrDefault(x => x.ID == productId);
-                SupportActionBar.Title = product.FirmName;
-                var viewPager = FindViewById<ViewPager>(Resource.Id.viewPager);
-                if (product.ImageCollection.Images.Count == 0)
-                {
-                    viewPager.Visibility = ViewStates.Gone;
-                }
-                else
-                {
-                    SliderAdapter adapter = new SliderAdapter(this, product);
-                    viewPager.Adapter = adapter;
-                }
-                Task.Run(() => { 
+                SupportActionBar.SetDisplayHomeAsUpEnabled(true);                    
+                fab.SetOnClickListener(this);
+                var task = LoadProduct();
+             
+
+
+
+        }   
+        private async Task LoadProduct()
+        {
+            var productId = Intent.GetIntExtra(Utils.PRODUCT_ID, -1);
+            product = dbCon.GetDataList<ProductModel>().FirstOrDefault(x => x.ID == productId);
+
+            SupportActionBar.Title = product.FirmName;
+
+            if (product.ImageCollection.Images.Count == 0)
+            {
+                viewPager.Visibility = ViewStates.Gone;
+            }
+            else
+            {
+                SliderAdapter adapter = new SliderAdapter(this, product);
+                viewPager.Adapter = adapter;
+            }
+            
                 categories = dbCon.GetDataList<CategoryModel>();
                 var icon = Utils.GetImage(this, categories.FirstOrDefault(x => x.ID == product.Categories[0]).Icon);
                 SupportActionBar.SetIcon(Utils.SetDrawableSize(this, icon, 70, 70));
+           
+            
                 descriptionTextView.TextFormatted = Html.FromHtml(product.Description);
                 adressTextView.Text = product.Adress;
-                phoneTextView.Text = product.Telefon.Replace(" ","");
+                phoneTextView.Text = product.Telefon.Replace(" ", "");
                 emailTextView.Text = product.Email;
                 linkTextView.Text = product.HomePage;
-                string bookingLink =string.Format("<a href='{0}'> booking.com </a>",product.HomePage);
+                string bookingLink = string.Format("<a href='{0}'> booking.com </a>", product.HomePage);
                 bookingTextView.TextFormatted = Html.FromHtml(bookingLink);
                 openHoursTextView.TextFormatted = Html.FromHtml(product.OpenTime);
                 string bulledList = "";
@@ -116,64 +129,31 @@ namespace NohandicapNative.Droid
                     bulledList += "&#8226;" + categories.FirstOrDefault(y => y.ID == x).Name + "<br/>";
                 });
                 categoriesTextView.TextFormatted = Html.FromHtml(bulledList);
-                var user = dbCon.GetDataList<UserModel>().FirstOrDefault();
+           
+            HideEmptyTextView();
+            
+                user = dbCon.GetDataList<UserModel>().FirstOrDefault();
                 if (user != null)
                 {
-                    var userFavorites = user.Fravorites;
+                    var userFavorites = user.Favorites;
                     if (userFavorites.Any(x => x == product.ID))
                     {
                         fab.SetImageResource(Resource.Drawable.filled_star);
                         fab.Selected = true;
                     }
-                }
-                fab.Click += (s, e) =>
-                {
-                    if (user != null)
-                    {
-                        if (!fab.Selected)
-                        {
-                            fab.SetImageResource(Resource.Drawable.filled_star);
-                            fab.Selected = true;
-                            user.Fravorites.Add(product.ID);
-                            dbCon.InsertUpdateProduct(user);
-                            var url = String.Format(NohandicapLibrary.LINK_SAVEFAV, user.ID, product.ID);
-                            RestApiService.GetDataFromUrl<UserModel>(url, readBack: false);
-                        }
-                        else
-                        {
-                            fab.SetImageResource(Resource.Drawable.empty_star);
-                            fab.Selected = false;
-                            user.Fravorites.Remove(product.ID);
-                            dbCon.InsertUpdateProduct(user);
-                            ((MainActivity)Utils.mainActivity).Favorites.ReloadData();
-                            var url = String.Format(NohandicapLibrary.LINK_DELFAV, user.ID, product.ID);
-                            RestApiService.GetDataFromUrl<UserModel>(url, readBack: false);
-                        }
-                    }
-                    else
-                    {
-                        Toast.MakeText(this, Resources.GetString(Resource.String.please_login), ToastLength.Short).Show();
-                    }
-                };
 
-                HideEmptyTextView();
-                });
-            }
-            catch (Exception e)
-            {
-                Log.Error(TAG, "OnCreate: " + e.Message + " " + e.StackTrace);
-            }
-        }        
+                }
+         
+          
+        }     
       private void HideEmptyTextView()
-        {
-            Task.Run(() => { 
+        {           
             CheckTextView(adressTextView);
             CheckTextView(phoneTextView);
             CheckTextView(emailTextView);
             CheckTextView(linkTextView);
             CheckTextView(bookingTextView);
-            CheckTextView(openHoursTextView);
-            });
+            CheckTextView(openHoursTextView);          
         }
         private static void CheckTextView(TextView textView)
         {
@@ -244,6 +224,36 @@ namespace NohandicapNative.Droid
             intent.PutExtra(Utils.PRODUCT_ID, product.ID);
             SetResult(Result.Ok, intent);
             Finish();
+        }
+
+        public void OnClick(View v)
+        {
+            if (user != null)
+            {
+                if (!fab.Selected)
+                {
+                    fab.SetImageResource(Resource.Drawable.filled_star);
+                    fab.Selected = true;
+                    user.Favorites.Add(product.ID);
+                    dbCon.InsertUpdateProduct(user);
+                    var url = String.Format(NohandicapLibrary.LINK_SAVEFAV, user.ID, product.ID);
+                    RestApiService.GetDataFromUrl<UserModel>(url, readBack: false);
+                }
+                else
+                {
+                    fab.SetImageResource(Resource.Drawable.empty_star);
+                    fab.Selected = false;
+                    user.Favorites.Remove(product.ID);
+                    dbCon.InsertUpdateProduct(user);
+                    ((MainActivity)Utils.mainActivity).Favorites.ReloadData();
+                    var url = String.Format(NohandicapLibrary.LINK_DELFAV, user.ID, product.ID);
+                    RestApiService.GetDataFromUrl<UserModel>(url, readBack: false);
+                }
+            }
+            else
+            {
+                Toast.MakeText(this, Resources.GetString(Resource.String.please_login), ToastLength.Short).Show();
+            }
         }
     }
 

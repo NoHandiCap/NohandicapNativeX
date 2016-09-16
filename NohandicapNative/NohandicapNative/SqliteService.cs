@@ -87,7 +87,11 @@ namespace NohandicapNative
             var k = s.GetHashCode();
             return s;
         }
-     
+     public void Logout()
+        {
+            dbCon.DeleteAll(typeof(UserModel));
+            dbCon.CreateTable<UserModel>();
+        }
         public  async Task<bool> SynchronizeDataBase(string langID,string TableName=null)
         {
             bool result;

@@ -43,6 +43,24 @@
  <string name="try_text">Try</string>
   <string name="continue_text">Continue</string>
   <string name="error">Error</string>
+  <string name="login_facebook">Connect</string>
+  <string name="error_char">at least 3 characters</string>
+  <string name="error_valid_email">enter a valid email address</string>
+  <string name="error_password_char">between 4 and 10 alphanumeric characters</string>
+  <string name="error_password_equal">Passwords are not equal</string>
+  <string name="error_valid_phone">enter a valid phone</string>
+  <string name="error_valid_name">enter a Name</string>
+  <string name="error_valid_sex">Please choose a gender</string>
+  <string name="error_login">Login failed</string>
+  <string name="no_favorites">You haven\'t added any favorites yet!</string>
+  <string name="last_update">Last update: </string>
+  <string name="sync">Synchronized</string>
+  
+
+
+
+
+
 
 
 

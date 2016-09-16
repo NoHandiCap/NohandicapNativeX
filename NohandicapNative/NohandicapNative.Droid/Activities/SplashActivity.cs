@@ -18,7 +18,7 @@ using HockeyApp.Android;
 
 namespace NohandicapNative.Droid.Activities
 {
-    [Activity(Theme = "@style/MyTheme.Splash", MainLauncher = true, NoHistory = true, Icon = "@drawable/logo_small", ConfigurationChanges = Android.Content.PM.ConfigChanges.Orientation |
+    [Activity(Theme = "@style/MyTheme.Splash", MainLauncher = true, NoHistory = true,Icon = "@drawable/logo_small", ConfigurationChanges = Android.Content.PM.ConfigChanges.Orientation |
         Android.Content.PM.ConfigChanges.ScreenSize
        )]
     public class SplashActivity : AppCompatActivity

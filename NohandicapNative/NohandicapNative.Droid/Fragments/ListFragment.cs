@@ -80,8 +80,9 @@ namespace NohandicapNative.Droid
             Products = dbCon.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= categorySelectedId).ToList();
             categoryName.Text = Resources.GetString(mainCategoriesText[categorySelectedId-1]);
             var image = Utils.GetImage(myContext, "wheelchair" + categorySelectedId);
-            categoryImage.SetImageDrawable(Utils.SetDrawableSize(myContext, image, 140, 65));         
-            cardViewAdapter = new CardViewAdapter(myContext, SortProductsByDistance(Products));
+            categoryImage.SetImageDrawable(Utils.SetDrawableSize(myContext, image, 140, 65));
+            Products = SortProductsByDistance(Products);
+            cardViewAdapter = new CardViewAdapter(myContext, Products);
             listView.Adapter = cardViewAdapter;
 
             //var listAdapter = new ListAdapter(myContext, product);

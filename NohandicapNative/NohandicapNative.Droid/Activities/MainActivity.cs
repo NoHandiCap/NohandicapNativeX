@@ -25,6 +25,8 @@ using System.Threading.Tasks;
 using System.Linq;
 using HockeyApp.Android;
 using Android.Locations;
+using Xamarin.Auth;
+using System.Json;
 
 namespace NohandicapNative.Droid
 {
@@ -95,6 +97,7 @@ namespace NohandicapNative.Droid
           LocationManager _locationManager;
 
         string _locationProvider;
+     
         #endregion
 
         protected override void OnCreate(Bundle bundle)
@@ -128,16 +131,23 @@ namespace NohandicapNative.Droid
         }
         public async void CheckUpdate()
         {
-            ISharedPreferences settings = PreferenceManager.GetDefaultSharedPreferences(this);
-            string langId = settings.GetString(Utils.LANG_ID_TAG, "1");
-           
+    
+            string langId =Utils.ReadFromSettings(this,Utils.LANG_ID_TAG, "1");           
             var updateList= await RestApiService.CheckUpdate(dbCon, langId,Utils.GetLastUpadte(this));
             if (updateList != null)
             {
-                Utils.WriteToSettings(this, NohandicapLibrary.PRODUCT_TABLE, updateList[NohandicapLibrary.PRODUCT_TABLE]);
-                Utils.WriteToSettings(this, NohandicapLibrary.CATEGORY_TABLE, updateList[NohandicapLibrary.CATEGORY_TABLE]);
-                Utils.WriteToSettings(this, NohandicapLibrary.LANGUAGE_TABLE, updateList[NohandicapLibrary.LANGUAGE_TABLE]);
-            }        }
+                if (updateList.Count != 0)
+                {
+                    Utils.WriteToSettings(this, NohandicapLibrary.PRODUCT_TABLE, updateList[NohandicapLibrary.PRODUCT_TABLE]);
+                    Utils.WriteToSettings(this, NohandicapLibrary.CATEGORY_TABLE, updateList[NohandicapLibrary.CATEGORY_TABLE]);
+                    Utils.WriteToSettings(this, NohandicapLibrary.LANGUAGE_TABLE, updateList[NohandicapLibrary.LANGUAGE_TABLE]);
+                }
+                Utils.WriteToSettings(this, Utils.LAST_UPDATE_DATE, DateTime.Now.ToShortDateString());
+            }
+            
+
+           
+        }
         private void PrepareBar()
         {
            
@@ -217,7 +227,63 @@ namespace NohandicapNative.Droid
 
             lastPos = position;
         }
-       public void ShowFragment(Android.Support.V4.App.Fragment fragment,string tag)
+
+      public void LoginToFacebook(FavoritesFragment fragment,bool allowCancel)
+        {
+            UserModel user = null;
+            var auth = new OAuth2Authenticator(
+                clientId: "105055836622734",
+                scope: "",
+                authorizeUrl: new Uri("https://m.facebook.com/dialog/oauth/"),
+                redirectUrl: new Uri("http://www.facebook.com/connect/login_success.html"));
+
+            auth.AllowCancel = allowCancel;
+
+            // If authorization succeeds or is canceled, .Completed will be fired.
+            auth.Completed += (s, ee) => {
+                if (!ee.IsAuthenticated)
+                {
+                    //var builder = new Android.Support.V7.App.AlertDialog.Builder(this);
+                    //builder.SetMessage("Not Authenticated");
+                    //builder.SetPositiveButton("Ok", (o, e) => { });
+                    //builder.Create().Show();
+                    return;
+                }
+
+                // Now that we're logged in, make a OAuth2 request to get the user's info.
+                var request = new OAuth2Request("GET", new Uri("https://graph.facebook.com/me"), null, ee.Account);
+                request.GetResponseAsync().ContinueWith(t => {
+                    var builder = new Android.Support.V7.App.AlertDialog.Builder(this);
+                    if (t.IsFaulted)
+                    {                       
+                        builder.SetMessage(t.Exception.Flatten().InnerException.ToString());
+                        fragment.UserLoginSuccess(null);
+                    }
+                    else if (t.IsCanceled)
+                    {
+                       
+                        fragment.UserLoginSuccess(null);
+                    }
+                    else
+                    {
+                        var obj = JsonValue.Parse(t.Result.GetResponseText());
+
+                        user = new UserModel();
+                        user.ID = obj["id"].ToString();
+                        user.Name = obj["name"];
+                        user.Favorites = new List<int>();
+                        fragment.UserLoginSuccess(user);
+                    }
+                   
+                }, UIScheduler);
+            };
+
+            var intent = auth.GetUI(this);
+            StartActivity(intent);
+          
+        }
+        private static readonly TaskScheduler UIScheduler = TaskScheduler.FromCurrentSynchronizationContext();
+        public void ShowFragment(Android.Support.V4.App.Fragment fragment,string tag)
         {
             Android.Support.V4.App.FragmentManager fragmentManager = SupportFragmentManager;
 
@@ -301,16 +367,7 @@ namespace NohandicapNative.Droid
         }
         public async void OnLocationChanged(Location location)
         {
-            CurrentLocation = location;
-            if (CurrentLocation == null)
-            {
-               var s= "Unable to determine your location. Try again in a short while.";
-            }
-            else
-            {
-                var v= string.Format("{0:f6},{1:f6}", CurrentLocation.Latitude, CurrentLocation.Longitude);
-                Log.Debug(TAG, "Coordinate: " + v);
-            }
+            CurrentLocation = location;           
         }
 
         public void OnProviderDisabled(string provider)

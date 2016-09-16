@@ -118,7 +118,7 @@ namespace NohandicapNative
                     var user = Deserializedata<UserModel>(responsebody, rootName: "user");
                     var fav = Deserializedata<List<int>>(responsebody, rootName: "favorites");
                     if (user != null && fav != null)
-                        user.Fravorites = fav;
+                        user.Favorites = fav;
                     return user;
                 }
             }
@@ -128,7 +128,7 @@ namespace NohandicapNative
             }
 
         }
-        public static async Task<bool> SignUp(UserModel user)
+        public static async Task<string> SignUp(UserModel user)
         {
             try
             {
@@ -147,21 +147,22 @@ namespace NohandicapNative
                     string responsebody = Encoding.UTF8.GetString(responsebytes);
                     var root = JObject.Parse(responsebody).SelectToken("status").ToString();
                     var code = JsonConvert.DeserializeObject<int>(root);
-                    if (code == 1) return true;
+                    if (code == 1) return "OK";
                     else
-                        return false;
+                        return JObject.Parse(responsebody).SelectToken("message").ToString();
 
                 }
             }
             catch (Exception e)
             {
-                return false;
+                return null;
             }
 
         }
 
         public static async Task<Dictionary<string,string>> CheckUpdate(SqliteService dbCon,string langID, Dictionary<string, string> lastUpdate)
         {
+            Dictionary<string, string> updateList = new Dictionary<string, string>();
             bool prod = false;
             bool cat = false;
             bool lang = false;
@@ -190,7 +191,7 @@ namespace NohandicapNative
             }
             if (lang || prod || cat)
             {
-                Dictionary<string, string> updateList = new Dictionary<string, string>();
+               updateList = new Dictionary<string, string>();
                 updateList.Add(NohandicapLibrary.PRODUCT_TABLE, productTable);
                 updateList.Add(NohandicapLibrary.CATEGORY_TABLE, categoryTable);
                 updateList.Add(NohandicapLibrary.LANGUAGE_TABLE, langTable);
@@ -198,7 +199,7 @@ namespace NohandicapNative
             }
             else
             {
-                return null;
+                return updateList;
             }
    
         }
