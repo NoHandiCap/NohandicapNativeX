@@ -9,15 +9,18 @@ namespace NohandicapNative
 {
     public class NohandicapLibrary
     {
-        public const string LINK_MAIN= "http://www.stage.nohandicap.net";
-        public const string LINK_LANGUAGE = "http://www.stage.nohandicap.net/cms/component/shopmap/ajax/api.php?action=getlang";
-        public const string LINK_CATEGORY = "http://www.stage.nohandicap.net/cms/component/shopmap/ajax/api.php?action=getcat&idlang=";
-        public const string LINK_PRODUCT = "http://www.stage.nohandicap.net/cms/component/shopmap/ajax/api.php?action=getprod&idlang=";
-        public const string LINK_LOGIN = "http://www.stage.nohandicap.net/cms/index.php?item=artikel&id=1&com=login&action=login&type=app";
-        public const string LINK_SAVEFAV = "http://www.stage.nohandicap.net/cms/component/shopmap/ajax/api.php?action=savefave&iduser={0}&idprod={1}";
-        public const string LINK_SIGN_UP = "http://www.stage.nohandicap.net/cms/index.php?item=artikel&id=&com=login&action=register&type=app";
-        public const string LINK_GET_UPDATE = "http://www.stage.nohandicap.net/cms/component/shopmap/ajax/api.php?action=getlastupdated";
-        public const string LINK_DELFAV = " http://www.stage.nohandicap.net/cms/component/shopmap/ajax/api.php?action=delfave&iduser={0}&idprod={1}";
+        public const string COM = "placemap";
+        public const string LOGIN_ARTIKEL_ID = "1";
+        public const string REGISTER_ARTIKEL_ID = "73";
+        public const string LINK_MAIN= "http://www.stage.nohandicap.net/cms/";
+        public const string LINK_LANGUAGE = LINK_MAIN + "component/"+ COM +"/ajax/api.php?action=getlang";
+        public const string LINK_CATEGORY = LINK_MAIN + "component/" + COM + "/ajax/api.php?action=getcat&idlang=";
+        public const string LINK_PRODUCT = LINK_MAIN + "component/" + COM + "/ajax/api.php?action=getprod&idlang=";
+        public const string LINK_LOGIN = LINK_MAIN + "index.php?item=artikel&id="+ LOGIN_ARTIKEL_ID + "&com=login&action=login&type=app";
+        public const string LINK_SAVEFAV = LINK_MAIN + "component/" + COM + "/ajax/api.php?action=savefave&iduser={0}&idprod={1}";
+        public const string LINK_SIGN_UP = LINK_MAIN + "index.php?item=artikel&id="+ REGISTER_ARTIKEL_ID +"&com=login&action=register&type=app";
+        public const string LINK_GET_UPDATE = LINK_MAIN + "component/" + COM + "/ajax/api.php?action=getlastupdated";
+        public const string LINK_DELFAV = LINK_MAIN + "component/" + COM + "/ajax/api.php?action=delfave&iduser={0}&idprod={1}";
         public const string PRODUCT_TABLE = "Products";
         public const string CATEGORY_TABLE = "Categories";
         public const string LANGUAGE_TABLE = "Language";
@@ -43,10 +46,8 @@ namespace NohandicapNative
         public static List<CategoryModel> GetAdditionalCategory()
         {
             List<CategoryModel> items = new List<CategoryModel>();
-            string[] buttonTitles = { "Kunsnt&Kultur", "Museen", "Shoppen", "Sport&Welsness", "Essen&Trinken", "Nächtigen", "Nützliches", "Sightseeing", "Location" };
-
+            string[] buttonTitles = { "Kunst&Kultur", "Museen", "Shoppen", "Sport&Welness", "Essen&Trinken", "Nächtigen", "Nützliches", "Sightseeing", "Location" };
             string[] buttonColors = { "#FF2C0C05", "#FFF0634B", "#FF60A42D", "#FFE78F02", "#FF7B0D0B", "#FFE78F02", "#FF60A42D", "#FFF0634B", "#FF2C0C05" };
-
             string[] buttonImage = { "kunst", "museum", "shop", "sport", "eat", "sleep", "search", "event", "location" };
             int[] buttonId = {6, 9,7, 8, 5, 4,12, 11, 10 };
 
@@ -65,7 +66,7 @@ namespace NohandicapNative
         public static List<TabItem> GetMainCategory()
         {
             List<TabItem> items = new List<TabItem>();
-            string[] buttonTitles = { "Barrierenfrei", "Teilweise Behinderten gerecht", "Total Behinderten gerecht"};
+            string[] buttonTitles = { "Barrierenfrei", "Teilweise Behindertengerecht", "Total Behindertengerecht"};
 
             string[] buttonColors = { "#37474F", "#37474F", "#37474F" };
 
