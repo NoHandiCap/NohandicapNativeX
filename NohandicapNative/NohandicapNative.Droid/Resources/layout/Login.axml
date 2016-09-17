@@ -67,6 +67,6 @@
             android:layout_marginBottom="24dp"
             android:padding="12dp"
              style="@style/AppThemeNoBar.Button"
-            android:text="@string/sign_up" />
+            android:text="@string/create_account" />
     </LinearLayout>
 </ScrollView>

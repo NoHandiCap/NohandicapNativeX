@@ -121,18 +121,22 @@ namespace NohandicapNative.Droid
             }
             for (int i = 0; i < langListView.ChildCount; i++)
             {
+
                 var text = langListView.GetChildAt(i).FindViewById<TextView>(Resource.Id.grid_text);
+                var viewLayout = langListView.GetChildAt(i).FindViewById<LinearLayout>(Resource.Id.grid_layout);
                 if (position == i)
-                {
-                    text.TextSize = 12;
-                    text.SetTypeface(null, TypefaceStyle.Bold);
+                {                 
+                    text.SetTextColor(Color.White);
+                    viewLayout.SetBackgroundColor(Resources.GetColor(Resource.Color.themeColor));
                     SetLocale(position);
                 }
                 else
                 {
-                    text.TextSize = 11;
                     text.SetTypeface(null, TypefaceStyle.Normal);
-                }
+                    text.SetTextColor(Color.Black);
+                    viewLayout.SetBackgroundColor(Color.White);
+
+                }               
             }
         }
         private async void FillLanguageTable()

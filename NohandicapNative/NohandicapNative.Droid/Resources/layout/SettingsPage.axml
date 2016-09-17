@@ -95,6 +95,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="Small Text"
+        android:textSize="10dp"
         android:id="@+id/lastUpdateTextView"
         android:layout_gravity="center_horizontal" />
   </LinearLayout>

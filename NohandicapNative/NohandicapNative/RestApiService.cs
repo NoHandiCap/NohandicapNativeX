@@ -117,8 +117,14 @@ namespace NohandicapNative
                     string responsebody = Encoding.UTF8.GetString(responsebytes);
                     var user = Deserializedata<UserModel>(responsebody, rootName: "user");
                     var fav = Deserializedata<List<int>>(responsebody, rootName: "favorites");
-                    if (user != null && fav != null)
+                    if (user != null)
+                    {
+                        user.Favorites = new List<int>();
+                    }
+                    if (fav != null)
+                    {
                         user.Favorites = fav;
+                    }
                     return user;
                 }
             }
@@ -128,8 +134,9 @@ namespace NohandicapNative
             }
 
         }
-        public static async Task<string> SignUp(UserModel user)
+        public static async Task<Dictionary<int,string>> SignUp(UserModel user)
         {
+            var result = new Dictionary<int, string>();
             try
             {
                 using (WebClient client = new WebClient())
@@ -147,17 +154,16 @@ namespace NohandicapNative
                     string responsebody = Encoding.UTF8.GetString(responsebytes);
                     var root = JObject.Parse(responsebody).SelectToken("status").ToString();
                     var code = JsonConvert.DeserializeObject<int>(root);
-                    if (code == 1) return "OK";
-                    else
-                        return JObject.Parse(responsebody).SelectToken("message").ToString();
+                    var message = JObject.Parse(responsebody).SelectToken("message").ToString();
+                    result.Add(code, message);                
 
                 }
             }
             catch (Exception e)
             {
-                return null;
+           
             }
-
+            return result;
         }
 
         public static async Task<Dictionary<string,string>> CheckUpdate(SqliteService dbCon,string langID, Dictionary<string, string> lastUpdate)

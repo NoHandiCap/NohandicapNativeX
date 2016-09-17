@@ -76,25 +76,26 @@ namespace NohandicapNative.Droid
             ProgressDialog progressDialog = new ProgressDialog(this,
                         Resource.Style.StyledDialog);
             progressDialog.Indeterminate = true;
-            progressDialog.SetMessage("Creating Account...");
+            progressDialog.SetMessage(Resources.GetString(Resource.String.creating_account));
             progressDialog.Show();
 
            var result = await RestApiService.SignUp(createdUser);
-            if (result=="OK")
+            if (result.ContainsKey(1))
             {
-                onSignupSuccess();
+                onSignupSuccess(result[1]);
             }
             else
             {
                 progressDialog.Dismiss();
-                onSignupFailed(result);
+                onSignupFailed(result[0]);
             }
           
         }
-        public void onSignupSuccess()
+        public void onSignupSuccess(string message)
         {
             signUpButton.Enabled=true;
             SetResult(Result.Ok, null);
+            Toast.MakeText(BaseContext, message, ToastLength.Long).Show();
             Finish();
         }
 
@@ -180,7 +181,7 @@ namespace NohandicapNative.Droid
             createdUser.Email = email;
             if (!string.IsNullOrEmpty(email))
             {
-                createdUser.Login = email.Substring(0, email.LastIndexOf('@'));
+                createdUser.Login = string.Concat(email.Substring(0, email.LastIndexOf('@')).Take(9));
             }
             if (radioButton == null)
             {

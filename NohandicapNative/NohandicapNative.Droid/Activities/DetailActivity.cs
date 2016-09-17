@@ -84,8 +84,9 @@ namespace NohandicapNative.Droid
                 openHoursTextView = (TextView)FindViewById(Resource.Id.openHoursTextView);
                 viewPager = FindViewById<ViewPager>(Resource.Id.viewPager);
                 SetSupportActionBar(toolbar);
-                SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Resources.GetColor(Resource.Color.themeColor)));
-                SupportActionBar.SetDisplayHomeAsUpEnabled(true);                    
+            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+            SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Resources.GetColor(Resource.Color.themeColor)));
+                                 
                 fab.SetOnClickListener(this);
                 var task = LoadProduct();
              

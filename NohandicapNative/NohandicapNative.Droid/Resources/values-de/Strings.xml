@@ -55,6 +55,7 @@
   <string name="no_favorites">Sie haben noch keine Favoriten hinzugefügt!</string>
   <string name="last_update">Letztes Update: </string>
   <string name="sync">synchronisiert</string>
+  <string name="creating_account">Erstellen von Konto ...</string>
 
 
   <string-array name="lang_array">

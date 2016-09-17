@@ -55,12 +55,14 @@ namespace NohandicapNative.Droid.Adapters
         Resource.Layout.RadioButton, parent, false);       
             var image = view.FindViewById<ImageView>(Resource.Id.grid_image);
           var text= view.FindViewById<TextView>(Resource.Id.grid_text);
-            text.Text = items[position].Text; 
-            text.TextSize = 12;
-            if(defaultSelected==position)
-                text.SetTypeface(null, TypefaceStyle.Bold);
-            else
-                text.SetTypeface(null, TypefaceStyle.Normal);
+            text.Text = items[position].Text;             
+            text.TextSize = 12;    
+            if (defaultSelected == position)
+            {
+              
+                text.SetTextColor(Color.White);
+                view.SetBackgroundColor(context.Resources.GetColor(Resource.Color.themeColor));
+            }           
             var img = context.Resources.GetDrawable(flags[position]);    
             image.SetImageDrawable(img);
                 

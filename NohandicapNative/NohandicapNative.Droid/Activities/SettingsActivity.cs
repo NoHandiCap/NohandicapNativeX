@@ -60,7 +60,7 @@ namespace NohandicapNative.Droid
             languageList = dbCon.GetDataList<LanguageModel>();
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
-            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+            SupportActionBar.SetDisplayHomeAsUpEnabled(true);           
             SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Resources.GetColor(Resource.Color.themeColor)));
             SupportActionBar.Title=Resources.GetString(Resource.String.settings);
             langListView = FindViewById<ListView>(Resource.Id.languageList);
@@ -107,12 +107,13 @@ namespace NohandicapNative.Droid
             var user = dbCon.GetDataList<UserModel>().FirstOrDefault();
             if (user != null)
             {
-                userTextView.Text = user.Name;
+                userTextView.Text = user.Name??user.Vname;
                 logoutButton.Click += (s, e) =>
                 {
                     dbCon.Logout();
                     Utils.WriteToSettings(this, Utils.IS_LOGIN, Utils.IS_NOT_LOGED);
                     loginLayout.Visibility = ViewStates.Gone;
+                    ((MainActivity)Utils.mainActivity).Favorites=new FavoritesFragment();
                 };
             }
             else
@@ -164,17 +165,19 @@ namespace NohandicapNative.Droid
             for (int i = 0; i < langListView.ChildCount; i++)
             {
                 var text = langListView.GetChildAt(i).FindViewById<TextView>(Resource.Id.grid_text);
+                var viewLayout = langListView.GetChildAt(i).FindViewById<LinearLayout>(Resource.Id.grid_layout);
                 if (position == i)
                 {
-                    text.TextSize = 13;
-                    text.SetTypeface(null, TypefaceStyle.Bold);                
+                    text.SetTextColor(Color.White);
+                    viewLayout.SetBackgroundColor(Resources.GetColor(Resource.Color.themeColor));
                     selectedLanguage = languageList[position];
                 }
                 else
                 {
-                    text.TextSize = 12;
                     text.SetTypeface(null, TypefaceStyle.Normal);
-                }
+                    text.SetTextColor(Color.Black);
+                    viewLayout.SetBackgroundColor(Color.White);
+                }             
             }
         }
 
