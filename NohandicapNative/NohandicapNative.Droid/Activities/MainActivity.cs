@@ -40,7 +40,7 @@ namespace NohandicapNative.Droid
     public class NohandicapApplication : Application
     {
         static readonly string TAG = "X:" + typeof(NohandicapApplication).Name;
-        public MainActivity MainActivity { get; set; }
+        public static MainActivity MainActivity { get; set; }
         private Locale locale = null;   
                
         public NohandicapApplication(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
@@ -106,13 +106,13 @@ namespace NohandicapNative.Droid
             base.OnCreate(bundle);
          //   CrashManager.Register(this);
             SetContentView(Resource.Layout.Main);
-            Utils.mainActivity = this;
+           
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);          
             _bottomBar = BottomBar.AttachShy(FindViewById<CoordinatorLayout>(Resource.Id.myCoordinator), FindViewById<LinearLayout>(Resource.Id.linContent), bundle);
-            Task.Run(() => {
-            MapPage = new GMapFragment();
-            ListPage = new ListFragment();
             HomePage = new HomeFragment();
+            RunOnUiThread(() => {
+            MapPage = new GMapFragment();
+            ListPage = new ListFragment();     
             Favorites = new FavoritesFragment();
             });
             items = NohandicapLibrary.GetTabs();
@@ -124,8 +124,8 @@ namespace NohandicapNative.Droid
                 var postion = bundle.GetInt(Utils.TAB_ID);
                 _bottomBar.SelectTabAtPosition(postion, false);
             }
-            Utils.mainActivity = this;
-           ThreadPool.QueueUserWorkItem(o => CheckUpdate());      
+            NohandicapApplication.MainActivity = this;
+            ThreadPool.QueueUserWorkItem(o => CheckUpdate());      
             ThreadPool.QueueUserWorkItem(o => InitializeLocationManager());
 
         }
@@ -174,6 +174,7 @@ namespace NohandicapNative.Droid
                 //  _bottomBar.MapColorForTab(i, Color.ParseColor(Utils.BACKGROUND));
 
             }    
+           
             _bottomBar.SetOnTabClickListener(this);
          //   SupportActionBar.SetIcon(Utils.SetDrawableSize(this, Resource.Drawable.logo_small, 80, 80));
             SupportActionBar.SetHomeAsUpIndicator(Utils.SetDrawableSize(this, Resource.Drawable.logo_small, 80, 80));

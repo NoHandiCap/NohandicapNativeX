@@ -19,6 +19,7 @@ using Android.Preferences;
 using Java.IO;
 using Android.Gms.Maps.Model;
 using Android.Locations;
+using System.Threading.Tasks;
 
 namespace NohandicapNative.Droid.Services
 {
@@ -44,10 +45,6 @@ namespace NohandicapNative.Droid.Services
         public const string MAIN_CAT_SELECTED_ID = "maincat";
         public const string LAST_UPDATE_DATE = "lastUp";
 
-
-
-
-        public static Context mainActivity;
         public static  Dictionary<string,string> GetLastUpadte(Context context)
         {
             Dictionary<string, string> lastUpdate = new Dictionary<string, string>();
@@ -94,7 +91,7 @@ namespace NohandicapNative.Droid.Services
         }
         public static void ReloadMainActivity(Application application, Context context)
         {
-            ((MainActivity)mainActivity).Finish();
+           NohandicapApplication.MainActivity.Finish();
             Intent refresh = new Intent(context, typeof(MainActivity));
             context.StartActivity(refresh);
         }
@@ -126,7 +123,7 @@ namespace NohandicapNative.Droid.Services
                 return null;
             }
         }
-        public static Bitmap SaveImageBitmapFromUrl(string url, string name)
+        public async static Task<Bitmap> SaveImageBitmapFromUrl(string url, string name)
         {
 
             Bitmap imageBitmap = null;
@@ -135,23 +132,36 @@ namespace NohandicapNative.Droid.Services
             {
                 var imageBytes = webClient.DownloadData(url);
                 if (imageBytes != null && imageBytes.Length > 0)
-                {
-                    imageBitmap = BitmapFactory.DecodeByteArray(imageBytes, 0, imageBytes.Length);
+                {           
+
+                    imageBitmap = await GetBitmapOptionsOfImageAsync(imageBytes);
                 }
             }
             Save(imageBitmap, name);
             return imageBitmap;
         }
+        async static Task<Bitmap> GetBitmapOptionsOfImageAsync(byte[] imageBytes)
+        {
+            BitmapFactory.Options options = new BitmapFactory.Options
+            {
+                InJustDecodeBounds = false
+            };
+
+            // The result will be null because InJustDecodeBounds == true.
+            Bitmap result = await BitmapFactory.DecodeByteArrayAsync(imageBytes, 0, imageBytes.Length,options);        
+
+            return result;
+        }
         public static void Save(Bitmap bitmap, string name)
         {
             name = name.Replace(".jpg", "");
-            var parentDir = new File(mainActivity.FilesDir.ToString());
+            var parentDir = new File(NohandicapApplication.MainActivity.FilesDir.ToString());
             List<File> inFiles = new List<File>();
             File[] files = parentDir.ListFiles();
 
 
 
-            using (var os = new System.IO.FileStream(System.IO.Path.Combine(mainActivity.FilesDir.ToString(), name), System.IO.FileMode.Create))
+            using (var os = new System.IO.FileStream(System.IO.Path.Combine(NohandicapApplication.MainActivity.FilesDir.ToString(), name), System.IO.FileMode.Create))
             {
                 bitmap.Compress(Bitmap.CompressFormat.Png, 95, os);
             }
@@ -162,7 +172,7 @@ namespace NohandicapNative.Droid.Services
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.InPreferredConfig = Bitmap.Config.Argb8888;
 
-            Bitmap bitmap = BitmapFactory.DecodeFile(System.IO.Path.Combine(mainActivity.FilesDir.ToString(), name), options);
+            Bitmap bitmap = BitmapFactory.DecodeFile(System.IO.Path.Combine(NohandicapApplication.MainActivity.FilesDir.ToString(), name), options);
             return bitmap;
         }
         public static Resources SetLocale(Activity context, string lang)

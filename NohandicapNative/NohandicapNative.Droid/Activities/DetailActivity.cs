@@ -60,7 +60,7 @@ namespace NohandicapNative.Droid
         {
             Utils.updateConfig(this);
         }
-        protected override void OnCreate(Bundle bundle)
+        protected async override void OnCreate(Bundle bundle)
         {
             SetTheme(Resource.Style.AppThemeNoBar);
             base.OnCreate(bundle);
@@ -88,7 +88,7 @@ namespace NohandicapNative.Droid
             SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Resources.GetColor(Resource.Color.themeColor)));
                                  
                 fab.SetOnClickListener(this);
-                var task = LoadProduct();
+                await LoadProduct();
              
 
 
@@ -107,8 +107,10 @@ namespace NohandicapNative.Droid
             }
             else
             {
+
                 SliderAdapter adapter = new SliderAdapter(this, product);
                 viewPager.Adapter = adapter;
+                
             }
             
                 categories = dbCon.GetDataList<CategoryModel>();
@@ -131,7 +133,7 @@ namespace NohandicapNative.Droid
                 });
                 categoriesTextView.TextFormatted = Html.FromHtml(bulledList);
            
-            HideEmptyTextView();
+              RunOnUiThread(()=> { HideEmptyTextView(); });
             
                 user = dbCon.GetDataList<UserModel>().FirstOrDefault();
                 if (user != null)
@@ -179,11 +181,13 @@ namespace NohandicapNative.Droid
             {
                 case Android.Resource.Id.Home:
                     Finish();
+                    GC.Collect();
                     break;           
             }
             return true;
         }
-
+       
+       
         public void OnMapReady(GoogleMap googleMap)
         {
             try {
@@ -197,12 +201,10 @@ namespace NohandicapNative.Droid
                 googleMap.UiSettings.ScrollGesturesEnabled=false;
                 CameraPosition cameraPosition = new CameraPosition.Builder().Target(options.Position).Zoom(14.0f).Build();
             CameraUpdate cameraUpdate = CameraUpdateFactory.NewCameraPosition(cameraPosition);
-            googleMap.MoveCamera(cameraUpdate);
-                
+            googleMap.MoveCamera(cameraUpdate);                
                 View toolbar = ((View)mapFragment.View.FindViewById(int.Parse("1")).
             Parent).FindViewById(int.Parse("4"));
-
-                Task.Run(() => {
+               
                 // and next place it, for example, on bottom right (as Google Maps app)
                 RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams)toolbar.LayoutParameters;
                 // position on right bottom
@@ -210,7 +212,7 @@ namespace NohandicapNative.Droid
                rlp.AddRule(LayoutRules.AlignParentBottom,(int)LayoutRules.True);  
                rlp.AddRule(LayoutRules.AlignParentLeft,(int)LayoutRules.True);
                 rlp.SetMargins(100, 0, 0,30);
-                });
+             
             }
             catch (Exception e)
             {
@@ -218,7 +220,12 @@ namespace NohandicapNative.Droid
 
             }
         }
-
+       
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            GC.Collect();
+        }
         private void GoogleMap_MapClick(object sender, object e)
         {
             Intent intent = new Intent();
@@ -246,7 +253,7 @@ namespace NohandicapNative.Droid
                     fab.Selected = false;
                     user.Favorites.Remove(product.ID);
                     dbCon.InsertUpdateProduct(user);
-                    ((MainActivity)Utils.mainActivity).Favorites.ReloadData();
+                    NohandicapApplication.MainActivity.Favorites.ReloadData();
                     var url = String.Format(NohandicapLibrary.LINK_DELFAV, user.ID, product.ID);
                     RestApiService.GetDataFromUrl<UserModel>(url, readBack: false);
                 }

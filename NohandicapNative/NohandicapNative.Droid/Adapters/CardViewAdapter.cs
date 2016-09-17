@@ -78,7 +78,7 @@ namespace NohandicapNative.Droid.Adapters
             {
                 distanceLayout.Visibility = ViewStates.Gone;
             }
-            Task.Run(() => {
+         
 
          
             var catImage = categories.FirstOrDefault(x => x.ID == products[position].Categories[0]);
@@ -87,7 +87,7 @@ namespace NohandicapNative.Droid.Adapters
                 imageView.SetImageDrawable(Utils.GetImage(context, catImage.Icon));
                 imageView.SetBackgroundColor(Color.ParseColor(catImage.Color));
             }
-            });
+         
             //var frame = view.FindViewById<LinearLayout>(Resource.Id.itemFrame);
             //var mainimage = products[position].ImageCollection.Images;
             //if (mainimage.Count != 0)

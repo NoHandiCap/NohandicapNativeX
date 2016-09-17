@@ -62,7 +62,13 @@ namespace NohandicapNative.Droid.Adapters
               
                 text.SetTextColor(Color.White);
                 view.SetBackgroundColor(context.Resources.GetColor(Resource.Color.themeColor));
-            }           
+            }
+            else
+            {
+
+                text.SetTextColor(Color.Black);
+                view.SetBackgroundColor(Color.White);
+            }
             var img = context.Resources.GetDrawable(flags[position]);    
             image.SetImageDrawable(img);
                 

@@ -38,6 +38,7 @@ namespace NohandicapNative.Droid
         TextView lastUpdateTextView;
         TextView userTextView;
         LinearLayout loginLayout;
+        MainActivity mainActivity;
         public SettingsActivity()
         {
             Utils.updateConfig(this);
@@ -74,7 +75,7 @@ namespace NohandicapNative.Droid
             langListView.Adapter = new RadioButtonListAdapter(this, flags, langList,int.Parse(currentLocale)-1);
             syncButton.Click += async(s,e)=>{
                 ProgressDialog progressDialog = new ProgressDialog(this,
-                Resource.Style.AppThemeDarkDialog);
+                 Resource.Style.StyledDialog);
                 progressDialog.Indeterminate = true;
                 var a = Resources.GetString(Resource.String.load_data);
                 progressDialog.SetMessage(a);
@@ -113,7 +114,7 @@ namespace NohandicapNative.Droid
                     dbCon.Logout();
                     Utils.WriteToSettings(this, Utils.IS_LOGIN, Utils.IS_NOT_LOGED);
                     loginLayout.Visibility = ViewStates.Gone;
-                    ((MainActivity)Utils.mainActivity).Favorites=new FavoritesFragment();
+                   NohandicapApplication.MainActivity.Favorites=new FavoritesFragment();
                 };
             }
             else
@@ -121,8 +122,7 @@ namespace NohandicapNative.Droid
                 loginLayout.Visibility = ViewStates.Gone;
             }
             
-        }
-
+        }       
         private async Task<bool> ReloadData()
         {
             

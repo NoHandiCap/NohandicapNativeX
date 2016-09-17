@@ -99,7 +99,7 @@ namespace NohandicapNative.Droid
 
                 };
                 langListView.OnItemClickListener = this;
-                Utils.mainActivity = this;
+              
             }catch(Exception e)
             {
                 Log.Error(TAG, e.Message + " " + e.StackTrace);

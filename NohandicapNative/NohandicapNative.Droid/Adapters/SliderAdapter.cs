@@ -13,6 +13,7 @@ using Android.Support.V4.View;
 using NohandicapNative.Droid.Services;
 using Android.Util;
 using System.Threading.Tasks;
+using Android.Graphics;
 
 namespace NohandicapNative.Droid.Adapters
 {
@@ -53,16 +54,7 @@ namespace NohandicapNative.Droid.Adapters
             {
                 if (string.IsNullOrWhiteSpace(img.LocalImage))
                 {
-                    imageView.SetBackgroundResource(Resource.Drawable.placeholder);
-                    Task.Run(() => { 
-                    string filename = "none";
-                    Uri uri = new Uri(img.LinkImage);
-                    filename = System.IO.Path.GetFileName(uri.LocalPath);
-                  var bitmap=  Utils.SaveImageBitmapFromUrl(img.LinkImage, filename);
-                    img.LocalImage = filename;
-                    dbCon.InsertUpdateProduct(product);
-                    imageView.SetImageBitmap(bitmap);                   
-                    });
+                    LoadImageAsync(imageView, img);
                 }
                 else
                 {
@@ -78,10 +70,23 @@ namespace NohandicapNative.Droid.Adapters
            ((ViewPager)container).AddView(imageView, 0);
             return imageView;
         }
+       public async void LoadImageAsync(ImageView imageView,ImageModel img)
+        {
+            imageView.SetBackgroundResource(Resource.Drawable.placeholder);          
+                string filename = "none";
+                Uri uri = new Uri(img.LinkImage);
+                filename = System.IO.Path.GetFileName(uri.LocalPath);
+                var bitmap =await Utils.SaveImageBitmapFromUrl(img.LinkImage, filename);
+                img.LocalImage = filename;
+                dbCon.InsertUpdateProduct(product);
+                imageView.SetImageBitmap(bitmap);
+
+        }
 
         public override void DestroyItem(View container, int position, Java.Lang.Object objectValue)
         {
             ((ViewPager)container).RemoveView((ImageView)objectValue);
+            GC.Collect();
         }
     }
 }
