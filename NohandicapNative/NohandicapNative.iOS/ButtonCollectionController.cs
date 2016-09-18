@@ -51,6 +51,7 @@ namespace NohandicapNative.iOS
             {
                 animals.Add(new Monkey());
             }
+            
         }
 
         public override void ViewDidLoad()
@@ -60,17 +61,17 @@ namespace NohandicapNative.iOS
             CollectionView.RegisterClassForCell(typeof(AnimalCell), animalCellId);
             CollectionView.RegisterClassForSupplementaryView(typeof(Header), UICollectionElementKindSection.Header, headerId);
             CollectionView.BackgroundColor = UIColor.White;
-    
+  
         }
-
+      
         public override nint NumberOfSections(UICollectionView collectionView)
         {
             return 1;
         }
-        
+       
         public override nint GetItemsCount(UICollectionView collectionView, nint section)
         {
-            return animals.Count;
+            return 9;
         }
 
         public override UICollectionViewCell GetCell(UICollectionView collectionView, NSIndexPath indexPath)
@@ -79,7 +80,7 @@ namespace NohandicapNative.iOS
 
             var animal = animals[indexPath.Row];
 
-            animalCell.Image = animal.Image;
+            animalCell.Image =TabController.ResizeImage(animal.Image,50,50);
             animalCell.Title = animal.Name;
             return animalCell;
         }

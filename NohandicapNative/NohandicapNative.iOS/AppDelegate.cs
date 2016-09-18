@@ -9,27 +9,15 @@ namespace NohandicapNative.iOS
     [Register ("AppDelegate")]
 	public class AppDelegate : UIApplicationDelegate
 	{
-		// class-level declarations
+        // class-level declarations
 
-		public override UIWindow Window {
-			get;
-			set;
-		}
-        
-        TabController tabController;
-        public override bool FinishedLaunching (UIApplication application, NSDictionary launchOptions)
-		{
-            Window = new UIWindow(UIScreen.MainScreen.Bounds);
-       
-            var tabController = new TabController();
-            Window.RootViewController = tabController;
-
-            Window.MakeKeyAndVisible();
-
-            return true;
+        public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
+        {
+            return base.FinishedLaunching(application, launchOptions);
         }
 
-		public override void OnResignActivation (UIApplication application)
+
+        public override void OnResignActivation (UIApplication application)
 		{
 			// Invoked when the application is about to move from active to inactive state.
 			// This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) 

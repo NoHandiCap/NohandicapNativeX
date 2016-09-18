@@ -1,6 +1,7 @@
 ﻿using CoreGraphics;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
 using UIKit;
 
@@ -21,26 +22,14 @@ namespace NohandicapNative.iOS
 
                var item = new UIViewController();
             item.Title = tab.Title;
-            item.TabBarItem = new UITabBarItem(tab.Title, UIImage.FromBundle(tab.Image), 0);
+            item.TabBarItem = new UITabBarItem(tab.Title,ResizeImage(UIImage.FromBundle(tab.Image),30,30), 0);
             item.View.BackgroundColor = UIColor.White;
                 tabItems[i] = new UINavigationController(item);
                 if (i == 0)
-                {
-                    var flowLayout = new UICollectionViewFlowLayout()
-                    {
-                        HeaderReferenceSize = new CGSize(100, 100),
-                        SectionInset = new UIEdgeInsets(2, 2, 2,2),
-                        ScrollDirection = UICollectionViewScrollDirection.Vertical,
-                        MinimumInteritemSpacing = 5, // minimum spacing between cells
-                        MinimumLineSpacing = 5 // minimum spacing between rows if ScrollDirection is Vertical or between columns if Horizontal
-                    };
+                {               
 
-                    var col = new ButtonCollectionController(flowLayout);
-                    col.CollectionView.ContentInset = new UIEdgeInsets(0, 0, 0, 0);
-                    col.Title = tab.Title;
-                    col.TabBarItem = new UITabBarItem(tab.Title, UIImage.FromBundle(tab.Image), 0);
-                    col.View.BackgroundColor = UIColor.White;
-                    tabItems[i] = col;
+                    var col = new HomeController();             
+                    tabItems[i] = new UINavigationController(col);
                 }
                 
             }
@@ -60,5 +49,14 @@ namespace NohandicapNative.iOS
 
             ViewControllers = tabItems;
         }
+        public static UIImage ResizeImage(UIImage sourceImage, float width, float height)
+        {
+            UIGraphics.BeginImageContext(new SizeF(width, height));
+            sourceImage.Draw(new RectangleF(0, 0, width, height));
+            var resultImage = UIGraphics.GetImageFromCurrentImageContext();
+            UIGraphics.EndImageContext();
+            return resultImage;
+        }
+
     }
 }

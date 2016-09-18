@@ -146,19 +146,29 @@
     <InterfaceDefinition Include="Main.storyboard" />
   </ItemGroup>
   <ItemGroup>
-    <InterfaceDefinition Include="HomeController.xib" />
     <None Include="Info.plist" />
     <None Include="Entitlements.plist" />
     <None Include="packages.config" />
+    <InterfaceDefinition Include="Views\ButtonGrid.xib" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ButtonGridController.cs" />
-    <Compile Include="ButtonGridController.designer.cs">
-      <DependentUpon>ButtonGridController.cs</DependentUpon>
+    <Compile Include="ButtonCollectionController.cs" />
+    <Compile Include="ButtonCollectionViewCell.cs" />
+    <Compile Include="ButtonCollectionViewCell.designer.cs">
+      <DependentUpon>ButtonCollectionViewCell.cs</DependentUpon>
     </Compile>
-    <Compile Include="HomeController.cs" />
-    <Compile Include="HomeController.designer.cs">
+    <Compile Include="ButtonGrid.cs" />
+    <Compile Include="ButtonGrid.designer.cs">
+      <DependentUpon>ButtonGrid.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CustomButtonViewFlowLayout.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\HomeController.designer.cs">
       <DependentUpon>HomeController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="HomeView.cs" />
+    <Compile Include="HomeView.designer.cs">
+      <DependentUpon>HomeView.cs</DependentUpon>
     </Compile>
     <Compile Include="LineLayout.cs" />
     <Compile Include="Main.cs" />
@@ -310,6 +320,7 @@
   <ItemGroup>
     <BundleResource Include="Resources\wheelchaisdr.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="..\NohandicapNative\NohandicapNative.projitems" Label="Shared" Condition="Exists('..\NohandicapNative\NohandicapNative.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

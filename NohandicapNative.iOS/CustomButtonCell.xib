@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10117" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="cZE-iV-UFb" customClass="CustomButtonCell">
+            <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="WmC-1e-tpB">
+                        <rect key="frame" x="35" y="16" width="80" height="80"/>
+                        <constraints>
+                            <constraint id="4" firstAttribute="width" constant="80"/>
+                            <constraint id="5" firstAttribute="height" constant="80"/>
+                        </constraints>
+                    </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zp0-ey-TYh">
+                        <rect key="frame" x="8" y="121" width="134" height="21"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                        <constraints>
+                            <constraint id="11" firstAttribute="width" constant="134"/>
+                        </constraints>
+                    </label>
+                </subviews>
+                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            </view>
+            <constraints>
+                <constraint id="2" firstItem="cZE-iV-UFb" firstAttribute="trailing" secondItem="WmC-1e-tpB" secondAttribute="trailing" constant="35"/>
+                <constraint id="3" firstItem="WmC-1e-tpB" firstAttribute="top" secondItem="cZE-iV-UFb" secondAttribute="top" constant="16"/>
+                <constraint id="6" firstItem="WmC-1e-tpB" firstAttribute="leading" secondItem="cZE-iV-UFb" secondAttribute="leading" constant="35"/>
+                <constraint id="9" firstItem="cZE-iV-UFb" firstAttribute="trailing" secondItem="zp0-ey-TYh" secondAttribute="trailing" constant="8"/>
+                <constraint id="10" firstItem="cZE-iV-UFb" firstAttribute="bottom" secondItem="zp0-ey-TYh" secondAttribute="bottom" constant="8"/>
+                <constraint id="12" firstItem="cZE-iV-UFb" firstAttribute="bottom" secondItem="zp0-ey-TYh" secondAttribute="bottom" constant="8"/>
+                <constraint id="13" firstItem="zp0-ey-TYh" firstAttribute="leading" secondItem="cZE-iV-UFb" secondAttribute="leading" constant="8"/>
+                <constraint id="14" firstItem="cZE-iV-UFb" firstAttribute="trailing" secondItem="zp0-ey-TYh" secondAttribute="trailing" constant="8"/>
+                <constraint id="15" firstItem="zp0-ey-TYh" firstAttribute="top" secondItem="WmC-1e-tpB" secondAttribute="bottom" constant="25"/>
+            </constraints>
+            <size key="customSize" width="148" height="150"/>
+            <point key="canvasLocation" x="536" y="351"/>
+            <connections>
+                <outlet property="iconImage" destination="WmC-1e-tpB" id="name-outlet-WmC-1e-tpB"/>
+                <outlet property="titleLabel" destination="zp0-ey-TYh" id="name-outlet-zp0-ey-TYh"/>
+            </connections>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <image name="back.png" width="48" height="48"/>
+        <image name="done.png" width="48" height="48"/>
+        <image name="eat.png" width="130" height="112"/>
+        <image name="empty_star.png" width="52" height="52"/>
+        <image name="english.png" width="256" height="256"/>
+        <image name="event.png" width="130" height="112"/>
+        <image name="facebook.png" width="128" height="128"/>
+        <image name="filled_star.png" width="48" height="48"/>
+        <image name="france.png" width="264" height="264"/>
+        <image name="german.png" width="256" height="256"/>
+        <image name="ic_favorites.png" width="84" height="81"/>
+        <image name="ic_home.png" width="84" height="81"/>
+        <image name="ic_list.png" width="36" height="35"/>
+        <image name="ic_map.png" width="84" height="81"/>
+        <image name="ic_restaurants.png" width="36" height="36"/>
+        <image name="ic_s.png" width="36" height="36"/>
+        <image name="Icon.png" width="72" height="72"/>
+        <image name="info.png" width="48" height="48"/>
+        <image name="kunst.png" width="130" height="112"/>
+        <image name="location.png" width="130" height="112"/>
+        <image name="logo_handicap.png" width="200" height="82"/>
+        <image name="logo_small.png" width="240" height="240"/>
+        <image name="love.png" width="52" height="52"/>
+        <image name="marker_eat.png" width="52" height="64"/>
+        <image name="marker_event.png" width="52" height="64"/>
+        <image name="marker_kunst.png" width="52" height="64"/>
+        <image name="marker_location.png" width="52" height="64"/>
+        <image name="marker_museum.png" width="52" height="64"/>
+        <image name="marker_search.png" width="52" height="64"/>
+        <image name="marker_shop.png" width="52" height="64"/>
+        <image name="marker_sleep.png" width="52" height="64"/>
+        <image name="marker_sport.png" width="52" height="64"/>
+        <image name="monkey.png" width="38" height="48"/>
+        <image name="museum.png" width="130" height="112"/>
+        <image name="pin.png" width="48" height="48"/>
+        <image name="placeholder.png" width="1500" height="1500"/>
+        <image name="search.png" width="130" height="112"/>
+        <image name="select_all.png" width="64" height="64"/>
+        <image name="settings.png" width="64" height="64"/>
+        <image name="settingsBar.png" width="64" height="64"/>
+        <image name="shop.png" width="130" height="112"/>
+        <image name="sleep.png" width="130" height="112"/>
+        <image name="sport.png" width="130" height="112"/>
+        <image name="wheelchair1.png" width="93" height="41"/>
+        <image name="wheelchair2.png" width="93" height="41"/>
+        <image name="wheelchair3.png" width="93" height="41"/>
+        <image name="wheelchaisdr.png" width="64" height="64"/>
+    </resources>
+</document>
