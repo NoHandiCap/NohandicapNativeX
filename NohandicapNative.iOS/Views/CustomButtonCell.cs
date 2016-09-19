@@ -3,6 +3,7 @@ using NohandicapNative.iOS.Services;
 using Foundation;
 using UIKit;
 using System.Drawing;
+using CoreGraphics;
 
 namespace NohandicapNative.iOS
 {
@@ -10,53 +11,32 @@ namespace NohandicapNative.iOS
 	{
 		public static readonly NSString Key = new NSString("CustomButtonCell");
 		public static readonly UINib Nib;
-        public string Title;
-        public UIImage img;
+       public UILabel TitleLabel
+        {
+            get;set;
+        }
+        public UIImageView iconView { get; set; }
 		static CustomButtonCell()
 		{
 			Nib = UINib.FromName("CustomButtonCell", NSBundle.MainBundle);
 		}
-        public override void LayoutIfNeeded()
-        {
-            base.LayoutIfNeeded();
-          
-        }
-        public void Bind(UIImage icon, string title)
-        {
-
-
-            img = icon;
-            title = title; 
-          
-
-
-
-        }
+  
+       
         [Export("initWithFrame:")]
-        public CustomButtonCell(System.Drawing.RectangleF frame) : base (frame)
-        {
-            UILabel title= new UILabel();
-            title.Text = Title;
-            title.Font = UIFont.SystemFontOfSize(12);
-            title.TextColor = UIColor.White;
-            title.Center = new CoreGraphics.CGPoint(Bounds.Width / 2 - 10, -Bounds.Height+2);
-            UIImageView icon = new UIImageView(new CoreGraphics.CGRect(0, 0, 30, 30));         
-            icon.Center = new CoreGraphics.CGPoint(Bounds.Width / 2, Bounds.Height / 2 + title.Bounds.Height);
-            ContentView.AddSubview(icon);
-            ContentView.AddSubview(title);
-        }
+        public CustomButtonCell(CGRect frame) : base (frame)
+        {                
+            iconView = new UIImageView(new CoreGraphics.CGRect(0, 0, 35, 35));
+            iconView.Center = ContentView.Center;
+            iconView.Frame = new CGRect(iconView.Frame.X, iconView.Frame.Y-5, iconView.Frame.Width, iconView.Frame.Height);
+            TitleLabel = new UILabel();
+            TitleLabel.Font = UIFont.SystemFontOfSize(12);
+            TitleLabel.TextColor = UIColor.White;
+            TitleLabel.TextAlignment = UITextAlignment.Center;
+            TitleLabel.Frame = new CGRect(0,iconView.Frame.Height*2-10, frame.Size.Width, 35);
+            ContentView.AddSubview(TitleLabel);
+            ContentView.AddSubview(iconView);  
 
-        public override void LayoutSubviews()
-        {
-            base.LayoutSubviews();
-           
-        }
-        public override void AwakeFromNib()
-        {
-            base.AwakeFromNib();
-         
-
-        }
+        }    
 
         protected CustomButtonCell(IntPtr handle) : base(handle)
 		{

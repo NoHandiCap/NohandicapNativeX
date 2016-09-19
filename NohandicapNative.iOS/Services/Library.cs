@@ -8,6 +8,8 @@ namespace NohandicapNative.iOS.Services
 {
   public static class Library
     {
+        public static string BackgroundColor = "#FFECB3";
+
         // resize the image (without trying to maintain aspect ratio)
         public static UIImage ResizeImage(this UIImage sourceImage, float width, float height)
         {

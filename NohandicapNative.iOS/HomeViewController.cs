@@ -30,7 +30,7 @@ namespace NohandicapNative.iOS
         {
             base.ViewDidLoad();
           
-            float itemWidth = ((float)View.Frame.Size.Width) / 3f-8;
+            float itemWidth = ((float)View.Frame.Size.Width)/3f-7;
             layout = new UICollectionViewFlowLayout
             {
                 SectionInset = new UIEdgeInsets(0, 0, 0, 0),
@@ -38,6 +38,7 @@ namespace NohandicapNative.iOS
                 MinimumLineSpacing = 2,               
                 ItemSize = new SizeF(itemWidth, itemWidth)
             };
+            View.BackgroundColor = UIColor.Clear.FromHexString(Library.BackgroundColor);
             buttonCollectionView.CollectionViewLayout = layout;
             buttonCollectionView.ContentSize = View.Frame.Size;
             buttonCollectionView.RegisterClassForCell(typeof(CustomButtonCell), CustomButtonCell.Key);
@@ -59,7 +60,9 @@ namespace NohandicapNative.iOS
             var cell = collectionView.DequeueReusableCell(CustomButtonCell.Key,indexPath)as CustomButtonCell;
             var cat = tabs[indexPath.Row]; 
             cell.BackgroundColor = UIColor.Clear.FromHexString(cat.Color);
-            cell.Bind(UIImage.FromBundle(cat.Icon),cat.Name);
+            cell.TitleLabel.Text = cat.Name;
+            var img = UIImage.FromBundle(cat.Icon);
+            cell.iconView.Image = img;
             return cell;
 
         }

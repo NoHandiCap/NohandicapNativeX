@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10117" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
@@ -31,60 +32,11 @@
                 <constraint firstItem="zp0-ey-TYh" firstAttribute="trailing" secondItem="cZE-iV-UFb" secondAttribute="trailingMargin" constant="8" id="FxI-5f-gNU"/>
                 <constraint firstItem="zp0-ey-TYh" firstAttribute="bottom" secondItem="cZE-iV-UFb" secondAttribute="bottomMargin" id="HLm-DI-hCJ"/>
             </constraints>
-            <point key="canvasLocation" x="536" y="351"/>
             <connections>
                 <outlet property="iconImage" destination="WmC-1e-tpB" id="name-outlet-WmC-1e-tpB"/>
                 <outlet property="titleLabel" destination="zp0-ey-TYh" id="name-outlet-zp0-ey-TYh"/>
             </connections>
+            <point key="canvasLocation" x="536" y="351"/>
         </collectionViewCell>
     </objects>
-    <resources>
-        <image name="back.png" width="48" height="48"/>
-        <image name="done.png" width="48" height="48"/>
-        <image name="eat.png" width="130" height="112"/>
-        <image name="empty_star.png" width="52" height="52"/>
-        <image name="english.png" width="256" height="256"/>
-        <image name="event.png" width="130" height="112"/>
-        <image name="facebook.png" width="128" height="128"/>
-        <image name="filled_star.png" width="48" height="48"/>
-        <image name="france.png" width="264" height="264"/>
-        <image name="german.png" width="256" height="256"/>
-        <image name="ic_favorites.png" width="84" height="81"/>
-        <image name="ic_home.png" width="84" height="81"/>
-        <image name="ic_list.png" width="36" height="35"/>
-        <image name="ic_map.png" width="84" height="81"/>
-        <image name="ic_restaurants.png" width="36" height="36"/>
-        <image name="ic_s.png" width="36" height="36"/>
-        <image name="Icon.png" width="72" height="72"/>
-        <image name="info.png" width="48" height="48"/>
-        <image name="kunst.png" width="130" height="112"/>
-        <image name="location.png" width="130" height="112"/>
-        <image name="logo_handicap.png" width="200" height="82"/>
-        <image name="logo_small.png" width="240" height="240"/>
-        <image name="love.png" width="52" height="52"/>
-        <image name="marker_eat.png" width="52" height="64"/>
-        <image name="marker_event.png" width="52" height="64"/>
-        <image name="marker_kunst.png" width="52" height="64"/>
-        <image name="marker_location.png" width="52" height="64"/>
-        <image name="marker_museum.png" width="52" height="64"/>
-        <image name="marker_search.png" width="52" height="64"/>
-        <image name="marker_shop.png" width="52" height="64"/>
-        <image name="marker_sleep.png" width="52" height="64"/>
-        <image name="marker_sport.png" width="52" height="64"/>
-        <image name="monkey.png" width="38" height="48"/>
-        <image name="museum.png" width="130" height="112"/>
-        <image name="pin.png" width="48" height="48"/>
-        <image name="placeholder.png" width="1500" height="1500"/>
-        <image name="search.png" width="130" height="112"/>
-        <image name="select_all.png" width="64" height="64"/>
-        <image name="settings.png" width="64" height="64"/>
-        <image name="settingsBar.png" width="64" height="64"/>
-        <image name="shop.png" width="130" height="112"/>
-        <image name="sleep.png" width="130" height="112"/>
-        <image name="sport.png" width="130" height="112"/>
-        <image name="wheelchair1.png" width="93" height="41"/>
-        <image name="wheelchair2.png" width="93" height="41"/>
-        <image name="wheelchair3.png" width="93" height="41"/>
-        <image name="wheelchaisdr.png" width="64" height="64"/>
-    </resources>
 </document>
