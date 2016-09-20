@@ -1,4 +1,4 @@
-// WARNING
+﻿// WARNING
 //
 // This file has been generated automatically by Xamarin Studio from the outlets and
 // actions declared in your storyboard file.
@@ -14,16 +14,11 @@ namespace NohandicapNative.iOS
     [Register ("HomeViewController")]
     partial class HomeViewController
     {
-        [Outlet]
-        [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UICollectionView buttonCollectionView { get; set; }
+      
 
         void ReleaseDesignerOutlets ()
         {
-            if (buttonCollectionView != null) {
-                buttonCollectionView.Dispose ();
-                buttonCollectionView = null;
-            }
+           
         }
     }
 }

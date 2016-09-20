@@ -20,8 +20,20 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <MtouchArch>i386</MtouchArch>
-    <MtouchLink>None</MtouchLink>
-    <MtouchDebug>true</MtouchDebug>
+    <MtouchLink>SdkOnly</MtouchLink>
+    <MtouchDebug>True</MtouchDebug>
+    <MtouchSdkVersion>9.3</MtouchSdkVersion>
+    <MtouchProfiling>False</MtouchProfiling>
+    <MtouchFastDev>False</MtouchFastDev>
+    <MtouchUseLlvm>False</MtouchUseLlvm>
+    <MtouchUseThumb>False</MtouchUseThumb>
+    <MtouchEnableBitcode>False</MtouchEnableBitcode>
+    <MtouchUseSGen>False</MtouchUseSGen>
+    <MtouchUseRefCounting>False</MtouchUseRefCounting>
+    <OptimizePNGs>True</OptimizePNGs>
+    <MtouchTlsProvider>Default</MtouchTlsProvider>
+    <MtouchHttpClientHandler>HttpClientHandler</MtouchHttpClientHandler>
+    <MtouchFloat32>False</MtouchFloat32>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
@@ -84,12 +96,13 @@
     <CodesignKey>iPhone Distribution</CodesignKey>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Controllers\TabController.cs" />
     <Compile Include="Views\CustomButtonCell.cs" />
     <Compile Include="Views\CustomButtonCell.designer.cs">
       <DependentUpon>CustomButtonCell.cs</DependentUpon>
     </Compile>
-    <Compile Include="HomeViewController.cs" />
-    <Compile Include="HomeViewController.designer.cs">
+    <Compile Include="Controllers\HomeViewController.cs" />
+    <Compile Include="Controllers\HomeViewController.designer.cs">
       <DependentUpon>HomeViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="Main.cs" />
@@ -100,8 +113,8 @@
     <None Include="app.config" />
     <None Include="GettingStarted.Xamarin" />
     <None Include="Info.plist" />
-    <Compile Include="MapViewController.cs" />
-    <Compile Include="MapViewController.designer.cs">
+    <Compile Include="Controllers\MapViewController.cs" />
+    <Compile Include="Controllers\MapViewController.designer.cs">
       <DependentUpon>MapViewController.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -109,7 +122,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <InterfaceDefinition Include="Main.storyboard" />
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Contents.json">
       <InProject>false</InProject>
     </ImageAsset>
@@ -195,6 +207,14 @@
     <BundleResource Include="Resources\wheelchair2.png" />
     <BundleResource Include="Resources\wheelchair3.png" />
     <BundleResource Include="Resources\wheelchaisdr.png" />
+    <BundleResource Include="Resources\ic_home%402x.png" />
+    <BundleResource Include="Resources\ic_home%403x.png" />
+    <BundleResource Include="Resources\ic_map%402x.png" />
+    <BundleResource Include="Resources\ic_map%403x.png" />
+    <Content Include="Resources\ic_favorites%402x.png" />
+    <BundleResource Include="Resources\ic_favorites%403x.png" />
+    <BundleResource Include="Resources\ic_list%403x.png" />
+    <BundleResource Include="Resources\ic_list%402x.png" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="..\NohandicapNative\NohandicapNative\NohandicapNative.projitems" Label="Shared" />

@@ -1,4 +1,5 @@
 ﻿using Foundation;
+using NohandicapNative.iOS.Controllers;
 using UIKit;
 
 namespace NohandicapNative.iOS
@@ -15,12 +16,15 @@ namespace NohandicapNative.iOS
         {
             get;
             set;
-        }
-
+        }   
+        TabController tabController;
         public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
         {
-            // Override point for customization after application launch.
-            // If not required for your application you can safely delete this method
+            Window = new UIWindow(UIScreen.MainScreen.Bounds);
+
+            var tabController = new TabController();
+            Window.RootViewController = tabController; 
+            Window.MakeKeyAndVisible();
 
             return true;
         }
