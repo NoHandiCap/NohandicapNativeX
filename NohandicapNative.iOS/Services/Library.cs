@@ -9,6 +9,8 @@ namespace NohandicapNative.iOS.Services
   public static class Library
     {
         public static string BackgroundColor = "#FFECB3";
+        public static string ThemeColor = "#FF74032C";
+
 
         // resize the image (without trying to maintain aspect ratio)
         public static UIImage ResizeImage(this UIImage sourceImage, float width, float height)
@@ -31,6 +33,15 @@ namespace NohandicapNative.iOS.Services
             var resultImage = UIGraphics.GetImageFromCurrentImageContext();
             UIGraphics.EndImageContext();
             return resultImage;
+        }
+        public static void SetLogoImage(UINavigationItem navItems)
+        {
+            var logoImg = UIImage.FromBundle("logo_small").ResizeImage(40, 40);
+            var logoBtn = new UIButton(UIButtonType.Custom);
+            logoBtn.SetBackgroundImage(logoImg, UIControlState.Normal);
+            logoBtn.Frame = new CoreGraphics.CGRect(0, 0, logoImg.Size.Width, logoImg.Size.Height);
+            navItems.LeftBarButtonItem = new UIBarButtonItem(logoBtn);
+            
         }
     }
 }

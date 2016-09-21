@@ -17,13 +17,13 @@ namespace NohandicapNative.iOS
             get;
             set;
         }   
-        TabController tabController;
+      public  TabController TabController { get; set; }
         public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
         {
             Window = new UIWindow(UIScreen.MainScreen.Bounds);
 
-            var tabController = new TabController();
-            Window.RootViewController = tabController; 
+            TabController = new TabController();
+            Window.RootViewController = TabController; 
             Window.MakeKeyAndVisible();
 
             return true;

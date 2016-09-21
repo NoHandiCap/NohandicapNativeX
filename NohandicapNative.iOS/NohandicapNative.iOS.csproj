@@ -112,7 +112,9 @@
     <InterfaceDefinition Include="Views\CustomButtonCell.xib" />
     <None Include="app.config" />
     <None Include="GettingStarted.Xamarin" />
-    <None Include="Info.plist" />
+    <None Include="Info.plist">
+      <SubType>Designer</SubType>
+    </None>
     <Compile Include="Controllers\MapViewController.cs" />
     <Compile Include="Controllers\MapViewController.designer.cs">
       <DependentUpon>MapViewController.cs</DependentUpon>

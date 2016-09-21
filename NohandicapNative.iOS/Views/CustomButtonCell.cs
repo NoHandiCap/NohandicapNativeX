@@ -24,15 +24,16 @@ namespace NohandicapNative.iOS
        
         [Export("initWithFrame:")]
         public CustomButtonCell(CGRect frame) : base (frame)
-        {                
-            iconView = new UIImageView(new CoreGraphics.CGRect(0, 0, 35, 35));
+        {
+            var iconSize = new CGSize(50, 50);
+            iconView = new UIImageView(new CoreGraphics.CGRect(new CGPoint(0,0), iconSize));
             iconView.Center = ContentView.Center;
             iconView.Frame = new CGRect(iconView.Frame.X, iconView.Frame.Y-5, iconView.Frame.Width, iconView.Frame.Height);
             TitleLabel = new UILabel();
-            TitleLabel.Font = UIFont.SystemFontOfSize(12);
+            TitleLabel.Font = UIFont.SystemFontOfSize(14);
             TitleLabel.TextColor = UIColor.White;
             TitleLabel.TextAlignment = UITextAlignment.Center;
-            TitleLabel.Frame = new CGRect(0,iconView.Frame.Height*2-10, frame.Size.Width, 35);
+            TitleLabel.Frame = new CGRect(0,iconView.Frame.Y+iconSize.Height/2+20, frame.Size.Width, 35);
             ContentView.AddSubview(TitleLabel);
             ContentView.AddSubview(iconView);  
 
