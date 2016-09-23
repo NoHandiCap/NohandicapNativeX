@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	
+	<string name="app_name">Nohandicap</string>
+  <string name="current_language_short">en</string>
+  <string name="settings">Settings</string>
+  <string name="next">Next</string>
+  <string name="load_data">Loading data from server...</string>
+  <string name="authentication">Authenticating...</string>
+  <string name="lang_prompt">Choose a language:</string>
+  <string name="main_cat1">Disability</string>
+  <string name="main_cat2">Partially disabled persons</string>
+  <string name="main_cat3">Total disabled persons</string>
+
+  <string-array name="lang_array">
+    <item>German</item>
+    <item>English</item>
+    <item>French</item>
+  </string-array>
+  <string-array name="lang_short_array">
+    <item>de</item>
+    <item>en</item>
+    <item>fr</item>
+  </string-array>
+  <string-array name="main_category_array">
+    <item>@string/main_cat1</item>
+    <item>@string/main_cat2</item>
+    <item>@string/main_cat3</item>
+  </string-array>
+  <string-array name="additional_category_array">
+    <item>Kunst&amp;Kultur</item>
+    <item>Museen</item>
+    <item>Shopping</item>
+    <item>Sport&amp;Wellness</item>
+    <item>Essen&amp;Trinken</item>
+    <item>Nächtigen</item>
+    <item>Nützliches</item>
+    <item>Events</item>
+    <item>Location</item>
+  </string-array>
+</resources>

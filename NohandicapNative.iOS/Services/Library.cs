@@ -10,7 +10,7 @@ namespace NohandicapNative.iOS.Services
     {
         public static string BackgroundColor = "#FFECB3";
         public static string ThemeColor = "#FF74032C";
-
+        public const string MapsApiKey = "AIzaSyBYePlqzhp-2f4azsWJDhmBFO57gfY6TcI";
 
         // resize the image (without trying to maintain aspect ratio)
         public static UIImage ResizeImage(this UIImage sourceImage, float width, float height)

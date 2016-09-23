@@ -196,7 +196,6 @@
     <AndroidResource Include="Resources\layout\FirstStart.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout-large\Main.axml" />
     <AndroidResource Include="Resources\layout\grid_item.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
@@ -220,6 +219,9 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\no_favorites.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout-xlarge\HomePage.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
@@ -381,10 +383,10 @@
     <AndroidResource Include="Resources\drawable\logo_handicap.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\values-large\dimens.xml" />
+    <AndroidResource Include="Resources\values-xlarge\dimens.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\values-large\Strings.xml" />
+    <AndroidResource Include="Resources\values-xlarge\Strings.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\marker_eat.png" />

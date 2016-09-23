@@ -55,7 +55,7 @@ namespace NohandicapNative.Droid.Adapters
             View grid;
             LayoutInflater inflater = (LayoutInflater)context
                 .GetSystemService(Context.LayoutInflaterService);
-          
+            GridView gridView = (GridView)parent;
                 var item = categories[position];
                 grid = new View(context);
                 grid = inflater.Inflate(Resource.Layout.grid_item, null);
@@ -64,17 +64,13 @@ namespace NohandicapNative.Droid.Adapters
                 textView.Text = item.Name;
                 imageView.SetImageDrawable(Utils.GetImage(context, item.Icon));
                 grid.SetBackgroundColor(Color.ParseColor(item.Color));
-            DisplayMetrics displaymetrics = new DisplayMetrics();
-            context.WindowManager.DefaultDisplay.GetMetrics(displaymetrics);
-            int width = displaymetrics.WidthPixels;
+
+            int width = gridView.ColumnWidth;
             var orientation = context.Resources.Configuration.Orientation;
-            int imageWidth;
-            if (orientation == Android.Content.Res.Orientation.Portrait)
-                imageWidth = width / 8;
-            else
-                imageWidth = width / 11;
-            imageView.LayoutParameters.Height = imageWidth;
-            imageView.LayoutParameters.Width = imageWidth;
+            
+        
+            imageView.LayoutParameters.Height = width/3;
+            imageView.LayoutParameters.Width = width/3;
 
 
             grid.Click += (s, e) =>

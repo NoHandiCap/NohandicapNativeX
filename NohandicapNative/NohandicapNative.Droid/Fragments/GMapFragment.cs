@@ -28,6 +28,8 @@ namespace NohandicapNative.Droid
 {
    public class GMapFragment : Android.Support.V4.App.Fragment, GoogleMap.IInfoWindowAdapter, IOnMapReadyCallback
     {
+      
+
         static readonly string TAG = "X:" + typeof(GMapFragment).Name;
         MainActivity myContext;
         LayoutInflater inflater;
@@ -204,7 +206,7 @@ namespace NohandicapNative.Droid
         {
             var info = inflater.Inflate(Resource.Layout.infoWindow, null);
             var product = FindProductFromMarker(marker);
-            var image = info.FindViewById<ImageView>(Resource.Id.info_mainImageView);
+            var imageView = info.FindViewById<ImageView>(Resource.Id.info_mainImageView);
             var title= info.FindViewById<TextView>(Resource.Id.info_titleTextView);
             var adress = info.FindViewById<TextView>(Resource.Id.info_adressTextView);          
             var mainimage = product.ImageCollection.Images;
@@ -215,26 +217,37 @@ namespace NohandicapNative.Droid
                 {
                     if (string.IsNullOrWhiteSpace(img.LocalImage))
                     {
-
-                        string filename = "none";
-                        Uri uri = new Uri(img.LinkImage);
-                        filename = System.IO.Path.GetFileName(uri.LocalPath);
-                        Utils.SaveImageBitmapFromUrl(img.LinkImage, filename);
-                        img.LocalImage = filename;
-                        dbCon.InsertUpdateProduct(product.ImageCollection);
+                        LoadImageAsync(imageView, img,product);
                     }
+                    else
+                    {
+                        imageView.SetImageBitmap(Utils.GetBitmap(img.LocalImage));
+
+                    }
+
                 }
                 catch (Exception e)
                 {
                     Log.Error(TAG, e.Message);
                 }
-                image.SetImageDrawable(new Android.Graphics.Drawables.BitmapDrawable(Utils.GetBitmap(mainimage[0].LocalImage)));
             }
            
             title.Text = product.FirmName;
             adress.Text = product.Adress;
          
             return info;
+        }
+        public async void LoadImageAsync(ImageView imageView, ImageModel img,ProductModel product)
+        {
+            imageView.SetBackgroundResource(Resource.Drawable.placeholder);
+            string filename = "none";
+            Uri uri = new Uri(img.LinkImage);
+            filename = System.IO.Path.GetFileName(uri.LocalPath);
+            var bitmap = await Utils.SaveImageBitmapFromUrl(img.LinkImage, filename);
+            img.LocalImage = filename;
+            dbCon.InsertUpdateProduct(product);
+            imageView.SetImageBitmap(bitmap);
+
         }
         #region InfoWindowAdapter
         public View GetInfoWindow(Marker marker)

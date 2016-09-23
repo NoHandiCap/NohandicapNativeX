@@ -1,5 +1,7 @@
 ﻿using Foundation;
+using Google.Maps;
 using NohandicapNative.iOS.Controllers;
+using NohandicapNative.iOS.Services;
 using UIKit;
 
 namespace NohandicapNative.iOS
@@ -20,8 +22,8 @@ namespace NohandicapNative.iOS
       public  TabController TabController { get; set; }
         public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
         {
+            MapServices.ProvideAPIKey(Library.MapsApiKey);
             Window = new UIWindow(UIScreen.MainScreen.Bounds);
-
             TabController = new TabController();
             Window.RootViewController = TabController; 
             Window.MakeKeyAndVisible();

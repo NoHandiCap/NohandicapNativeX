@@ -44,6 +44,8 @@ namespace NohandicapNative.Droid.Services
         public const string PRODUCT_ID = "productId";
         public const string MAIN_CAT_SELECTED_ID = "maincat";
         public const string LAST_UPDATE_DATE = "lastUp";
+       
+
 
         public static  Dictionary<string,string> GetLastUpadte(Context context)
         {
@@ -89,6 +91,7 @@ namespace NohandicapNative.Droid.Services
 
             return bitmap;
         }
+        
         public static void ReloadMainActivity(Application application, Context context)
         {
            NohandicapApplication.MainActivity.Finish();
