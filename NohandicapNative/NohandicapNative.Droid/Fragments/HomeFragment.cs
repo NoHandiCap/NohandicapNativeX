@@ -143,11 +143,17 @@ namespace NohandicapNative.Droid
         private void GridRotation()
         {
             var orientation = myContext.Resources.Configuration.Orientation;
-            if(orientation==Android.Content.Res.Orientation.Portrait)
+           
+            if (!NohandicapApplication.isTablet)
+            {
+                if (orientation == Android.Content.Res.Orientation.Portrait)
+                    additionalCategory.NumColumns = 3;
+                else
+                    additionalCategory.NumColumns = 5;
+            }else
+            {
                 additionalCategory.NumColumns = 3;
-            else
-                additionalCategory.NumColumns = 5;
-
+            }
          
         }
         public override void OnAttach(Activity activity)

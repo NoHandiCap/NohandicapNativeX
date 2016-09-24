@@ -9,23 +9,19 @@
     android:paddingRight="10dp"
     android:paddingTop="10dp"
     android:baselineAligned="false"
-    android:fillViewport="true"
- >
-
+    android:fillViewport="true">
     <RelativeLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="2">
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="top"
             android:layout_weight="3"
             android:id="@+id/categoryLayout"
-          android:layout_marginBottom="20dp">
-
+            android:layout_marginBottom="20dp">
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
@@ -38,8 +34,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/imageView"
                     android:layout_gravity="center"
-                    android:layout_marginRight="5dp"
-                    />
+                    android:layout_marginRight="5dp" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -63,8 +58,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/imageView3"
                     android:layout_gravity="center"
-                    android:layout_marginLeft="5dp"
-                    />
+                    android:layout_marginLeft="5dp" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -90,8 +84,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/imageView2"
                     android:layout_gravity="center"
-                    android:layout_marginRight="5dp"
-                    />
+                    android:layout_marginRight="5dp" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -101,9 +94,7 @@
                     android:layout_gravity="center"
                     android:textColor="#000000" />
             </LinearLayout>
-
         </RelativeLayout>
-
         <NohandicapNative.Droid.ButtonGridView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -117,11 +108,8 @@
             android:layout_weight="3"
             android:layout_below="@+id/categoryLayout"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true">
-        </NohandicapNative.Droid.ButtonGridView>
-
+            android:layout_alignParentStart="true" />
     </RelativeLayout>
-
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -129,10 +117,9 @@
         android:weightSum="0"
         android:layout_weight="1"
         android:layout_marginLeft="10dp">
-       <FrameLayout
+        <FrameLayout
             android:id="@+id/mapFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"            />
-</LinearLayout>
-
+            android:layout_height="match_parent" />
+    </LinearLayout>
 </LinearLayout>

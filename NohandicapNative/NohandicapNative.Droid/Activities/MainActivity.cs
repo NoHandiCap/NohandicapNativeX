@@ -32,7 +32,7 @@ namespace NohandicapNative.Droid
 {
     #region Application region
 #if DEBUG
-[Application(Debuggable=true)]
+    [Application(Debuggable = true)]
 #else
     [Application(Debuggable = true)]
 #endif
@@ -41,8 +41,8 @@ namespace NohandicapNative.Droid
     {
         static readonly string TAG = "X:" + typeof(NohandicapApplication).Name;
         public static MainActivity MainActivity { get; set; }
-        private Locale locale = null;   
-               
+        private Locale locale = null;
+        public static bool isTablet {get;set;}
         public NohandicapApplication(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
         {
         }
@@ -106,7 +106,7 @@ namespace NohandicapNative.Droid
             base.OnCreate(bundle);
          //   CrashManager.Register(this);
             SetContentView(Resource.Layout.Main);
-           
+            NohandicapApplication.isTablet = Resources.GetBoolean(Resource.Boolean.is_tablet);        
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);          
             _bottomBar = BottomBar.AttachShy(FindViewById<CoordinatorLayout>(Resource.Id.myCoordinator), FindViewById<LinearLayout>(Resource.Id.linContent), bundle);
             HomePage = new HomeFragment();
@@ -115,10 +115,9 @@ namespace NohandicapNative.Droid
             ListPage = new ListFragment();     
             Favorites = new FavoritesFragment();
             });
-            items = NohandicapLibrary.GetTabs();
+            items = NohandicapLibrary.GetTabs(NohandicapApplication.isTablet);
             dbCon = Utils.GetDatabaseConnection();
             PrepareBar();
-            //   PrepareBar();
             if (bundle != null)
             {
                 var postion = bundle.GetInt(Utils.TAB_ID);
@@ -159,6 +158,7 @@ namespace NohandicapNative.Droid
             var tabItems = new BottomBarTab[items.Count];
             for (int i = 0; i < tabItems.Length; i++)
             {
+             
                 var tab = items[i];
                 var icon = Utils.GetImage(this, tab.Image);
 

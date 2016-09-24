@@ -2818,6 +2818,9 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f0b0008
 			public const int bb_bottom_bar_is_tablet_mode = 2131427336;
 			
+			// aapt resource value: 0x7f0b0009
+			public const int is_tablet = 2131427337;
+			
 			static Boolean()
 			{
 				global::Android.Runtime.ResourceIdManager.UpdateIdValues();

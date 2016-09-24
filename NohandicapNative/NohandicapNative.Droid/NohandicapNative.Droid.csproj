@@ -383,12 +383,6 @@
     <AndroidResource Include="Resources\drawable\logo_handicap.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\values-xlarge\dimens.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\values-xlarge\Strings.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\drawable\marker_eat.png" />
   </ItemGroup>
   <ItemGroup>
@@ -447,6 +441,15 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\facebook.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\values-xlarge\layouts.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\values\layouts.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\values-xlarge\dimens.xml" />
   </ItemGroup>
   <Import Project="..\NohandicapNative\NohandicapNative.projitems" Label="Shared" Condition="Exists('..\NohandicapNative\NohandicapNative.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

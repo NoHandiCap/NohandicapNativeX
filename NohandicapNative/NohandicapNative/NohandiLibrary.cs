@@ -25,12 +25,13 @@ namespace NohandicapNative
         public const string CATEGORY_TABLE = "Categories";
         public const string LANGUAGE_TABLE = "Language";
 
-        public static List<TabItem> GetTabs()
+        public static List<TabItem> GetTabs(bool isTablet=false)
         {
             List<TabItem> items = new List<TabItem>();
             string[] tabTitles = { "Home", "Map", "List", "Favorites" };
 
             string[] tabColors = { "#FF74032C", "#FF74032C", "#FF74032C", "#FF74032C" };
+            
             for (int i = 0; i < tabTitles.Length; ++i)
             {
                 items.Add(new TabItem()
@@ -41,6 +42,7 @@ namespace NohandicapNative
                     Image = string.Format("ic_{0}", tabTitles[i].ToLowerInvariant())
                 });
             }
+            if (isTablet) items.RemoveAt(1);
             return items;
         }
         public static List<CategoryModel> GetAdditionalCategory()
