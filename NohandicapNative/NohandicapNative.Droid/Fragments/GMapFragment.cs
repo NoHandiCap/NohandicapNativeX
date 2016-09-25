@@ -40,7 +40,7 @@ namespace NohandicapNative.Droid
         List<ProductModel> products;
         List<MarkerOptions> markerOptons;
       MapFragment mapFragment;
-        CategoryModel currentCategory;
+        List<CategoryModel> currentCategories;
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             this.inflater = inflater;
@@ -51,12 +51,19 @@ namespace NohandicapNative.Droid
 
                 mapFragment = myContext.FragmentManager.FindFragmentById(Resource.Id.map).JavaCast<MapFragment>();
 
-                mapFragment.GetMapAsync(this);        
-            if (products.Count==0)
-            SetData(dbCon.GetDataList<ProductModel>());
+                mapFragment.GetMapAsync(this);
+            var startList = dbCon.GetDataList<CategoryModel>().Where(x=>x.IsSelected).ToList();
+            if (startList.Count != 0)
+            {
+                SetData(startList);
+            }
+            else
+            {
+                SetData(dbCon.GetDataList<CategoryModel>());
+            }
 
             // Updates the location and zoom of the MapView
-          
+
             return view;
         }
         public GMapFragment()
@@ -66,49 +73,42 @@ namespace NohandicapNative.Droid
             markerOptons = new List<MarkerOptions>();
             products = new List<ProductModel>();
         }
-        private void LoadData(bool filter = true)
+        public void LoadData(bool filter = true)
         {
-            try {          
+                   
                 if (myContext != null&map!=null)
                 {                    
                     markersList.Clear();
                     map.Clear();
+                  markerOptons.Clear();
 
-
-                var category = dbCon.GetDataList<CategoryModel>();
-                    int categorySelected;
+                   var categories = dbCon.GetDataList<CategoryModel>();
+                    int mainCategorySelected;
                     if (filter)
                     {
-                        categorySelected = int.Parse(Utils.ReadFromSettings(myContext, Utils.MAIN_CAT_SELECTED_ID, "1"));
+                        mainCategorySelected = int.Parse(Utils.ReadFromSettings(myContext, Utils.MAIN_CAT_SELECTED_ID, "1"));
                     }
                     else
                     {
-                        categorySelected = 0;
+                        mainCategorySelected = 0;
                     }
 
 
-                products = products.Where(x => x.MainCategoryID >= categorySelected).ToList();
-                    products.ForEach(product =>
-                    {
-                       
-                      
-                        var pos = new LatLng(double.Parse(product.Lat, CultureInfo.InvariantCulture), double.Parse(product.Long, CultureInfo.InvariantCulture));
-                  
-                        var title = product.FirmName;
-         
-                        var options = new MarkerOptions().SetPosition(pos).SetTitle(product.FirmName);
-                        string cat;
-                        if (currentCategory != null)
-                        {
-                            cat = currentCategory.Marker;
-                        }
-                        else
-                        {
+                products = dbCon.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= mainCategorySelected).ToList();
+                var productsForCategories = products.Where(x => x.Categories.Any(y => currentCategories.Any(z => z.ID == y))).ToList();
+                products = productsForCategories;
+                products.ForEach(product =>
+                {
 
-                            cat = category.FirstOrDefault(y => y.ID == product.Categories[0]).Marker;
 
-                        }
-                        var drawImage = Utils.SetDrawableSize(myContext, Utils.GetImage(myContext, cat), 60, 70);
+                var pos = new LatLng(double.Parse(product.Lat, CultureInfo.InvariantCulture), double.Parse(product.Long, CultureInfo.InvariantCulture));
+
+                var title = product.FirmName;
+
+                var options = new MarkerOptions().SetPosition(pos).SetTitle(product.FirmName);
+
+                       var catMarker = currentCategories.FirstOrDefault(x => product.Categories.Any(y=>y==x.ID)).Marker;
+                        var drawImage = Utils.SetDrawableSize(myContext, Utils.GetImage(myContext, catMarker), 60, 70);
                         var bitmap = Utils.convertDrawableToBitmap(drawImage);
                         options.SetIcon(BitmapDescriptorFactory.FromBitmap(bitmap));
                         markerOptons.Add(options);
@@ -129,24 +129,20 @@ namespace NohandicapNative.Droid
                 if (markersList.Count != 0)
                 {
                     CameraPosition.Builder builder = CameraPosition.InvokeBuilder();
-                    builder.Target(new LatLng(double.Parse(products[0].Lat, CultureInfo.InvariantCulture), double.Parse(products[0].Long, CultureInfo.InvariantCulture))).Zoom(10);
+                    builder.Target(markersList[0].Position).Zoom(10);
                     CameraPosition cameraPosition = builder.Build();
                     CameraUpdate cameraUpdate = CameraUpdateFactory.NewCameraPosition(cameraPosition);
                     map.AnimateCamera(cameraUpdate);
                     
 
             }
-            }
-            catch (Exception e)
-            {
-                Log.Error(TAG, e.Message," "+e.InnerException+ " "+e.StackTrace);
-            }
+           
         }
-        public void SetData(List<ProductModel> data,CategoryModel currentCategory=null,bool filter=true)
+        public void SetData(List<CategoryModel> currentCategories)
         {
-           markerOptons.Clear();
-            products = data;
-            this.currentCategory = currentCategory;
+           markerOptons.Clear();           
+          
+           this.currentCategories = currentCategories;
         }
        
         public override void OnResume()
@@ -262,7 +258,10 @@ namespace NohandicapNative.Droid
         #region Menu implementation
         public override void OnCreateOptionsMenu(IMenu menu, MenuInflater inflater)
         {
-            inflater.Inflate(Resource.Menu.map_menu, menu);
+            if (!NohandicapApplication.isTablet)
+            {
+                inflater.Inflate(Resource.Menu.map_menu, menu);
+            }
             base.OnCreateOptionsMenu(menu, inflater);
         }
 
@@ -274,7 +273,7 @@ namespace NohandicapNative.Droid
                     myContext.SetCurrentTab(0);
                     break;
                 case Resource.Id.select_all:
-                    SetData(dbCon.GetDataList<ProductModel>());
+                    SetData(dbCon.GetDataList<CategoryModel>());
                     myContext.SupportActionBar.Title = "Map";
                     LoadData();
                     break;

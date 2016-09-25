@@ -3,15 +3,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="5dp">
+    android:id="@+id/selectedLayout"
+    android:background="@drawable/grid_border"
+   >
+
+  
+
     <ImageView
         android:id="@+id/grid_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-         android:layout_centerHorizontal="true"
-         android:layout_centerVertical="true"
-         android:layout_centerInParent="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_centerInParent="true" />
+
     <TextView
         android:id="@+id/grid_text"
         android:layout_width="wrap_content"
@@ -24,4 +30,5 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/grid_image"
         android:textColor="#ffffff" />
+
 </NohandicapNative.Droid.Adapters.SquareRelativeLayout>

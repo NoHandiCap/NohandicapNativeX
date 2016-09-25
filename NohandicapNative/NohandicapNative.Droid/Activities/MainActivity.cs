@@ -182,7 +182,8 @@ namespace NohandicapNative.Droid
             SupportActionBar.SetHomeButtonEnabled(true);
             _bottomBar.HideShadow();
             Log.Debug(TAG, "Bar prepared");
-            
+            _bottomBar.FindViewById(Resource.Id.bb_bottom_bar_background_view).SetBackgroundColor(Resources.GetColor(Resource.Color.themeColor));
+            _bottomBar.SetActiveTabColor(Color.White);
         }
 
         
@@ -193,17 +194,35 @@ namespace NohandicapNative.Droid
         }
         public void OnTabSelected(int position)
         {
+            
             switch (position)
             {
                 case 0:                  
                         ShowFragment(HomePage,position.ToString());
                     break;
-                case 1:                    
-                        ShowFragment(MapPage, position.ToString());                          
+                case 1:
+                    if (NohandicapApplication.isTablet)
+                    {
+                        ShowFragment(ListPage, position.ToString());
+
+                    }
+                    else
+                    {
+                        ShowFragment(MapPage, position.ToString());
+
+                    }
 
                     break;
                 case 2:
-                    ShowFragment(ListPage, position.ToString());
+                    if (NohandicapApplication.isTablet)
+                    {
+                        ShowFragment(Favorites, position.ToString());
+                    }
+                    else
+                    {
+                        ShowFragment(ListPage, position.ToString());
+                    }
+                   
                     break;
                 case 3:
                     ShowFragment(Favorites, position.ToString());
@@ -366,6 +385,10 @@ namespace NohandicapNative.Droid
 
             }
         }
+        public override void OnConfigurationChanged(Configuration newConfig)
+        {
+            base.OnConfigurationChanged(newConfig);
+        }
         public async void OnLocationChanged(Location location)
         {
             CurrentLocation = location;           
@@ -413,7 +436,7 @@ namespace NohandicapNative.Droid
                     {
                         var products = dbCon.GetDataList<ProductModel>();
                         var currentProduct = dbCon.GetDataList<ProductModel>().Where(x => x.ID == currentProductId).ToList();
-                        MapPage.SetData(currentProduct);
+                        MapPage.SetData(new List<CategoryModel>());
                         SetCurrentTab(1);
                         SupportActionBar.Title = currentProduct[0].FirmName;
                     }

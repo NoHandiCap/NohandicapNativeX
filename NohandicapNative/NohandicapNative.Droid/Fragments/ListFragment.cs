@@ -46,10 +46,7 @@ namespace NohandicapNative.Droid
 
                 var activity = new Intent(myContext, typeof(DetailActivity));
                 activity.PutExtra(Utils.PRODUCT_ID, Products[position].ID);
-                myContext.StartActivityForResult(activity,1);
-              
-           
-               
+                myContext.StartActivityForResult(activity,1);         
             };
             ReloadData();
             return view;
@@ -76,10 +73,15 @@ namespace NohandicapNative.Droid
         private async void ReloadData()
         {
             var category = dbCon.GetDataList<CategoryModel>();
-            int categorySelectedId = int.Parse(Utils.ReadFromSettings(myContext, Utils.MAIN_CAT_SELECTED_ID, "1"));                    
-            Products = dbCon.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= categorySelectedId).ToList();
-            categoryName.Text = Resources.GetString(mainCategoriesText[categorySelectedId-1]);
-            var image = Utils.GetImage(myContext, "wheelchair" + categorySelectedId);
+            int mainCategorySelectedId = int.Parse(Utils.ReadFromSettings(myContext, Utils.MAIN_CAT_SELECTED_ID, "1"));
+            var selectedCategory = dbCon.GetDataList<CategoryModel>().Where(x => x.IsSelected).ToList();
+            Products = dbCon.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= mainCategorySelectedId).ToList();
+            if (selectedCategory.Count!=0)
+            {
+                Products = Products.Where(x => x.Categories.Any(y => selectedCategory.Any(z => z.ID == y))).ToList();
+            }
+                categoryName.Text = Resources.GetString(mainCategoriesText[mainCategorySelectedId-1]);
+            var image = Utils.GetImage(myContext, "wheelchair" + mainCategorySelectedId);
             categoryImage.SetImageDrawable(Utils.SetDrawableSize(myContext, image, 140, 65));
             Products = SortProductsByDistance(Products);
             cardViewAdapter = new CardViewAdapter(myContext, Products);
@@ -94,7 +96,7 @@ namespace NohandicapNative.Droid
             var myLocation = myContext.CurrentLocation;
             if (myLocation != null)
             {
-             var sorted=   products.Select(product =>
+             var sorted = products.Select(product =>
                 {
                     var point = new Location("");
                     point.Latitude = double.Parse(product.Lat, CultureInfo.InvariantCulture);

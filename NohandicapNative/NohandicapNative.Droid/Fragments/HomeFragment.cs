@@ -33,49 +33,54 @@ namespace NohandicapNative.Droid
         private SqliteService dbCon;
         ButtonGridView additionalCategory;
         ListView mainCategory;
+        View rootView;
+        LayoutInflater inflater;
+        ViewGroup container;
+        bool isMapReady = false;
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-
-            var view = inflater.Inflate(Resource.Layout.HomePage,container,false);
-          view.SetBackgroundColor(myContext.Resources.GetColor(Resource.Color.backgroundColor));
-            dbCon = Utils.GetDatabaseConnection();
-            // mainCategory = view.FindViewById<ListView>(Resource.Id.mainCategory);
-            //   string[] mainItems = Resources.GetStringArray(Resource.Array.main_category_array);
-            //List<CustomRadioButton> main = new List<CustomRadioButton>();
-            //for (int i = 0; i < mainItems.Length; i++)
-            //{
-            //    main.Add(new CustomRadioButton() {
-            //        ResourceImage = "wheelchair" + (i + 1),
-            //        Text = mainItems[i]
-
-            //    });
-            //}
-            // mainCategory.Adapter = new RadioButtonListAdapter(myContext, main);
+            this.inflater = inflater;
+            this.container = container;
+            PopulateViewForOrientation();
             
+            return rootView;
+        }
+        private void PopulateViewForOrientation()
+        {
+          
+            var orientation = myContext.Resources.Configuration.Orientation;
+            if (orientation == Android.Content.Res.Orientation.Portrait)
+            {
+                rootView = inflater.Inflate(Resource.Layout.HomePage, null);
+
+            }
+            else
+            {
+             
+                rootView = inflater.Inflate(Resource.Layout.HomePage_land, null);
+
+            }
+
+            rootView.SetBackgroundColor(myContext.Resources.GetColor(Resource.Color.backgroundColor));
+            dbCon = Utils.GetDatabaseConnection();         
             this.HasOptionsMenu = true;
             TextView[] mainCat = new TextView[mainCategoriesText.Length];
             ImageView[] mainImg = new ImageView[mainCategoriesImgView.Length];
             LinearLayout[] mainLayout = new LinearLayout[mainCategoriesLayout.Length];
 
             string[] mainItems = Resources.GetStringArray(Resource.Array.main_category_array);
-
-          
             for (int i = 0; i < mainCat.Length; i++)
             {
-                mainCat[i] = view.FindViewById<TextView>(mainCategoriesText[i]);
+                mainCat[i] = rootView.FindViewById<TextView>(mainCategoriesText[i]);
                 mainCat[i].Text = mainItems[i];
-                mainImg[i] = view.FindViewById<ImageView>(mainCategoriesImgView[i]);
-                mainLayout[i] = view.FindViewById<LinearLayout>(mainCategoriesLayout[i]);
-          
-
+                mainImg[i] = rootView.FindViewById<ImageView>(mainCategoriesImgView[i]);
+                mainLayout[i] = rootView.FindViewById<LinearLayout>(mainCategoriesLayout[i]);
             }
             for (int i = 0; i < mainCat.Length; i++)
             {
                 mainCat[i].SetTextColor(Color.Gray);
                 mainCat[i].SetTypeface(null, TypefaceStyle.Normal);
                 mainLayout[i].Selected = false;
-                
-             
                 mainLayout[i].Click += (s, e) =>
                 {
                     var layout = (LinearLayout)s;
@@ -95,23 +100,24 @@ namespace NohandicapNative.Droid
                                 mainCat[y].SetTextColor(Color.Black);
                                 mainCat[y].SetTypeface(null, TypefaceStyle.Bold);
                                 mainLayout[y].Selected = true;
-                                Utils.WriteToSettings(myContext,Utils.MAIN_CAT_SELECTED_ID, (y+1).ToString());
+                                Utils.WriteToSettings(myContext, Utils.MAIN_CAT_SELECTED_ID, (y + 1).ToString());
                             }
                         }
                     }
+                    NohandicapApplication.MainActivity.MapPage.LoadData();
                 };
 
             }
             var categorySelected = int.Parse(Utils.ReadFromSettings(myContext, Utils.MAIN_CAT_SELECTED_ID, "1"));
 
-            mainCat[categorySelected-1].SetTextColor(Color.Black);
-            mainCat[categorySelected-1].SetTypeface(null, TypefaceStyle.Bold);
-            mainLayout[categorySelected-1].Selected = true;
-            mainImg[0].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair1, 140,65 ));
+            mainCat[categorySelected - 1].SetTextColor(Color.Black);
+            mainCat[categorySelected - 1].SetTypeface(null, TypefaceStyle.Bold);
+            mainLayout[categorySelected - 1].Selected = true;
+            mainImg[0].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair1, 140, 65));
             mainImg[1].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair2, 140, 65));
             mainImg[2].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair3, 140, 65));
 
-            additionalCategory = view.FindViewById<ButtonGridView>(Resource.Id.additionalCategory);
+            additionalCategory = rootView.FindViewById<ButtonGridView>(Resource.Id.additionalCategory);
             GridRotation();
 
             List<CategoryModel> additItems = dbCon.GetDataList<CategoryModel>(false);
@@ -123,38 +129,57 @@ namespace NohandicapNative.Droid
                 {
                     var cat = localCategories[i];
                     var loc = localCategoriesLocalization[i];
-                    additItems.Add(new CategoryModel() {
+                    additItems.Add(new CategoryModel()
+                    {
                         ID = cat.ID,
                         Name = loc,
                         Color = cat.Color,
-                        Icon=cat.Icon,
-                         Sort=i+1
+                        Icon = cat.Icon,
+                        Sort = i + 1
                     });
                 }
             }
             //  List<TabItem> mainItems = NohandiLibrary.GetMainCategory();
             //  mainCategory.Adapter = new GridViewAdapter(myContext, mainItems);
-        
-              additionalCategory.Adapter= new GridViewAdapter(myContext, additItems.OrderBy(x => x.Sort).ToList());
+
+            additionalCategory.Adapter = new GridViewAdapter(myContext, additItems.OrderBy(x => x.Sort).ToList());
             //mainCategory.OnItemClickListener = this;
-            
-            return view;
         }
+
         private void GridRotation()
         {
             var orientation = myContext.Resources.Configuration.Orientation;
-           
-            if (!NohandicapApplication.isTablet)
-            {
-                if (orientation == Android.Content.Res.Orientation.Portrait)
-                    additionalCategory.NumColumns = 3;
-                else
-                    additionalCategory.NumColumns = 5;
-            }else
+
+
+            if (orientation == Android.Content.Res.Orientation.Portrait)
             {
                 additionalCategory.NumColumns = 3;
             }
+            else
+            {
+                additionalCategory.NumColumns = 5;
+            }
+            if (NohandicapApplication.isTablet)
+            {
+                if (orientation == Android.Content.Res.Orientation.Landscape)
+                {
+                    additionalCategory.NumColumns = 3;
+                }
+                else
+                {
+                    additionalCategory.NumColumns = 5;
+                }
+                InitializeMapForTablet();
+            }
          
+        }
+        private void InitializeMapForTablet()
+        {
+           
+                Android.Support.V4.App.FragmentTransaction transaction = ChildFragmentManager.BeginTransaction();
+               
+                transaction.Replace(Resource.Id.mapFragment, NohandicapApplication.MainActivity.MapPage).Commit();
+            
         }
         public override void OnAttach(Activity activity)
         {
@@ -164,7 +189,14 @@ namespace NohandicapNative.Droid
         public override void OnConfigurationChanged(Configuration newConfig)
         {
             base.OnConfigurationChanged(newConfig);
-            GridRotation();
+            //NohandicapApplication.MainActivity.HomePage = null;
+            //var fav = new HomeFragment();
+            ////  _myContext.ShowFragment(fav, "fav");
+            //Android.Support.V4.App.FragmentManager fragmentManager = myContext.SupportFragmentManager;
+            //var trans = fragmentManager.BeginTransaction();
+            //trans.Replace(Resource.Id.flContent, fav);
+            //trans.Commit();
+             GridRotation();
         }
         #region Menu implementation
         public override void OnCreateOptionsMenu(IMenu menu, MenuInflater inflater)

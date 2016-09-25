@@ -2,6 +2,8 @@
 <resources>
   <color name="backgroundColor">#FFECB3</color>
   <color name="detailBarColor">@color/themeColor</color>
+  <color name="selectedCategoryColor">#1DE9B6</color>
+
   <color name="favoritesButtonColor">#C2185B</color>
   <color name="starColor">#FFD600</color>
   <color name="themeColor">#FF74032C</color>

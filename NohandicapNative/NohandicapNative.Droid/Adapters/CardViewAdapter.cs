@@ -78,10 +78,10 @@ namespace NohandicapNative.Droid.Adapters
             {
                 distanceLayout.Visibility = ViewStates.Gone;
             }
-         
 
-         
-            var catImage = categories.FirstOrDefault(x => x.ID == products[position].Categories[0]);
+
+            var selectedCategory = dbCon.GetDataList<CategoryModel>().Where(x => x.IsSelected).ToList();
+            var catImage = selectedCategory.FirstOrDefault(x => products[position].Categories.Any(y => y == x.ID));
             if (catImage != null)
             {
                 imageView.SetImageDrawable(Utils.GetImage(context, catImage.Icon));
