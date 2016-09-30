@@ -130,17 +130,25 @@ namespace NohandicapNative.Droid.Services
         {
 
             Bitmap imageBitmap = null;
+            var dbCon = GetDatabaseConnection();
+            var imagesLIst = dbCon.GetDataList<ImageJsonModel>();
 
-            using (var webClient = new WebClient())
+            if (!CheckExistFile(name))
             {
-                var imageBytes = webClient.DownloadData(url);
-                if (imageBytes != null && imageBytes.Length > 0)
-                {           
-
-                    imageBitmap = await GetBitmapOptionsOfImageAsync(imageBytes);
+                using (var webClient = new WebClient())
+                {
+                    var imageBytes = webClient.DownloadData(url);
+                    if (imageBytes != null && imageBytes.Length > 0)
+                    {
+                        imageBitmap = await GetBitmapOptionsOfImageAsync(imageBytes);
+                    }
                 }
+                Save(imageBitmap, name);
             }
-            Save(imageBitmap, name);
+            else
+            {
+                imageBitmap = GetBitmap(name);
+            }
             return imageBitmap;
         }
         async static Task<Bitmap> GetBitmapOptionsOfImageAsync(byte[] imageBytes)
@@ -168,6 +176,21 @@ namespace NohandicapNative.Droid.Services
             {
                 bitmap.Compress(Bitmap.CompressFormat.Png, 95, os);
             }
+        }
+        public static bool CheckExistFile(string name)
+        {
+            var parentDir = new File(NohandicapApplication.MainActivity.FilesDir.ToString());
+            List<File> inFiles = new List<File>();
+            File[] files = parentDir.ListFiles();
+            for (int i = 0; i < files.Length; i++)
+            {
+                if(files[i].Name==name)
+                {
+                    return true;
+                }
+                
+            }
+            return false;
         }
         public static Bitmap GetBitmap(string name)
         {

@@ -186,6 +186,19 @@ namespace NohandicapNative
          
            
         }
+        public void UnSelectAllCategories()
+        {
+           var categories= dbCon.Table<CategoryModel>().ToList();
+            categories.ForEach(x =>
+            {
+                if (x.IsSelected)
+                {
+                    x.IsSelected = false;
+                    InsertUpdateProduct(x);
+                }
+            });
+
+        }
         public void Close()
         {
             dbCon.Close();

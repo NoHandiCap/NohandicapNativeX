@@ -46,8 +46,10 @@ namespace NohandicapNative
         [JsonProperty(PropertyName = "gpslat")]
         public string Lat { get; set; }
         [JsonProperty(PropertyName = "gpslon")]
-        public string Long { get; set; }
-        public string Color { get; set; }
+        public string Long { get; set; }        
+
+        [JsonProperty(PropertyName = "prodimgpin"), JsonConverter(typeof(ImageDataConverter)), TextBlob("productMarkerImgBlobbed")]
+        public ImageModel ProductMarkerImg { get; set; }
         [JsonProperty(PropertyName = "cat"), TextBlob("categoriesBlobbed")]
         public List<int> Categories { get; set; }  
         [flield: NonSerialized]
@@ -68,6 +70,8 @@ namespace NohandicapNative
         [ForeignKey(typeof(ImageJsonModel))]
         public int ImageJsonID { get; set; }
         public string categoriesBlobbed { get; set; }
+        public string productMarkerImgBlobbed { get; set; }
+
 
         [Ignore, JsonIgnore]
         public float DistanceToMyLocation { get; set; }

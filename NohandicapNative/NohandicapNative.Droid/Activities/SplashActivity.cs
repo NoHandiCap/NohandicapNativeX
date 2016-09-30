@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.IO;
 using NohandicapNative.Droid.Services;
 using HockeyApp.Android;
+using HockeyApp.Android.Metrics;
 
 namespace NohandicapNative.Droid.Activities
 {
@@ -29,6 +30,8 @@ namespace NohandicapNative.Droid.Activities
         {
             base.OnCreate(savedInstanceState, persistentState);
             CrashManager.Register(this);
+            MetricsManager.Register(this, Application);
+            HockeyApp.MetricsManager.TrackEvent("App started");
             Log.Debug(TAG, "SplashActivity.OnCreate");
          
         }

@@ -5282,7 +5282,7 @@ namespace NohandicapNative.Droid
 			public const int HomePage = 2130903092;
 			
 			// aapt resource value: 0x7f030035
-			public const int HomePage_land = 2130903093;
+			public const int HomePage_port = 2130903093;
 			
 			// aapt resource value: 0x7f030036
 			public const int infoWindow = 2130903094;

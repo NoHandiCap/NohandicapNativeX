@@ -14,6 +14,8 @@ using Android.App;
 
 using Android.Gms.Common;
 using Android.Gms.Maps.Model;
+
+
 using System.Collections.ObjectModel;
 using System.Collections;
 using NohandicapNative.Droid.Services;
@@ -23,6 +25,7 @@ using NohandicapNative.Droid.Adapters;
 using Android.Util;
 using Android.Gms.Maps;
 using System.Globalization;
+using System.Threading.Tasks;
 
 namespace NohandicapNative.Droid
 {
@@ -41,6 +44,7 @@ namespace NohandicapNative.Droid
         List<MarkerOptions> markerOptons;
       MapFragment mapFragment;
         List<CategoryModel> currentCategories;
+        
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             this.inflater = inflater;
@@ -63,7 +67,7 @@ namespace NohandicapNative.Droid
             }
 
             // Updates the location and zoom of the MapView
-
+        
             return view;
         }
         public GMapFragment()
@@ -97,7 +101,7 @@ namespace NohandicapNative.Droid
                 products = dbCon.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= mainCategorySelected).ToList();
                 var productsForCategories = products.Where(x => x.Categories.Any(y => currentCategories.Any(z => z.ID == y))).ToList();
                 products = productsForCategories;
-                products.ForEach(product =>
+                products.ForEach( async product =>
                 {
 
 
@@ -108,10 +112,19 @@ namespace NohandicapNative.Droid
                 var options = new MarkerOptions().SetPosition(pos).SetTitle(product.FirmName);
 
                        var catMarker = currentCategories.FirstOrDefault(x => product.Categories.Any(y=>y==x.ID)).Marker;
-                        var drawImage = Utils.SetDrawableSize(myContext, Utils.GetImage(myContext, catMarker), 60, 70);
-                        var bitmap = Utils.convertDrawableToBitmap(drawImage);
-                        options.SetIcon(BitmapDescriptorFactory.FromBitmap(bitmap));
-                        markerOptons.Add(options);
+                    Bitmap markerImg;
+                    if (product.ProductMarkerImg == null)
+                    {
+                        var drawImage =Utils.SetDrawableSize(myContext,Utils.GetImage(myContext, catMarker),32,34);
+                        markerImg = Utils.convertDrawableToBitmap(drawImage);
+                    }
+                    else
+                    {
+                        markerImg =await LoadBitmapAsync(product.ProductMarkerImg, product);
+                    }
+                    options.SetIcon(BitmapDescriptorFactory.FromBitmap(markerImg));
+
+                    markerOptons.Add(options);
 
 
                     });     
@@ -129,11 +142,11 @@ namespace NohandicapNative.Droid
                 if (markersList.Count != 0)
                 {
                     CameraPosition.Builder builder = CameraPosition.InvokeBuilder();
-                    builder.Target(markersList[0].Position).Zoom(10);
+                    builder.Target(markersList[0].Position).Zoom(15);
                     CameraPosition cameraPosition = builder.Build();
                     CameraUpdate cameraUpdate = CameraUpdateFactory.NewCameraPosition(cameraPosition);
                     map.AnimateCamera(cameraUpdate);
-                    
+                 
 
             }
            
@@ -245,6 +258,18 @@ namespace NohandicapNative.Droid
             imageView.SetImageBitmap(bitmap);
 
         }
+        private async Task<Bitmap> LoadBitmapAsync(ImageModel img, ProductModel product)
+        {
+          
+            string filename = "none";
+            Uri uri = new Uri(img.LinkImage);
+            filename = System.IO.Path.GetFileName(uri.LocalPath);
+            var image= await Utils.SaveImageBitmapFromUrl(img.LinkImage, filename);
+            img.LocalImage = filename;
+            dbCon.InsertUpdateProduct(product);
+            return image;
+            
+        }
         #region InfoWindowAdapter
         public View GetInfoWindow(Marker marker)
         {
@@ -273,6 +298,7 @@ namespace NohandicapNative.Droid
                     myContext.SetCurrentTab(0);
                     break;
                 case Resource.Id.select_all:
+                    dbCon.UnSelectAllCategories();                  
                     SetData(dbCon.GetDataList<CategoryModel>());
                     myContext.SupportActionBar.Title = "Map";
                     LoadData();

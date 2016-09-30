@@ -48,18 +48,11 @@ namespace NohandicapNative.Droid
         private void PopulateViewForOrientation()
         {
           
-            var orientation = myContext.Resources.Configuration.Orientation;
-            if (orientation == Android.Content.Res.Orientation.Portrait)
-            {
+          
+           
                 rootView = inflater.Inflate(Resource.Layout.HomePage, null);
 
-            }
-            else
-            {
-             
-                rootView = inflater.Inflate(Resource.Layout.HomePage_land, null);
-
-            }
+           
 
             rootView.SetBackgroundColor(myContext.Resources.GetColor(Resource.Color.backgroundColor));
             dbCon = Utils.GetDatabaseConnection();         
@@ -167,7 +160,7 @@ namespace NohandicapNative.Droid
                 }
                 else
                 {
-                    additionalCategory.NumColumns = 5;
+                    additionalCategory.NumColumns = 2;
                 }
                 InitializeMapForTablet();
             }

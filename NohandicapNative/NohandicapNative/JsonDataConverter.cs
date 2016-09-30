@@ -20,8 +20,10 @@ namespace NohandicapNative
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            JToken token = JToken.Load(reader);
-            ImageJsonModel model = new ImageJsonModel();
+            if (objectType == typeof(ImageJsonModel))
+            {
+                JToken token = JToken.Load(reader);
+                ImageJsonModel model = new ImageJsonModel();
 #if __ANDROID__
             if (token.Type == JTokenType.Object)
             {
@@ -60,7 +62,23 @@ namespace NohandicapNative
 
             }
 #endif
-            return model;
+                return model;
+            }
+            else
+            {
+                JToken token = JToken.Load(reader);             
+                var urlImage= token.ToString();
+                if (!string.IsNullOrEmpty(urlImage)) {
+                    ImageModel img = new ImageModel();
+                    img.LinkImage = urlImage;
+                    return img;
+                }
+                else
+                {
+                    return null;
+                }
+               
+            }
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)

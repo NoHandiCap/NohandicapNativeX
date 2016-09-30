@@ -81,7 +81,16 @@ namespace NohandicapNative.Droid.Adapters
 
 
             var selectedCategory = dbCon.GetDataList<CategoryModel>().Where(x => x.IsSelected).ToList();
-            var catImage = selectedCategory.FirstOrDefault(x => products[position].Categories.Any(y => y == x.ID));
+            CategoryModel catImage;
+            if (selectedCategory.Count != 0)
+            {
+                catImage = selectedCategory.FirstOrDefault(x => products[position].Categories.Any(y => y == x.ID));
+            }
+            else
+            {
+                catImage = categories.FirstOrDefault(x => products[position].Categories.Any(y => y == x.ID));
+
+            }
             if (catImage != null)
             {
                 imageView.SetImageDrawable(Utils.GetImage(context, catImage.Icon));

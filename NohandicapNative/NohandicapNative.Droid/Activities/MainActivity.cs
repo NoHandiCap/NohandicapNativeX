@@ -78,7 +78,7 @@ namespace NohandicapNative.Droid
     [Activity(Label = "Nohandicap", WindowSoftInputMode = SoftInput.AdjustPan,LaunchMode =Android.Content.PM.LaunchMode.SingleTop, Icon = "@drawable/logo_small", ConfigurationChanges =Android.Content.PM.ConfigChanges.Orientation | 
         Android.Content.PM.ConfigChanges.ScreenSize
        )]
-	public class MainActivity : AppCompatActivity,  IOnTabClickListener, ILocationListener
+	public class MainActivity :AppCompatActivity,  IOnTabClickListener, ILocationListener
     {
         #region Properties
         static readonly string TAG = "X:" + typeof(MainActivity).Name;
@@ -152,7 +152,7 @@ namespace NohandicapNative.Droid
            
             Log.Debug(TAG, "Prepare Bar.....");
             SetSupportActionBar(toolbar);
-            _bottomBar.NoNavBarGoodness();
+          
             _bottomBar.NoTabletGoodness();
           
             var tabItems = new BottomBarTab[items.Count];
@@ -179,8 +179,7 @@ namespace NohandicapNative.Droid
          //   SupportActionBar.SetIcon(Utils.SetDrawableSize(this, Resource.Drawable.logo_small, 80, 80));
             SupportActionBar.SetHomeAsUpIndicator(Utils.SetDrawableSize(this, Resource.Drawable.logo_small, 80, 80));
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
-            SupportActionBar.SetHomeButtonEnabled(true);
-            _bottomBar.HideShadow();
+            SupportActionBar.SetHomeButtonEnabled(true);           
             Log.Debug(TAG, "Bar prepared");
             _bottomBar.FindViewById(Resource.Id.bb_bottom_bar_background_view).SetBackgroundColor(Resources.GetColor(Resource.Color.themeColor));
             _bottomBar.SetActiveTabColor(Color.White);
@@ -324,7 +323,11 @@ namespace NohandicapNative.Droid
             }
 
         }
-
+        public void RemoveFragment(Android.Support.V4.App.Fragment fragment)
+        {
+            Android.Support.V4.App.FragmentManager fragmentManager = SupportFragmentManager;
+            fragmentManager.BeginTransaction().Remove(fragment).Commit();
+        }
         public void OnTabReSelected(int position)
         {
           
@@ -388,6 +391,7 @@ namespace NohandicapNative.Droid
         public override void OnConfigurationChanged(Configuration newConfig)
         {
             base.OnConfigurationChanged(newConfig);
+
         }
         public async void OnLocationChanged(Location location)
         {
