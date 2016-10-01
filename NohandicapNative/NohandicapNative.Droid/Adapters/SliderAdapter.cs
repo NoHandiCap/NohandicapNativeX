@@ -23,12 +23,12 @@ namespace NohandicapNative.Droid.Adapters
 
         private Context context;
        ProductModel product;
-        SqliteService dbCon;
+
         public SliderAdapter(Context context, ProductModel product)
         {
             this.context = context;
             this.product = product;
-            dbCon = Utils.GetDatabaseConnection();
+           
         }
         public override int Count
         {
@@ -72,6 +72,7 @@ namespace NohandicapNative.Droid.Adapters
         }
        public async void LoadImageAsync(ImageView imageView,ImageModel img)
         {
+            var dbCon = Utils.GetDatabaseConnection();
             imageView.SetBackgroundResource(Resource.Drawable.placeholder);          
                 string filename = "none";
                 Uri uri = new Uri(img.LinkImage);
@@ -80,7 +81,7 @@ namespace NohandicapNative.Droid.Adapters
                 img.LocalImage = filename;
                 dbCon.InsertUpdateProduct(product);
                 imageView.SetImageBitmap(bitmap);
-
+            dbCon.Close();
         }
 
         public override void DestroyItem(View container, int position, Java.Lang.Object objectValue)

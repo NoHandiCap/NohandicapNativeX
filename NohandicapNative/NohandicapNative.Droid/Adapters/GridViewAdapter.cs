@@ -25,14 +25,16 @@ namespace NohandicapNative.Droid.Adapters
     {
         private MainActivity context;
         private List<CategoryModel> categories;
-        private SqliteService dbCon;
+       
    
         public GridViewAdapter(MainActivity context, List<CategoryModel> items)
         {
             this.context = context;
+            var dbCon = Utils.GetDatabaseConnection();
+
             this.categories = items;
-            dbCon = Utils.GetDatabaseConnection();
-            
+            dbCon.Close();
+           
           
             //border.SetStroke(2, context.Resources.GetColor(Resource.Color.selectedCategoryColor)); //border with full opacity
         }
@@ -59,11 +61,12 @@ namespace NohandicapNative.Droid.Adapters
 
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
+         
             View grid;
             LayoutInflater inflater = (LayoutInflater)context
                 .GetSystemService(Context.LayoutInflaterService);
             GridView gridView = (GridView)parent;
-                var category =dbCon.GetDataList<CategoryModel>().FirstOrDefault(x=>x.ID == categories[position].ID);
+                var category =categories[position];
                 grid = new View(context);
                 grid = inflater.Inflate(Resource.Layout.grid_item, null);
          //   var backgroundButton = grid.FindViewById<RelativeLayout>(Resource.Id.backgroundLayout);
@@ -103,11 +106,12 @@ namespace NohandicapNative.Droid.Adapters
             {
                 bgBorder.SetColor(Color.ParseColor(category.Color));
             }
-
-            grid.Click += (s, e) =>
+           
+            grid.Click += async (s, e) =>
                {
+                   var db = Utils.GetDatabaseConnection();
                    var mainActivity = (MainActivity)context;
-                   var products = dbCon.GetDataList<ProductModel>();
+                   var products = db.GetDataList<ProductModel>();
 
 
                    if (!NohandicapApplication.isTablet)
@@ -119,12 +123,12 @@ namespace NohandicapNative.Droid.Adapters
                            if (category.ID == x.ID)
                            {
                                category.IsSelected = true;
-                               dbCon.InsertUpdateProduct(category);
+                               db.InsertUpdateProduct(category);
                            }
                            else
                            {
                                x.IsSelected = false;
-                               dbCon.InsertUpdateProduct(x);
+                               db.InsertUpdateProduct(x);
                            }
                        });
                    }
@@ -134,15 +138,15 @@ namespace NohandicapNative.Droid.Adapters
                        if (category.IsSelected)
                        {
                            category.IsSelected = false;
-                           dbCon.InsertUpdateProduct(category);
+                           db.InsertUpdateProduct(category);
                            NotifyDataSetChanged();
                        }else
                        {
                            category.IsSelected = true;
-                           dbCon.InsertUpdateProduct(category);
+                           db.InsertUpdateProduct(category);
                            NotifyDataSetChanged();
                        }
-                       var selectedCategories = dbCon.GetDataList<CategoryModel>().Where(x => x.IsSelected).ToList();
+                       var selectedCategories = db.GetDataList<CategoryModel>().Where(x => x.IsSelected).ToList();
                        if (selectedCategories.Count == 0)
                        {
 
@@ -153,12 +157,13 @@ namespace NohandicapNative.Droid.Adapters
                            mainActivity.MapPage.SetData(selectedCategories);
 
                        }
-                       mainActivity.MapPage.LoadData();
+                       db.Close();
+                     await  mainActivity.MapPage.LoadData();
                    }                 
 
                };
 
-
+        
             return grid;
         
         }

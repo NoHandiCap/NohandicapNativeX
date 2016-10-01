@@ -28,14 +28,14 @@ namespace NohandicapNative.Droid
     {
         MainActivity myContext;       
         View view;
-        SqliteService dbCon;       
+          
         ListView listView;
         List<ProductModel> products;
         TextView noFav;
         CardViewAdapter cardViewAdapter;
         public FavoritesFragment()
         {
-            dbCon = Utils.GetDatabaseConnection();
+           
             products = new List<ProductModel>();
         }
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -109,7 +109,9 @@ namespace NohandicapNative.Droid
         {
             if (user != null)
             {
+                var dbCon = Utils.GetDatabaseConnection();
                 dbCon.InsertUpdateProduct(user);
+                dbCon.Close();
                 Utils.WriteToSettings(myContext, Utils.IS_LOGIN, Utils.IS_SUCCESS_LOGED);
                 ReloadFragment();
             }
@@ -165,7 +167,9 @@ namespace NohandicapNative.Droid
             var user = await RestApiService.Login(emailText.Text, passwordText.Text);
             if (user != null)
             {
+                var dbCon = Utils.GetDatabaseConnection();
                 dbCon.InsertUpdateProduct(user);
+                dbCon.Close();
                 Utils.WriteToSettings(myContext, Utils.IS_LOGIN, Utils.IS_SUCCESS_LOGED);
                 return true;
             }else
@@ -236,11 +240,13 @@ namespace NohandicapNative.Droid
 
         }
         public async void ReloadData()
-        {          
-                var user = dbCon.GetDataList<UserModel>().FirstOrDefault();
+        {
+            var dbCon = Utils.GetDatabaseConnection();
+            var user = dbCon.GetDataList<UserModel>().FirstOrDefault();
             if (user != null)
             {
                 products = dbCon.GetDataList<ProductModel>().Where(x => user.Favorites.Any(y => y == x.ID)).ToList();
+                dbCon.Close();
                 if (products.Count == 0)
                 {
                     noFav.Visibility = ViewStates.Visible;

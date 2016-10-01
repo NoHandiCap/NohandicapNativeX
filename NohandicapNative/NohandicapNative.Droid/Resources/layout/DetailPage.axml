@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+             
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -183,8 +184,8 @@
                                 android:textAppearance="?android:attr/textAppearanceSmall"
                                 android:text="@string/medium_text"
                                 android:id="@+id/adressTextView"
-                                android:textColor="#000000" 
-                                android:layout_marginBottom="4dp"/>
+                                android:textColor="#000000"
+                                android:layout_marginBottom="4dp" />
                             <TextView
                                 android:layout_width="fill_parent"
                                 android:layout_height="wrap_content"
@@ -193,8 +194,7 @@
                                 android:id="@+id/phoneTextView"
                                 android:textColor="#000000"
                                 android:autoLink="phone"
-                                
-                                 android:layout_marginBottom="4dp"/>
+                                android:layout_marginBottom="4dp" />
                             <TextView
                                 android:layout_width="fill_parent"
                                 android:layout_height="wrap_content"
@@ -202,8 +202,8 @@
                                 android:text="@string/medium_text"
                                 android:id="@+id/emailTextView"
                                 android:textColor="#000000"
-                                android:autoLink="email"  
-                                android:layout_marginBottom="4dp"/>
+                                android:autoLink="email"
+                                android:layout_marginBottom="4dp" />
                             <TextView
                                 android:layout_width="fill_parent"
                                 android:layout_height="wrap_content"
@@ -212,7 +212,7 @@
                                 android:id="@+id/linkTextView"
                                 android:textColor="#000000"
                                 android:autoLink="web"
-                                 android:layout_marginBottom="4dp"/>
+                                android:layout_marginBottom="4dp" />
                             <TextView
                                 android:layout_width="fill_parent"
                                 android:layout_height="wrap_content"
@@ -348,12 +348,16 @@
                 <!--android:layout_width="fill_parent"-->
                 <!--android:layout_height="300dp"-->
                 <!--android:id="@+id/mapImageView" />-->
-                    <fragment
-                        android:id="@+id/map"
-                        android:layout_width="fill_parent"
+                  <com.google.android.gms.maps.MapView
+        android:id="@+id/map"
+      
+          android:layout_width="fill_parent"
                         android:layout_height="300dp"
                         android:fitsSystemWindows="true"
-                        class="com.google.android.gms.maps.MapFragment" />
+        app:cameraZoom="15"
+          app:mapType="normal"
+          app:liteMode="true"/>
+                    
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>

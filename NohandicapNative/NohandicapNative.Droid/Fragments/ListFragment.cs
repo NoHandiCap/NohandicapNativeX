@@ -28,7 +28,7 @@ namespace NohandicapNative.Droid
         MainActivity myContext;
         ListView listView;
         List<ProductModel> Products;
-        SqliteService dbCon;
+     
         CardViewAdapter cardViewAdapter;
         TextView categoryName;
         ImageView categoryImage;
@@ -53,12 +53,12 @@ namespace NohandicapNative.Droid
         }
         public ListFragment()
         {
-            dbCon = Utils.GetDatabaseConnection();
+         
         }
         public ListFragment(string productType)
         {
             _currentProductType = productType;
-            dbCon = Utils.GetDatabaseConnection();
+           
          
         }
         public override void OnHiddenChanged(bool hidden)
@@ -72,10 +72,12 @@ namespace NohandicapNative.Droid
         }
         private async void ReloadData()
         {
+            var dbCon = Utils.GetDatabaseConnection();
             var category = dbCon.GetDataList<CategoryModel>();
             int mainCategorySelectedId = int.Parse(Utils.ReadFromSettings(myContext, Utils.MAIN_CAT_SELECTED_ID, "1"));
             var selectedCategory = dbCon.GetDataList<CategoryModel>().Where(x => x.IsSelected).ToList();
             Products = dbCon.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= mainCategorySelectedId).ToList();
+            dbCon.Close();
             if (selectedCategory.Count!=0)
             {
                 Products = Products.Where(x => x.Categories.Any(y => selectedCategory.Any(z => z.ID == y))).ToList();

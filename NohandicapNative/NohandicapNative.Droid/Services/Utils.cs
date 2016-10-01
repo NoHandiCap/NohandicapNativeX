@@ -129,9 +129,7 @@ namespace NohandicapNative.Droid.Services
         public async static Task<Bitmap> SaveImageBitmapFromUrl(string url, string name)
         {
 
-            Bitmap imageBitmap = null;
-            var dbCon = GetDatabaseConnection();
-            var imagesLIst = dbCon.GetDataList<ImageJsonModel>();
+            Bitmap imageBitmap = null;       
 
             if (!CheckExistFile(name))
             {
@@ -169,8 +167,6 @@ namespace NohandicapNative.Droid.Services
             var parentDir = new File(NohandicapApplication.MainActivity.FilesDir.ToString());
             List<File> inFiles = new List<File>();
             File[] files = parentDir.ListFiles();
-
-
 
             using (var os = new System.IO.FileStream(System.IO.Path.Combine(NohandicapApplication.MainActivity.FilesDir.ToString(), name), System.IO.FileMode.Create))
             {

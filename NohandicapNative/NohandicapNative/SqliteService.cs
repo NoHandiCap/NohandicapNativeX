@@ -71,12 +71,12 @@ namespace NohandicapNative
         }
         public List<T> GetDataList<T>(bool r=true) where T : class
         {
+            List<T> result = default(List<T>);
 
-            List<T> result=default(List<T>);
-           
+
                 result = dbCon.GetAllWithChildren<T>(null, r).ToList();
-          
-                return result;
+            
+            return result;
            
         
             

@@ -22,14 +22,15 @@ namespace NohandicapNative.Droid.Adapters
         string TAG = "X: " + typeof(CardView).Name;
         private readonly Activity context;
         private readonly List<ProductModel> products;
-        SqliteService dbCon;
+
         List<CategoryModel> categories;
         public CardViewAdapter(Activity context, List<ProductModel> products)
         {
             this.context = context;
             this.products = products;
-            dbCon = Utils.GetDatabaseConnection();
+            var dbCon = Utils.GetDatabaseConnection();
             categories = dbCon.GetDataList<CategoryModel>();
+            dbCon.Close();
         }
       
 
@@ -79,8 +80,9 @@ namespace NohandicapNative.Droid.Adapters
                 distanceLayout.Visibility = ViewStates.Gone;
             }
 
-
+            var dbCon = Utils.GetDatabaseConnection();
             var selectedCategory = dbCon.GetDataList<CategoryModel>().Where(x => x.IsSelected).ToList();
+            dbCon.Close();
             CategoryModel catImage;
             if (selectedCategory.Count != 0)
             {

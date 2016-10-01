@@ -30,7 +30,7 @@ namespace NohandicapNative.Droid
         int[] mainCategoriesText = { Resource.Id.first_category, Resource.Id.second_category, Resource.Id.thrity_category };
        int[] mainCategoriesImgView = { Resource.Id.imageView, Resource.Id.imageView2, Resource.Id.imageView3 };
        int[] mainCategoriesLayout= { Resource.Id.category_linearLayout, Resource.Id.category_linearLayout3, Resource.Id.category_linearLayout2 };
-        private SqliteService dbCon;
+      
         ButtonGridView additionalCategory;
         ListView mainCategory;
         View rootView;
@@ -55,7 +55,7 @@ namespace NohandicapNative.Droid
            
 
             rootView.SetBackgroundColor(myContext.Resources.GetColor(Resource.Color.backgroundColor));
-            dbCon = Utils.GetDatabaseConnection();         
+         
             this.HasOptionsMenu = true;
             TextView[] mainCat = new TextView[mainCategoriesText.Length];
             ImageView[] mainImg = new ImageView[mainCategoriesImgView.Length];
@@ -112,7 +112,7 @@ namespace NohandicapNative.Droid
 
             additionalCategory = rootView.FindViewById<ButtonGridView>(Resource.Id.additionalCategory);
             GridRotation();
-
+            var dbCon = Utils.GetDatabaseConnection();
             List<CategoryModel> additItems = dbCon.GetDataList<CategoryModel>(false);
             if (additItems.Count == 0)
             {
@@ -132,6 +132,7 @@ namespace NohandicapNative.Droid
                     });
                 }
             }
+            dbCon.Close();
             //  List<TabItem> mainItems = NohandiLibrary.GetMainCategory();
             //  mainCategory.Adapter = new GridViewAdapter(myContext, mainItems);
 

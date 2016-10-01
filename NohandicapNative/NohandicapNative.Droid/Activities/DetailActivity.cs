@@ -37,8 +37,7 @@ namespace NohandicapNative.Droid
         Android.Support.V7.Widget.Toolbar toolbar;
         List<CategoryModel> categories;
         UserModel user;
-        ProductModel product;
-        SqliteService dbCon;
+        ProductModel product;       
         TextView descriptionTextView;
         TextView adressTextView;
         TextView phoneTextView;
@@ -50,7 +49,7 @@ namespace NohandicapNative.Droid
         TextView categoriesTextView;
         ImageView mapImageView;
         GoogleMap map;
-        MapFragment mapFragment;
+        MapView mapView;
         FloatingActionButton fab;
         ViewPager viewPager;
         // MapView mapView;
@@ -66,12 +65,14 @@ namespace NohandicapNative.Droid
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.DetailPage);
 
-            dbCon = Utils.GetDatabaseConnection();
-                Window.DecorView.SetBackgroundColor(Color.White);        
-                mapFragment = FragmentManager.FindFragmentById(Resource.Id.map) as MapFragment;
-                mapFragment.GetMapAsync(this);
           
-                toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
+                Window.DecorView.SetBackgroundColor(Color.White);
+            mapView = FindViewById<MapView>(Resource.Id.map);
+            mapView.OnCreate(bundle);
+            mapView.OnResume();
+            mapView.GetMapAsync(this);
+
+            toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
                 fab = FindViewById<FloatingActionButton>(Resource.Id.fab);
                 descriptionTextView = (TextView)FindViewById(Resource.Id.descriptionTextView);
                 adressTextView = (TextView)FindViewById(Resource.Id.adressTextView);
@@ -96,6 +97,7 @@ namespace NohandicapNative.Droid
         }   
         private async Task LoadProduct()
         {
+            var dbCon = Utils.GetDatabaseConnection();
             var productId = Intent.GetIntExtra(Utils.PRODUCT_ID, -1);
             product = dbCon.GetDataList<ProductModel>().FirstOrDefault(x => x.ID == productId);
 
@@ -146,7 +148,7 @@ namespace NohandicapNative.Droid
                     }
 
                 }
-         
+            dbCon.Close();
           
         }     
       private void HideEmptyTextView()
@@ -202,7 +204,7 @@ namespace NohandicapNative.Droid
                 CameraPosition cameraPosition = new CameraPosition.Builder().Target(options.Position).Zoom(14.0f).Build();
             CameraUpdate cameraUpdate = CameraUpdateFactory.NewCameraPosition(cameraPosition);
             googleMap.MoveCamera(cameraUpdate);                
-                View toolbar = ((View)mapFragment.View.FindViewById(int.Parse("1")).
+                View toolbar = ((View)mapView.FindViewById(int.Parse("1")).
             Parent).FindViewById(int.Parse("4"));
                
                 // and next place it, for example, on bottom right (as Google Maps app)
@@ -238,6 +240,7 @@ namespace NohandicapNative.Droid
         {
             if (user != null)
             {
+                var dbCon = Utils.GetDatabaseConnection();
                 if (!fab.Selected)
                 {
                     fab.SetImageResource(Resource.Drawable.filled_star);
@@ -257,6 +260,7 @@ namespace NohandicapNative.Droid
                     var url = String.Format(NohandicapLibrary.LINK_DELFAV, user.ID, product.ID);
                     RestApiService.GetDataFromUrl<UserModel>(url, readBack: false);
                 }
+                dbCon.Close();
             }
             else
             {

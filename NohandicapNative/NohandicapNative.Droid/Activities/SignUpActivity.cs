@@ -19,7 +19,7 @@ namespace NohandicapNative.Droid
        )]
     public class SigUpActivity : AppCompatActivity
     {
-        SqliteService dbCon;
+    
         Button signUpButton;
         TextView loginLinkButton;
         EditText emailText;
@@ -42,7 +42,7 @@ namespace NohandicapNative.Droid
             SetContentView(Resource.Layout.SignUp);
            // Window.DecorView.SetBackgroundColor(Resources.GetColor(Resource.Color.backgroundColor));
 
-            dbCon = Utils.GetDatabaseConnection();
+          
             // Create your application here
             loginLinkButton = FindViewById<TextView>(Resource.Id.link_login);
             signUpButton = FindViewById<Button>(Resource.Id.btn_signup);

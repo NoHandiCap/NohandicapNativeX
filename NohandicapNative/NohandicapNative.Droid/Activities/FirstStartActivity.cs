@@ -32,7 +32,7 @@ namespace NohandicapNative.Droid
     {
         static readonly string TAG = "X:" + typeof(FirstStartActivity).Name;
 
-        private SqliteService dbCon;
+      
         Button nextButton;
         int[] flags = { Resource.Drawable.german, Resource.Drawable.english, Resource.Drawable.france };
         private int _selecteLangID = 1;   
@@ -183,13 +183,14 @@ namespace NohandicapNative.Droid
             progressDialog.Indeterminate = true;
             progressDialog.SetMessage(res.GetString(Resource.String.load_data));
             progressDialog.Show();
-            dbCon = Utils.GetDatabaseConnection();
+            var dbCon = Utils.GetDatabaseConnection();
             dbCon.CreateTables();
             Languages.ForEach(x =>
             {
                 dbCon.InsertUpdateProduct(x);
             });
             var result = await RestApiService.CheckUpdate(dbCon, _selecteLangID.ToString(), Utils.GetLastUpadte(this));
+            dbCon.Close();
             if (result != null)
             {
 

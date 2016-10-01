@@ -27,7 +27,7 @@ namespace NohandicapNative.Droid
     public  class SettingsActivity : AppCompatActivity, IOnItemClickListener
     {
         Android.Support.V7.Widget.Toolbar toolbar;
-         SqliteService dbCon;
+         
         int[] flags = { Resource.Drawable.german, Resource.Drawable.english, Resource.Drawable.france };
         List<LanguageModel> languageList;
         Resources res;
@@ -57,7 +57,7 @@ namespace NohandicapNative.Droid
             userTextView = (TextView)FindViewById(Resource.Id.userTextView);
             lastUpdateTextView= (TextView)FindViewById(Resource.Id.lastUpdateTextView);
             lastUpdateTextView.Text = Resources.GetString(Resource.String.last_update) + Utils.ReadFromSettings(this, Utils.LAST_UPDATE_DATE);
-            dbCon = Utils.GetDatabaseConnection();
+            var dbCon = Utils.GetDatabaseConnection();
             languageList = dbCon.GetDataList<LanguageModel>();
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
@@ -82,6 +82,7 @@ namespace NohandicapNative.Droid
                 progressDialog.Show();
                 var _selectedLangID = Utils.ReadFromSettings(this,Utils.LANG_ID_TAG);
                 bool result = await dbCon.SynchronizeDataBase(_selectedLangID);
+                dbCon.Close();
                 if (result)
                 {
 
@@ -105,6 +106,7 @@ namespace NohandicapNative.Droid
         }
         private void SetLoginLayout()
         {
+            var dbCon = Utils.GetDatabaseConnection();
             var user = dbCon.GetDataList<UserModel>().FirstOrDefault();
             if (user != null)
             {
@@ -112,6 +114,7 @@ namespace NohandicapNative.Droid
                 logoutButton.Click += (s, e) =>
                 {
                     dbCon.Logout();
+                    dbCon.Close();
                     Utils.WriteToSettings(this, Utils.IS_LOGIN, Utils.IS_NOT_LOGED);
                     loginLayout.Visibility = ViewStates.Gone;
                    NohandicapApplication.MainActivity.Favorites=new FavoritesFragment();
@@ -132,8 +135,9 @@ namespace NohandicapNative.Droid
             progressDialog.Indeterminate = true;
             progressDialog.SetMessage(Resources.GetString(Resource.String.load_data));
             progressDialog.Show();
-
+            var dbCon = Utils.GetDatabaseConnection();
             var result = await dbCon.SynchronizeDataBase(selectedLanguage.ID.ToString());
+            dbCon.Close();
             if (result)
             {
 

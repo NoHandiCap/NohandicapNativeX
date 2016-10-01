@@ -90,7 +90,7 @@ namespace NohandicapNative.Droid
         public GMapFragment MapPage { get; set; }
         public ListFragment ListPage { get; set; }
         public FavoritesFragment Favorites { get; set; }       
-        SqliteService dbCon;
+     
         int lastPos = 0;
         public  Location CurrentLocation { get; set; }
 
@@ -106,7 +106,8 @@ namespace NohandicapNative.Droid
             base.OnCreate(bundle);
          //   CrashManager.Register(this);
             SetContentView(Resource.Layout.Main);
-            NohandicapApplication.isTablet = Resources.GetBoolean(Resource.Boolean.is_tablet);        
+            NohandicapApplication.isTablet = Resources.GetBoolean(Resource.Boolean.is_tablet);
+            NohandicapApplication.MainActivity = this;
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);          
             _bottomBar = BottomBar.AttachShy(FindViewById<CoordinatorLayout>(Resource.Id.myCoordinator), FindViewById<LinearLayout>(Resource.Id.linContent), bundle);
             HomePage = new HomeFragment();
@@ -116,22 +117,23 @@ namespace NohandicapNative.Droid
             Favorites = new FavoritesFragment();
             });
             items = NohandicapLibrary.GetTabs(NohandicapApplication.isTablet);
-            dbCon = Utils.GetDatabaseConnection();
+         
             PrepareBar();
             if (bundle != null)
             {
                 var postion = bundle.GetInt(Utils.TAB_ID);
                 _bottomBar.SelectTabAtPosition(postion, false);
             }
-            NohandicapApplication.MainActivity = this;
+          
             ThreadPool.QueueUserWorkItem(o => CheckUpdate());      
-            ThreadPool.QueueUserWorkItem(o => InitializeLocationManager());
+            ThreadPool.QueueUserWorkItem(async o =>await InitializeLocationManager());
 
         }
         public async void CheckUpdate()
         {
     
-            string langId =Utils.ReadFromSettings(this,Utils.LANG_ID_TAG, "1");           
+            string langId =Utils.ReadFromSettings(this,Utils.LANG_ID_TAG, "1");
+            var dbCon = Utils.GetDatabaseConnection();      
             var updateList= await RestApiService.CheckUpdate(dbCon, langId,Utils.GetLastUpadte(this));
             if (updateList != null)
             {
@@ -143,7 +145,7 @@ namespace NohandicapNative.Droid
                 }
                 Utils.WriteToSettings(this, Utils.LAST_UPDATE_DATE, DateTime.Now.ToShortDateString());
             }
-            
+            dbCon.Close();
 
            
         }
@@ -344,7 +346,7 @@ namespace NohandicapNative.Droid
             }
             return base.OnOptionsItemSelected(item);
         }
-        void InitializeLocationManager()
+       async Task InitializeLocationManager()
         {
             try
             {
@@ -438,11 +440,13 @@ namespace NohandicapNative.Droid
                   var currentProductId= data.GetIntExtra(Utils.PRODUCT_ID,-1);
                     if (currentProductId != -1)
                     {
+                        var dbCon = Utils.GetDatabaseConnection();
                         var products = dbCon.GetDataList<ProductModel>();
                         var currentProduct = dbCon.GetDataList<ProductModel>().Where(x => x.ID == currentProductId).ToList();
                         MapPage.SetData(new List<CategoryModel>());
                         SetCurrentTab(1);
                         SupportActionBar.Title = currentProduct[0].FirmName;
+                        dbCon.Close();
                     }
                 }
             }

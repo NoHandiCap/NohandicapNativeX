@@ -146,6 +146,8 @@
     <Compile Include="Activities\FirstStartActivity.cs" />
     <Compile Include="Activities\MainActivity.cs" />
     <Compile Include="Fragments\GMapFragment.cs" />
+    <Compile Include="Model\ClusterItem.cs" />
+    <Compile Include="Model\OwnIconRendered.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Fragments\HomeFragment.cs" />
@@ -466,6 +468,12 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values-large\dimens.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Xamarin.Android.Maps.Utils\GoogleMapsUtilityBinding.csproj">
+      <Project>{bc829f65-b3b0-43c3-a282-fd5497656434}</Project>
+      <Name>GoogleMapsUtilityBinding</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="..\NohandicapNative\NohandicapNative.projitems" Label="Shared" Condition="Exists('..\NohandicapNative\NohandicapNative.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
