@@ -79,26 +79,37 @@ namespace NohandicapNative.Droid.Adapters
             {
                 distanceLayout.Visibility = ViewStates.Gone;
             }
-
-            var dbCon = Utils.GetDatabaseConnection();
-            var selectedCategory = dbCon.GetDataList<CategoryModel>().Where(x => x.IsSelected).ToList();
-            dbCon.Close();
-            CategoryModel catImage;
-            if (selectedCategory.Count != 0)
+            if (products[position].MainImageUrl != null)
             {
-                catImage = selectedCategory.FirstOrDefault(x => products[position].Categories.Any(y => y == x.ID));
+                try
+                {
+                    imageView.SetImageBitmap(Utils.LoadBitmapAsync(products[position].MainImageUrl).Result);
+                }catch(Exception e)
+                {
+
+                }
             }
             else
             {
-                catImage = categories.FirstOrDefault(x => products[position].Categories.Any(y => y == x.ID));
+                var dbCon = Utils.GetDatabaseConnection();
+                var selectedCategory = dbCon.GetDataList<CategoryModel>().Where(x => x.IsSelected).ToList();
+                dbCon.Close();
+                CategoryModel catImage;
+                if (selectedCategory.Count != 0)
+                {
+                    catImage = selectedCategory.FirstOrDefault(x => products[position].Categories.Any(y => y == x.ID));
+                }
+                else
+                {
+                    catImage = categories.FirstOrDefault(x => products[position].Categories.Any(y => y == x.ID));
 
+                }
+                if (catImage != null)
+                {
+                    imageView.SetImageDrawable(Utils.GetImage(context, catImage.Icon));
+                    imageView.SetBackgroundColor(Color.ParseColor(catImage.Color));
+                }
             }
-            if (catImage != null)
-            {
-                imageView.SetImageDrawable(Utils.GetImage(context, catImage.Icon));
-                imageView.SetBackgroundColor(Color.ParseColor(catImage.Color));
-            }
-         
             //var frame = view.FindViewById<LinearLayout>(Resource.Id.itemFrame);
             //var mainimage = products[position].ImageCollection.Images;
             //if (mainimage.Count != 0)

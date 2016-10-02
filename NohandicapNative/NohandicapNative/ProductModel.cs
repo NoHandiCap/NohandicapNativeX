@@ -48,8 +48,9 @@ namespace NohandicapNative
         [JsonProperty(PropertyName = "gpslon")]
         public string Long { get; set; }        
 
-        [JsonProperty(PropertyName = "prodimgpin"), JsonConverter(typeof(ImageDataConverter)), TextBlob("productMarkerImgBlobbed")]
-        public ImageModel ProductMarkerImg { get; set; }
+        [JsonProperty(PropertyName = "prodimgpin")]
+        public string ProductMarkerImg { get; set; }   
+
         [JsonProperty(PropertyName = "cat"), TextBlob("categoriesBlobbed")]
         public List<int> Categories { get; set; }  
         [flield: NonSerialized]
@@ -71,6 +72,7 @@ namespace NohandicapNative
         public int ImageJsonID { get; set; }
         public string categoriesBlobbed { get; set; }
         public string productMarkerImgBlobbed { get; set; }
+        public string productFirmLogoBlobbed { get; set; }
 
 
         [Ignore, JsonIgnore]

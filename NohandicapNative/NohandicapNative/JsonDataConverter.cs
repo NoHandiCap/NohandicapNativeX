@@ -30,17 +30,15 @@ namespace NohandicapNative
                 var thumbs = token["thumbs"].ToObject<List<string>>();
                 var images = token["images"].ToObject<List<string>>();
              
-                model.Thumbs = new List<ImageModel>();
-                model.Images = new List<ImageModel>();
+                model.Thumbs = new List<string>();
+                model.Images = new List<string>();
 
                 var dbCon = Utils.GetDatabaseConnection();
                 if (thumbs != null)
                 {
                     foreach (var item in thumbs)
-                    {
-                        ImageModel thumb = new ImageModel();
-                        thumb.LinkImage = item;
-                        model.Thumbs.Add(thumb);
+                    {                     
+                        model.Thumbs.Add(item);
 
                     }
                 }
@@ -48,11 +46,8 @@ namespace NohandicapNative
                 {
 
                     foreach (var item in images)
-                    {
-
-                        ImageModel img = new ImageModel();
-                        img.LinkImage = item;
-                        model.Images.Add(img);
+                    {                        
+                        model.Images.Add(item);
                     }
                 }
 
@@ -68,10 +63,8 @@ namespace NohandicapNative
             {
                 JToken token = JToken.Load(reader);             
                 var urlImage= token.ToString();
-                if (!string.IsNullOrEmpty(urlImage)) {
-                    ImageModel img = new ImageModel();
-                    img.LinkImage = urlImage;
-                    return img;
+                if (!string.IsNullOrEmpty(urlImage)) {                   
+                    return urlImage;
                 }
                 else
                 {

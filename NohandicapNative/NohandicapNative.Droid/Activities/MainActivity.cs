@@ -43,6 +43,7 @@ namespace NohandicapNative.Droid
         public static MainActivity MainActivity { get; set; }
         private Locale locale = null;
         public static bool isTablet {get;set;}
+        
         public NohandicapApplication(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
         {
         }
@@ -125,7 +126,7 @@ namespace NohandicapNative.Droid
                 _bottomBar.SelectTabAtPosition(postion, false);
             }
           
-            ThreadPool.QueueUserWorkItem(o => CheckUpdate());      
+            ThreadPool.QueueUserWorkItem(o => CheckUpdate());          
             ThreadPool.QueueUserWorkItem(async o =>await InitializeLocationManager());
 
         }

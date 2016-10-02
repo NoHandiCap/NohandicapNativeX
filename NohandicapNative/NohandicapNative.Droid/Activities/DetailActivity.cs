@@ -190,15 +190,28 @@ namespace NohandicapNative.Droid
         }
        
        
-        public void OnMapReady(GoogleMap googleMap)
+        public async void OnMapReady(GoogleMap googleMap)
         {
             try {
               
             var options = new MarkerOptions().SetPosition(new LatLng(double.Parse(product.Lat, CultureInfo.InvariantCulture), double.Parse(product.Long, CultureInfo.InvariantCulture))).SetTitle(product.FirmName);
-            var cat = categories.FirstOrDefault(y => y.ID == product.Categories[0]).Marker;
-            var drawImage = Utils.SetDrawableSize(this, Utils.GetImage(this, cat), 70, 80);
-            var bitmap = Utils.convertDrawableToBitmap(drawImage);
-            options.SetIcon(BitmapDescriptorFactory.FromBitmap(bitmap));
+                if (product.ProductMarkerImg == null)
+                {
+                
+                var cat = categories.FirstOrDefault(y => y.ID == product.Categories[0]).Marker;
+                var drawImage = Utils.SetDrawableSize(this, Utils.GetImage(this, cat), 70, 80);
+                var bitmap = Utils.convertDrawableToBitmap(drawImage);
+                options.SetIcon(BitmapDescriptorFactory.FromBitmap(bitmap));
+             
+
+                }
+                else
+                {
+          var      markerImg = await Utils.LoadBitmapAsync(product.ProductMarkerImg);
+                 
+                options.SetIcon(BitmapDescriptorFactory.FromBitmap(Bitmap.CreateScaledBitmap(markerImg, markerImg.Width+20, markerImg.Height+20, true)));
+
+            }
             googleMap.AddMarker(options);
                 googleMap.UiSettings.ScrollGesturesEnabled=false;
                 CameraPosition cameraPosition = new CameraPosition.Builder().Target(options.Position).Zoom(14.0f).Build();

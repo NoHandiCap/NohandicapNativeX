@@ -91,7 +91,14 @@ namespace NohandicapNative.Droid.Services
 
             return bitmap;
         }
-        
+      public static async Task<Bitmap> LoadBitmapAsync(string url)
+        {
+            string filename = "none";
+            Uri uri = new Uri(url);
+            filename = System.IO.Path.GetFileName(uri.LocalPath);
+            var image = await Utils.SaveImageBitmapFromUrl(url, filename);
+            return image;
+        }
         public static void ReloadMainActivity(Application application, Context context)
         {
            NohandicapApplication.MainActivity.Finish();
@@ -163,14 +170,18 @@ namespace NohandicapNative.Droid.Services
         }
         public static void Save(Bitmap bitmap, string name)
         {
-            name = name.Replace(".jpg", "");
-            var parentDir = new File(NohandicapApplication.MainActivity.FilesDir.ToString());
-            List<File> inFiles = new List<File>();
-            File[] files = parentDir.ListFiles();
-
+            name = name.Replace(".jpg", "");              
             using (var os = new System.IO.FileStream(System.IO.Path.Combine(NohandicapApplication.MainActivity.FilesDir.ToString(), name), System.IO.FileMode.Create))
             {
-                bitmap.Compress(Bitmap.CompressFormat.Png, 95, os);
+                if (NohandicapApplication.isTablet)
+                {
+                    bitmap.Compress(Bitmap.CompressFormat.Png, 95, os);
+                }
+                else
+                {
+                    bitmap.Compress(Bitmap.CompressFormat.Png, 85, os);
+
+                }
             }
         }
         public static bool CheckExistFile(string name)

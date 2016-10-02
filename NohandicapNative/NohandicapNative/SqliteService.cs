@@ -27,8 +27,7 @@ namespace NohandicapNative
             {
                 dbCon.RunInTransaction(() =>
                 {
-                    dbCon.CreateTable<ImageJsonModel>();
-                dbCon.CreateTable<ImageModel>();
+                    dbCon.CreateTable<ImageJsonModel>();             
                 dbCon.CreateTable<CategoryModel>();              
                 dbCon.CreateTable<LanguageModel>();
                     dbCon.CreateTable<UserModel>();
@@ -45,25 +44,19 @@ namespace NohandicapNative
         public string InsertUpdateProduct<T>(T data)
         {
            
-            try
-            {
-                dbCon.RunInTransaction(() =>
-                {
+           
+             
                     dbCon.InsertOrReplaceWithChildren(data, true);
-                });
+          
                 return "Single data file inserted or updated";
-            }
-            catch (SQLiteException ex)
-            {
-                return ex.Message;
-            }
+          
          
         }
         public string InsertUpdateProductList<T>(List<T> data)
         {
-            dbCon.RunInTransaction(() => {
+            
                 dbCon.InsertOrReplaceAllWithChildren(data, true);
-            });
+      
            
                 return "Single data file inserted or updated";
          

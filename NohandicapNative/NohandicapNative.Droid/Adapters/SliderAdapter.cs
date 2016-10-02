@@ -51,17 +51,8 @@ namespace NohandicapNative.Droid.Adapters
             var img = product.ImageCollection.Images[position];
           
             try
-            {
-                if (string.IsNullOrWhiteSpace(img.LocalImage))
-                {
-                    LoadImageAsync(imageView, img);
-                }
-                else
-                {
-                    imageView.SetImageBitmap(Utils.GetBitmap(img.LocalImage));
-                    
-                }
-                
+            {               
+                    LoadImageAsync(imageView, img);                              
             }
             catch(Exception e)
             {
@@ -70,20 +61,14 @@ namespace NohandicapNative.Droid.Adapters
            ((ViewPager)container).AddView(imageView, 0);
             return imageView;
         }
-       public async void LoadImageAsync(ImageView imageView,ImageModel img)
+       public async void LoadImageAsync(ImageView imageView,string url)
         {
-            var dbCon = Utils.GetDatabaseConnection();
-            imageView.SetBackgroundResource(Resource.Drawable.placeholder);          
-                string filename = "none";
-                Uri uri = new Uri(img.LinkImage);
-                filename = System.IO.Path.GetFileName(uri.LocalPath);
-                var bitmap =await Utils.SaveImageBitmapFromUrl(img.LinkImage, filename);
-                img.LocalImage = filename;
-                dbCon.InsertUpdateProduct(product);
-                imageView.SetImageBitmap(bitmap);
-            dbCon.Close();
+           
+            imageView.SetBackgroundResource(Resource.Drawable.placeholder);
+            imageView.SetImageBitmap(await Utils.LoadBitmapAsync(url));
+        
         }
-
+    
         public override void DestroyItem(View container, int position, Java.Lang.Object objectValue)
         {
             ((ViewPager)container).RemoveView((ImageView)objectValue);

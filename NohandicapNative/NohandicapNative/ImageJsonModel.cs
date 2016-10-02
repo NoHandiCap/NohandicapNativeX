@@ -13,9 +13,9 @@ namespace NohandicapNative
         [PrimaryKey, AutoIncrement]
         public int ID { get; set; }
        [JsonProperty(PropertyName = "thumbs"), TextBlob("ThumbsBlobbed")]      
-        public List<ImageModel> Thumbs { get; set; }
+        public List<string> Thumbs { get; set; }
        [JsonProperty(PropertyName = "images"), TextBlob("ImagesBlobbed")]
-        public List<ImageModel> Images { get; set; }
+        public List<string> Images { get; set; }
 
         public string ThumbsBlobbed { get; set; } 
         public string ImagesBlobbed { get; set; }

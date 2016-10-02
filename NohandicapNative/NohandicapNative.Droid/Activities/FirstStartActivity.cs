@@ -24,6 +24,7 @@ using Java.IO;
 using System.IO;
 using System.Globalization;
 using System.Text;
+using System;
 
 namespace NohandicapNative.Droid
 {
@@ -58,6 +59,7 @@ namespace NohandicapNative.Droid
             Log.Debug(TAG, "Set loadContent");
             try
             {
+             
                 agreementLayout = FindViewById<LinearLayout>(Resource.Id.agreementLayout);
                 languageLayout = FindViewById<RelativeLayout>(Resource.Id.languageLayout);
                 var agreementTextView = FindViewById<TextView>(Resource.Id.agreementTextView);
@@ -100,7 +102,7 @@ namespace NohandicapNative.Droid
                 };
                 langListView.OnItemClickListener = this;
               
-            }catch(Exception e)
+            }catch(System.Exception e)
             {
                 Log.Error(TAG, e.Message + " " + e.StackTrace);
             }
@@ -141,30 +143,20 @@ namespace NohandicapNative.Droid
         }
         private async void FillLanguageTable()
         {
-          //  var languages = await RestApiService.GetData<List<LanguageModel>>(NohandiLibrary.LINK_LANGUAGE);
+ 
             string[] defaultLanguages = Resources.GetStringArray(Resource.Array.lang_array);
             var defaultShortLanguages = Resources.GetStringArray(Resource.Array.lang_short_array);
-            //if (languages == null)
-            //{
+           
                 for (int i = 0; i < defaultLanguages.Length; i++)
                 {
                     LanguageModel lang = new LanguageModel();
                     lang.ID = i + 1;
                     lang.ShortName = defaultShortLanguages[i];
                     lang.LanguageName = defaultLanguages[i];
-                   // dbCon.InsertUpdateProduct(lang);
+               
                     Languages.Add(lang);
                 }
-            //}
-            //else
-            //{
-            //    foreach (LanguageModel lang in languages)
-            //    {
-            //        dbCon.InsertUpdateProduct(lang);
-            //        Languages.Add(lang);
-            //    }
-            //    defaultShortLanguages = languages.Select(x => x.ShortName).ToArray();
-            //}
+          
             List<CustomRadioButton> langList = new List<CustomRadioButton>();
             Languages.ForEach(x => langList.Add(new CustomRadioButton()
             {
@@ -199,7 +191,15 @@ namespace NohandicapNative.Droid
                 // onLoginFailed();
                 progressDialog.Dismiss();
                 Log.Debug(TAG, "Work is finished - start MainActivity.");
-
+               
+                    if (result.Count != 0)
+                    {
+                        Utils.WriteToSettings(this, NohandicapLibrary.PRODUCT_TABLE, result[NohandicapLibrary.PRODUCT_TABLE]);
+                        Utils.WriteToSettings(this, NohandicapLibrary.CATEGORY_TABLE, result[NohandicapLibrary.CATEGORY_TABLE]);
+                        Utils.WriteToSettings(this, NohandicapLibrary.LANGUAGE_TABLE, result[NohandicapLibrary.LANGUAGE_TABLE]);
+                    }
+                    Utils.WriteToSettings(this, Utils.LAST_UPDATE_DATE, DateTime.Now.ToShortDateString());
+           
                 StartActivity(new Intent(Application.Context, typeof(MainActivity)));
                 Finish();
 
