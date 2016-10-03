@@ -22,14 +22,16 @@ namespace NohandicapNative.Droid.Adapters
         string TAG = "X: " + typeof(CardView).Name;
         private readonly Activity context;
         private readonly List<ProductModel> products;
-
+        List<CategoryModel> selectedCategory;
         List<CategoryModel> categories;
         public CardViewAdapter(Activity context, List<ProductModel> products)
         {
             this.context = context;
             this.products = products;
             var dbCon = Utils.GetDatabaseConnection();
-            categories = dbCon.GetDataList<CategoryModel>();
+            categories = dbCon.GetDataList<CategoryModel>();         
+           selectedCategory = dbCon.GetDataList<CategoryModel>().Where(x => x.IsSelected).ToList();
+   
             dbCon.Close();
         }
       
@@ -79,21 +81,21 @@ namespace NohandicapNative.Droid.Adapters
             {
                 distanceLayout.Visibility = ViewStates.Gone;
             }
-            if (products[position].MainImageUrl != null)
+            if (!string.IsNullOrEmpty(products[position].MainImageUrl))
             {
                 try
                 {
-                    imageView.SetImageBitmap(Utils.LoadBitmapAsync(products[position].MainImageUrl).Result);
-                }catch(Exception e)
-                {
+                    LoadImageAsync(imageView, products[position].MainImageUrl); 
 
+                }
+                catch(Exception e)
+                {
+                    var s = e;
                 }
             }
             else
             {
-                var dbCon = Utils.GetDatabaseConnection();
-                var selectedCategory = dbCon.GetDataList<CategoryModel>().Where(x => x.IsSelected).ToList();
-                dbCon.Close();
+                
                 CategoryModel catImage;
                 if (selectedCategory.Count != 0)
                 {
@@ -176,6 +178,16 @@ namespace NohandicapNative.Droid.Adapters
             #endregion
             return view;
         }
+        public async Task LoadImageAsync(ImageView imageView, string url)
+        {
+          
+            imageView.SetBackgroundResource(Resource.Drawable.placeholder);
+            Uri uri = new Uri(url);
+            var filename = System.IO.Path.GetFileName(uri.LocalPath);
+            imageView.SetImageBitmap(await Utils.LoadBitmapAsync(url));
 
+
+
+        }
     }
 }

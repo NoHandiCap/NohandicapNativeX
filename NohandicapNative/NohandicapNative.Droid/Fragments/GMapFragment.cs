@@ -47,6 +47,7 @@ namespace NohandicapNative.Droid
         ClusterManager _clusterManager;
         static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1,1);
         CameraPosition currentCameraPosition;
+        private readonly object syncLock = new object();
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             this.inflater = inflater;
@@ -90,24 +91,46 @@ namespace NohandicapNative.Droid
         {
 
             if (mainActivity != null & map != null)
-            {            
-                
+            {
+                try
+                {
+
                     await Task.Run(() =>
                     {
                         mainActivity.RunOnUiThread(() =>
                         {
                             latLngBounds = map.Projection.VisibleRegion.LatLngBounds;
-                            
+
                         });
+
+
                     }).ContinueWith(async t =>
-                     {                       
-                        
+                     {
+
                          var productsForCategories = products.Where(x => x.Categories.Any(y => currentCategories.Any(z => z.ID == y))).ToList();
+                         //Reload task untill latLngBounds not null
+                         if (latLngBounds == null)
+                         {
+                             await semaphoreSlim.WaitAsync();
+                             try
+                             {
+                                 await LoadData();
+
+                             }
+                             finally
+                             {
+                                 //When the task is ready, release the semaphore. It is vital to ALWAYS release the semaphore when we are ready, or else we will end up with a Semaphore that is forever locked.
+                                 //This is why it is important to do the Release within a try...finally clause; program execution may crash or take a different path, this way you are guaranteed execution
+                                 semaphoreSlim.Release();
+                             }
+                         }
+                         //---------------
                          var newProductsInBound = productsForCategories
                              .Where(x => latLngBounds.Contains(new LatLng(
                              double.Parse(x.Lat, CultureInfo.InvariantCulture),
                              double.Parse(x.Long, CultureInfo.InvariantCulture))) && !productsInBounds.Contains(x))
                              .ToList();
+
                          if (currentCameraPosition != null)
                          {
                              if (currentCameraPosition.Zoom < 11)
@@ -119,17 +142,17 @@ namespace NohandicapNative.Droid
                          {
                              var lat = double.Parse(product.Lat, CultureInfo.InvariantCulture);
                              var lng = double.Parse(product.Long, CultureInfo.InvariantCulture);
-                             var clusterItem = new ClusterItem(lat, lng);                            
+                             var clusterItem = new ClusterItem(lat, lng);
 
                              var catMarker = currentCategories.FirstOrDefault(x => product.Categories.Any(y => y == x.ID)).Marker;
 
                              Bitmap markerImg;
-                             if (product.ProductMarkerImg == null)
+                             if (!string.IsNullOrEmpty(product.ProductMarkerImg))
                              {
-                       
+
                                  var drawImage = Utils.SetDrawableSize(mainActivity, Utils.GetImage(mainActivity, catMarker), 32, 34);
                                  markerImg = Utils.convertDrawableToBitmap(drawImage);
-                             
+
                              }
                              else
                              {
@@ -137,26 +160,35 @@ namespace NohandicapNative.Droid
                                  clusterItem.Icon = BitmapDescriptorFactory.FromBitmap(markerImg);
                              }
                              clusterItem.Icon = BitmapDescriptorFactory.FromBitmap(markerImg);
-                             clusterItem.ProductId = product.ID;                     
-            
-                        productsInBounds.Add(product);
+                             clusterItem.ProductId = product.ID;
+
+                             productsInBounds.Add(product);
 
                              _clusterManager.AddItem(clusterItem);
-                            
                          }
 
+                     }).ContinueWith(t =>
+                     {
 
-                        
+                         mainActivity.RunOnUiThread(() =>
+                         {
+                             _clusterManager.Cluster();//Workaround show markers after add new
+                         });
 
                      });
-               
-                return true;
+
+                    return true;
+                }catch(System.Exception e)
+                {
+                    Log.Debug(Tag, "Failed LoadData for markers: \n" + e.Message);
+                }
         }
             return false;
         }
+       
         public void SetData(List<CategoryModel> currentCategories)
         {
-         
+           //Reload markers if catecories changed
             if (map != null&&!this.currentCategories.Equals(currentCategories))
             {
                 map.Clear();
@@ -164,8 +196,9 @@ namespace NohandicapNative.Droid
                 markersList.Clear();
                 productsInBounds.Clear();
                 _clusterManager.ClearItems();
-                _clusterManager.Cluster();
+              
             }
+            //----
            this.currentCategories = currentCategories;
         }
        
@@ -197,14 +230,7 @@ namespace NohandicapNative.Droid
                     products = dbCon.GetDataList<ProductModel>();
                     dbCon.Close();
                 }
-
-               if(await LoadData())
-                {
-                    _clusterManager.Cluster();
-                   
-
-                }
-               
+                await LoadData();            
                
             }
            
@@ -236,22 +262,23 @@ namespace NohandicapNative.Droid
             {
                 builder.Target(new LatLng(48.2205998, 16.2399776)).Zoom(15);
             }
-            CameraPosition cameraPosition = builder.Build();
-            CameraUpdate cameraUpdate = CameraUpdateFactory.NewCameraPosition(cameraPosition);
-            map.MoveCamera(cameraUpdate);        
-            map.SetOnCameraChangeListener(this);
+          
             _clusterManager = new ClusterManager(mainActivity, map);      
                  
             _clusterManager.SetRenderer(new ClusterIconRendered(mainActivity, map, _clusterManager));
+            map.SetOnCameraChangeListener(this);
+            CameraPosition cameraPosition = builder.Build();
+            CameraUpdate cameraUpdate = CameraUpdateFactory.NewCameraPosition(cameraPosition);
+            map.MoveCamera(cameraUpdate);
+        
 
-              
         }
 
         string lastmarker = null;
         public View GetInfoContents(Marker marker)
         {
             if (marker.Title == null) return null;
-           
+          
             var info = inflater.Inflate(Resource.Layout.infoWindow, null);
             var product = FindProductFromMarker(marker);
             var imageView = info.FindViewById<ImageView>(Resource.Id.info_mainImageView);
@@ -264,10 +291,8 @@ namespace NohandicapNative.Droid
                 try
                 {
                     if (img!=null)
-                    {
-                        LoadImageAsync(imageView, img,marker);
-                        LoadImageAsync(imageView, img, marker);
-
+                    {                      
+                            LoadImageAsync(imageView, img, marker);                      
                     }
 
 
@@ -281,13 +306,14 @@ namespace NohandicapNative.Droid
             adress.Text = product.Adress;        
             return info;
         }
-        Bitmap cacheImage = null;
+    
         public async void LoadImageAsync(ImageView imageView, string url,Marker marker)
         {
-
+            await Utils.LoadBitmapAsync(url);
             imageView.SetBackgroundResource(Resource.Drawable.placeholder);
-         
-                imageView.SetImageBitmap(await Utils.LoadBitmapAsync(url));
+            Uri uri = new Uri(url);
+           var filename = System.IO.Path.GetFileName(uri.LocalPath);
+            imageView.SetImageBitmap(Utils.GetBitmap(filename));
 
             
 
@@ -326,8 +352,8 @@ namespace NohandicapNative.Droid
                     dbCon.Close();
                     mainActivity.SupportActionBar.Title = "Map";
                              
-               LoadData();
-
+             var task= LoadData();
+                    task.Start();
                     break;
             }
             return true;
@@ -341,16 +367,16 @@ namespace NohandicapNative.Droid
         #endregion
         public async void OnCameraChange(CameraPosition position)
         {
+            currentCameraPosition = position;
             if (position.Zoom > 8)
             {
+                //Make LoadData in queue 
                 await semaphoreSlim.WaitAsync();
                 try
                 {
                     if (await LoadData())
                     {
-                        _clusterManager.OnCameraChange(position);
-                      
-
+                        _clusterManager.OnCameraChange(position);                    
                     }
                 }
                 finally
@@ -364,17 +390,7 @@ namespace NohandicapNative.Droid
             {
                 _clusterManager.OnCameraChange(position);
             }
-            _clusterManager.Cluster();
-        }
-
-      
-
-        public void OnClusterInfoWindowClick(ICluster p0)
-        {
-            var cluster = (ClusterItem)p0;           
-            var activity = new Intent(mainActivity, typeof(DetailActivity));
-            activity.PutExtra(Utils.PRODUCT_ID, cluster.ProductId);
-            mainActivity.StartActivity(activity);
+           
         }
 
      

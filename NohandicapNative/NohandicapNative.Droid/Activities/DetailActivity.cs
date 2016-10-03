@@ -40,6 +40,8 @@ namespace NohandicapNative.Droid
         ProductModel product;       
         TextView descriptionTextView;
         TextView adressTextView;
+        TextView ortTextView;
+        TextView plzTextView;
         TextView phoneTextView;
         TextView emailTextView;
         TextView linkTextView;
@@ -76,7 +78,9 @@ namespace NohandicapNative.Droid
                 fab = FindViewById<FloatingActionButton>(Resource.Id.fab);
                 descriptionTextView = (TextView)FindViewById(Resource.Id.descriptionTextView);
                 adressTextView = (TextView)FindViewById(Resource.Id.adressTextView);
-                phoneTextView = (TextView)FindViewById(Resource.Id.phoneTextView);
+            ortTextView = (TextView)FindViewById(Resource.Id.ortTextView);
+            plzTextView = (TextView)FindViewById(Resource.Id.plzTextView);
+            phoneTextView = (TextView)FindViewById(Resource.Id.phoneTextView);
                 emailTextView = (TextView)FindViewById(Resource.Id.emailTextView);
                 linkTextView = (TextView)FindViewById(Resource.Id.linkTextView);
                 bookingTextView = (TextView)FindViewById(Resource.Id.bookingTextView);
@@ -116,12 +120,23 @@ namespace NohandicapNative.Droid
             }
             
                 categories = dbCon.GetDataList<CategoryModel>();
-                var icon = Utils.GetImage(this, categories.FirstOrDefault(x => x.ID == product.Categories[0]).Icon);
-                SupportActionBar.SetIcon(Utils.SetDrawableSize(this, icon, 70, 70));
-           
+            Drawable icon;
+            if (product.MainImageUrl != null)
+            {
+                var img= await Utils.LoadBitmapAsync(product.MainImageUrl);
+                icon = new BitmapDrawable(Resources, Bitmap.CreateScaledBitmap(img, 70, 70, true)); 
+            }
+            else
+            {
+                icon = Utils.GetImage(this, categories.FirstOrDefault(x => x.ID == product.Categories[0]).Icon);
+
+            }
+            SupportActionBar.SetIcon(Utils.SetDrawableSize(this, icon, 70, 70));        
             
                 descriptionTextView.TextFormatted = Html.FromHtml(product.Description);
                 adressTextView.Text = product.Adress;
+            ortTextView.Text = product.Ort;
+            plzTextView.Text = product.Plz;
                 phoneTextView.Text = product.Telefon.Replace(" ", "");
                 emailTextView.Text = product.Email;
                 linkTextView.Text = product.HomePage;
@@ -154,6 +169,8 @@ namespace NohandicapNative.Droid
       private void HideEmptyTextView()
         {           
             CheckTextView(adressTextView);
+            CheckTextView(ortTextView);
+            CheckTextView(plzTextView);
             CheckTextView(phoneTextView);
             CheckTextView(emailTextView);
             CheckTextView(linkTextView);

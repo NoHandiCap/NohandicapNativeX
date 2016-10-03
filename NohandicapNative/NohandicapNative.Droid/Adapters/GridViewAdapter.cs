@@ -107,7 +107,7 @@ namespace NohandicapNative.Droid.Adapters
                 bgBorder.SetColor(Color.ParseColor(category.Color));
             }
            
-            grid.Click += async (s, e) =>
+            grid.Click +=async (s, e) =>
                {
                    var db = Utils.GetDatabaseConnection();
                    var mainActivity = (MainActivity)context;
@@ -158,7 +158,8 @@ namespace NohandicapNative.Droid.Adapters
 
                        }
                        db.Close();
-                     await  mainActivity.MapPage.LoadData();
+               await mainActivity.MapPage.LoadData();
+                       
                    }                 
 
                };

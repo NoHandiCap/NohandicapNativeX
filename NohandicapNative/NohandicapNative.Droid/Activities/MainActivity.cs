@@ -27,6 +27,7 @@ using HockeyApp.Android;
 using Android.Locations;
 using Xamarin.Auth;
 using System.Json;
+using NohandicapNative.Droid.Activities;
 
 namespace NohandicapNative.Droid
 {
@@ -59,6 +60,8 @@ namespace NohandicapNative.Droid
         public override void OnCreate()
         {
             base.OnCreate();
+            AndroidEnvironment.UnhandledExceptionRaiser += Nohandicap_UnhandledExceptionHandler;
+            AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
             Log.Debug(TAG, "Configure locale");
             ISharedPreferences settings = PreferenceManager.GetDefaultSharedPreferences(this);
             string lang = settings.GetString(Utils.LANG_SHORT, null);
@@ -72,6 +75,22 @@ namespace NohandicapNative.Droid
            
 
 
+        }
+
+        private void CurrentDomain_ProcessExit(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        void Nohandicap_UnhandledExceptionHandler(object sender, RaiseThrowableEventArgs e)
+        {
+            var s = sender;
+            var b = e;
+        }
+        protected override void Dispose(bool disposing)
+        {
+           AndroidEnvironment.UnhandledExceptionRaiser -= Nohandicap_UnhandledExceptionHandler;
+            base.Dispose(disposing);
         }
     }
     #endregion
@@ -125,7 +144,7 @@ namespace NohandicapNative.Droid
                 var postion = bundle.GetInt(Utils.TAB_ID);
                 _bottomBar.SelectTabAtPosition(postion, false);
             }
-          
+         
             ThreadPool.QueueUserWorkItem(o => CheckUpdate());          
             ThreadPool.QueueUserWorkItem(async o =>await InitializeLocationManager());
 
@@ -477,7 +496,7 @@ namespace NohandicapNative.Droid
                 Log.Error(TAG, "OnPause(): " +e.Message);
             }
        
-        }
+        }     
 
         #endregion
 
