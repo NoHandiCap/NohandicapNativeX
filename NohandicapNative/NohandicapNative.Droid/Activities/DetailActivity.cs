@@ -121,7 +121,7 @@ namespace NohandicapNative.Droid
             
                 categories = dbCon.GetDataList<CategoryModel>();
             Drawable icon;
-            if (product.MainImageUrl != null)
+            if (!string.IsNullOrEmpty(product.MainImageUrl))
             {
                 var img= await Utils.LoadBitmapAsync(product.MainImageUrl);
                 icon = new BitmapDrawable(Resources, Bitmap.CreateScaledBitmap(img, 70, 70, true)); 
@@ -212,7 +212,7 @@ namespace NohandicapNative.Droid
             try {
               
             var options = new MarkerOptions().SetPosition(new LatLng(double.Parse(product.Lat, CultureInfo.InvariantCulture), double.Parse(product.Long, CultureInfo.InvariantCulture))).SetTitle(product.FirmName);
-                if (product.ProductMarkerImg == null)
+                if (string.IsNullOrEmpty(product.ProductMarkerImg))
                 {
                 
                 var cat = categories.FirstOrDefault(y => y.ID == product.Categories[0]).Marker;

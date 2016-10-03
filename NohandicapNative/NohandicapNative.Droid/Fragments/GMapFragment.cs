@@ -22,6 +22,7 @@ using NohandicapNative.Droid.Model;
 using static Com.Google.Maps.Android.Clustering.ClusterManager;
 using Java.Lang;
 using System.Threading;
+using Square.Picasso;
 
 namespace NohandicapNative.Droid
 {
@@ -92,8 +93,6 @@ namespace NohandicapNative.Droid
 
             if (mainActivity != null & map != null)
             {
-                try
-                {
 
                     await Task.Run(() =>
                     {
@@ -147,7 +146,7 @@ namespace NohandicapNative.Droid
                              var catMarker = currentCategories.FirstOrDefault(x => product.Categories.Any(y => y == x.ID)).Marker;
 
                              Bitmap markerImg;
-                             if (!string.IsNullOrEmpty(product.ProductMarkerImg))
+                             if (string.IsNullOrEmpty(product.ProductMarkerImg))
                              {
 
                                  var drawImage = Utils.SetDrawableSize(mainActivity, Utils.GetImage(mainActivity, catMarker), 32, 34);
@@ -178,10 +177,7 @@ namespace NohandicapNative.Droid
                      });
 
                     return true;
-                }catch(System.Exception e)
-                {
-                    Log.Debug(Tag, "Failed LoadData for markers: \n" + e.Message);
-                }
+               
         }
             return false;
         }
@@ -291,8 +287,9 @@ namespace NohandicapNative.Droid
                 try
                 {
                     if (img!=null)
-                    {                      
-                            LoadImageAsync(imageView, img, marker);                      
+                    {
+                        Picasso.With(mainActivity).Load(img).Placeholder(Resource.Drawable.placeholder).Into(imageView,new MarkerCallback(marker));          
+                                             
                     }
 
 
@@ -352,8 +349,8 @@ namespace NohandicapNative.Droid
                     dbCon.Close();
                     mainActivity.SupportActionBar.Title = "Map";
                              
-             var task= LoadData();
-                    task.Start();
+                      LoadData();
+                 
                     break;
             }
             return true;

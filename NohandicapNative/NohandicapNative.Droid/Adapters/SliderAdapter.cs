@@ -14,6 +14,7 @@ using NohandicapNative.Droid.Services;
 using Android.Util;
 using System.Threading.Tasks;
 using Android.Graphics;
+using Square.Picasso;
 
 namespace NohandicapNative.Droid.Adapters
 {
@@ -51,8 +52,10 @@ namespace NohandicapNative.Droid.Adapters
             var img = product.ImageCollection.Images[position];
           
             try
-            {               
-                    LoadImageAsync(imageView, img);                              
+            {
+                Picasso.With(context).Load(img).Placeholder(Resource.Drawable.placeholder).Into(imageView);
+
+                    
             }
             catch(Exception e)
             {
