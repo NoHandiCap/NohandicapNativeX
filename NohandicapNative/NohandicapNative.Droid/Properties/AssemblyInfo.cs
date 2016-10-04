@@ -18,7 +18,7 @@ using Android.App;
 // The form "{Major}.{Minor}.*" will automatically update the build and revision,
 // and "{Major}.{Minor}.{Build}.*" will update just the revision.
 
-[assembly: AssemblyVersion ("1.0.0")]
+[assembly: AssemblyVersion ("1.1.0")]
 [assembly: MetaData("net.hockeyapp.android.appIdentifier", Value = "cb6c99bd03934c67bff312f683dbed1d")]
 //[assembly: MetaData("com.facebook.sdk.ApplicationId", Value = "@string/app_id")]
 // The following attributes are used to specify the signing key for the assembly,

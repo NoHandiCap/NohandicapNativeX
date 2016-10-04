@@ -14,12 +14,13 @@ using Android.Gms.Maps.Model;
 
 namespace NohandicapNative.Droid.Model
 {
-    public class MarkerCallback : Java.Lang.Object, ICallback
+    public class CustomCallback : Java.Lang.Object, ICallback
     {
-        Marker marker = null;
-        public MarkerCallback(Marker marker)
+        Action action = null;
+
+        public CustomCallback(Action action)
         {
-            this.marker = marker;
+            this.action = action;
         }    
 
         public void OnError()
@@ -29,11 +30,7 @@ namespace NohandicapNative.Droid.Model
 
         public void OnSuccess()
         {
-            if (marker != null && marker.IsInfoWindowShown)
-            {
-                marker.HideInfoWindow();
-                marker.ShowInfoWindow();
-            }
+            action?.Invoke();
         }
     }
 }

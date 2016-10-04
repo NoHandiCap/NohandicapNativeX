@@ -38,6 +38,11 @@ namespace NohandicapNative.Droid.Model
             get;
             set;
         }
+        public string Url 
+        {
+            get;
+            set;
+        }
         public int ProductId
         {
             get;

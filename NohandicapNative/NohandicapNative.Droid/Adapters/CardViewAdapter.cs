@@ -15,6 +15,7 @@ using NohandicapNative.Droid.Services;
 using Android.Graphics;
 using System.Threading.Tasks;
 using Square.Picasso;
+using NohandicapNative.Droid.Model;
 
 namespace NohandicapNative.Droid.Adapters
 {
@@ -83,17 +84,11 @@ namespace NohandicapNative.Droid.Adapters
                 distanceLayout.Visibility = ViewStates.Gone;
             }
             if (!string.IsNullOrEmpty(products[position].MainImageUrl))
-            {
-                try
-                {
-                    Picasso.With(context).Load(products[position].MainImageUrl).Into(imageView);
-       
+            {               
+                    Picasso.With(context).Load(products[position].MainImageUrl).Into(imageView, new CustomCallback(()=> {
+                        imageView.SetBackgroundColor(Color.White);
 
-                }
-                catch(Exception e)
-                {
-                    var s = e;
-                }
+                    }));
             }
             else
             {

@@ -157,9 +157,10 @@
     <Compile Include="Activities\FirstStartActivity.cs" />
     <Compile Include="Activities\MainActivity.cs" />
     <Compile Include="Fragments\GMapFragment.cs" />
+    <Compile Include="Model\ClusterImageLoader.cs" />
     <Compile Include="Model\ClusterItem.cs" />
-    <Compile Include="Model\MarkerCallback.cs" />
-    <Compile Include="Model\OwnIconRendered.cs" />
+    <Compile Include="Model\CustomCallback.cs" />
+    <Compile Include="Model\ClusterIconRendered.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Fragments\HomeFragment.cs" />
@@ -241,10 +242,10 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout-xlarge\HomePage_port.axml" />
-    <AndroidResource Include="Resources\layout-large\HomePage.axml">
+    <AndroidResource Include="Resources\layout-sw600dp\HomePage.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout-large\HomePage_port.axml" />
+    <AndroidResource Include="Resources\layout-sw600dp\HomePage_port.axml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\Main.axml">
@@ -476,10 +477,10 @@
     <AndroidResource Include="Resources\drawable\grid_border.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\values-large\layouts.xml" />
+    <AndroidResource Include="Resources\values-sw600dp\layouts.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\values-large\dimens.xml" />
+    <AndroidResource Include="Resources\values-sw600dp\dimens.xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Xamarin.Android.Maps.Utils\GoogleMapsUtilityBinding.csproj">

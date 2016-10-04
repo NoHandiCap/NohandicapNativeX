@@ -144,7 +144,14 @@ namespace NohandicapNative.Droid
                 var postion = bundle.GetInt(Utils.TAB_ID);
                 _bottomBar.SelectTabAtPosition(postion, false);
             }
-         
+            try {
+                HockeyApp.MetricsManager.TrackEvent("Start App");
+            }
+
+            catch (Exception e)
+            {
+
+            }
             ThreadPool.QueueUserWorkItem(o => CheckUpdate());          
             ThreadPool.QueueUserWorkItem(async o =>await InitializeLocationManager());
 
@@ -176,7 +183,7 @@ namespace NohandicapNative.Droid
             SetSupportActionBar(toolbar);
           
             _bottomBar.NoTabletGoodness();
-          
+            _bottomBar.UseFixedMode();
             var tabItems = new BottomBarTab[items.Count];
             for (int i = 0; i < tabItems.Length; i++)
             {

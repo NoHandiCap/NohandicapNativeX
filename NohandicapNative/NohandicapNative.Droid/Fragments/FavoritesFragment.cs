@@ -222,7 +222,8 @@ namespace NohandicapNative.Droid
          
                 view = inflater.Inflate(Resource.Layout.ListPage, container, false);
                 listView = view.FindViewById<ListView>(Resource.Id.listview);
-
+            var categoryLabel = view.FindViewById<LinearLayout>(Resource.Id.category_linearLayout);
+            categoryLabel.Visibility = ViewStates.Gone;
 
                 listView.ItemClick += (s, e) =>
                 {

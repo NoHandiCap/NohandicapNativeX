@@ -288,7 +288,15 @@ namespace NohandicapNative.Droid
                 {
                     if (img!=null)
                     {
-                        Picasso.With(mainActivity).Load(img).Placeholder(Resource.Drawable.placeholder).Into(imageView,new MarkerCallback(marker));          
+                        Picasso.With(mainActivity).Load(img).Placeholder(Resource.Drawable.placeholder).Into(imageView,new CustomCallback(()=>
+                        {
+                            if (marker.IsInfoWindowShown)
+                            {
+                                marker.HideInfoWindow();
+                                marker.ShowInfoWindow();
+                            }
+
+                        }));          
                                              
                     }
 
