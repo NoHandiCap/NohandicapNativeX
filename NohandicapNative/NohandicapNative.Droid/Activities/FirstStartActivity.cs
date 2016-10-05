@@ -25,6 +25,7 @@ using System.IO;
 using System.Globalization;
 using System.Text;
 using System;
+using System.Threading;
 
 namespace NohandicapNative.Droid
 {
@@ -33,7 +34,7 @@ namespace NohandicapNative.Droid
     {
         static readonly string TAG = "X:" + typeof(FirstStartActivity).Name;
 
-      
+        ProgressDialog progressDialog;
         Button nextButton;
         int[] flags = { Resource.Drawable.german, Resource.Drawable.english, Resource.Drawable.france };
         private int _selecteLangID = 1;   
@@ -96,8 +97,17 @@ namespace NohandicapNative.Droid
                 nextButton.Click += (s, e) =>
                 {
 
-
-                    LoadData();
+                   progressDialog = new ProgressDialog(this,
+           Resource.Style.StyledDialog);
+                    progressDialog.Indeterminate = true;
+                    progressDialog.SetMessage(res.GetString(Resource.String.load_data));
+                    progressDialog.Show();
+                    new System.Threading.Thread(new ThreadStart(delegate
+                    {                
+                        LoadData(); 
+                    })).Start();
+                  
+                   
 
                 };
                 langListView.OnItemClickListener = this;
@@ -169,12 +179,7 @@ namespace NohandicapNative.Droid
         }
         private async void LoadData()
         {
-            ProgressDialog progressDialog = new ProgressDialog(this,
-           Resource.Style.StyledDialog);
-        
-            progressDialog.Indeterminate = true;
-            progressDialog.SetMessage(res.GetString(Resource.String.load_data));
-            progressDialog.Show();
+               
             var dbCon = Utils.GetDatabaseConnection();
             dbCon.CreateTables();
             Languages.ForEach(x =>
@@ -182,14 +187,14 @@ namespace NohandicapNative.Droid
                 dbCon.InsertUpdateProduct(x);
             });
             var result = await RestApiService.CheckUpdate(dbCon, _selecteLangID.ToString(), Utils.GetLastUpadte(this));
-            dbCon.Close();
+      
             if (result != null)
             {
 
                 // On complete call either onLoginSuccess or onLoginFailed
 
                 // onLoginFailed();
-                progressDialog.Dismiss();
+               
                 Log.Debug(TAG, "Work is finished - start MainActivity.");
                
                     if (result.Count != 0)
@@ -199,15 +204,15 @@ namespace NohandicapNative.Droid
                         Utils.WriteToSettings(this, NohandicapLibrary.LANGUAGE_TABLE, result[NohandicapLibrary.LANGUAGE_TABLE]);
                     }
                     Utils.WriteToSettings(this, Utils.LAST_UPDATE_DATE, DateTime.Now.ToShortDateString());
-           
+                dbCon.Close();
                 StartActivity(new Intent(Application.Context, typeof(MainActivity)));
                 Finish();
-
-
+             
             }
             else
             {
                 progressDialog.Dismiss();
+                dbCon.Close();
                 new Android.Support.V7.App.AlertDialog.Builder(this)
      .SetPositiveButton(Resources.GetString(Resource.String.try_text), (sender, args) =>
      {

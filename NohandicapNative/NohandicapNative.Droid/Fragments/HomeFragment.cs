@@ -1,25 +1,13 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
-
-using Android.Content;
 using Android.OS;
-using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using Android.Support.V7.App;
-using Android.Support.V4.App;
 using NohandicapNative.Droid.Services;
 using Android.Graphics;
 using NohandicapNative.Droid.Adapters;
 using Android.App;
-using static Android.Views.View;
-using Android.Graphics.Drawables;
-using Android.Content.PM;
 using Android.Content.Res;
-using static Android.Widget.AdapterView;
 using BottomNavigationBar.Listeners;
 
 namespace NohandicapNative.Droid

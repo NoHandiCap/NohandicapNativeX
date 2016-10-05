@@ -1,21 +1,13 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using Android.Support.V7.App;
 using Android.Util;
 using System.Threading.Tasks;
 using System.IO;
 using NohandicapNative.Droid.Services;
-using HockeyApp.Android;
-using HockeyApp.Android.Metrics;
+
 
 namespace NohandicapNative.Droid.Activities
 {
@@ -28,10 +20,7 @@ namespace NohandicapNative.Droid.Activities
 
         public override void OnCreate(Bundle savedInstanceState, PersistableBundle persistentState)
         {
-            base.OnCreate(savedInstanceState, persistentState);
-            CrashManager.Register(this);
-            MetricsManager.Register(this, Application);
-            HockeyApp.MetricsManager.TrackEvent("App started");
+            base.OnCreate(savedInstanceState, persistentState);           
             Log.Debug(TAG, "SplashActivity.OnCreate");
          
         }

@@ -18,7 +18,8 @@ namespace NohandicapNative
         public SqliteService(ISQLitePlatform platform, string path)
         {
             path = Path.Combine(path, DB_NAME);
-            dbCon = new SQLiteConnection(platform,path);
+            dbCon = new SQLiteConnection(platform,path, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.SharedCache|SQLiteOpenFlags.FullMutex,true);
+      
    
         }
         public bool CreateTables()

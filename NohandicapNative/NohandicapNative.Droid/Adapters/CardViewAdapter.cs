@@ -1,16 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
 using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.Support.V7.Widget;
-using Android.Graphics.Drawables;
 using NohandicapNative.Droid.Services;
 using Android.Graphics;
 using System.Threading.Tasks;
@@ -85,10 +79,7 @@ namespace NohandicapNative.Droid.Adapters
             }
             if (!string.IsNullOrEmpty(products[position].MainImageUrl))
             {               
-                    Picasso.With(context).Load(products[position].MainImageUrl).Into(imageView, new CustomCallback(()=> {
-                        imageView.SetBackgroundColor(Color.White);
-
-                    }));
+                    Picasso.With(context).Load(products[position].MainImageUrl).Resize(60,60).Into(imageView);
             }
             else
             {

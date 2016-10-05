@@ -23,11 +23,10 @@ using Android.Util;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
-using HockeyApp.Android;
 using Android.Locations;
 using Xamarin.Auth;
 using System.Json;
-using NohandicapNative.Droid.Activities;
+
 
 namespace NohandicapNative.Droid
 {
@@ -60,8 +59,8 @@ namespace NohandicapNative.Droid
         public override void OnCreate()
         {
             base.OnCreate();
-            AndroidEnvironment.UnhandledExceptionRaiser += Nohandicap_UnhandledExceptionHandler;
-            AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
+            AppDomain currentDomain = AppDomain.CurrentDomain;
+            currentDomain.UnhandledException += CurrentDomain_UnhandledException;
             Log.Debug(TAG, "Configure locale");
             ISharedPreferences settings = PreferenceManager.GetDefaultSharedPreferences(this);
             string lang = settings.GetString(Utils.LANG_SHORT, null);
@@ -77,19 +76,24 @@ namespace NohandicapNative.Droid
 
         }
 
-        private void CurrentDomain_ProcessExit(object sender, EventArgs e)
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            throw new NotImplementedException();
+            new Android.Support.V7.App.AlertDialog.Builder(this)
+       .SetPositiveButton("Ok", (s, args) =>
+       {
+           MainActivity.Finish();
+
+       })
+       .SetMessage(e.ExceptionObject.ToString())
+       .SetTitle("Error")
+       .Show();
         }
 
-        void Nohandicap_UnhandledExceptionHandler(object sender, RaiseThrowableEventArgs e)
-        {
-            var s = sender;
-            var b = e;
-        }
         protected override void Dispose(bool disposing)
         {
-           AndroidEnvironment.UnhandledExceptionRaiser -= Nohandicap_UnhandledExceptionHandler;
+            AppDomain currentDomain = AppDomain.CurrentDomain;
+            currentDomain.UnhandledException -= CurrentDomain_UnhandledException;
+            
             base.Dispose(disposing);
         }
     }
@@ -122,6 +126,7 @@ namespace NohandicapNative.Droid
 
         protected override void OnCreate(Bundle bundle)
         {
+        
             SetTheme(Resource.Style.AppThemeNoBar);
             base.OnCreate(bundle);
          //   CrashManager.Register(this);
@@ -144,16 +149,9 @@ namespace NohandicapNative.Droid
                 var postion = bundle.GetInt(Utils.TAB_ID);
                 _bottomBar.SelectTabAtPosition(postion, false);
             }
-            try {
-                HockeyApp.MetricsManager.TrackEvent("Start App");
-            }
 
-            catch (Exception e)
-            {
-
-            }
-            ThreadPool.QueueUserWorkItem(o => CheckUpdate());          
-            ThreadPool.QueueUserWorkItem(async o =>await InitializeLocationManager());
+            Task.Run(() => { CheckUpdate();  });
+            Task.Run(() => { InitializeLocationManager(); });
 
         }
         public async void CheckUpdate()
@@ -373,7 +371,7 @@ namespace NohandicapNative.Droid
             }
             return base.OnOptionsItemSelected(item);
         }
-       async Task InitializeLocationManager()
+      void InitializeLocationManager()
         {
             try
             {

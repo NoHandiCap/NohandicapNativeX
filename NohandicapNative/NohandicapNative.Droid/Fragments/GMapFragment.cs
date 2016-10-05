@@ -5,7 +5,6 @@ using Android.Content;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
-
 using Android.Gms.Maps.Model;
 using NohandicapNative.Droid.Services;
 using Android.Graphics;
@@ -14,13 +13,8 @@ using Android.Gms.Maps;
 using System.Globalization;
 using System.Threading.Tasks;
 using Com.Google.Maps.Android.Clustering;
-using Com.Google.Maps.Android.Clustering.View;
-using Com.Google.Maps.Android.Clustering.Algo;
-
 using static Android.Gms.Maps.GoogleMap;
 using NohandicapNative.Droid.Model;
-using static Com.Google.Maps.Android.Clustering.ClusterManager;
-using Java.Lang;
 using System.Threading;
 using Square.Picasso;
 
@@ -51,6 +45,7 @@ namespace NohandicapNative.Droid
         private readonly object syncLock = new object();
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
+            mainActivity = NohandicapApplication.MainActivity;
             this.inflater = inflater;
             var view = inflater.Inflate(Resource.Layout.MapPage, container, false);
             view.SetBackgroundColor(mainActivity.Resources.GetColor(Resource.Color.backgroundColor));
@@ -58,11 +53,14 @@ namespace NohandicapNative.Droid
             mapView = view.FindViewById<MapView>(Resource.Id.map);
             mapView.OnCreate(savedInstanceState);
             mapView.OnResume();
-            mapView.GetMapAsync(this);
-            //   mapFragment = mainActivity.FragmentManager.FindFragmentById(Resource.Id.map).JavaCast<MapFragment>();
-          var  dbCon = Utils.GetDatabaseConnection();
-            //  mapFragment.GetMapAsync(this);
-            var startList = dbCon.GetDataList<CategoryModel>().Where(x=>x.IsSelected).ToList();
+            mapView.GetMapAsync(this);          
+            var dbCon = Utils.GetDatabaseConnection();
+            markersList = new List<Marker>();
+            markerOptons = new List<MarkerOptions>();
+            int mainCategorySelected = int.Parse(Utils.ReadFromSettings(NohandicapApplication.MainActivity, Utils.MAIN_CAT_SELECTED_ID, "1"));
+            products = dbCon.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= mainCategorySelected).ToList();
+            productsInBounds = new List<ProductModel>();
+            var startList = dbCon.GetDataList<CategoryModel>().Where(x => x.IsSelected).ToList();
             if (startList.Count != 0)
             {
                 SetData(startList);
@@ -72,22 +70,8 @@ namespace NohandicapNative.Droid
                 SetData(dbCon.GetDataList<CategoryModel>());
             }
             dbCon.Close();
-            // Updates the location and zoom of the MapView
             return view;
-        }
-        public GMapFragment()
-        {
-            mainActivity = NohandicapApplication.MainActivity;
-          var  dbCon = Utils.GetDatabaseConnection();
-            markersList = new List<Marker>();
-            markerOptons = new List<MarkerOptions>();
-            int mainCategorySelected= int.Parse(Utils.ReadFromSettings(NohandicapApplication.MainActivity, Utils.MAIN_CAT_SELECTED_ID, "1"));                    
-            products = dbCon.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= mainCategorySelected).ToList();
-           productsInBounds = new List<ProductModel>();
-            dbCon.Close();
-       
-
-        }
+        }       
         public async Task<bool> LoadData()
         {
 
@@ -122,7 +106,9 @@ namespace NohandicapNative.Droid
                                  //This is why it is important to do the Release within a try...finally clause; program execution may crash or take a different path, this way you are guaranteed execution
                                  semaphoreSlim.Release();
                              }
+                             return;
                          }
+                         
                          //---------------
                          var newProductsInBound = productsForCategories
                              .Where(x => latLngBounds.Contains(new LatLng(
@@ -288,7 +274,7 @@ namespace NohandicapNative.Droid
                 {
                     if (img!=null)
                     {
-                        Picasso.With(mainActivity).Load(img).Placeholder(Resource.Drawable.placeholder).Into(imageView,new CustomCallback(()=>
+                        Picasso.With(mainActivity).Load(img).Placeholder(Resource.Drawable.placeholder).Resize(50,50).Into(imageView,new CustomCallback(()=>
                         {
                             if (marker.IsInfoWindowShown)
                             {
@@ -383,6 +369,9 @@ namespace NohandicapNative.Droid
                     {
                         _clusterManager.OnCameraChange(position);                    
                     }
+                }catch(Exception e)
+                {
+                    Log.Error(TAG, "OnCameraChanged: "+e.Message) ;
                 }
                 finally
                 {
