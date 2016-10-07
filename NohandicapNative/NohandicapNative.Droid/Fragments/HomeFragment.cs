@@ -61,6 +61,7 @@ namespace NohandicapNative.Droid
             {
                 mainCat[i].SetTextColor(Color.Gray);
                 mainCat[i].SetTypeface(null, TypefaceStyle.Normal);
+                mainCat[i].SetBackgroundColor(Color.White);
                 mainLayout[i].Selected = false;
                 mainLayout[i].Click += (s, e) =>
                 {

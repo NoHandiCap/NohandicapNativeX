@@ -26,7 +26,7 @@ using System.Linq;
 using Android.Locations;
 using Xamarin.Auth;
 using System.Json;
-
+using Square.Picasso;
 
 namespace NohandicapNative.Droid
 {
@@ -71,8 +71,13 @@ namespace NohandicapNative.Droid
                 Utils.updateConfig(this, BaseContext.Resources.Configuration);
             }     
             Log.Debug(TAG, "Locale configuration finished");
-           
 
+            Picasso.Builder builder = new Picasso.Builder(this);
+            builder.Downloader(new OkHttpDownloader(this, int.MaxValue));
+            Picasso built = builder.Build();
+            built.IndicatorsEnabled=true;
+            built.LoggingEnabled=true;
+            Picasso.SetSingletonInstance(built);
 
         }
 
@@ -146,6 +151,7 @@ namespace NohandicapNative.Droid
             PrepareBar();
             if (bundle != null)
             {
+                
                 var postion = bundle.GetInt(Utils.TAB_ID);
                 _bottomBar.SelectTabAtPosition(postion, false);
             }
@@ -182,6 +188,7 @@ namespace NohandicapNative.Droid
           
             _bottomBar.NoTabletGoodness();
             _bottomBar.UseFixedMode();
+           
             var tabItems = new BottomBarTab[items.Count];
             for (int i = 0; i < tabItems.Length; i++)
             {
@@ -189,7 +196,7 @@ namespace NohandicapNative.Droid
                 var tab = items[i];
                 var icon = Utils.GetImage(this, tab.Image);
 
-                tabItems[i] = new BottomBarTab(Utils.SetDrawableSize(this,icon, 50, 50), tab.Title);
+                tabItems[i] = new BottomBarTab(Utils.SetDrawableSize(this,icon, 40, 40), tab.Title);
                 _bottomBar.SetActiveTabColor(Color.Red);
 
             }

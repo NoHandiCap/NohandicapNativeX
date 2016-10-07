@@ -71,100 +71,83 @@ namespace NohandicapNative.Droid
             }
             dbCon.Close();
             return view;
-        }       
+        }
         public async Task<bool> LoadData()
         {
-
             if (mainActivity != null & map != null)
             {
-
-                    await Task.Run(() =>
+                await Task.Run(() =>
+                {
+                    mainActivity.RunOnUiThread(() =>
                     {
-                        mainActivity.RunOnUiThread(() =>
-                        {
-                            latLngBounds = map.Projection.VisibleRegion.LatLngBounds;
+                        latLngBounds = map.Projection.VisibleRegion.LatLngBounds;
 
-                        });
-
-
-                    }).ContinueWith(async t =>
-                     {
-
-                         var productsForCategories = products.Where(x => x.Categories.Any(y => currentCategories.Any(z => z.ID == y))).ToList();
+                    });
+                }).ContinueWith(async t =>
+                 {
+                     var productsForCategories = products.Where(x => x.Categories.Any(y => currentCategories.Any(z => z.ID == y))).ToList();
                          //Reload task untill latLngBounds not null
                          if (latLngBounds == null)
-                         {
-                             await semaphoreSlim.WaitAsync();
-                             try
-                             {
-                                 await LoadData();
-
-                             }
-                             finally
-                             {
-                                 //When the task is ready, release the semaphore. It is vital to ALWAYS release the semaphore when we are ready, or else we will end up with a Semaphore that is forever locked.
-                                 //This is why it is important to do the Release within a try...finally clause; program execution may crash or take a different path, this way you are guaranteed execution
-                                 semaphoreSlim.Release();
-                             }
-                             return;
-                         }
-                         
-                         //---------------
-                         var newProductsInBound = productsForCategories
-                             .Where(x => latLngBounds.Contains(new LatLng(
-                             double.Parse(x.Lat, CultureInfo.InvariantCulture),
-                             double.Parse(x.Long, CultureInfo.InvariantCulture))) && !productsInBounds.Contains(x))
-                             .ToList();
-
-                         if (currentCameraPosition != null)
-                         {
-                             if (currentCameraPosition.Zoom < 11)
-                             {
-                                 newProductsInBound = newProductsInBound.Take(50).ToList();
-                             }
-                         }
-                         foreach (var product in newProductsInBound)
-                         {
-                             var lat = double.Parse(product.Lat, CultureInfo.InvariantCulture);
-                             var lng = double.Parse(product.Long, CultureInfo.InvariantCulture);
-                             var clusterItem = new ClusterItem(lat, lng);
-
-                             var catMarker = currentCategories.FirstOrDefault(x => product.Categories.Any(y => y == x.ID)).Marker;
-
-                             Bitmap markerImg;
-                             if (string.IsNullOrEmpty(product.ProductMarkerImg))
-                             {
-
-                                 var drawImage = Utils.SetDrawableSize(mainActivity, Utils.GetImage(mainActivity, catMarker), 32, 34);
-                                 markerImg = Utils.convertDrawableToBitmap(drawImage);
-
-                             }
-                             else
-                             {
-                                 markerImg = await Utils.LoadBitmapAsync(product.ProductMarkerImg);
-                                 clusterItem.Icon = BitmapDescriptorFactory.FromBitmap(markerImg);
-                             }
-                             clusterItem.Icon = BitmapDescriptorFactory.FromBitmap(markerImg);
-                             clusterItem.ProductId = product.ID;
-
-                             productsInBounds.Add(product);
-
-                             _clusterManager.AddItem(clusterItem);
-                         }
-
-                     }).ContinueWith(t =>
                      {
-
-                         mainActivity.RunOnUiThread(() =>
+                         await semaphoreSlim.WaitAsync();
+                         try
                          {
-                             _clusterManager.Cluster();//Workaround show markers after add new
+                             await LoadData();
+
+                         }
+                         finally
+                         {
+                             semaphoreSlim.Release();
+                         }
+                         return;
+                     }
+                         //---------------
+
+                         var newProductsInBound = productsForCategories
+                         .Where(x => latLngBounds.Contains(new LatLng(
+                         double.Parse(x.Lat, CultureInfo.InvariantCulture),
+                         double.Parse(x.Long, CultureInfo.InvariantCulture))) && !productsInBounds.Contains(x))
+                         .ToList();
+                     if (currentCameraPosition != null)
+                     {
+                         if (currentCameraPosition.Zoom < 11)
+                         {
+                             newProductsInBound = newProductsInBound.Take(50).ToList();
+                         }
+                     }
+                     foreach (var product in newProductsInBound)
+                     {
+                         var lat = double.Parse(product.Lat, CultureInfo.InvariantCulture);
+                         var lng = double.Parse(product.Long, CultureInfo.InvariantCulture);
+                         var clusterItem = new ClusterItem(lat, lng);
+                         var catMarker = currentCategories.FirstOrDefault(x => product.Categories.Any(y => y == x.ID)).Marker;
+                         string imageUrl = "";
+                         if (string.IsNullOrEmpty(product.ProductMarkerImg))
+                         {
+                             imageUrl = ContentResolver.SchemeAndroidResource + "://" + mainActivity.PackageName + "/drawable/" + catMarker;
+                         }
+                         else
+                         {
+                             imageUrl = product.ProductMarkerImg;
+                         }
+                         var markerImg = Picasso.With(mainActivity).Load(imageUrl).Resize(32, 34).Get();
+                         clusterItem.Icon = BitmapDescriptorFactory.FromBitmap(markerImg);
+                         clusterItem.ProductId = product.ID;
+                         productsInBounds.Add(product);
+                         _clusterManager.AddItem(clusterItem);
+                     }
+                 }).ContinueWith(t =>
+                 {
+                     mainActivity.RunOnUiThread(() =>
+                     {
+                         _clusterManager.Cluster();//Workaround show markers after add new
                          });
 
-                     });
+                 });
 
-                    return true;
-               
-        }
+                return true;
+
+            }
             return false;
         }
        
@@ -238,11 +221,11 @@ namespace NohandicapNative.Droid
                 var myLocation = NohandicapApplication.MainActivity.CurrentLocation;
                 var lat = myLocation.Latitude;
                 var lng = myLocation.Longitude;
-                builder.Target(new LatLng(lat, lng)).Zoom(15);
+                builder.Target(new LatLng(lat, lng)).Zoom(13);
             }
             else
             {
-                builder.Target(new LatLng(48.2205998, 16.2399776)).Zoom(15);
+                builder.Target(new LatLng(48.2274656, 16.4067023)).Zoom(10);
             }
           
             _clusterManager = new ClusterManager(mainActivity, map);      
@@ -296,19 +279,8 @@ namespace NohandicapNative.Droid
             title.Text = product.FirmName;
             adress.Text = product.Adress;        
             return info;
-        }
-    
-        public async void LoadImageAsync(ImageView imageView, string url,Marker marker)
-        {
-            await Utils.LoadBitmapAsync(url);
-            imageView.SetBackgroundResource(Resource.Drawable.placeholder);
-            Uri uri = new Uri(url);
-           var filename = System.IO.Path.GetFileName(uri.LocalPath);
-            imageView.SetImageBitmap(Utils.GetBitmap(filename));
-
-            
-
-        }
+        }    
+      
         #region InfoWindowAdapter
         public View GetInfoWindow(Marker marker)
         {

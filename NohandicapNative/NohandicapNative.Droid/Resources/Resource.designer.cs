@@ -4009,8 +4009,8 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f02009d
 			public const int museum = 2130837661;
 			
-			// aapt resource value: 0x7f0200b0
-			public const int notification_template_icon_bg = 2130837680;
+			// aapt resource value: 0x7f0200af
+			public const int notification_template_icon_bg = 2130837679;
 			
 			// aapt resource value: 0x7f02009e
 			public const int pin = 2130837662;
@@ -4062,9 +4062,6 @@ namespace NohandicapNative.Droid
 			
 			// aapt resource value: 0x7f0200ae
 			public const int wheelchair3 = 2130837678;
-			
-			// aapt resource value: 0x7f0200af
-			public const int wheelchaisdr = 2130837679;
 			
 			static Drawable()
 			{

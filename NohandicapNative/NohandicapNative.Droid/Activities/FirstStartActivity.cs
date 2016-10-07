@@ -101,6 +101,7 @@ namespace NohandicapNative.Droid
            Resource.Style.StyledDialog);
                     progressDialog.Indeterminate = true;
                     progressDialog.SetMessage(res.GetString(Resource.String.load_data));
+                    progressDialog.SetCanceledOnTouchOutside(false);
                     progressDialog.Show();
                     new System.Threading.Thread(new ThreadStart(delegate
                     {                
