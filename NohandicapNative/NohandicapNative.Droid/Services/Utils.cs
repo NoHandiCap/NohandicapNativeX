@@ -47,7 +47,7 @@ namespace NohandicapNative.Droid.Services
        
 
 
-        public static  Dictionary<string,string> GetLastUpadte(Context context)
+        public static  Dictionary<string,string> GetLastUpdate(Context context)
         {
             Dictionary<string, string> lastUpdate = new Dictionary<string, string>();
             lastUpdate.Add(NohandicapLibrary.PRODUCT_TABLE, Utils.ReadFromSettings(context, NohandicapLibrary.PRODUCT_TABLE));
@@ -56,9 +56,7 @@ namespace NohandicapNative.Droid.Services
             return lastUpdate;
         }
         public static Android.Graphics.Drawables.Drawable GetImage(Context context, string image)
-
         {
-
             var id = context.Resources.GetIdentifier(image, "drawable", context.PackageName);
             return context.Resources.GetDrawable(id);
         }
@@ -135,7 +133,6 @@ namespace NohandicapNative.Droid.Services
         }
         public async static Task<Bitmap> SaveImageBitmapFromUrl(string url, string name)
         {
-
             Bitmap imageBitmap = null;       
 
             if (!CheckExistFile(name))

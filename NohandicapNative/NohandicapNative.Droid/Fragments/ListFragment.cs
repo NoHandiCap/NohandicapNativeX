@@ -23,16 +23,24 @@ namespace NohandicapNative.Droid
         List<ProductModel> Products;
      
         CardViewAdapter cardViewAdapter;
-        TextView categoryName;
-        ImageView categoryImage;
+        TextView mainCategoryName;
+        ImageView mainCategoryImage;
+        TextView subCategoryName;
+        ImageView subCategoryImage;
+
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
 
             var view = inflater.Inflate(Resource.Layout.ListPage, container, false);
-         listView = view.FindViewById<ListView>(Resource.Id.listview);
+            listView = view.FindViewById<ListView>(Resource.Id.listview);
             view.SetBackgroundColor(myContext.Resources.GetColor(Resource.Color.backgroundColor));
-             categoryName = view.FindViewById<TextView>(Resource.Id.first_categoryTextView);
-             categoryImage = view.FindViewById<ImageView>(Resource.Id.categoryImageView);           
+
+            mainCategoryName = view.FindViewById<TextView>(Resource.Id.mainCategoryTextView);
+            mainCategoryImage = view.FindViewById<ImageView>(Resource.Id.mainCategoryImageView);
+
+            subCategoryName = view.FindViewById<TextView>(Resource.Id.subCategoryTextView);
+            subCategoryImage = view.FindViewById<ImageView>(Resource.Id.subCategoryImageView);
+
             listView.ItemClick += (s, e) =>
             {
                 int position = e.Position;
@@ -41,6 +49,7 @@ namespace NohandicapNative.Droid
                 activity.PutExtra(Utils.PRODUCT_ID, Products[position].ID);
                 myContext.StartActivityForResult(activity,1);         
             };
+
             ReloadData();
             return view;
         }
@@ -60,7 +69,6 @@ namespace NohandicapNative.Droid
             if (!hidden)
             {
                 ReloadData();
-               
             }
         }
         private async void ReloadData()
@@ -71,21 +79,22 @@ namespace NohandicapNative.Droid
             var selectedCategory = dbCon.GetDataList<CategoryModel>().Where(x => x.IsSelected).ToList();
             Products = dbCon.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= mainCategorySelectedId).ToList();
             dbCon.Close();
+
             if (selectedCategory.Count!=0)
             {
                 Products = Products.Where(x => x.Categories.Any(y => selectedCategory.Any(z => z.ID == y))).ToList();
             }
-                categoryName.Text = Resources.GetString(mainCategoriesText[mainCategorySelectedId-1]);
+
+            mainCategoryName.Text = Resources.GetString(mainCategoriesText[mainCategorySelectedId-1]);
             var image = Utils.GetImage(myContext, "wheelchair" + mainCategorySelectedId);
-            categoryImage.SetImageDrawable(Utils.SetDrawableSize(myContext, image, 140, 65));
+            mainCategoryImage.SetImageDrawable(Utils.SetDrawableSize(myContext, image, 140, 65));
+
             Products = SortProductsByDistance(Products);
             cardViewAdapter = new CardViewAdapter(myContext, Products);
             listView.Adapter = cardViewAdapter;
-
             //var listAdapter = new ListAdapter(myContext, product);
-
-
         }
+
         public List<ProductModel> SortProductsByDistance(List<ProductModel> products)
         {
             var myLocation = myContext.CurrentLocation;
@@ -104,12 +113,11 @@ namespace NohandicapNative.Droid
             }
             return products;
         }
+
         public override void OnAttach(Activity activity)
         {
             myContext = (MainActivity)activity;
             base.OnAttach(activity);     
-          
-
         }
     }
 }
