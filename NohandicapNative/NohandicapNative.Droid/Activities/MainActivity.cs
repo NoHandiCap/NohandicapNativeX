@@ -49,7 +49,6 @@ namespace NohandicapNative.Droid
         }
         public override void OnConfigurationChanged(Configuration newConfig)
         {
-           
             base.OnConfigurationChanged(newConfig);
             Log.Debug(TAG, "Make config");
             Utils.updateConfig(this, newConfig);
@@ -165,7 +164,7 @@ namespace NohandicapNative.Droid
     
             string langId =Utils.ReadFromSettings(this,Utils.LANG_ID_TAG, "1");
             var dbCon = Utils.GetDatabaseConnection();      
-            var updateList= await RestApiService.CheckUpdate(dbCon, langId,Utils.GetLastUpadte(this));
+            var updateList= await RestApiService.CheckUpdate(dbCon, langId,Utils.GetLastUpdate(this));
             if (updateList != null)
             {
                 if (updateList.Count != 0)

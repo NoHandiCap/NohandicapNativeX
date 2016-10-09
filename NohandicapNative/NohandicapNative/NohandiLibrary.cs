@@ -12,18 +12,25 @@ namespace NohandicapNative
         public const string COM = "placemap";
         public const string LOGIN_ARTIKEL_ID = "1";
         public const string REGISTER_ARTIKEL_ID = "73";
-        public const string LINK_MAIN= "http://www.stage.nohandicap.net/cms/";
-        public const string LINK_LANGUAGE = LINK_MAIN + "component/"+ COM +"/ajax/api.php?action=getlang";
-        public const string LINK_CATEGORY = LINK_MAIN + "component/" + COM + "/ajax/api.php?action=getcat&idlang=";
-        public const string LINK_PRODUCT = LINK_MAIN + "component/" + COM + "/ajax/api.php?action=getprod&idlang=";
-        public const string LINK_LOGIN = LINK_MAIN + "index.php?item=artikel&id="+ LOGIN_ARTIKEL_ID + "&com=login&action=login&type=app";
-        public const string LINK_SAVEFAV = LINK_MAIN + "component/" + COM + "/ajax/api.php?action=savefave&iduser={0}&idprod={1}";
-        public const string LINK_SIGN_UP = LINK_MAIN + "index.php?item=artikel&id="+ REGISTER_ARTIKEL_ID +"&com=login&action=register&type=app";
-        public const string LINK_GET_UPDATE = LINK_MAIN + "component/" + COM + "/ajax/api.php?action=getlastupdated";
-        public const string LINK_DELFAV = LINK_MAIN + "component/" + COM + "/ajax/api.php?action=delfave&iduser={0}&idprod={1}";
-        public const string PRODUCT_TABLE = "Products";
-        public const string CATEGORY_TABLE = "Categories";
-        public const string LANGUAGE_TABLE = "Language";
+
+        public const string LINK_MAIN           = "http://www.stage.nohandicap.net/cms/";
+        public const string LINK_API            = LINK_MAIN + "component/" + COM + "/ajax/api.php?";
+
+        public const string LINK_LANGUAGE       = LINK_API + "action=getlang";
+        public const string LINK_CATEGORY       = LINK_API + "action=getcat&idlang=";
+        public const string LINK_PRODUCT        = LINK_API + "action=getprod&idlang=";
+        public const string LINK_GET_UPDATE     = LINK_API + "action=getlastupdated";
+        public const string LINK_DELFAV         = LINK_API + "action=delfave&iduser={0}&idprod={1}";
+        public const string LINK_SAVEFAV        = LINK_API + "action=savefave&iduser={0}&idprod={1}";
+        public const string LINK_SAVEPRODVIEW   = LINK_API + "action=saveproductview&idprod={0}";
+        public const string LINK_SAVEAPPSTATI   = LINK_API + "action=saveappstatistic";   //POST:appid,viewname,clickid,clickaction,createdate,iduser
+
+        public const string LINK_LOGIN          = LINK_MAIN + "index.php?item=artikel&id="+ LOGIN_ARTIKEL_ID + "&com=login&action=login&type=app";
+        public const string LINK_SIGN_UP        = LINK_MAIN + "index.php?item=artikel&id="+ REGISTER_ARTIKEL_ID +"&com=login&action=register&type=app";
+
+        public const string PRODUCT_TABLE   = "Products";
+        public const string CATEGORY_TABLE  = "Categories";
+        public const string LANGUAGE_TABLE  = "Language";
 
         public static List<TabItem> GetTabs(bool isTablet=false)
         {

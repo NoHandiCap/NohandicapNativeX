@@ -2,50 +2,91 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+  <LinearLayout
+      android:layout_marginTop="15dp"
+      android:orientation="vertical"
+      android:layout_width="fill_parent"
+      android:layout_height="@dimen/main_category_height"
+      android:id="@+id/categoryContainer"
+      android:layout_marginBottom="10dp"
+      android:layout_marginLeft="10dp"
+      android:layout_marginRight="10dp"
+      android:background="#ffffff"
+      android:visibility="visible">
     <LinearLayout
         android:layout_marginTop="15dp"
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/main_category_height"
-        android:id="@+id/category_linearLayout"
+        android:id="@+id/mainCategoryContainer"
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:background="#ffffff">
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/categoryImageView"
-            android:layout_gravity="center"
-            android:layout_marginRight="5dp" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Large Text"
-            android:id="@+id/first_categoryTextView"
-            android:layout_gravity="center"
-            android:textColor="#000000" />
+        android:background="#ffffff"
+        android:visibility="visible"
+        android:touchscreenBlocksFocus="false">
+      <ImageView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:id="@+id/mainCategoryImageView"
+          android:layout_gravity="center"
+          android:layout_marginRight="5dp" />
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:textAppearance="?android:attr/textAppearanceSmall"
+          android:text="Barierefrei"
+          android:id="@+id/mainCategoryTextView"
+          android:layout_gravity="center"
+          android:textColor="#000000"
+          android:visibility="visible" />
     </LinearLayout>
-    <ListView
-        android:id="@+id/listview"
+    <LinearLayout
+        android:layout_marginTop="15dp"
+        android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="match_parent"
-        android:padding="10dp"
-        android:clipToPadding="false"
-        android:dividerHeight="5dp"
-        android:divider="@null"
-        android:scrollbars="none"
-        android:layout_below="@+id/category_linearLayout" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/no_favorites"
-        android:id="@+id/noFavoritesTextView"
-        android:layout_gravity="center"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:textColor="@color/themeColor"
-        android:visibility="gone" />
+        android:layout_height="@dimen/main_category_height"
+        android:id="@+id/subCategoryContainer"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="#ffffff"
+        android:visibility="visible">
+      <ImageView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:id="@+id/subCategoryImageView"
+          android:layout_gravity="center"
+          android:layout_marginRight="5dp" />
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:textAppearance="?android:attr/textAppearanceSmall"
+          android:text="Large Text"
+          android:id="@+id/subCategoryTextView"
+          android:layout_gravity="center"
+          android:textColor="#000000" />
+    </LinearLayout>
+  </LinearLayout>
+  <ListView
+      android:id="@+id/listview"
+      android:layout_width="fill_parent"
+      android:layout_height="match_parent"
+      android:padding="10dp"
+      android:clipToPadding="false"
+      android:dividerHeight="5dp"
+      android:divider="@null"
+      android:scrollbars="none"
+      android:layout_below="@+id/categoryContainer" />
+  <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:textAppearance="?android:attr/textAppearanceMedium"
+      android:text="@string/no_favorites"
+      android:id="@+id/noFavoritesTextView"
+      android:layout_gravity="center"
+      android:layout_centerVertical="true"
+      android:layout_centerHorizontal="true"
+      android:textColor="@color/themeColor"
+      android:visibility="gone" />
 </RelativeLayout>

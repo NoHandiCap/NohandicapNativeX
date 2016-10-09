@@ -187,7 +187,7 @@ namespace NohandicapNative.Droid
             {
                 dbCon.InsertUpdateProduct(x);
             });
-            var result = await RestApiService.CheckUpdate(dbCon, _selecteLangID.ToString(), Utils.GetLastUpadte(this));
+            var result = await RestApiService.CheckUpdate(dbCon, _selecteLangID.ToString(), Utils.GetLastUpdate(this));
       
             if (result != null)
             {
