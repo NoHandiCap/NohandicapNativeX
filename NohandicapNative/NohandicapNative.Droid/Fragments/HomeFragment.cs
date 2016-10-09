@@ -9,6 +9,8 @@ using NohandicapNative.Droid.Adapters;
 using Android.App;
 using Android.Content.Res;
 using BottomNavigationBar.Listeners;
+using System;
+using Android.Util;
 
 namespace NohandicapNative.Droid
 {
@@ -35,8 +37,8 @@ namespace NohandicapNative.Droid
         }
         private void PopulateViewForOrientation()
         {
-          
-          
+
+            Log.Debug(Tag, "Start HomeFragment ");
            
                 rootView = inflater.Inflate(Resource.Layout.HomePage, null);
 
@@ -101,32 +103,40 @@ namespace NohandicapNative.Droid
 
             additionalCategory = rootView.FindViewById<ButtonGridView>(Resource.Id.additionalCategory);
             GridRotation();
-            var dbCon = Utils.GetDatabaseConnection();
-            List<CategoryModel> additItems = dbCon.GetDataList<CategoryModel>(false);
-            if (additItems.Count == 0)
+            try
             {
-                var localCategories = NohandicapLibrary.GetAdditionalCategory();
-                var localCategoriesLocalization = Resources.GetStringArray(Resource.Array.additional_category_array);
-                for (int i = 0; i < localCategories.Count; i++)
+                var dbCon = Utils.GetDatabaseConnection();
+                List<CategoryModel> additItems = dbCon.GetDataList<CategoryModel>(false).Where(x=>x.Group==1).ToList();
+                if (additItems.Count == 0)
                 {
-                    var cat = localCategories[i];
-                    var loc = localCategoriesLocalization[i];
-                    additItems.Add(new CategoryModel()
+                    var localCategories = NohandicapLibrary.GetAdditionalCategory();
+                    var localCategoriesLocalization = Resources.GetStringArray(Resource.Array.additional_category_array);
+                    for (int i = 0; i < localCategories.Count; i++)
                     {
-                        ID = cat.ID,
-                        Name = loc,
-                        Color = cat.Color,
-                        Icon = cat.Icon,
-                        Sort = i + 1
-                    });
+                        var cat = localCategories[i];
+                        var loc = localCategoriesLocalization[i];
+                        additItems.Add(new CategoryModel()
+                        {
+                            ID = cat.ID,
+                            Name = loc,
+                            Color = cat.Color,
+                            Icon = cat.Icon,
+                            Sort = i + 1
+                        });
+                    }
                 }
-            }
-            dbCon.Close();
+                dbCon.Close();
+         
             //  List<TabItem> mainItems = NohandiLibrary.GetMainCategory();
             //  mainCategory.Adapter = new GridViewAdapter(myContext, mainItems);
 
             additionalCategory.Adapter = new GridViewAdapter(myContext, additItems.OrderBy(x => x.Sort).ToList());
-            //mainCategory.OnItemClickListener = this;
+                //mainCategory.OnItemClickListener = this;
+            }
+            catch (Exception e)
+            {
+                Log.Debug(Tag, "Home Fragment: " + e.Message);
+            }
         }
 
         private void GridRotation()

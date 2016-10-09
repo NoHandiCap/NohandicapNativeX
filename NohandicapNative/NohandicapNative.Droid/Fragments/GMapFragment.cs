@@ -45,7 +45,9 @@ namespace NohandicapNative.Droid
         private readonly object syncLock = new object();
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
+           
             mainActivity = NohandicapApplication.MainActivity;
+            
             this.inflater = inflater;
             var view = inflater.Inflate(Resource.Layout.MapPage, container, false);
             view.SetBackgroundColor(mainActivity.Resources.GetColor(Resource.Color.backgroundColor));
@@ -53,23 +55,29 @@ namespace NohandicapNative.Droid
             mapView = view.FindViewById<MapView>(Resource.Id.map);
             mapView.OnCreate(savedInstanceState);
             mapView.OnResume();
-            mapView.GetMapAsync(this);          
-            var dbCon = Utils.GetDatabaseConnection();
-            markersList = new List<Marker>();
-            markerOptons = new List<MarkerOptions>();
-            int mainCategorySelected = int.Parse(Utils.ReadFromSettings(NohandicapApplication.MainActivity, Utils.MAIN_CAT_SELECTED_ID, "1"));
-            products = dbCon.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= mainCategorySelected).ToList();
-            productsInBounds = new List<ProductModel>();
-            var startList = dbCon.GetDataList<CategoryModel>().Where(x => x.IsSelected).ToList();
-            if (startList.Count != 0)
+            mapView.GetMapAsync(this);
+            try
             {
-                SetData(startList);
-            }
-            else
+                var dbCon = Utils.GetDatabaseConnection();
+                markersList = new List<Marker>();
+                markerOptons = new List<MarkerOptions>();
+                int mainCategorySelected = int.Parse(Utils.ReadFromSettings(NohandicapApplication.MainActivity, Utils.MAIN_CAT_SELECTED_ID, "1"));
+                products = dbCon.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= mainCategorySelected).ToList();
+                productsInBounds = new List<ProductModel>();
+                var startList = dbCon.GetDataList<CategoryModel>().Where(x => x.IsSelected).ToList();
+                if (startList.Count != 0)
+                {
+                    SetData(startList);
+                }
+                else
+                {
+                    SetData(dbCon.GetDataList<CategoryModel>());
+                }
+                dbCon.Close();
+            } catch(Exception e)
             {
-                SetData(dbCon.GetDataList<CategoryModel>());
+                Log.Debug(TAG, "Check Update " + e.Message);
             }
-            dbCon.Close();
             return view;
         }
         public async Task<bool> LoadData()
@@ -313,8 +321,7 @@ namespace NohandicapNative.Droid
                     dbCon.UnSelectAllCategories();                  
                     SetData(dbCon.GetDataList<CategoryModel>());
                     dbCon.Close();
-                    mainActivity.SupportActionBar.Title = "Map";
-                             
+                    mainActivity.SupportActionBar.Title = "Map";                            
                       LoadData();
                  
                     break;

@@ -162,21 +162,26 @@ namespace NohandicapNative.Droid
         }
         public async void CheckUpdate()
         {
-    
-            string langId =Utils.ReadFromSettings(this,Utils.LANG_ID_TAG, "1");
-            var dbCon = Utils.GetDatabaseConnection();      
-            var updateList= await RestApiService.CheckUpdate(dbCon, langId,Utils.GetLastUpadte(this));
-            if (updateList != null)
+            try
             {
-                if (updateList.Count != 0)
+                string langId = Utils.ReadFromSettings(this, Utils.LANG_ID_TAG, "1");
+                var dbCon = Utils.GetDatabaseConnection();
+                var updateList = await RestApiService.CheckUpdate(dbCon, langId, Utils.GetLastUpadte(this));
+                if (updateList != null)
                 {
-                    Utils.WriteToSettings(this, NohandicapLibrary.PRODUCT_TABLE, updateList[NohandicapLibrary.PRODUCT_TABLE]);
-                    Utils.WriteToSettings(this, NohandicapLibrary.CATEGORY_TABLE, updateList[NohandicapLibrary.CATEGORY_TABLE]);
-                    Utils.WriteToSettings(this, NohandicapLibrary.LANGUAGE_TABLE, updateList[NohandicapLibrary.LANGUAGE_TABLE]);
+                    if (updateList.Count != 0)
+                    {
+                        Utils.WriteToSettings(this, NohandicapLibrary.PRODUCT_TABLE, updateList[NohandicapLibrary.PRODUCT_TABLE]);
+                        Utils.WriteToSettings(this, NohandicapLibrary.CATEGORY_TABLE, updateList[NohandicapLibrary.CATEGORY_TABLE]);
+                        Utils.WriteToSettings(this, NohandicapLibrary.LANGUAGE_TABLE, updateList[NohandicapLibrary.LANGUAGE_TABLE]);
+                    }
+                    Utils.WriteToSettings(this, Utils.LAST_UPDATE_DATE, DateTime.Now.ToShortDateString());
                 }
-                Utils.WriteToSettings(this, Utils.LAST_UPDATE_DATE, DateTime.Now.ToShortDateString());
+                dbCon.Close();
+            }catch(Exception e)
+            {
+                Log.Debug(TAG, "Check Update " + e.Message);
             }
-            dbCon.Close();
 
            
         }
