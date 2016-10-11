@@ -59,7 +59,7 @@ namespace NohandicapNative.Droid
 
         public DetailActivity()
         {
-            Utils.updateConfig(this);
+            Utils.UpdateConfig(this);
         }
         protected async override void OnCreate(Bundle bundle)
         {
@@ -101,9 +101,9 @@ namespace NohandicapNative.Droid
         }   
         private async Task LoadProduct()
         {
-            var dbCon = Utils.GetDatabaseConnection();
+            var conn = Utils.GetDatabaseConnection();
             var productId = Intent.GetIntExtra(Utils.PRODUCT_ID, -1);
-            product = dbCon.GetDataList<ProductModel>().FirstOrDefault(x => x.ID == productId);
+            product = conn.GetDataList<ProductModel>().FirstOrDefault(x => x.ID == productId);
 
             SupportActionBar.Title = product.FirmName;
 
@@ -119,7 +119,7 @@ namespace NohandicapNative.Droid
                 
             }
             
-                categories = dbCon.GetDataList<CategoryModel>();
+                categories = conn.GetDataList<CategoryModel>();
             Drawable icon;
             if (!string.IsNullOrEmpty(product.MainImageUrl))
             {
@@ -128,7 +128,7 @@ namespace NohandicapNative.Droid
             }
             else
             {
-                icon = Utils.GetImage(this, categories.FirstOrDefault(x => x.ID == product.Categories[0]).Icon);
+                icon = Utils.GetImage(this, categories.FirstOrDefault(x => x.Id == product.Categories[0]).Icon);
 
             }
             SupportActionBar.SetIcon(Utils.SetDrawableSize(this, icon, 70, 70));        
@@ -146,13 +146,13 @@ namespace NohandicapNative.Droid
                 string bulledList = "";
                 product.Categories.ForEach(x =>
                 {
-                    bulledList += "&#8226;" + categories.FirstOrDefault(y => y.ID == x).Name + "<br/>";
+                    bulledList += "&#8226;" + categories.FirstOrDefault(y => y.Id == x).Name + "<br/>";
                 });
                 categoriesTextView.TextFormatted = Html.FromHtml(bulledList);
            
               RunOnUiThread(()=> { HideEmptyTextView(); });
             
-                user = dbCon.GetDataList<UserModel>().FirstOrDefault();
+                user = conn.GetDataList<UserModel>().FirstOrDefault();
                 if (user != null)
                 {
                     var userFavorites = user.Favorites;
@@ -163,7 +163,7 @@ namespace NohandicapNative.Droid
                     }
 
                 }
-            dbCon.Close();
+            conn.Close();
           
         }     
       private void HideEmptyTextView()
@@ -215,7 +215,7 @@ namespace NohandicapNative.Droid
                 if (string.IsNullOrEmpty(product.ProductMarkerImg))
                 {
                 
-                var cat = categories.FirstOrDefault(y => y.ID == product.Categories[0]).Marker;
+                var cat = categories.FirstOrDefault(y => y.Id == product.Categories[0]).Marker;
                 var drawImage = Utils.SetDrawableSize(this, Utils.GetImage(this, cat), 70, 80);
                 var bitmap = Utils.convertDrawableToBitmap(drawImage);
                 options.SetIcon(BitmapDescriptorFactory.FromBitmap(bitmap));
@@ -270,13 +270,13 @@ namespace NohandicapNative.Droid
         {
             if (user != null)
             {
-                var dbCon = Utils.GetDatabaseConnection();
+                var conn = Utils.GetDatabaseConnection();
                 if (!fab.Selected)
                 {
                     fab.SetImageResource(Resource.Drawable.filled_star);
                     fab.Selected = true;
                     user.Favorites.Add(product.ID);
-                    dbCon.InsertUpdateProduct(user);
+                    conn.InsertUpdateProduct(user);
                     var url = String.Format(NohandicapLibrary.LINK_SAVEFAV, user.ID, product.ID);
                     RestApiService.GetDataFromUrl<UserModel>(url, readBack: false);
                 }
@@ -285,12 +285,12 @@ namespace NohandicapNative.Droid
                     fab.SetImageResource(Resource.Drawable.empty_star);
                     fab.Selected = false;
                     user.Favorites.Remove(product.ID);
-                    dbCon.InsertUpdateProduct(user);
+                    conn.InsertUpdateProduct(user);
                     NohandicapApplication.MainActivity.Favorites.ReloadData();
                     var url = String.Format(NohandicapLibrary.LINK_DELFAV, user.ID, product.ID);
                     RestApiService.GetDataFromUrl<UserModel>(url, readBack: false);
                 }
-                dbCon.Close();
+                conn.Close();
             }
             else
             {

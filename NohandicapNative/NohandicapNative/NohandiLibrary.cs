@@ -64,7 +64,7 @@ namespace NohandicapNative
             {
                 items.Add(new CategoryModel()
                 {
-                    ID =buttonId[i],
+                    Id =buttonId[i],
                     Name = buttonTitles[i],
                     Color = buttonColors[i],
                     Icon = buttonImage[i]

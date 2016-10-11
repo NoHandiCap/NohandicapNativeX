@@ -25,7 +25,6 @@ namespace NohandicapNative.Droid
         EditText emailText;
         EditText passwordText;
         EditText passwordText2;
-
         EditText nameText;     
         EditText phoneText;
         EditText nachNameText;
@@ -33,17 +32,13 @@ namespace NohandicapNative.Droid
         RadioGroup radioSex;
         public SigUpActivity()
         {
-            Utils.updateConfig(this);
+            Utils.UpdateConfig(this);
         }
         protected override void OnCreate(Bundle savedInstanceState)
         {
             SetTheme(Resource.Style.AppThemeNoBar);
             base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.SignUp);
-           // Window.DecorView.SetBackgroundColor(Resources.GetColor(Resource.Color.backgroundColor));
-
-          
-            // Create your application here
+            SetContentView(Resource.Layout.SignUp);           
             loginLinkButton = FindViewById<TextView>(Resource.Id.link_login);
             signUpButton = FindViewById<Button>(Resource.Id.btn_signup);
             radioSex= FindViewById<RadioGroup>(Resource.Id.radioSex);
@@ -55,18 +50,18 @@ namespace NohandicapNative.Droid
             nameText = FindViewById<EditText>(Resource.Id.input_name);
             signUpButton.Click += (s, e) =>
             {
-                signup();
+                Signup();
             };
             loginLinkButton.Click += (s, e) =>
             {
                 Finish();
             };
         }
-        public async void signup()
+        public async void Signup()
         {
 
 
-            if (!validate())
+            if (!Validate())
             { 
                 return;
             }
@@ -87,7 +82,7 @@ namespace NohandicapNative.Droid
             else
             {
                 progressDialog.Dismiss();
-                onSignupFailed(result[0]);
+                OnSignupFailed(result[0]);
             }
           
         }
@@ -99,14 +94,14 @@ namespace NohandicapNative.Droid
             Finish();
         }
 
-        public void onSignupFailed(string message)
+        public void OnSignupFailed(string message)
         {
             Toast.MakeText(BaseContext, message, ToastLength.Long).Show();
 
             signUpButton.Enabled=true;
         }
 
-        public bool validate()
+        public bool Validate()
         {
             bool valid = true;
             createdUser = new UserModel();

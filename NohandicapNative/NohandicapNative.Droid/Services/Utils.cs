@@ -24,13 +24,9 @@ using System.Threading.Tasks;
 namespace NohandicapNative.Droid.Services
 {
     public class Utils
-    {       
-        public const string HOME_TAG = "0";
-        public const string MAP_TAG = "1";
-        public const string LIST_TAG = "2";
-        public const string FAVORITES_TAG = "3";
-        public static string PATH = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-        public const string LOG_TAG = "NHC: ";
+    {     
+        
+        public static string PATH = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);   
         public const string LANG_ID_TAG = "langID";
         public const string LANG_SHORT = "langShort";
         public const string TAB_ID = "tabID";
@@ -41,12 +37,9 @@ namespace NohandicapNative.Droid.Services
         public const string IS_NOT_LOGED = "false";
         public const string LOGIN_NAME = "loginName";
         public const string LOGIN_ID = "loginID";
-        public const string PRODUCT_ID = "productId";
-        public const string MAIN_CAT_SELECTED_ID = "maincat";
+        public const string PRODUCT_ID = "productId";  
         public const string LAST_UPDATE_DATE = "lastUp";
-       
-
-
+        private static Locale SLocale;
         public static  Dictionary<string,string> GetLastUpdate(Context context)
         {
             Dictionary<string, string> lastUpdate = new Dictionary<string, string>();
@@ -60,33 +53,14 @@ namespace NohandicapNative.Droid.Services
             var id = context.Resources.GetIdentifier(image, "drawable", context.PackageName);
             return context.Resources.GetDrawable(id);
         }
-        public static Drawable covertBitmapToDrawable(Context context, Bitmap bitmap)
-        {
-            Drawable d = new BitmapDrawable(context.Resources, bitmap);
-            return d;
-        }
-        public static Bitmap changeImageColor(Bitmap sourceBitmap, int color)
-        {
-            Bitmap resultBitmap = Bitmap.CreateBitmap(sourceBitmap, 0, 0,
-            sourceBitmap.Width - 1, sourceBitmap.Height - 1);
-            Paint p = new Paint();
-            ColorFilter filter = new LightingColorFilter(color, 1);
-            p.SetColorFilter(filter);
-
-            Canvas canvas = new Canvas(resultBitmap);
-            canvas.DrawBitmap(resultBitmap, 0, 0, p);
-            return resultBitmap;
-        }
+     
         public static Bitmap convertDrawableToBitmap(Drawable drawable)
         {
-
-
             Bitmap bitmap = Bitmap.CreateBitmap(drawable.IntrinsicWidth,
             drawable.IntrinsicHeight, Bitmap.Config.Argb8888);
             Canvas canvas = new Canvas(bitmap);
             drawable.SetBounds(0, 0, canvas.Width, canvas.Height);
             drawable.Draw(canvas);
-
             return bitmap;
         }
       public static async Task<Bitmap> LoadBitmapAsync(string url)
@@ -216,25 +190,8 @@ namespace NohandicapNative.Droid.Services
             return res;
 
         }
-        protected void saveset()
-        {
 
-            //store
-            var prefs = Application.Context.GetSharedPreferences("MyApp", FileCreationMode.Private);
-            var prefEditor = prefs.Edit();
-            prefEditor.PutString("PrefName", "Some value");
-            prefEditor.Commit();
-
-        }
-
-        // Function called from OnCreate
-        protected void retrieveset()
-        {
-            //retreive 
-            var prefs = Application.Context.GetSharedPreferences("MyApp", FileCreationMode.Private);
-            var somePref = prefs.GetString("PrefName", null);
-
-        }
+       
         public static void WriteToSettings(Context context, string key, string value)
         {
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
@@ -248,14 +205,14 @@ namespace NohandicapNative.Droid.Services
 
             return prefs.GetString(key, defValue);
         }
-        private static Locale sLocale;
+     
 
-        public static void setLocale(Locale locale)
+        public static void SetLocale(Locale locale)
         {
-            sLocale = locale;
-            if (sLocale != null)
+            SLocale = locale;
+            if (SLocale != null)
             {
-                Locale.Default = sLocale;
+                Locale.Default = SLocale;
             }
         }
         public static float GetDistance(Location myLocation, Location point)
@@ -263,23 +220,23 @@ namespace NohandicapNative.Droid.Services
             var d = myLocation.DistanceTo(point);
             return d;
         }
-        public static void updateConfig(ContextThemeWrapper wrapper)
+        public static void UpdateConfig(ContextThemeWrapper wrapper)
         {
-            if (sLocale != null && Build.VERSION.SdkInt >= Build.VERSION_CODES.JellyBeanMr1)
+            if (SLocale != null && Build.VERSION.SdkInt >= Build.VERSION_CODES.JellyBeanMr1)
             {
                 Configuration configuration = new Configuration();
-                configuration.SetLocale(sLocale);
+                configuration.SetLocale(SLocale);
                 wrapper.ApplyOverrideConfiguration(configuration);
             }
         }
 
         public static void updateConfig(Application app, Configuration configuration)
         {
-            if (sLocale != null && Build.VERSION.SdkInt < Build.VERSION_CODES.JellyBeanMr1)
+            if (SLocale != null && Build.VERSION.SdkInt < Build.VERSION_CODES.JellyBeanMr1)
             {
                 //Wrapping the configuration to avoid Activity endless loop
                 Configuration config = new Configuration(configuration);
-                config.Locale = sLocale;
+                config.Locale = SLocale;
                 Resources res = app.BaseContext.Resources;
          
                 res.UpdateConfiguration(config, res.DisplayMetrics);

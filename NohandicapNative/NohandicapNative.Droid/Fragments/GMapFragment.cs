@@ -21,36 +21,27 @@ using Square.Picasso;
 namespace NohandicapNative.Droid
 {
     public class GMapFragment : Android.Support.V4.App.Fragment, GoogleMap.IInfoWindowAdapter, IOnMapReadyCallback,IOnCameraChangeListener
-    {
-      
+    {     
 
         static readonly string TAG = "X:" + typeof(GMapFragment).Name;
-        MainActivity mainActivity;
         LayoutInflater inflater;
-      //  MapView mapView;
-        GoogleMap map;
-       
+        GoogleMap map;       
         List<Marker> markersList;
         List<ProductModel> products;
-        List<MarkerOptions> markerOptons;
-        //MapFragment mapFragment;
+        List<MarkerOptions> markerOptons;    
         MapView mapView;
         List<CategoryModel> currentCategories;
         List<ProductModel> productsInBounds;
-        LatLngBounds latLngBounds = null;
-   
+        LatLngBounds latLngBounds = null;   
         ClusterManager _clusterManager;
         static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1,1);
-        CameraPosition currentCameraPosition;
-        private readonly object syncLock = new object();
+        CameraPosition currentCameraPosition;     
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-           
-            mainActivity = NohandicapApplication.MainActivity;
-            
-            this.inflater = inflater;
+
+            this.inflater = inflater;          
             var view = inflater.Inflate(Resource.Layout.MapPage, container, false);
-            view.SetBackgroundColor(mainActivity.Resources.GetColor(Resource.Color.backgroundColor));
+            view.SetBackgroundColor(NohandicapApplication.MainActivity.Resources.GetColor(Resource.Color.backgroundColor));
             HasOptionsMenu = true;
             mapView = view.FindViewById<MapView>(Resource.Id.map);
             mapView.OnCreate(savedInstanceState);
@@ -58,22 +49,21 @@ namespace NohandicapNative.Droid
             mapView.GetMapAsync(this);
             try
             {
-                var dbCon = Utils.GetDatabaseConnection();
+                var conn = Utils.GetDatabaseConnection();
                 markersList = new List<Marker>();
-                markerOptons = new List<MarkerOptions>();
-                int mainCategorySelected = int.Parse(Utils.ReadFromSettings(NohandicapApplication.MainActivity, Utils.MAIN_CAT_SELECTED_ID, "1"));
-                products = dbCon.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= mainCategorySelected).ToList();
+                markerOptons = new List<MarkerOptions>();             
+                products = conn.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= NohandicapApplication.SelectedMainCategory.Id).ToList();
                 productsInBounds = new List<ProductModel>();
-                var startList = dbCon.GetDataList<CategoryModel>().Where(x => x.IsSelected).ToList();
-                if (startList.Count != 0)
+                var allCategoriesList = conn.GetSubSelectedCategory();
+                if (allCategoriesList.Count != 0)
                 {
-                    SetData(startList);
+                    SetData(allCategoriesList);
                 }
                 else
                 {
-                    SetData(dbCon.GetDataList<CategoryModel>());
+                    SetData(conn.GetDataList<CategoryModel>());
                 }
-                dbCon.Close();
+                conn.Close();
             } catch(Exception e)
             {
                 Log.Debug(TAG, "Check Update " + e.Message);
@@ -82,18 +72,18 @@ namespace NohandicapNative.Droid
         }
         public async Task<bool> LoadData()
         {
-            if (mainActivity != null & map != null)
+            if (map != null)
             {
                 await Task.Run(() =>
                 {
-                    mainActivity.RunOnUiThread(() =>
+                    Activity.RunOnUiThread(() =>
                     {
                         latLngBounds = map.Projection.VisibleRegion.LatLngBounds;
 
                     });
                 }).ContinueWith(async t =>
                  {
-                     var productsForCategories = products.Where(x => x.Categories.Any(y => currentCategories.Any(z => z.ID == y))).ToList();
+                     var productsForCategories = products.Where(x => x.Categories.Any(y => currentCategories.Any(z => z.Id == y))).ToList();
                          //Reload task untill latLngBounds not null
                          if (latLngBounds == null)
                      {
@@ -128,17 +118,17 @@ namespace NohandicapNative.Droid
                          var lat = double.Parse(product.Lat, CultureInfo.InvariantCulture);
                          var lng = double.Parse(product.Long, CultureInfo.InvariantCulture);
                          var clusterItem = new ClusterItem(lat, lng);
-                         var catMarker = currentCategories.FirstOrDefault(x => product.Categories.Any(y => y == x.ID)).Marker;
+                         var catMarker = currentCategories.FirstOrDefault(x => product.Categories.Any(y => y == x.Id)).Marker;
                          string imageUrl = "";
                          if (string.IsNullOrEmpty(product.ProductMarkerImg))
                          {
-                             imageUrl = ContentResolver.SchemeAndroidResource + "://" + mainActivity.PackageName + "/drawable/" + catMarker;
+                             imageUrl = ContentResolver.SchemeAndroidResource + "://" + Activity.PackageName + "/drawable/" + catMarker;
                          }
                          else
                          {
                              imageUrl = product.ProductMarkerImg;
                          }
-                         var markerImg = Picasso.With(mainActivity).Load(imageUrl).Resize(32, 34).Get();
+                         var markerImg = Picasso.With(Activity).Load(imageUrl).Resize(32, 34).Get();
                          clusterItem.Icon = BitmapDescriptorFactory.FromBitmap(markerImg);
                          clusterItem.ProductId = product.ID;
                          productsInBounds.Add(product);
@@ -146,12 +136,12 @@ namespace NohandicapNative.Droid
                      }
                  }).ContinueWith(t =>
                  {
-                     mainActivity.RunOnUiThread(() =>
+                     Activity.RunOnUiThread(() =>
                      {
                          _clusterManager.Cluster();//Workaround show markers after add new
                          });
 
-                 });
+                 }, TaskScheduler.FromCurrentSynchronizationContext());
 
                 return true;
 
@@ -179,19 +169,8 @@ namespace NohandicapNative.Droid
         {
             base.OnResume();
            mapView.OnResume();
-        }
-        public override void OnActivityCreated(Bundle savedInstanceState)
-        {
-            base.OnActivityCreated(savedInstanceState);
-        
-
-        }       
+        }            
       
-        public override void OnDestroy()
-        {
-            base.OnDestroy();
-        
-        }
         public async  override void OnHiddenChanged(bool hidden)
         {
             base.OnHiddenChanged(hidden);
@@ -199,14 +178,12 @@ namespace NohandicapNative.Droid
             {
                 if (products.Count == 0)
                 {
-                    var dbCon = Utils.GetDatabaseConnection();
-                    products = dbCon.GetDataList<ProductModel>();
-                    dbCon.Close();
+                    var conn = Utils.GetDatabaseConnection();
+                    products = conn.GetDataList<ProductModel>();
+                    conn.Close();
                 }
-                await LoadData();            
-               
+                await LoadData();           
             }
-           
         }
 
         public async void OnMapReady(GoogleMap googleMap)
@@ -219,9 +196,9 @@ namespace NohandicapNative.Droid
             map.SetInfoWindowAdapter(this);
             map.InfoWindowClick += (s, e) => {
                 var product = FindProductFromMarker((Marker)e.Marker);
-                var activity = new Intent(mainActivity, typeof(DetailActivity));
+                var activity = new Intent(Activity, typeof(DetailActivity));
                 activity.PutExtra(Utils.PRODUCT_ID, product.ID);
-                mainActivity.StartActivity(activity);
+               Activity.StartActivity(activity);
             };
             CameraPosition.Builder builder = CameraPosition.InvokeBuilder();                     
             if (NohandicapApplication.MainActivity.CurrentLocation != null)
@@ -236,36 +213,31 @@ namespace NohandicapNative.Droid
                 builder.Target(new LatLng(48.2274656, 16.4067023)).Zoom(10);
             }
           
-            _clusterManager = new ClusterManager(mainActivity, map);      
+            _clusterManager = new ClusterManager(Activity, map);      
                  
-            _clusterManager.SetRenderer(new ClusterIconRendered(mainActivity, map, _clusterManager));
+            _clusterManager.SetRenderer(new ClusterIconRendered(Activity, map, _clusterManager));
             map.SetOnCameraChangeListener(this);
             CameraPosition cameraPosition = builder.Build();
             CameraUpdate cameraUpdate = CameraUpdateFactory.NewCameraPosition(cameraPosition);
-            map.MoveCamera(cameraUpdate);
-        
-
+            map.MoveCamera(cameraUpdate);     
         }
-
-        string lastmarker = null;
+        #region InfoWindowAdapter
         public View GetInfoContents(Marker marker)
         {
-            if (marker.Title == null) return null;
-          
             var info = inflater.Inflate(Resource.Layout.infoWindow, null);
             var product = FindProductFromMarker(marker);
             var imageView = info.FindViewById<ImageView>(Resource.Id.info_mainImageView);
-            var title= info.FindViewById<TextView>(Resource.Id.info_titleTextView);
-            var adress = info.FindViewById<TextView>(Resource.Id.info_adressTextView);          
+            var title = info.FindViewById<TextView>(Resource.Id.info_titleTextView);
+            var adress = info.FindViewById<TextView>(Resource.Id.info_adressTextView);
             var mainimage = product.ImageCollection.Images;
             if (mainimage.Count != 0)
             {
                 var img = mainimage[0];
                 try
                 {
-                    if (img!=null)
+                    if (img != null)
                     {
-                        Picasso.With(mainActivity).Load(img).Placeholder(Resource.Drawable.placeholder).Resize(50,50).Into(imageView,new CustomCallback(()=>
+                        Picasso.With(Activity).Load(img).Placeholder(Resource.Drawable.placeholder).Resize(50, 50).Into(imageView, new CustomCallback(() =>
                         {
                             if (marker.IsInfoWindowShown)
                             {
@@ -273,8 +245,8 @@ namespace NohandicapNative.Droid
                                 marker.ShowInfoWindow();
                             }
 
-                        }));          
-                                             
+                        }));
+
                     }
 
 
@@ -283,13 +255,11 @@ namespace NohandicapNative.Droid
                 {
                     Log.Error(TAG, e.Message);
                 }
-            }           
+            }
             title.Text = product.FirmName;
-            adress.Text = product.Adress;        
+            adress.Text = product.Adress;
             return info;
-        }    
-      
-        #region InfoWindowAdapter
+        }
         public View GetInfoWindow(Marker marker)
         {
             return null;
@@ -314,14 +284,14 @@ namespace NohandicapNative.Droid
             switch (item.ItemId)
             {
                 case Android.Resource.Id.Home:
-                    mainActivity.SetCurrentTab(0);
+                    NohandicapApplication.MainActivity.SetCurrentTab(0);
                     break;
                 case Resource.Id.select_all:
-                    var dbCon = Utils.GetDatabaseConnection();
-                    dbCon.UnSelectAllCategories();                  
-                    SetData(dbCon.GetDataList<CategoryModel>());
-                    dbCon.Close();
-                    mainActivity.SupportActionBar.Title = "Map";                            
+                    var conn = Utils.GetDatabaseConnection();
+                    conn.UnSelectAllCategories();                  
+                    SetData(conn.GetDataList<CategoryModel>());
+                    conn.Close();
+                    NohandicapApplication.MainActivity.SupportActionBar.Title = "Map";                            
                       LoadData();
                  
                     break;
@@ -332,7 +302,6 @@ namespace NohandicapNative.Droid
         {
 
         }
-
 
         #endregion
         public async void OnCameraChange(CameraPosition position)

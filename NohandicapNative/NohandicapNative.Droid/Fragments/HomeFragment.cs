@@ -16,7 +16,6 @@ namespace NohandicapNative.Droid
 {
   public  class HomeFragment: Android.Support.V4.App.Fragment, IOnMenuTabSelectedListener
     {
-        MainActivity myContext;
         int[] mainCategoriesText = { Resource.Id.first_category, Resource.Id.second_category, Resource.Id.thrity_category };
        int[] mainCategoriesImgView = { Resource.Id.imageView, Resource.Id.imageView2, Resource.Id.imageView3 };
        int[] mainCategoriesLayout= { Resource.Id.category_linearLayout, Resource.Id.category_linearLayout3, Resource.Id.category_linearLayout2 };
@@ -44,18 +43,21 @@ namespace NohandicapNative.Droid
 
            
 
-            rootView.SetBackgroundColor(myContext.Resources.GetColor(Resource.Color.backgroundColor));
+            rootView.SetBackgroundColor(Activity.Resources.GetColor(Resource.Color.backgroundColor));
          
             this.HasOptionsMenu = true;
-            TextView[] mainCat = new TextView[mainCategoriesText.Length];
-            ImageView[] mainImg = new ImageView[mainCategoriesImgView.Length];
-            LinearLayout[] mainLayout = new LinearLayout[mainCategoriesLayout.Length];
-
-            string[] mainItems = Resources.GetStringArray(Resource.Array.main_category_array);
+            
+                var conn = Utils.GetDatabaseConnection();
+               List<CategoryModel> mainCategoriesList = conn.GetDataList<CategoryModel>().Where(x => x.Group == 2).ToList();
+                List<CategoryModel> subCategoriesList = conn.GetSubSelectedCategory();
+                conn.Close();
+                TextView[] mainCat = new TextView[mainCategoriesList.Count];
+            ImageView[] mainImg = new ImageView[mainCategoriesList.Count];
+            LinearLayout[] mainLayout = new LinearLayout[mainCategoriesList.Count];   
             for (int i = 0; i < mainCat.Length; i++)
             {
                 mainCat[i] = rootView.FindViewById<TextView>(mainCategoriesText[i]);
-                mainCat[i].Text = mainItems[i];
+                mainCat[i].Text = mainCategoriesList[i].Name;
                 mainImg[i] = rootView.FindViewById<ImageView>(mainCategoriesImgView[i]);
                 mainLayout[i] = rootView.FindViewById<LinearLayout>(mainCategoriesLayout[i]);
             }
@@ -84,7 +86,9 @@ namespace NohandicapNative.Droid
                                 mainCat[y].SetTextColor(Color.Black);
                                 mainCat[y].SetTypeface(null, TypefaceStyle.Bold);
                                 mainLayout[y].Selected = true;
-                                Utils.WriteToSettings(myContext, Utils.MAIN_CAT_SELECTED_ID, (y + 1).ToString());
+                                var conn2 = Utils.GetDatabaseConnection();
+                                conn2.SetSelectedCategory(mainCategoriesList[y]);
+                                conn2.Close();
                             }
                         }
                     }
@@ -92,22 +96,21 @@ namespace NohandicapNative.Droid
                 };
 
             }
-            var categorySelected = int.Parse(Utils.ReadFromSettings(myContext, Utils.MAIN_CAT_SELECTED_ID, "1"));
+          
+            var categorySelected = NohandicapApplication.SelectedMainCategory.Id;
 
-            mainCat[categorySelected - 1].SetTextColor(Color.Black);
-            mainCat[categorySelected - 1].SetTypeface(null, TypefaceStyle.Bold);
+            mainCat[categorySelected-1].SetTextColor(Color.Black);
+            mainCat[categorySelected-1].SetTypeface(null, TypefaceStyle.Bold);
             mainLayout[categorySelected - 1].Selected = true;
-            mainImg[0].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair1, 140, 65));
-            mainImg[1].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair2, 140, 65));
-            mainImg[2].SetImageDrawable(Utils.SetDrawableSize(myContext, Resource.Drawable.wheelchair3, 140, 65));
+            mainImg[0].SetImageDrawable(Utils.SetDrawableSize(Activity, Resource.Drawable.wheelchair1, 140, 65));
+            mainImg[1].SetImageDrawable(Utils.SetDrawableSize(Activity, Resource.Drawable.wheelchair2, 140, 65));
+            mainImg[2].SetImageDrawable(Utils.SetDrawableSize(Activity, Resource.Drawable.wheelchair3, 140, 65));
 
             additionalCategory = rootView.FindViewById<ButtonGridView>(Resource.Id.additionalCategory);
             GridRotation();
-            try
-            {
-                var dbCon = Utils.GetDatabaseConnection();
-                List<CategoryModel> additItems = dbCon.GetDataList<CategoryModel>(false).Where(x=>x.Group==1).ToList();
-                if (additItems.Count == 0)
+
+           
+                if (subCategoriesList.Count == 0)
                 {
                     var localCategories = NohandicapLibrary.GetAdditionalCategory();
                     var localCategoriesLocalization = Resources.GetStringArray(Resource.Array.additional_category_array);
@@ -115,9 +118,9 @@ namespace NohandicapNative.Droid
                     {
                         var cat = localCategories[i];
                         var loc = localCategoriesLocalization[i];
-                        additItems.Add(new CategoryModel()
+                        subCategoriesList.Add(new CategoryModel()
                         {
-                            ID = cat.ID,
+                            Id = cat.Id,
                             Name = loc,
                             Color = cat.Color,
                             Icon = cat.Icon,
@@ -125,23 +128,19 @@ namespace NohandicapNative.Droid
                         });
                     }
                 }
-                dbCon.Close();
+              
          
             //  List<TabItem> mainItems = NohandiLibrary.GetMainCategory();
             //  mainCategory.Adapter = new GridViewAdapter(myContext, mainItems);
 
-            additionalCategory.Adapter = new GridViewAdapter(myContext, additItems.OrderBy(x => x.Sort).ToList());
+            additionalCategory.Adapter = new GridViewAdapter(NohandicapApplication.MainActivity, subCategoriesList.OrderBy(x => x.Sort).ToList());
                 //mainCategory.OnItemClickListener = this;
-            }
-            catch (Exception e)
-            {
-                Log.Debug(Tag, "Home Fragment: " + e.Message);
-            }
+           
         }
 
         private void GridRotation()
         {
-            var orientation = myContext.Resources.Configuration.Orientation;
+            var orientation = Activity.Resources.Configuration.Orientation;
 
 
             if (orientation == Android.Content.Res.Orientation.Portrait)
@@ -173,12 +172,7 @@ namespace NohandicapNative.Droid
                
                 transaction.Replace(Resource.Id.mapFragment, NohandicapApplication.MainActivity.MapPage).Commit();
             
-        }
-        public override void OnAttach(Activity activity)
-        {
-            myContext = (MainActivity)activity;
-            base.OnAttach(activity);
-        }
+        }      
         public override void OnConfigurationChanged(Configuration newConfig)
         {
             base.OnConfigurationChanged(newConfig);
@@ -203,10 +197,10 @@ namespace NohandicapNative.Droid
             switch (item.ItemId)
             {
                 case Android.Resource.Id.Home:
-                 myContext.SetCurrentTab(0);
+                 NohandicapApplication.MainActivity.SetCurrentTab(0);
                     break;
                 case Resource.Id.settings:
-                   myContext.StartActivity(typeof(SettingsActivity));
+                    NohandicapApplication.MainActivity.StartActivity(typeof(SettingsActivity));
                     break;
             }
             return true;

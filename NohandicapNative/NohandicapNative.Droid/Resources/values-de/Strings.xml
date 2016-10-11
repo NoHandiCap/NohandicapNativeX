@@ -8,8 +8,8 @@
   <string name="authentication">Authentifizieren...</string>
   <string name="lang_prompt">Wählen Sie Ihre Sprache aus:</string>
   <string name="main_cat1">Barrierenfrei</string>
-  <string name="main_cat2">Teilweise Behinderten gerecht</string>
-  <string name="main_cat3">Total Behinderten gerecht</string>
+  <string name="main_cat2">Teilweise Rollstuhltauglich</string>
+  <string name="main_cat3">Total Rollstuhltauglich</string>
   <string name="description">Beschreibung</string>
   <string name="information">INFORMATION</string>
   <string name="medium_text">Mittel Text</string>
@@ -56,6 +56,7 @@
   <string name="last_update">Letztes Update: </string>
   <string name="sync">synchronisiert</string>
   <string name="creating_account">Erstellen von Konto ...</string>
+  <string name="all_cat">Alle Kategorien</string>
 
 
   <string-array name="lang_array">

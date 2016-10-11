@@ -167,8 +167,9 @@ namespace NohandicapNative
             return result;
         }
 
-        public static async Task<Dictionary<string,string>> CheckUpdate(SqliteService dbCon,string langID, Dictionary<string, string> lastUpdate)
+        public static async Task<Dictionary<string,string>> CheckUpdate(SqliteService conn,string langID, Dictionary<string, string> lastUpdate)
         {
+            
             Dictionary<string, string> updateList = new Dictionary<string, string>();
             bool prod = false;
             bool cat = false;
@@ -176,37 +177,42 @@ namespace NohandicapNative
             var result = await GetStringContent(NohandicapLibrary.LINK_GET_UPDATE);
             if (result == null)
             {
+                
                 return null;
+                
             }
             var token = JObject.Parse(result).SelectToken("result");
             var productTable= token.SelectToken("prod").ToString();
             var categoryTable = token.SelectToken("cat").ToString();
             var langTable = token.SelectToken("lang").ToString();
 
-            if (productTable !=lastUpdate[NohandicapLibrary.PRODUCT_TABLE])
-            {
-             prod = await dbCon.SynchronizeDataBase(langID, NohandicapLibrary.PRODUCT_TABLE);
-            }
-            
             if (categoryTable != lastUpdate[NohandicapLibrary.CATEGORY_TABLE])
             {
-            cat=  await  dbCon.SynchronizeDataBase(langID, NohandicapLibrary.CATEGORY_TABLE);
+                cat = await conn.SynchronizeDataBase(langID, NohandicapLibrary.CATEGORY_TABLE);
             }
             if (langTable != lastUpdate[NohandicapLibrary.LANGUAGE_TABLE])
             {
-             lang=  await dbCon.SynchronizeDataBase(langID, NohandicapLibrary.LANGUAGE_TABLE);
+                lang = await conn.SynchronizeDataBase(langID, NohandicapLibrary.LANGUAGE_TABLE);
             }
+            if (productTable !=lastUpdate[NohandicapLibrary.PRODUCT_TABLE])
+            {
+             prod = await conn.SynchronizeDataBase(langID, NohandicapLibrary.PRODUCT_TABLE);
+            }                
             if (lang || prod || cat)
             {
                updateList = new Dictionary<string, string>();
                 updateList.Add(NohandicapLibrary.PRODUCT_TABLE, productTable);
                 updateList.Add(NohandicapLibrary.CATEGORY_TABLE, categoryTable);
                 updateList.Add(NohandicapLibrary.LANGUAGE_TABLE, langTable);
+                conn.Close();
                 return updateList;
+               
             }
             else
             {
+            
                 return updateList;
+            
             }
    
         }

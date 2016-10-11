@@ -1,24 +1,16 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
 using Android.App;
-using Android.Content;
 using Android.OS;
-using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.Support.V7.App;
 using Android.Graphics.Drawables;
 using Android.Graphics;
-using Android.Support.V4.Content;
 using NohandicapNative.Droid.Adapters;
 using NohandicapNative.Droid.Services;
-using Java.Util;
 using Android.Content.Res;
 using static Android.Widget.AdapterView;
-using Android.Util;
 using System.Threading.Tasks;
 
 namespace NohandicapNative.Droid
@@ -26,8 +18,7 @@ namespace NohandicapNative.Droid
     [Activity(Label = "@string/settings")]
     public  class SettingsActivity : AppCompatActivity, IOnItemClickListener
     {
-        Android.Support.V7.Widget.Toolbar toolbar;
-         
+        Android.Support.V7.Widget.Toolbar toolbar;         
         int[] flags = { Resource.Drawable.german, Resource.Drawable.english, Resource.Drawable.france };
         List<LanguageModel> languageList;
         Resources res;
@@ -41,33 +32,26 @@ namespace NohandicapNative.Droid
         MainActivity mainActivity;
         public SettingsActivity()
         {
-            Utils.updateConfig(this);
+            Utils.UpdateConfig(this);
         }
         protected override void OnCreate(Bundle savedInstanceState)
         {
-
-            SetTheme(Resource.Style.AppThemeNoBar);
-            
+            SetTheme(Resource.Style.AppThemeNoBar);            
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.SettingsPage);
-            // Window.DecorView.SetBackgroundColor(Resources.GetColor(Resource.Color.backgroundColor));
+            PrepareBar();              
             loginLayout = (LinearLayout)FindViewById(Resource.Id.loginLayout);
             syncButton = (Button)FindViewById(Resource.Id.syncButton);
             logoutButton= (Button)FindViewById(Resource.Id.logoutButton);
             userTextView = (TextView)FindViewById(Resource.Id.userTextView);
             lastUpdateTextView= (TextView)FindViewById(Resource.Id.lastUpdateTextView);
             lastUpdateTextView.Text = Resources.GetString(Resource.String.last_update) + Utils.ReadFromSettings(this, Utils.LAST_UPDATE_DATE);
-            var dbCon = Utils.GetDatabaseConnection();
-            languageList = dbCon.GetDataList<LanguageModel>();
-            toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
-            SetSupportActionBar(toolbar);
-            SupportActionBar.SetDisplayHomeAsUpEnabled(true);           
-            SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Resources.GetColor(Resource.Color.themeColor)));
-            SupportActionBar.Title=Resources.GetString(Resource.String.settings);
+            var conn = Utils.GetDatabaseConnection();
+            languageList = conn.GetDataList<LanguageModel>();           
             langListView = FindViewById<ListView>(Resource.Id.languageList);
             langListView.OnItemClickListener = this;
             List<CustomRadioButton> langList = new List<CustomRadioButton>();
-            dbCon.GetDataList<LanguageModel>().ForEach(x => langList.Add(new CustomRadioButton()
+            conn.GetDataList<LanguageModel>().ForEach(x => langList.Add(new CustomRadioButton()
             {
                 Text = x.LanguageName
             }));
@@ -81,19 +65,12 @@ namespace NohandicapNative.Droid
                 progressDialog.SetMessage(a);
                 progressDialog.Show();
                 var _selectedLangID = Utils.ReadFromSettings(this,Utils.LANG_ID_TAG);
-                bool result = await dbCon.SynchronizeDataBase(_selectedLangID);
-                dbCon.Close();
+                bool result = await conn.SynchronizeDataBase(_selectedLangID);
+                conn.Close();
                 if (result)
-                {
-
-                    // On complete call either onLoginSuccess or onLoginFailed
-
-                    // onLoginFailed();
+                {                 
                     progressDialog.Dismiss();
                     Toast.MakeText(this, Resources.GetString(Resource.String.sync), ToastLength.Short).Show();
-
-
-
                 }
                 else
                 {
@@ -104,17 +81,25 @@ namespace NohandicapNative.Droid
             SetLoginLayout();
 
         }
+        private void PrepareBar()
+        {
+            toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
+            SetSupportActionBar(toolbar);
+            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
+            SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Resources.GetColor(Resource.Color.themeColor)));
+            SupportActionBar.Title = Resources.GetString(Resource.String.settings);
+        }
         private void SetLoginLayout()
         {
-            var dbCon = Utils.GetDatabaseConnection();
-            var user = dbCon.GetDataList<UserModel>().FirstOrDefault();
+            var conn = Utils.GetDatabaseConnection();
+            var user = conn.GetDataList<UserModel>().FirstOrDefault();
             if (user != null)
             {
                 userTextView.Text = user.Name??user.Vname;
                 logoutButton.Click += (s, e) =>
                 {
-                    dbCon.Logout();
-                    dbCon.Close();
+                    conn.Logout();
+                    conn.Close();
                     Utils.WriteToSettings(this, Utils.IS_LOGIN, Utils.IS_NOT_LOGED);
                     loginLayout.Visibility = ViewStates.Gone;
                    NohandicapApplication.MainActivity.Favorites=new FavoritesFragment();
@@ -123,8 +108,7 @@ namespace NohandicapNative.Droid
             else
             {
                 loginLayout.Visibility = ViewStates.Gone;
-            }
-            
+            }            
         }       
         private async Task<bool> ReloadData()
         {
@@ -135,30 +119,20 @@ namespace NohandicapNative.Droid
             progressDialog.Indeterminate = true;
             progressDialog.SetMessage(Resources.GetString(Resource.String.load_data));
             progressDialog.Show();
-            var dbCon = Utils.GetDatabaseConnection();
-            var result = await dbCon.SynchronizeDataBase(selectedLanguage.ID.ToString());
-            dbCon.Close();
+            var conn = Utils.GetDatabaseConnection();
+            var result = await conn.SynchronizeDataBase(selectedLanguage.ID.ToString());
+            conn.Close();
             if (result)
-            {
-
-                // On complete call either onLoginSuccess or onLoginFailed
-
-                // onLoginFailed();
-                progressDialog.Dismiss();
-
-               
+            {                
+                progressDialog.Dismiss();               
                 Finish();
                 return true;
-
             }
             else
-            {
-              
+            {              
                 progressDialog.Dismiss();
                 return false;
-
-            }
-           
+            }           
         }
         public void OnItemClick(AdapterView parent, View view, int position, long languageId)
         {
@@ -184,7 +158,41 @@ namespace NohandicapNative.Droid
                 }             
             }
         }
+        private async void SaveSettings()
+        {
+            if (selectedLanguage != null)
+            {
+                if (await ReloadData())
+                {
 
+                    Utils.WriteToSettings(this, Utils.LANG_ID_TAG, selectedLanguage.ID.ToString());
+                    Utils.WriteToSettings(this, Utils.LANG_SHORT, selectedLanguage.ShortName);
+                    res = Utils.SetLocale(this, selectedLanguage.ShortName);
+                    Utils.ReloadMainActivity(Application, this);
+                    Finish();
+                }
+                else
+                {
+                    new Android.Support.V7.App.AlertDialog.Builder(this)
+                    .SetPositiveButton(Resources.GetString(Resource.String.try_text), (sender, args) =>
+                    {
+                        SaveSettings();
+                    })
+                    .SetNegativeButton(Resources.GetString(Resource.String.continue_text), (sender, args) =>
+                    {
+                        this.Finish();
+                    })
+                    .SetMessage(Resources.GetString(Resource.String.server_not_responding))
+                    .SetTitle(Resources.GetString(Resource.String.error))
+                    .Show();
+                }
+            }
+            else
+            {
+                Finish();
+            }
+        }
+        #region MenuImplement
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
             MenuInflater inflater = MenuInflater;
@@ -201,51 +209,14 @@ namespace NohandicapNative.Droid
                 case Resource.Id.done:
                     SaveSettings();                
                     break;
-
             }
             return base.OnOptionsItemSelected(item);
-        }
-      private async void SaveSettings()
-        {
-            if (selectedLanguage != null)
-            {
-                if (await ReloadData())
-                {
-
-                    Utils.WriteToSettings(this, Utils.LANG_ID_TAG, selectedLanguage.ID.ToString());
-                    Utils.WriteToSettings(this, Utils.LANG_SHORT, selectedLanguage.ShortName);
-                    res = Utils.SetLocale(this, selectedLanguage.ShortName);
-                    Utils.ReloadMainActivity(Application, this);
-                    Finish();
-                }
-                else
-                {
-                    new Android.Support.V7.App.AlertDialog.Builder(this)
-   .SetPositiveButton(Resources.GetString(Resource.String.try_text), (sender, args) =>
-   {
-       SaveSettings();
-   })
-   .SetNegativeButton(Resources.GetString(Resource.String.continue_text), (sender, args) =>
-   {
-       this.Finish();
-   })
-   .SetMessage(Resources.GetString(Resource.String.server_not_responding))
-   .SetTitle(Resources.GetString(Resource.String.error))
-   .Show();
-
-                }
-
-            }
-            else
-            {
-                Finish();
-            }
-          
-        }
-
+        }        
         public void OnNothingSelected(AdapterView parent)
         {
            
         }
+        #endregion
+
     }
 }

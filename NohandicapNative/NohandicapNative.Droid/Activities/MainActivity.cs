@@ -41,6 +41,23 @@ namespace NohandicapNative.Droid
     {
         static readonly string TAG = "X:" + typeof(NohandicapApplication).Name;
         public static MainActivity MainActivity { get; set; }
+          public static CategoryModel SelectedMainCategory
+        {
+            get
+            {
+                CategoryModel cat;
+                var conn = Utils.GetDatabaseConnection();
+                cat = conn.GetSelectedMainCategory();
+                conn.Close();
+                return cat;
+            }
+            set {
+                var conn = Utils.GetDatabaseConnection();
+                conn.SetSelectedCategory(value);
+                conn.Close();
+            }
+
+        }
         private Locale locale = null;
         public static bool isTablet {get;set;}
         
@@ -66,7 +83,7 @@ namespace NohandicapNative.Droid
             string lang = settings.GetString(Utils.LANG_SHORT, null);
             if (lang != null)
             {
-                Utils.setLocale(new Locale(lang));
+                Utils.SetLocale(new Locale(lang));
                 Log.Debug(TAG, "Language: " +lang);
                 Utils.updateConfig(this, BaseContext.Resources.Configuration);
             }     
@@ -75,8 +92,8 @@ namespace NohandicapNative.Droid
             Picasso.Builder builder = new Picasso.Builder(this);
             builder.Downloader(new OkHttpDownloader(this, int.MaxValue));
             Picasso built = builder.Build();
-            built.IndicatorsEnabled=true;
-            built.LoggingEnabled=true;
+            built.IndicatorsEnabled=false;
+            built.LoggingEnabled=false;
             Picasso.SetSingletonInstance(built);
 
         }
@@ -126,6 +143,7 @@ namespace NohandicapNative.Droid
           LocationManager _locationManager;
 
         string _locationProvider;
+      
      
         #endregion
 
@@ -138,6 +156,13 @@ namespace NohandicapNative.Droid
             SetContentView(Resource.Layout.Main);
             NohandicapApplication.isTablet = Resources.GetBoolean(Resource.Boolean.is_tablet);
             NohandicapApplication.MainActivity = this;
+          if(NohandicapApplication.SelectedMainCategory == null)
+            {
+                var conn = Utils.GetDatabaseConnection();
+                var mainCategory = conn.GetDataList<CategoryModel>().FirstOrDefault(x => x.Group == 2&&x.Id==1);
+                conn.SetSelectedCategory(mainCategory);
+                conn.Close();
+            }
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);          
             _bottomBar = BottomBar.AttachShy(FindViewById<CoordinatorLayout>(Resource.Id.myCoordinator), FindViewById<LinearLayout>(Resource.Id.linContent), bundle);
             HomePage = new HomeFragment();
@@ -156,8 +181,8 @@ namespace NohandicapNative.Droid
                 _bottomBar.SelectTabAtPosition(postion, false);
             }
 
-            Task.Run(() => { CheckUpdate();  });
-            Task.Run(() => { InitializeLocationManager(); });
+            ThreadPool.QueueUserWorkItem(o => CheckUpdate());
+            ThreadPool.QueueUserWorkItem(o => InitializeLocationManager());
 
         }
         public async void CheckUpdate()
@@ -165,8 +190,8 @@ namespace NohandicapNative.Droid
             try
             {
                 string langId = Utils.ReadFromSettings(this, Utils.LANG_ID_TAG, "1");
-                var dbCon = Utils.GetDatabaseConnection();
-                var updateList = await RestApiService.CheckUpdate(dbCon, langId, Utils.GetLastUpadte(this));
+                var conn = Utils.GetDatabaseConnection();
+                var updateList = await RestApiService.CheckUpdate(conn, langId, Utils.GetLastUpdate(this));
                 if (updateList != null)
                 {
                     if (updateList.Count != 0)
@@ -177,7 +202,7 @@ namespace NohandicapNative.Droid
                     }
                     Utils.WriteToSettings(this, Utils.LAST_UPDATE_DATE, DateTime.Now.ToShortDateString());
                 }
-                dbCon.Close();
+          
             }catch(Exception e)
             {
                 Log.Debug(TAG, "Check Update " + e.Message);
@@ -268,14 +293,6 @@ namespace NohandicapNative.Droid
                 default:
                     break;
             }
-
-            //if (position == 0)
-            //{
-            //    SupportActionBar.SetDisplayHomeAsUpEnabled(false);
-            //}
-            //else
-            //    SupportActionBar.SetDisplayHomeAsUpEnabled(true);
-
             SupportActionBar.Show();
             SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Color.ParseColor(items[position].Color)));
           SupportActionBar.Title=items[position].Title;
@@ -465,7 +482,7 @@ namespace NohandicapNative.Droid
         }
         public MainActivity()
         {
-            Utils.updateConfig(this);
+            Utils.UpdateConfig(this);
         }
         protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
         {
@@ -477,13 +494,13 @@ namespace NohandicapNative.Droid
                   var currentProductId= data.GetIntExtra(Utils.PRODUCT_ID,-1);
                     if (currentProductId != -1)
                     {
-                        var dbCon = Utils.GetDatabaseConnection();
-                        var products = dbCon.GetDataList<ProductModel>();
-                        var currentProduct = dbCon.GetDataList<ProductModel>().Where(x => x.ID == currentProductId).ToList();
+                        var conn = Utils.GetDatabaseConnection();
+                        var products = conn.GetDataList<ProductModel>();
+                        var currentProduct = conn.GetDataList<ProductModel>().Where(x => x.ID == currentProductId).ToList();
                         MapPage.SetData(new List<CategoryModel>());
                         SetCurrentTab(1);
                         SupportActionBar.Title = currentProduct[0].FirmName;
-                        dbCon.Close();
+                        conn.Close();
                     }
                 }
             }

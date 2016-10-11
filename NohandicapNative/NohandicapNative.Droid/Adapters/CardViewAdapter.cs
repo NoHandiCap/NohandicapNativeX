@@ -25,11 +25,11 @@ namespace NohandicapNative.Droid.Adapters
         {
             this.context = context;
             this.products = products;
-            var dbCon = Utils.GetDatabaseConnection();
-            categories = dbCon.GetDataList<CategoryModel>();         
-           selectedCategory = dbCon.GetDataList<CategoryModel>().Where(x => x.IsSelected).ToList();
+            var conn = Utils.GetDatabaseConnection();
+            categories = conn.GetDataList<CategoryModel>();         
+           selectedCategory = conn.GetDataList<CategoryModel>().Where(x => x.IsSelected).ToList();
    
-            dbCon.Close();
+            conn.Close();
         }
       
 
@@ -89,11 +89,11 @@ namespace NohandicapNative.Droid.Adapters
                 CategoryModel catImage;
                 if (selectedCategory.Count != 0)
                 {
-                    catImage = selectedCategory.FirstOrDefault(x => products[position].Categories.Any(y => y == x.ID));
+                    catImage = selectedCategory.FirstOrDefault(x => products[position].Categories.Any(y => y == x.Id));
                 }
                 else
                 {
-                    catImage = categories.FirstOrDefault(x => products[position].Categories.Any(y => y == x.ID));
+                    catImage = categories.FirstOrDefault(x => products[position].Categories.Any(y => y == x.Id));
 
                 }
                 if (catImage != null)

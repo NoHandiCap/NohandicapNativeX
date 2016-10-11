@@ -16,10 +16,8 @@ using Android.Content.Res;
 namespace NohandicapNative.Droid
 {
   public class FavoritesFragment : Android.Support.V4.App.Fragment
-    {
-        MainActivity myContext;       
-        View view;
-          
+    {            
+        View view;          
         ListView listView;
         List<ProductModel> products;
         TextView noFav;
@@ -33,16 +31,16 @@ namespace NohandicapNative.Droid
         {
           
          
-            if (Utils.ReadFromSettings(myContext, Utils.IS_LOGIN, Utils.IS_NOT_LOGED) == Utils.IS_NOT_LOGED)
+            if (Utils.ReadFromSettings(Activity, Utils.IS_LOGIN, Utils.IS_NOT_LOGED) == Utils.IS_NOT_LOGED)
             {
                 InitiallizeLoginFragment(inflater, container);
-                view.SetBackgroundColor(myContext.Resources.GetColor(Resource.Color.backgroundColor));
+                view.SetBackgroundColor(Activity.Resources.GetColor(Resource.Color.backgroundColor));
                 return view;
             }
             else
             {
                 InitiallizeFavListFragment(inflater, container);
-                view.SetBackgroundColor(myContext.Resources.GetColor(Resource.Color.backgroundColor));
+                view.SetBackgroundColor(Activity.Resources.GetColor(Resource.Color.backgroundColor));
                 return view;
             }
             
@@ -70,7 +68,7 @@ namespace NohandicapNative.Droid
             passwordText = view.FindViewById<EditText>(Resource.Id.input_password);
             var fbImg = Resources.GetDrawable(Resource.Drawable.facebook);
             Drawable[] drawables = fbButton.GetCompoundDrawables();
-            fbButton.SetCompoundDrawablesWithIntrinsicBounds(Utils.SetDrawableSize(myContext,fbImg, 35, 35),drawables[1], drawables[2],drawables[3]);
+            fbButton.SetCompoundDrawablesWithIntrinsicBounds(Utils.SetDrawableSize(Activity, fbImg, 35, 35),drawables[1], drawables[2],drawables[3]);
             ColorStateList csl = new ColorStateList(new int[][] { new int[0] }, new int[] { Resources.GetColor(Resource.Color.fb_button_color)});
             fbButton.SupportBackgroundTintList=csl;
             loginButton.Click += (object sender, EventArgs e) =>
@@ -82,7 +80,7 @@ namespace NohandicapNative.Droid
                 StartActivityForResult(new Intent(Application.Context, typeof(SigUpActivity)), 1) ;
             };
             fbButton.Click +=  (s, e) => {
-             myContext.LoginToFacebook(this,true);               
+             NohandicapApplication.MainActivity.LoginToFacebook(this,true);               
             };
           
         }
@@ -100,10 +98,10 @@ namespace NohandicapNative.Droid
         {
             if (user != null)
             {
-                var dbCon = Utils.GetDatabaseConnection();
-                dbCon.InsertUpdateProduct(user);
-                dbCon.Close();
-                Utils.WriteToSettings(myContext, Utils.IS_LOGIN, Utils.IS_SUCCESS_LOGED);
+                var conn = Utils.GetDatabaseConnection();
+                conn.InsertUpdateProduct(user);
+                conn.Close();
+                Utils.WriteToSettings(Activity, Utils.IS_LOGIN, Utils.IS_SUCCESS_LOGED);
                 ReloadFragment();
             }
         }
@@ -111,7 +109,7 @@ namespace NohandicapNative.Droid
         {
             var fav = new FavoritesFragment();
             //  _myContext.ShowFragment(fav, "fav");
-            Android.Support.V4.App.FragmentManager fragmentManager = myContext.SupportFragmentManager;
+            Android.Support.V4.App.FragmentManager fragmentManager = NohandicapApplication.MainActivity.SupportFragmentManager;
             var trans = fragmentManager.BeginTransaction();
             trans.Replace(Resource.Id.flContent, fav);
             trans.Commit();
@@ -128,7 +126,7 @@ namespace NohandicapNative.Droid
 
             loginButton.Enabled = false;
 
-            ProgressDialog progressDialog = new ProgressDialog(myContext,
+            ProgressDialog progressDialog = new ProgressDialog(Activity,
                      Resource.Style.AppThemeDarkDialog);
             progressDialog.Indeterminate = true;
             progressDialog.SetMessage(Resources.GetString(Resource.String.authentication));
@@ -158,10 +156,10 @@ namespace NohandicapNative.Droid
             var user = await RestApiService.Login(emailText.Text, passwordText.Text);
             if (user != null)
             {
-                var dbCon = Utils.GetDatabaseConnection();
-                dbCon.InsertUpdateProduct(user);
-                dbCon.Close();
-                Utils.WriteToSettings(myContext, Utils.IS_LOGIN, Utils.IS_SUCCESS_LOGED);
+                var conn = Utils.GetDatabaseConnection();
+                conn.InsertUpdateProduct(user);
+                conn.Close();
+                Utils.WriteToSettings(Activity, Utils.IS_LOGIN, Utils.IS_SUCCESS_LOGED);
                 return true;
             }else
             {
@@ -172,7 +170,7 @@ namespace NohandicapNative.Droid
         }
         public void onLoginFailed()
         {
-            Toast.MakeText(myContext, Resources.GetString(Resource.String.error_login), ToastLength.Short).Show();
+            Toast.MakeText(Activity, Resources.GetString(Resource.String.error_login), ToastLength.Short).Show();
 
             loginButton.Enabled = true;
         }
@@ -220,9 +218,9 @@ namespace NohandicapNative.Droid
                 {
                     int position = e.Position;
 
-                    var activity = new Intent(myContext, typeof(DetailActivity));
+                    var activity = new Intent(Activity, typeof(DetailActivity));
                     activity.PutExtra(Utils.PRODUCT_ID, products[position].ID);
-                    myContext.StartActivity(activity);
+                    NohandicapApplication.MainActivity.StartActivity(activity);
                 };
             noFav = view.FindViewById<TextView>(Resource.Id.noFavoritesTextView);
        
@@ -233,12 +231,12 @@ namespace NohandicapNative.Droid
         }
         public async void ReloadData()
         {
-            var dbCon = Utils.GetDatabaseConnection();
-            var user = dbCon.GetDataList<UserModel>().FirstOrDefault();
+            var conn = Utils.GetDatabaseConnection();
+            var user = conn.GetDataList<UserModel>().FirstOrDefault();
             if (user != null)
             {
-                products = dbCon.GetDataList<ProductModel>().Where(x => user.Favorites.Any(y => y == x.ID)).ToList();
-                dbCon.Close();
+                products = conn.GetDataList<ProductModel>().Where(x => user.Favorites.Any(y => y == x.ID)).ToList();
+                conn.Close();
                 if (products.Count == 0)
                 {
                     noFav.Visibility = ViewStates.Visible;
@@ -248,18 +246,13 @@ namespace NohandicapNative.Droid
                     noFav.Visibility = ViewStates.Gone;
 
                 }
-                cardViewAdapter = new CardViewAdapter(myContext, products);
+                cardViewAdapter = new CardViewAdapter(Activity, products);
                 listView.Adapter = cardViewAdapter;
             }
         }
         #endregion
 
 
-        public override void OnAttach(Activity activity)
-        {
-           myContext = (MainActivity)activity;
-            base.OnAttach(activity);           
-        }
       
     }
 }

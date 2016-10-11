@@ -56,6 +56,7 @@
   <string name="last_update">Dernière mise à jour: </string>
   <string name="sync">synchronisé</string>
   <string name="creating_account"> Création d\'un compte ...</string>
+  <string name="all_cat">toutes les catégories</string>
 
 
   <string-array name="lang_array">

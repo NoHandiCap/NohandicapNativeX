@@ -14,17 +14,17 @@ namespace NohandicapNative.Droid.Adapters
 {
     public class GridViewAdapter : BaseAdapter, IOnTouchListener
     {
-        private MainActivity context;
+        private Context context;
         private List<CategoryModel> categories;
        
    
-        public GridViewAdapter(MainActivity context, List<CategoryModel> items)
+        public GridViewAdapter(Context context, List<CategoryModel> items)
         {
             this.context = context;
-            var dbCon = Utils.GetDatabaseConnection();
+            var conn = Utils.GetDatabaseConnection();
 
             this.categories = items;
-            dbCon.Close();
+            conn.Close();
            
           
             //border.SetStroke(2, context.Resources.GetColor(Resource.Color.selectedCategoryColor)); //border with full opacity
@@ -47,7 +47,7 @@ namespace NohandicapNative.Droid.Adapters
         }
         public override long GetItemId(int position)
         {
-            return categories[position].ID;
+            return categories[position].Id;
         }
 
         public override View GetView(int position, View convertView, ViewGroup parent)
@@ -109,9 +109,9 @@ namespace NohandicapNative.Droid.Adapters
                    {                      
                        mainActivity.MapPage.SetData(new List<CategoryModel> { categories[position] });
                        mainActivity.SetCurrentTab(1);
-                       context.SupportActionBar.Title = category.Name;
+                      NohandicapApplication.MainActivity.SupportActionBar.Title = category.Name;
                        categories.ForEach(x => {
-                           if (category.ID == x.ID)
+                           if (category.Id == x.Id)
                            {
                                category.IsSelected = true;
                                db.InsertUpdateProduct(category);

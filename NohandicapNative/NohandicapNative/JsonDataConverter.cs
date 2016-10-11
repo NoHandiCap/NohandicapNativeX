@@ -33,7 +33,7 @@ namespace NohandicapNative
                 model.Thumbs = new List<string>();
                 model.Images = new List<string>();
 
-                var dbCon = Utils.GetDatabaseConnection();
+                var conn = Utils.GetDatabaseConnection();
                 if (thumbs != null)
                 {
                     foreach (var item in thumbs)
