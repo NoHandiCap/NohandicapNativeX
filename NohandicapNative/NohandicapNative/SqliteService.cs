@@ -10,30 +10,39 @@ using System.Linq;
 
 namespace NohandicapNative
 {
-    public  class SqliteService
+    public class SqliteService
     {
         public const string DB_NAME = "nohandicap.db3";
-        private static SQLiteConnection conn;
-        private string _path; 
+
+        private string path;
+        ISQLitePlatform platform;
         public SqliteService(ISQLitePlatform platform, string path)
         {
-            path = Path.Combine(path, DB_NAME);
-            conn = new SQLiteConnection(platform,path, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.SharedCache|SQLiteOpenFlags.FullMutex,true);
-      
-   
+            this.platform = platform;
+            this.path = Path.Combine(path, DB_NAME);
+
+
         }
+        private SQLiteConnection GetSQLiteConnetion()
+        {
+            var conn = new SQLiteConnection(platform, path, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.SharedCache | SQLiteOpenFlags.FullMutex, true);
+            return conn;
+        }
+
         public bool CreateTables()
         {
             try
             {
-                conn.RunInTransaction(() =>
+                using (var conn = GetSQLiteConnetion())
                 {
-                    conn.CreateTable<ImageJsonModel>();             
-                conn.CreateTable<CategoryModel>();              
-                conn.CreateTable<LanguageModel>();
+                    conn.CreateTable<ImageJsonModel>();
+                    conn.CreateTable<CategoryModel>();
+                    conn.CreateTable<LanguageModel>();
                     conn.CreateTable<UserModel>();
-                conn.CreateTable<ProductModel>();
-                });
+                    conn.CreateTable<ProductModel>();
+
+                }
+
                 return true;
             }
             catch (Exception e)
@@ -44,83 +53,102 @@ namespace NohandicapNative
         }
         public string InsertUpdateProduct<T>(T data)
         {
-           
-           
-             
-                    conn.InsertOrReplaceWithChildren(data, true);
-          
-                return "Single data file inserted or updated";
-          
-         
+
+
+            using (var conn = GetSQLiteConnetion())
+            {
+                conn.InsertOrReplaceWithChildren(data, true);
+            }
+            return "Single data file inserted or updated";
+
+
         }
         public string InsertUpdateProductList<T>(List<T> data)
         {
-            
+            using (var conn = GetSQLiteConnetion())
+            {
                 conn.InsertOrReplaceAllWithChildren(data, true);
-      
-           
                 return "Single data file inserted or updated";
-         
-          
+            }
+
+
+
         }
-        public List<T> GetDataList<T>(bool r=true) where T : class
+        public List<T> GetDataList<T>(bool r = true) where T : class
         {
             List<T> result = default(List<T>);
 
-
+            using (var conn = GetSQLiteConnetion())
+            {
                 result = conn.GetAllWithChildren<T>(null, r).ToList();
-            
-            return result;
-           
-        
-            
-        }           
+                return result;
+            }
+
+
+
+
+        }
         public T Find<T>(int pk) where T : class
         {
-            var s= conn.GetAllWithChildren<T>().FirstOrDefault(m => m.GetHashCode() == pk);
-            var k = s.GetHashCode();
-            return s;
-        }
-        public void SetSelectedCategory(CategoryModel category,bool isSelected=true)
-        {
-            if (category.Group == 2)
+            using (var conn = GetSQLiteConnetion())
             {
-                category.IsSelected = true;
-                conn.InsertOrReplace(category);
-                //Uncheck another category
-                var mainCategories = conn.Table<CategoryModel>().Where(x => x.Group == 2).ToList();
-                foreach (var cat in mainCategories)
-                {
-                    if (cat.Id != category.Id)
-                    {
-                        cat.IsSelected = false;
-                        conn.InsertOrReplace(cat);
-                    }
-
-                }
+                var s = conn.GetAllWithChildren<T>().FirstOrDefault(m => m.GetHashCode() == pk);
+                var k = s.GetHashCode();
+                return s;
             }
-            if (category.Group == 1)
+        }
+        public void SetSelectedCategory(CategoryModel category, bool isSelected = true)
+        {
+            using (var conn = GetSQLiteConnetion())
             {
-                category.IsSelected = isSelected;
-                conn.InsertOrReplace(category);
+                if (category.Group == 2)
+                {
+                    category.IsSelected = true;
+                    conn.InsertOrReplace(category);
+                    //Uncheck another category
+                    var mainCategories = conn.Table<CategoryModel>().Where(x => x.Group == 2).ToList();
+                    foreach (var cat in mainCategories)
+                    {
+                        if (cat.Id != category.Id)
+                        {
+                            cat.IsSelected = false;
+                            conn.InsertOrReplace(cat);
+                        }
+
+                    }
+                }
+                if (category.Group == 1)
+                {
+                    category.IsSelected = isSelected;
+                    conn.InsertOrReplace(category);
+                }
             }
         }
         public List<CategoryModel> GetSubSelectedCategory()
         {
-            var categories = conn.Table<CategoryModel>().Where(x => x.IsSelected && x.Group == 1).ToList();
-            return categories;
+            using (var conn = GetSQLiteConnetion())
+            {
+                var categories = conn.Table<CategoryModel>().Where(x => x.IsSelected && x.Group == 1).ToList();
+                return categories;
+            }
         }
         public CategoryModel GetSelectedMainCategory()
         {
-            var mainCat= conn.Table<CategoryModel>().Where(x=>x.Group == 2).ToList();
-            return conn.Table<CategoryModel>().FirstOrDefault(x => x.IsSelected && x.Group == 2);
+            using (var conn = GetSQLiteConnetion())
+            {
+                var mainCat = conn.Table<CategoryModel>().Where(x => x.Group == 2).ToList();
+                return conn.Table<CategoryModel>().FirstOrDefault(x => x.IsSelected && x.Group == 2);
+            }
         }
-     public void Logout()
+        public void Logout()
         {
-            conn.DeleteAll(typeof(UserModel));
-            conn.CreateTable<UserModel>();
+            using (var conn = GetSQLiteConnetion())
+            {
+                conn.DeleteAll(typeof(UserModel));
+                conn.CreateTable<UserModel>();
+            }
         }
-        public  async Task<bool> SynchronizeDataBase(string langID,string TableName=null)
+        public async Task<bool> SynchronizeDataBase(string langID, string TableName = null)
         {
             bool result;
             List<LanguageModel> languages;
@@ -134,17 +162,19 @@ namespace NohandicapNative
 
                     if (languages != null)
                     {
-                        try { 
-                           
-                        conn.DeleteAll(typeof(LanguageModel));
-                        conn.CreateTable<LanguageModel>();
-                        InsertUpdateProductList(languages);
-                    }
+                        try {
+                            using (var conn = GetSQLiteConnetion())
+                            {
+                                conn.DeleteAll(typeof(LanguageModel));
+                                conn.CreateTable<LanguageModel>();
+                                InsertUpdateProductList(languages);
+                            }
+                        }
                         catch (Exception e)
-                    {
-                        var s = e;
-                    }
-                    return true;
+                        {
+                            var s = e;
+                        }
+                        return true;
                     }
                     return false;
                     break;
@@ -152,24 +182,27 @@ namespace NohandicapNative
                     categories = await RestApiService.GetDataFromUrl<List<CategoryModel>>(NohandicapLibrary.LINK_CATEGORY + langID);
                     if (categories != null)
                     {
-                         conn.DeleteAll(typeof(CategoryModel));
-                        conn.CreateTable<CategoryModel>();
-                        var localCategories = NohandicapLibrary.GetAdditionalCategory();
-                       foreach (var x in categories)                            
+                        using (var conn = GetSQLiteConnetion())
                         {
-                                if (x.Group != 2)
-                                {
-                                    var cat = localCategories.FirstOrDefault(y => y.Id == x.Id);
-                                    x.Icon = cat.Icon;
-                                    x.Color = cat.Color;
-                                    x.Marker = "marker_" + cat.Icon;
-                                }
+                            conn.DeleteAll(typeof(CategoryModel));
+                            conn.CreateTable<CategoryModel>();
+                        }
+                        var localCategories = NohandicapLibrary.GetAdditionalCategory();
+                        foreach (var x in categories)
+                        {
+                            if (x.Group != 2)
+                            {
+                                var cat = localCategories.FirstOrDefault(y => y.Id == x.Id);
+                                x.Icon = cat.Icon;
+                                x.Color = cat.Color;
+                                x.Marker = "marker_" + cat.Icon;
+                            }
                         }
 
                         InsertUpdateProductList(categories);
-                            return true;
-                        
-                      
+                        return true;
+
+
 
                     }
                     return false;
@@ -180,11 +213,15 @@ namespace NohandicapNative
                     {
                         try
                         {
-                            conn.DeleteAll(typeof(ProductModel));
-                            conn.CreateTable<ProductModel>();
+                            using (var conn = GetSQLiteConnetion())
+                            {
+                                conn.DeleteAll(typeof(ProductModel));
+                                conn.CreateTable<ProductModel>();
+                            }
                             InsertUpdateProductList(products);
+
                             return true;
-                        }catch(Exception e)
+                        } catch (Exception e)
                         {
                             var s = e;
                         }
@@ -192,10 +229,10 @@ namespace NohandicapNative
                     return false;
                     break;
                 default:
-                   var l= await SynchronizeDataBase(langID, NohandicapLibrary.LANGUAGE_TABLE);
-                  var c=await  SynchronizeDataBase(langID, NohandicapLibrary.CATEGORY_TABLE);
-                  var p= await SynchronizeDataBase(langID, NohandicapLibrary.PRODUCT_TABLE);
-                    if (l|| c  || p )
+                    var l = await SynchronizeDataBase(langID, NohandicapLibrary.LANGUAGE_TABLE);
+                    var c = await SynchronizeDataBase(langID, NohandicapLibrary.CATEGORY_TABLE);
+                    var p = await SynchronizeDataBase(langID, NohandicapLibrary.PRODUCT_TABLE);
+                    if (l || c || p)
                     {
                         return true;
                     } else
@@ -203,36 +240,38 @@ namespace NohandicapNative
                         return false;
                     }
                     break;
-            }     
-           
-           
-         
+            }
+
+
+
             return true;
-         
-           
+
+
         }
         public void UnSelectAllCategories()
         {
-           var categories= conn.Table<CategoryModel>().ToList();
-            categories.ForEach(x =>
+            using (var conn = GetSQLiteConnetion())
             {
-                if (x.IsSelected)
+                var categories = conn.Table<CategoryModel>().ToList();
+                categories.ForEach(x =>
                 {
-                    x.IsSelected = false;
-                    InsertUpdateProduct(x);
-                }
-            });
+                    if (x.IsSelected)
+                    {
+                        x.IsSelected = false;
+                        InsertUpdateProduct(x);
+                    }
+                });
+            }
+        }
 
-        }
-        public void Close()
-        {
-            conn.Close();
-            
-        }
         public void BeginTransaction()
         {
-            conn.BeginTransaction();
+            using (var conn = GetSQLiteConnetion())
+            {
+                conn.BeginTransaction();
+
+            }
+
         }
-       
     }
 }

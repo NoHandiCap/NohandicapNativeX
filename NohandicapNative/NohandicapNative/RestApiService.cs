@@ -204,7 +204,7 @@ namespace NohandicapNative
                 updateList.Add(NohandicapLibrary.PRODUCT_TABLE, productTable);
                 updateList.Add(NohandicapLibrary.CATEGORY_TABLE, categoryTable);
                 updateList.Add(NohandicapLibrary.LANGUAGE_TABLE, langTable);
-                conn.Close();
+                
                 return updateList;
                
             }

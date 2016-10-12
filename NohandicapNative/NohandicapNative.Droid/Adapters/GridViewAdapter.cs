@@ -24,7 +24,7 @@ namespace NohandicapNative.Droid.Adapters
             var conn = Utils.GetDatabaseConnection();
 
             this.categories = items;
-            conn.Close();
+            
            
           
             //border.SetStroke(2, context.Resources.GetColor(Resource.Color.selectedCategoryColor)); //border with full opacity
@@ -148,7 +148,7 @@ namespace NohandicapNative.Droid.Adapters
                            mainActivity.MapPage.SetData(selectedCategories);
 
                        }
-                       db.Close();
+                     
                await mainActivity.MapPage.LoadData();
                        
                    }                 

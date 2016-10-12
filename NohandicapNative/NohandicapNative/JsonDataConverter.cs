@@ -7,7 +7,6 @@ using System.Text;
 using System.Linq;
 #if __ANDROID__
 using NohandicapNative.Droid.Services;
-using NohandicapNative.Droid.Services;
 #endif
 namespace NohandicapNative
 {

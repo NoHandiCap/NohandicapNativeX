@@ -58,7 +58,7 @@ namespace NohandicapNative.Droid
 
             var selectedSubCategory = conn.GetSubSelectedCategory();
             Products = conn.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= NohandicapApplication.SelectedMainCategory.Id).ToList();
-            conn.Close();
+            
 
             if (selectedSubCategory.Count != 0)
             {

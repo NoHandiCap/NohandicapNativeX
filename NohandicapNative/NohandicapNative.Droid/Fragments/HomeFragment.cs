@@ -20,12 +20,10 @@ namespace NohandicapNative.Droid
        int[] mainCategoriesImgView = { Resource.Id.imageView, Resource.Id.imageView2, Resource.Id.imageView3 };
        int[] mainCategoriesLayout= { Resource.Id.category_linearLayout, Resource.Id.category_linearLayout3, Resource.Id.category_linearLayout2 };
       
-        ButtonGridView additionalCategory;
-        ListView mainCategory;
+        ButtonGridView additionalCategory;     
         View rootView;
         LayoutInflater inflater;
-        ViewGroup container;
-        bool isMapReady = false;
+        ViewGroup container;        
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             this.inflater = inflater;
@@ -50,7 +48,7 @@ namespace NohandicapNative.Droid
                 var conn = Utils.GetDatabaseConnection();
                List<CategoryModel> mainCategoriesList = conn.GetDataList<CategoryModel>().Where(x => x.Group == 2).ToList();
                 List<CategoryModel> subCategoriesList = conn.GetSubSelectedCategory();
-                conn.Close();
+                
                 TextView[] mainCat = new TextView[mainCategoriesList.Count];
             ImageView[] mainImg = new ImageView[mainCategoriesList.Count];
             LinearLayout[] mainLayout = new LinearLayout[mainCategoriesList.Count];   
@@ -88,7 +86,7 @@ namespace NohandicapNative.Droid
                                 mainLayout[y].Selected = true;
                                 var conn2 = Utils.GetDatabaseConnection();
                                 conn2.SetSelectedCategory(mainCategoriesList[y]);
-                                conn2.Close();
+                                
                             }
                         }
                     }

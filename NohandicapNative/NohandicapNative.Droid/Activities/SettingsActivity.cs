@@ -66,7 +66,7 @@ namespace NohandicapNative.Droid
                 progressDialog.Show();
                 var _selectedLangID = Utils.ReadFromSettings(this,Utils.LANG_ID_TAG);
                 bool result = await conn.SynchronizeDataBase(_selectedLangID);
-                conn.Close();
+                
                 if (result)
                 {                 
                     progressDialog.Dismiss();
@@ -99,7 +99,7 @@ namespace NohandicapNative.Droid
                 logoutButton.Click += (s, e) =>
                 {
                     conn.Logout();
-                    conn.Close();
+                    
                     Utils.WriteToSettings(this, Utils.IS_LOGIN, Utils.IS_NOT_LOGED);
                     loginLayout.Visibility = ViewStates.Gone;
                    NohandicapApplication.MainActivity.Favorites=new FavoritesFragment();
@@ -121,7 +121,7 @@ namespace NohandicapNative.Droid
             progressDialog.Show();
             var conn = Utils.GetDatabaseConnection();
             var result = await conn.SynchronizeDataBase(selectedLanguage.ID.ToString());
-            conn.Close();
+            
             if (result)
             {                
                 progressDialog.Dismiss();               

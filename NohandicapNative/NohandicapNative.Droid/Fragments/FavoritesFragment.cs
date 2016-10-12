@@ -100,7 +100,7 @@ namespace NohandicapNative.Droid
             {
                 var conn = Utils.GetDatabaseConnection();
                 conn.InsertUpdateProduct(user);
-                conn.Close();
+                
                 Utils.WriteToSettings(Activity, Utils.IS_LOGIN, Utils.IS_SUCCESS_LOGED);
                 ReloadFragment();
             }
@@ -158,7 +158,7 @@ namespace NohandicapNative.Droid
             {
                 var conn = Utils.GetDatabaseConnection();
                 conn.InsertUpdateProduct(user);
-                conn.Close();
+                
                 Utils.WriteToSettings(Activity, Utils.IS_LOGIN, Utils.IS_SUCCESS_LOGED);
                 return true;
             }else
@@ -236,7 +236,7 @@ namespace NohandicapNative.Droid
             if (user != null)
             {
                 products = conn.GetDataList<ProductModel>().Where(x => user.Favorites.Any(y => y == x.ID)).ToList();
-                conn.Close();
+                
                 if (products.Count == 0)
                 {
                     noFav.Visibility = ViewStates.Visible;

@@ -48,17 +48,17 @@ namespace NohandicapNative.Droid
                 CategoryModel cat;
                 var conn = Utils.GetDatabaseConnection();
                 cat = conn.GetSelectedMainCategory();
-                conn.Close();
+                
                 return cat;
             }
             set {
                 var conn = Utils.GetDatabaseConnection();
                 conn.SetSelectedCategory(value);
-                conn.Close();
+                
             }
 
         }
-        private Locale locale = null;
+     
         public static bool isTablet {get;set;}
         
         public NohandicapApplication(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
@@ -128,7 +128,6 @@ namespace NohandicapNative.Droid
     {
         #region Properties
         static readonly string TAG = "X:" + typeof(MainActivity).Name;
-        int PICK_CONTACT_REQUEST = 1;  // The request code
         private BottomBar _bottomBar;
         Android.Support.V7.Widget.Toolbar toolbar;
         List<TabItem> items;
@@ -161,7 +160,7 @@ namespace NohandicapNative.Droid
                 var conn = Utils.GetDatabaseConnection();
                 var mainCategory = conn.GetDataList<CategoryModel>().FirstOrDefault(x => x.Group == 2&&x.Id==1);
                 conn.SetSelectedCategory(mainCategory);
-                conn.Close();
+                
             }
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);          
             _bottomBar = BottomBar.AttachShy(FindViewById<CoordinatorLayout>(Resource.Id.myCoordinator), FindViewById<LinearLayout>(Resource.Id.linContent), bundle);
@@ -500,7 +499,7 @@ namespace NohandicapNative.Droid
                         MapPage.SetData(new List<CategoryModel>());
                         SetCurrentTab(1);
                         SupportActionBar.Title = currentProduct[0].FirmName;
-                        conn.Close();
+                        
                     }
                 }
             }

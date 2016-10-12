@@ -63,7 +63,7 @@ namespace NohandicapNative.Droid
                 {
                     SetData(conn.GetDataList<CategoryModel>());
                 }
-                conn.Close();
+                
             } catch(Exception e)
             {
                 Log.Debug(TAG, "Check Update " + e.Message);
@@ -180,7 +180,7 @@ namespace NohandicapNative.Droid
                 {
                     var conn = Utils.GetDatabaseConnection();
                     products = conn.GetDataList<ProductModel>();
-                    conn.Close();
+                    
                 }
                 await LoadData();           
             }
@@ -290,7 +290,7 @@ namespace NohandicapNative.Droid
                     var conn = Utils.GetDatabaseConnection();
                     conn.UnSelectAllCategories();                  
                     SetData(conn.GetDataList<CategoryModel>());
-                    conn.Close();
+                    
                     NohandicapApplication.MainActivity.SupportActionBar.Title = "Map";                            
                       LoadData();
                  

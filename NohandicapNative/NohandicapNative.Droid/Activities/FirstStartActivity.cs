@@ -186,7 +186,7 @@ namespace NohandicapNative.Droid
                         Utils.WriteToSettings(this, NohandicapLibrary.LANGUAGE_TABLE, result[NohandicapLibrary.LANGUAGE_TABLE]);
                     }
                     Utils.WriteToSettings(this, Utils.LAST_UPDATE_DATE, DateTime.Now.ToShortDateString());
-                conn.Close();
+                
                 StartActivity(new Intent(Application.Context, typeof(MainActivity)));
                 Finish();
              
@@ -194,7 +194,7 @@ namespace NohandicapNative.Droid
             else
             {
                 progressDialog.Dismiss();
-                conn.Close();
+                
                 new Android.Support.V7.App.AlertDialog.Builder(this)
      .SetPositiveButton(Resources.GetString(Resource.String.try_text), (sender, args) =>
      {

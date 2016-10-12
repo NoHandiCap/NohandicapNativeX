@@ -163,7 +163,7 @@ namespace NohandicapNative.Droid
                     }
 
                 }
-            conn.Close();
+            
           
         }     
       private void HideEmptyTextView()
@@ -290,7 +290,7 @@ namespace NohandicapNative.Droid
                     var url = String.Format(NohandicapLibrary.LINK_DELFAV, user.ID, product.ID);
                     RestApiService.GetDataFromUrl<UserModel>(url, readBack: false);
                 }
-                conn.Close();
+                
             }
             else
             {

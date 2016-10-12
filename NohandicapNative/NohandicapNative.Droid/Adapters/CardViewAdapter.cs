@@ -26,10 +26,10 @@ namespace NohandicapNative.Droid.Adapters
             this.context = context;
             this.products = products;
             var conn = Utils.GetDatabaseConnection();
-            categories = conn.GetDataList<CategoryModel>();         
-           selectedCategory = conn.GetDataList<CategoryModel>().Where(x => x.IsSelected).ToList();
+            categories = conn.GetDataList<CategoryModel>();
+            selectedCategory = conn.GetSubSelectedCategory();
    
-            conn.Close();
+            
         }
       
 
@@ -85,7 +85,7 @@ namespace NohandicapNative.Droid.Adapters
             }
             else
             {
-
+                //lat.low, long.low, lat.hig
                 CategoryModel catImage;
                 if (selectedCategory.Count != 0)
                 {
