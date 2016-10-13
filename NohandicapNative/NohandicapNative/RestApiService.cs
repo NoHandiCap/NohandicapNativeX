@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -57,8 +58,6 @@ namespace NohandicapNative
                 }
             }
         }
-
-
         public static async Task<T> GetDataFromUrl<T>(string dataUri, string rootName = "result", bool readBack = true)
         {
             var content = await GetStringContent(dataUri, rootName);
@@ -71,11 +70,26 @@ namespace NohandicapNative
             {
                 return default(T);
             }
+        }   
+
+        public static async Task<List<ProductMarkerModel>> GetProductMarkerListForMap(double lat_low,double lng_low, double lat_hight, double lng_hight,CategoryModel mainCat, List<CategoryModel> categoriesFilter)
+        {
+            var products=await GetDataFromUrl<List<ProductMarkerModel>>(BuildBoundUrl(lat_low,lng_low,lat_hight,lng_hight,mainCat,categoriesFilter));
+            return products;
         }
+        private static string BuildBoundUrl(double lat_low, double lng_low, double lat_hight, double lng_hight, CategoryModel mainCat, List<CategoryModel> categoriesFilter,int count=50)
+        {
+            var mainCategory = mainCat.Id;
+            string boundBox = lat_low + "," + lng_low + "," + lat_hight + "," + lng_hight;
+            string subCategories="";
+            foreach (var item in categoriesFilter)
+            {
+                subCategories += "," + item.Id;
+            }
 
-
-
-
+            string url = string.Format(NohandicapLibrary.LINK_GET_MARKERS, mainCategory, count, boundBox, subCategories);
+            return url;
+        }
         public static T Deserializedata<T>(string content, string rootName = "result")
         {
             try
