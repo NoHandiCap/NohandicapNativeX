@@ -116,6 +116,59 @@
                 </LinearLayout>
             </RelativeLayout>
         </LinearLayout>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/dataProtectionLayout"
+            android:layout_below="@+id/logo"
+            android:visibility="gone">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="bottom|top"
+                android:layout_marginBottom="0.0dp">
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_above="@+id/linearDataProtectionLayout">
+                    <ScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/scrollView"
+                        android:fillViewport="true">
+                        <TextView
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:text="Small Text"
+                            android:id="@+id/dataProtectionTextView" />
+                    </ScrollView>
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="false"
+                    android:layout_alignParentStart="false"
+                    android:layout_alignParentEnd="true"
+                    android:id="@+id/linearDataProtectionLayout"
+                    android:layout_alignParentRight="true">
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/accept"
+                        android:id="@+id/agreeDataProtectionButton"
+                        style="@style/AppThemeNoBar.Button"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_gravity="right" />
+                </LinearLayout>
+            </RelativeLayout>
+        </LinearLayout>
     <!--<Spinner
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
