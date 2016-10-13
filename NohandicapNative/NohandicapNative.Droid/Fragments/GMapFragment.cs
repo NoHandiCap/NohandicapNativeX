@@ -31,7 +31,7 @@ namespace NohandicapNative.Droid
         List<MarkerOptions> markerOptons;    
         MapView mapView;
         List<CategoryModel> currentCategories;
-        List<ProductModel> productsInBounds;
+        List<ProductMarkerModel> productsInBounds;
         LatLngBounds latLngBounds = null;   
         ClusterManager _clusterManager;
         static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1,1);
@@ -53,7 +53,7 @@ namespace NohandicapNative.Droid
                 markersList = new List<Marker>();
                 markerOptons = new List<MarkerOptions>();             
                 products = conn.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= NohandicapApplication.SelectedMainCategory.Id).ToList();
-                productsInBounds = new List<ProductModel>();
+                productsInBounds = new List<ProductMarkerModel>();
                 var allCategoriesList = conn.GetSubSelectedCategory();
                 if (allCategoriesList.Count != 0)
                 {
@@ -61,7 +61,7 @@ namespace NohandicapNative.Droid
                 }
                 else
                 {
-                    SetData(conn.GetDataList<CategoryModel>());
+                    SetData(conn.GetDataList<CategoryModel>().Where(x=>x.Group==1).ToList());
                 }
                 
             } catch(Exception e)
@@ -83,9 +83,7 @@ namespace NohandicapNative.Droid
                     });
                 }).ContinueWith(async t =>
                  {
-                     var productsForCategories = products.Where(x => x.Categories.Any(y => currentCategories.Any(z => z.Id == y))).ToList();
-                         //Reload task untill latLngBounds not null
-                         if (latLngBounds == null)
+                     if (latLngBounds == null)
                      {
                          await semaphoreSlim.WaitAsync();
                          try
@@ -99,13 +97,19 @@ namespace NohandicapNative.Droid
                          }
                          return;
                      }
-                         //---------------
+                       
+                        var productsForCategories = await RestApiService.GetProductMarkerListForMap(latLngBounds.Southwest.Latitude, latLngBounds.Southwest.Longitude, latLngBounds.Northeast.Latitude, latLngBounds.Northeast.Longitude,NohandicapApplication.SelectedMainCategory, currentCategories);
+                     //var productsForCategories = products.Where(x => x.Categories.Any(y => currentCategories.Any(z => z.Id == y))).ToList();
+                     //    //Reload task untill latLngBounds not null
+                     //   
+                     //}
+                     //    //---------------
 
-                         var newProductsInBound = productsForCategories
-                         .Where(x => latLngBounds.Contains(new LatLng(
-                         double.Parse(x.Lat, CultureInfo.InvariantCulture),
-                         double.Parse(x.Long, CultureInfo.InvariantCulture))) && !productsInBounds.Contains(x))
-                         .ToList();
+                     var newProductsInBound = productsForCategories
+                     .Where(x => latLngBounds.Contains(new LatLng(
+                     double.Parse(x.Lat, CultureInfo.InvariantCulture),
+                     double.Parse(x.Lng, CultureInfo.InvariantCulture))) && !productsInBounds.Contains(x))
+                     .ToList();
                      if (currentCameraPosition != null)
                      {
                          if (currentCameraPosition.Zoom < 11)
@@ -116,30 +120,31 @@ namespace NohandicapNative.Droid
                      foreach (var product in newProductsInBound)
                      {
                          var lat = double.Parse(product.Lat, CultureInfo.InvariantCulture);
-                         var lng = double.Parse(product.Long, CultureInfo.InvariantCulture);
+                         var lng = double.Parse(product.Lng, CultureInfo.InvariantCulture);
                          var clusterItem = new ClusterItem(lat, lng);
-                         var catMarker = currentCategories.FirstOrDefault(x => product.Categories.Any(y => y == x.Id)).Marker;
-                         string imageUrl = "";
-                         if (string.IsNullOrEmpty(product.ProductMarkerImg))
-                         {
-                             imageUrl = ContentResolver.SchemeAndroidResource + "://" + Activity.PackageName + "/drawable/" + catMarker;
-                         }
-                         else
-                         {
-                             imageUrl = product.ProductMarkerImg;
-                         }
-                         var markerImg = Picasso.With(Activity).Load(imageUrl).Resize(32, 34).Get();
+                         //var catMarker = currentCategories.FirstOrDefault(x => product.Categories.Any(y => y == x.Id)).Marker;
+                         //string imageUrl = "";
+                         //if (string.IsNullOrEmpty(product.ProductMarkerImg))
+                         //{
+                         //    imageUrl = ContentResolver.SchemeAndroidResource + "://" + Activity.PackageName + "/drawable/" + catMarker;
+                         //}
+                         //else
+                         //{
+                         //    imageUrl = product.ProductMarkerImg;
+                         //}
+                         var markerImg = Picasso.With(Activity).Load(product.ProdimgPin).Resize(32, 34).Get();
                          clusterItem.Icon = BitmapDescriptorFactory.FromBitmap(markerImg);
-                         clusterItem.ProductId = product.ID;
-                         productsInBounds.Add(product);
+                         clusterItem.ProductId = product.Id;
+                         //   productsInBounds.Add(product);
+                      
                          _clusterManager.AddItem(clusterItem);
                      }
                  }).ContinueWith(t =>
                  {
-                     Activity.RunOnUiThread(() =>
-                     {
-                         _clusterManager.Cluster();//Workaround show markers after add new
-                         });
+                     //Activity.RunOnUiThread(() =>
+                     //{
+                     //    _clusterManager.Cluster();//Workaround show markers after add new
+                     //    });
 
                  }, TaskScheduler.FromCurrentSynchronizationContext());
 
@@ -211,10 +216,8 @@ namespace NohandicapNative.Droid
             else
             {
                 builder.Target(new LatLng(48.2274656, 16.4067023)).Zoom(10);
-            }
-          
-            _clusterManager = new ClusterManager(Activity, map);      
-                 
+            }          
+            _clusterManager = new ClusterManager(Activity, map);                    
             _clusterManager.SetRenderer(new ClusterIconRendered(Activity, map, _clusterManager));
             map.SetOnCameraChangeListener(this);
             CameraPosition cameraPosition = builder.Build();
@@ -269,6 +272,7 @@ namespace NohandicapNative.Droid
             return products.FirstOrDefault(x => x.ID.ToString() == marker.Title);
         }
         #endregion
+
         #region Menu implementation
         public override void OnCreateOptionsMenu(IMenu menu, MenuInflater inflater)
         {
@@ -289,7 +293,7 @@ namespace NohandicapNative.Droid
                 case Resource.Id.select_all:
                     var conn = Utils.GetDatabaseConnection();
                     conn.UnSelectAllCategories();                  
-                    SetData(conn.GetDataList<CategoryModel>());
+                    SetData(conn.GetDataList<CategoryModel>().Where(x=>x.Group==1).ToList());
                     
                     NohandicapApplication.MainActivity.SupportActionBar.Title = "Map";                            
                       LoadData();

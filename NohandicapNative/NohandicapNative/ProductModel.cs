@@ -3,7 +3,7 @@ using SQLite.Net.Attributes;
 using SQLiteNetExtensions.Attributes;
 using System;
 using System.Collections.Generic;
-using System.Text;
+
 
 namespace NohandicapNative
 {
