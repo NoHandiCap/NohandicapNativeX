@@ -102,7 +102,7 @@ namespace NohandicapNative.Droid.Adapters
                {
                    var db = Utils.GetDatabaseConnection();
                    var mainActivity = (MainActivity)context;
-                   var products = db.GetDataList<ProductModel>();
+                   //var products = db.GetDataList<ProductModel>();
 
 
                    if (!NohandicapApplication.isTablet)
@@ -110,6 +110,7 @@ namespace NohandicapNative.Droid.Adapters
                        mainActivity.MapPage.SetData(new List<CategoryModel> { categories[position] });
                        mainActivity.SetCurrentTab(1);
                       NohandicapApplication.MainActivity.SupportActionBar.Title = category.Name;
+
                        categories.ForEach(x => {
                            if (category.Id == x.Id)
                            {
