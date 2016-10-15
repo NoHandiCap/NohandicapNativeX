@@ -11,7 +11,7 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "NohandicapNative", "Nohandi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NohandicapNative.iOS", "NohandicapNative.iOS\NohandicapNative.iOS.csproj", "{950262B1-29D2-494C-A226-8211555395AF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoogleMapsUtilityBinding", "NohandicapNative\NohandicapNative.Droid\Xamarin.Android.Maps.Utils\GoogleMapsUtilityBinding.csproj", "{BC829F65-B3B0-43C3-A282-FD5497656434}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoogleMapsUtility", "NohandicapNative\NohandicapNative.Droid\Xamarin.Android.Maps.Utils\GoogleMapsUtility.csproj", "{BC829F65-B3B0-43C3-A282-FD5497656434}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution

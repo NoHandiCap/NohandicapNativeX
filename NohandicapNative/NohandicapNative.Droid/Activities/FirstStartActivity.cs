@@ -107,7 +107,7 @@ namespace NohandicapNative.Droid
         }
         private void SetLocale(int position)
         {
-            Utils.WriteToSettings(this, Utils.LANG_ID_TAG, LanguagesList[position].ID.ToString());
+            Utils.WriteToSettings(this, Utils.LANG_ID_TAG, LanguagesList[position].Id.ToString());
             Utils.WriteToSettings(this, Utils.LANG_SHORT, LanguagesList[position].ShortName);
             res = Utils.SetLocale(this, LanguagesList[position].ShortName);
             nextButton.Text = res.GetString(Resource.String.next);
@@ -147,7 +147,7 @@ namespace NohandicapNative.Droid
                 for (int i = 0; i < defaultLanguages.Length; i++)
                 {
                     LanguageModel lang = new LanguageModel();
-                    lang.ID = i + 1;
+                    lang.Id = i + 1;
                     lang.ShortName = defaultShortLanguages[i];
                     lang.LanguageName = defaultLanguages[i];
                
@@ -246,7 +246,7 @@ namespace NohandicapNative.Droid
 
         public void OnItemSelected(AdapterView parent, View view, int position, long id)
         {
-            Utils.WriteToSettings(this, Utils.LANG_ID_TAG, LanguagesList[position].ID.ToString());
+            Utils.WriteToSettings(this, Utils.LANG_ID_TAG, LanguagesList[position].Id.ToString());
             Utils.WriteToSettings(this, Utils.LANG_SHORT, LanguagesList[position].ShortName);
             res = Utils.SetLocale(this, LanguagesList[position].ShortName);
             nextButton.Text = res.GetString(Resource.String.next);

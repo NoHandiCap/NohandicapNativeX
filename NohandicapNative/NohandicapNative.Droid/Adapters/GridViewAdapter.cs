@@ -138,7 +138,7 @@ namespace NohandicapNative.Droid.Adapters
                            db.InsertUpdateProduct(category);
                            NotifyDataSetChanged();
                        }
-                       var selectedCategories = db.GetDataList<CategoryModel>().Where(x => x.IsSelected).ToList();
+                       var selectedCategories = db.GetDataList<CategoryModel>(x => x.IsSelected).ToList();
                        if (selectedCategories.Count == 0)
                        {
 

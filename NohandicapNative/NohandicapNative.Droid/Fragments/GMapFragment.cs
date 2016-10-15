@@ -17,6 +17,7 @@ using static Android.Gms.Maps.GoogleMap;
 using NohandicapNative.Droid.Model;
 using System.Threading;
 using Square.Picasso;
+using Android.Graphics.Drawables;
 
 namespace NohandicapNative.Droid
 {
@@ -42,6 +43,7 @@ namespace NohandicapNative.Droid
             this.inflater = inflater;          
             var view = inflater.Inflate(Resource.Layout.MapPage, container, false);
             view.SetBackgroundColor(NohandicapApplication.MainActivity.Resources.GetColor(Resource.Color.backgroundColor));
+
             HasOptionsMenu = true;
             mapView = view.FindViewById<MapView>(Resource.Id.map);
             mapView.OnCreate(savedInstanceState);
@@ -50,6 +52,7 @@ namespace NohandicapNative.Droid
             try
             {
                 var conn = Utils.GetDatabaseConnection();
+            
                 markersList = new List<Marker>();
                 markerOptons = new List<MarkerOptions>();             
               //  products = conn.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= NohandicapApplication.SelectedMainCategory.Id).ToList();
@@ -61,7 +64,7 @@ namespace NohandicapNative.Droid
                 }
                 else
                 {
-                    SetData(conn.GetDataList<CategoryModel>().Where(x=>x.Group==1).ToList());
+                    SetData(conn.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.SubCatGroup));
                 }
                 
             } catch(Exception e)
@@ -98,7 +101,10 @@ namespace NohandicapNative.Droid
                          return;
                      }
                        
-                        var productsForCategories = await RestApiService.GetProductMarkerListForMap(latLngBounds.Southwest.Latitude, latLngBounds.Southwest.Longitude, latLngBounds.Northeast.Latitude, latLngBounds.Northeast.Longitude,NohandicapApplication.SelectedMainCategory, currentCategories);
+                     var productsForCategories =
+                       await RestApiService.GetMarkers(latLngBounds.Southwest.Latitude, latLngBounds.Southwest.Longitude,
+                       latLngBounds.Northeast.Latitude, latLngBounds.Northeast.Longitude,
+                       NohandicapApplication.SelectedMainCategory, currentCategories);
                      //var productsForCategories = products.Where(x => x.Categories.Any(y => currentCategories.Any(z => z.Id == y))).ToList();
                      //    //Reload task untill latLngBounds not null
                      //   
@@ -119,37 +125,33 @@ namespace NohandicapNative.Droid
                      {
                          var lat = double.Parse(product.Lat, CultureInfo.InvariantCulture);
                          var lng = double.Parse(product.Lng, CultureInfo.InvariantCulture);
-                         var clusterItem = new ClusterItem(lat, lng);
-                        var catMarker = currentCategories.FirstOrDefault(x => product.Categories.Any(y => y == x.Id)).Marker;
-                         string imageUrl = "";
-                         if (string.IsNullOrEmpty(product.ProdimgPin))
-                         {
-                             imageUrl = ContentResolver.SchemeAndroidResource + "://" + Activity.PackageName + "/drawable/" + catMarker;
-                         }
-                         else
-                         {
-                             imageUrl = product.ProdimgPin;
-                         }
-                     //    var markerImg = Picasso.With(Activity).Load(product.ProdimgPin).Resize(32, 34).Get();
+
+                     //    var clusterItem = new ClusterItem(lat, lng);
+                         var catMarker = currentCategories.FirstOrDefault(x => product.Categories.Any(y => y == x.Id)).Marker;
+                         string catPinUrl = ContentResolver.SchemeAndroidResource + "://" + Activity.PackageName + "/drawable/" + catMarker;
+                         string customPinUrl = product.ProdimgPin;
+                         var catBitmap = Picasso.With(Activity).Load(catPinUrl).Get();
+                         var bitmapDesc = BitmapDescriptorFactory.FromBitmap(catBitmap);
+
+                         //    var markerImg = Picasso.With(Activity).Load(product.ProdimgPin).Resize(32, 34).Get();
                          // clusterItem.Icon = BitmapDescriptorFactory.FromBitmap(markerImg);
                          // clusterItem.ProductId = product.Id;
-                          var options = new MarkerOptions();
+                         var options = new MarkerOptions();
                          options.SetPosition(new LatLng(lat, lng));
-                         try
+                         options.Visible(false);
+                         Activity.RunOnUiThread(() =>
                          {
-                             Activity.RunOnUiThread(() => {
-                             var marker = map.AddMarker(options);
+                             var marker = map.AddMarker(options);                           
                              var picassoMarker = new PicassoMarker(marker);
-                             Picasso.With(Activity).Load(imageUrl).Into(picassoMarker);
+                             if (!string.IsNullOrEmpty(customPinUrl))
+                             {
+                                 Picasso.With(Activity).Load(customPinUrl).Error(new BitmapDrawable(catBitmap)).Into(picassoMarker);
+                             }
                              markersList.Add(marker);
                              productsInBounds.Add(product);
-                             });
-                         }
-                         catch(Exception e)
-                         {
+                         });
 
-                         }
-                       //  _clusterManager.AddItem(clusterItem);
+                         //  _clusterManager.AddItem(clusterItem);
                      }
                  }).ContinueWith(t =>
                  {
@@ -305,7 +307,7 @@ namespace NohandicapNative.Droid
                 case Resource.Id.select_all:
                     var conn = Utils.GetDatabaseConnection();
                     conn.UnSelectAllCategories();                  
-                    SetData(conn.GetDataList<CategoryModel>().Where(x=>x.Group==1).ToList());
+                    SetData(conn.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.MainCatGroup));
                     
                     NohandicapApplication.MainActivity.SupportActionBar.Title = "Map";                            
                       LoadData();

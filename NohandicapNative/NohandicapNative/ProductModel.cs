@@ -55,7 +55,7 @@ namespace NohandicapNative
         public List<int> Categories { get; set; }  
         [flield: NonSerialized]
         private ImageJsonModel _imageCollection;
-        [JsonProperty(PropertyName = "img"), JsonConverter(typeof(ImageDataConverter)), OneToOne(CascadeOperations=CascadeOperation.All)]
+        [JsonProperty(PropertyName = "img"), JsonConverter(typeof(ImageDataConverter)), TextBlob("imagesBlobbed")]
         public ImageJsonModel ImageCollection
         {
             get
@@ -68,9 +68,11 @@ namespace NohandicapNative
             }
         }
 
-        [ForeignKey(typeof(ImageJsonModel))]
-        public int ImageJsonID { get; set; }
+    //    [ForeignKey(typeof(ImageJsonModel))]
+   //     public int ImageJsonID { get; set; }
         public string categoriesBlobbed { get; set; }
+        public string imagesBlobbed { get; set; }
+
         public string productMarkerImgBlobbed { get; set; }
         public string productFirmLogoBlobbed { get; set; }
 

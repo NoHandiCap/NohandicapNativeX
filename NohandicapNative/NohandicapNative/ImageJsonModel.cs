@@ -10,8 +10,7 @@ namespace NohandicapNative
     [JsonObject]
     public  class ImageJsonModel
     {
-        [PrimaryKey, AutoIncrement]
-        public int ID { get; set; }
+       
        [JsonProperty(PropertyName = "thumbs"), TextBlob("ThumbsBlobbed")]      
         public List<string> Thumbs { get; set; }
        [JsonProperty(PropertyName = "images"), TextBlob("ImagesBlobbed")]

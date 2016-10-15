@@ -138,8 +138,8 @@
   <ItemGroup>
     <Compile Include="Activities\SplashActivity.cs" />
     <Compile Include="Adapters\GridViewAdapter.cs" />
-    <Compile Include="Adapters\ListAdapter.cs" />
     <Compile Include="Adapters\CardViewAdapter.cs" />
+    <Compile Include="Adapters\ProductsRecyclerViewAdapter.cs" />
     <Compile Include="Adapters\RadioButtonListAdapter.cs" />
     <Compile Include="Adapters\SliderAdapter.cs" />
     <Compile Include="Adapters\SpinnerAdapter.cs" />
@@ -457,9 +457,9 @@
     <AndroidResource Include="Resources\values-sw600dp\dimens.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Xamarin.Android.Maps.Utils\GoogleMapsUtilityBinding.csproj">
+    <ProjectReference Include="Xamarin.Android.Maps.Utils\GoogleMapsUtility.csproj">
       <Project>{bc829f65-b3b0-43c3-a282-fd5497656434}</Project>
-      <Name>GoogleMapsUtilityBinding</Name>
+      <Name>GoogleMapsUtility</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

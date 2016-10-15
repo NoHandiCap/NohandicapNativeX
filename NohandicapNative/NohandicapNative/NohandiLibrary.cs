@@ -25,14 +25,19 @@ namespace NohandicapNative
         public const string LINK_SAVEPRODVIEW   = LINK_API + "action=saveproductview&idprod={0}";
         public const string LINK_SAVEAPPSTATI   = LINK_API + "action=saveappstatistic";   //POST:appid,viewname,clickid,clickaction,createdate,iduser
         public const string LINK_GET_MARKERS    = LINK_API + "action=getprodlist&typemap=true&app=true&listfave=false&maincat={0}&search=&num={1}&bbox={2}&cat={3}";
+        public const string LINK_GET_PRODUCTS   = LINK_API + "action=getprodlist&&typemap=true&listfave=false&maincat={0}&search=&cat={1}&idlang={2}&gpslat={3}&gpslng={4}&num={5}&page={6}&app=true";
+
         public const string LINK_LOGIN          = LINK_MAIN + "index.php?item=artikel&id="+ LOGIN_ARTIKEL_ID + "&com=login&action=login&type=app";
         public const string LINK_SIGN_UP        = LINK_MAIN + "index.php?item=artikel&id="+ REGISTER_ARTIKEL_ID +"&com=login&action=register&type=app";
 
         public const string PRODUCT_TABLE   = "Products";
         public const string CATEGORY_TABLE  = "Categories";
         public const string LANGUAGE_TABLE  = "Language";
+        public const int MainCatGroup = 2;
+        public const int SubCatGroup = 1;
 
-        
+
+
         public static List<TabItem> GetTabs(bool isTablet=false)
         {
             List<TabItem> items = new List<TabItem>();

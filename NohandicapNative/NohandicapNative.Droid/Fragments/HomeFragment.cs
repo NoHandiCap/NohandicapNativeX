@@ -46,7 +46,7 @@ namespace NohandicapNative.Droid
             this.HasOptionsMenu = true;
             
                 var conn = Utils.GetDatabaseConnection();
-               List<CategoryModel> mainCategoriesList = conn.GetDataList<CategoryModel>().Where(x => x.Group == 2).ToList();
+               List<CategoryModel> mainCategoriesList = conn.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.MainCatGroup);
                 List<CategoryModel> subCategoriesList = conn.GetSubSelectedCategory();
                 
                 TextView[] mainCat = new TextView[mainCategoriesList.Count];

@@ -235,7 +235,7 @@ namespace NohandicapNative.Droid
             var user = conn.GetDataList<UserModel>().FirstOrDefault();
             if (user != null)
             {
-                products = conn.GetDataList<ProductModel>().Where(x => user.Favorites.Any(y => y == x.ID)).ToList();
+              //  products = conn.GetDataList<ProductModel>(x => user.Favorites.Any(y => y == x.ID));
                 
                 if (products.Count == 0)
                 {
@@ -246,8 +246,8 @@ namespace NohandicapNative.Droid
                     noFav.Visibility = ViewStates.Gone;
 
                 }
-                cardViewAdapter = new CardViewAdapter(Activity, products);
-                listView.Adapter = cardViewAdapter;
+               // cardViewAdapter = new CardViewAdapter(Activity, products);
+              //  listView.Adapter = cardViewAdapter;
             }
         }
         #endregion

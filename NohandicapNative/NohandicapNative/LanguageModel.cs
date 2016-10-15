@@ -12,7 +12,7 @@ namespace NohandicapNative
     {
         [PrimaryKey]
         [JsonProperty(PropertyName = "id")]
-        public int ID { get; set; }
+        public int Id { get; set; }
         [JsonProperty(PropertyName = "name")]
         public string LanguageName { get; set; }
 

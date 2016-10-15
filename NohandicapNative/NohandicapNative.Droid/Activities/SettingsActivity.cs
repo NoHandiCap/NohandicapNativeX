@@ -120,7 +120,7 @@ namespace NohandicapNative.Droid
             progressDialog.SetMessage(Resources.GetString(Resource.String.load_data));
             progressDialog.Show();
             var conn = Utils.GetDatabaseConnection();
-            var result = await conn.SynchronizeDataBase(selectedLanguage.ID.ToString());
+            var result = await conn.SynchronizeDataBase(selectedLanguage.Id.ToString());
             
             if (result)
             {                
@@ -164,9 +164,7 @@ namespace NohandicapNative.Droid
             {
                 if (await ReloadData())
                 {
-
-                    Utils.WriteToSettings(this, Utils.LANG_ID_TAG, selectedLanguage.ID.ToString());
-                    Utils.WriteToSettings(this, Utils.LANG_SHORT, selectedLanguage.ShortName);
+                    NohandicapApplication.CurrentLang = selectedLanguage;                 
                     res = Utils.SetLocale(this, selectedLanguage.ShortName);
                     Utils.ReloadMainActivity(Application, this);
                     Finish();

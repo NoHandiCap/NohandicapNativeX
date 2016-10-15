@@ -41,7 +41,23 @@ namespace NohandicapNative.Droid
     {
         static readonly string TAG = "X:" + typeof(NohandicapApplication).Name;
         public static MainActivity MainActivity { get; set; }
-          public static CategoryModel SelectedMainCategory
+        public static LanguageModel CurrentLang
+        {
+            get
+            {
+                var conn = Utils.GetDatabaseConnection();
+                int id = int.Parse(Utils.ReadFromSettings(MainActivity, Utils.LANG_ID_TAG, "1"));
+                var lang = conn.GetDataList<LanguageModel>(x => x.Id == id).FirstOrDefault();
+                return lang;
+            }
+            set
+            {
+                Utils.WriteToSettings(MainActivity, Utils.LANG_ID_TAG, value.ToString());
+                Utils.WriteToSettings(MainActivity, Utils.LANG_SHORT, value.ShortName);
+            }
+        }
+
+        public static CategoryModel SelectedMainCategory
         {
             get
             {
@@ -158,7 +174,7 @@ namespace NohandicapNative.Droid
           if(NohandicapApplication.SelectedMainCategory == null)
             {
                 var conn = Utils.GetDatabaseConnection();
-                var mainCategory = conn.GetDataList<CategoryModel>().FirstOrDefault(x => x.Group == 2&&x.Id==1);
+                var mainCategory = conn.GetDataList<CategoryModel>().FirstOrDefault(x => x.Group == NohandicapLibrary.MainCatGroup && x.Id==1);
                 conn.SetSelectedCategory(mainCategory);
                 
             }
@@ -217,7 +233,7 @@ namespace NohandicapNative.Droid
           
             _bottomBar.NoTabletGoodness();
             _bottomBar.UseFixedMode();
-           
+          
             var tabItems = new BottomBarTab[items.Count];
             for (int i = 0; i < tabItems.Length; i++)
             {
@@ -495,7 +511,7 @@ namespace NohandicapNative.Droid
                     {
                         var conn = Utils.GetDatabaseConnection();
                         var products = conn.GetDataList<ProductModel>();
-                        var currentProduct = conn.GetDataList<ProductModel>().Where(x => x.ID == currentProductId).ToList();
+                        var currentProduct = conn.GetDataList<ProductModel>(x => x.ID == currentProductId);
                         MapPage.SetData(new List<CategoryModel>());
                         SetCurrentTab(1);
                         SupportActionBar.Title = currentProduct[0].FirmName;

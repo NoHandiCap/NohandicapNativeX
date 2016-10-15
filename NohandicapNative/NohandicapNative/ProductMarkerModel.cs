@@ -21,6 +21,8 @@ namespace NohandicapNative
         public string Ort { get; set; }
         [JsonProperty(PropertyName = "plz")]
         public string Plz { get; set; }
+        [JsonProperty(PropertyName = "land")]
+        public string Country { get; set; }
         [JsonProperty(PropertyName = "prodimg")]
         public string ProdImg { get; set; }
 

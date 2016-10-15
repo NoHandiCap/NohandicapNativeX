@@ -2,16 +2,16 @@ using Android.Graphics;
 using Android.Graphics.Drawables;
 using Square.Picasso;
 using Android.Gms.Maps.Model;
-
+using Android.Gms.Maps;
 
 namespace NohandicapNative.Droid.Model
 {
     public class PicassoMarker : Java.Lang.Object, ITarget
     {
-        Marker marker;
+        Marker marker;       
         public PicassoMarker(Marker marker)
         {
-           this.marker = marker;
+           this.marker = marker;           
         }
         public override int GetHashCode()
         {
@@ -34,7 +34,7 @@ namespace NohandicapNative.Droid.Model
         public void OnBitmapLoaded(Bitmap p0, Picasso.LoadedFrom p1)
         {
             marker.SetIcon(BitmapDescriptorFactory.FromBitmap(p0));
-        }
+            marker.Visible = true;        }
 
         public void OnPrepareLoad(Drawable p0)
         {

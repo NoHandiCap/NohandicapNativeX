@@ -72,23 +72,35 @@ namespace NohandicapNative
             }
         }   
 
-        public static async Task<List<ProductMarkerModel>> GetProductMarkerListForMap(double lat_low,double lng_low, double lat_hight, double lng_hight,CategoryModel mainCat, List<CategoryModel> categoriesFilter)
-        {
-            var products=await GetDataFromUrl<List<ProductMarkerModel>>(BuildBoundUrl(lat_low,lng_low,lat_hight,lng_hight,mainCat,categoriesFilter));
-            return products;
-        }
-        private static string BuildBoundUrl(double lat_low, double lng_low, double lat_hight, double lng_hight, CategoryModel mainCat, List<CategoryModel> categoriesFilter,int count=50)
+        public static async Task<List<ProductMarkerModel>> GetMarkers(double latLow,double lngLow, double latHight, 
+            double lngHight,CategoryModel mainCat, List<CategoryModel> subCategories,int count=50)
         {
             var mainCategory = mainCat.Id;
-            string boundBox = lat_low + "," + lng_low + "," + lat_hight + "," + lng_hight;
-            string subCategories="";
-            foreach (var item in categoriesFilter)
+            string boundBox = latLow + "," + lngLow + "," + latHight + "," + lngHight;
+            string subCatList = "";
+            foreach (var item in subCategories)
             {
-                subCategories += "," + item.Id;
+                subCatList += "," + item.Id;
             }
+            string url = string.Format(NohandicapLibrary.LINK_GET_MARKERS, mainCategory, count, boundBox, subCatList);
 
-            string url = string.Format(NohandicapLibrary.LINK_GET_MARKERS, mainCategory, count, boundBox, subCategories);
-            return url;
+            var products=await GetDataFromUrl<List<ProductMarkerModel>>(url);
+
+            return products;
+        }
+        public static async Task<List<ProductMarkerModel>> GetMarkers(CategoryModel mainCat, List<CategoryModel> subCategories, int langId,double lat,double lng,int page, int count = 50)
+        {
+            var mainCategory = mainCat.Id;  
+            string subCatList = "";
+            foreach (var item in subCategories)
+            {
+                subCatList += "," + item.Id;
+            }
+            string url = string.Format(NohandicapLibrary.LINK_GET_PRODUCTS, mainCategory, subCatList, langId,lat,lng,count,page);
+
+            var products = await GetDataFromUrl<List<ProductMarkerModel>>(url);
+
+            return products;
         }
         public static T Deserializedata<T>(string content, string rootName = "result")
         {

@@ -15,7 +15,7 @@ namespace NohandicapNative.Droid
   public  class ListFragment : Android.Support.V4.App.Fragment
     {           
         ListView listView;
-        List<ProductModel> Products;     
+        List<ProductMarkerModel> productsList;     
         CardViewAdapter cardViewAdapter;
         TextView mainCategoryName;
         ImageView mainCategoryImage;
@@ -36,7 +36,7 @@ namespace NohandicapNative.Droid
                 int position = e.Position;
 
                 var activity = new Intent(Activity, typeof(DetailActivity));
-                activity.PutExtra(Utils.PRODUCT_ID, Products[position].ID);
+                activity.PutExtra(Utils.PRODUCT_ID, productsList[position].Id);
                 NohandicapApplication.MainActivity.StartActivityForResult(activity,1);         
             };
             ReloadData();
@@ -53,16 +53,17 @@ namespace NohandicapNative.Droid
         }
         private async void ReloadData()
         {
-            var conn = Utils.GetDatabaseConnection();
-            var category = conn.GetDataList<CategoryModel>();
-
+            var conn = Utils.GetDatabaseConnection();        
             var selectedSubCategory = conn.GetSubSelectedCategory();
-            Products = conn.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= NohandicapApplication.SelectedMainCategory.Id).ToList();
-            
+            double lat = NohandicapApplication.MainActivity.CurrentLocation.Latitude;
+            double lng = NohandicapApplication.MainActivity.CurrentLocation.Longitude;
+
+            //Products = conn.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= NohandicapApplication.SelectedMainCategory.Id).ToList();
+            productsList =await RestApiService.GetMarkers(NohandicapApplication.SelectedMainCategory, selectedSubCategory, NohandicapApplication.CurrentLang.Id, lat, lng, 1);
 
             if (selectedSubCategory.Count != 0)
             {
-                Products = Products.Where(x => x.Categories.Any(y => selectedSubCategory.Any(z => z.Id == y))).ToList();
+                productsList = productsList.Where(x => x.Categories.Any(y => selectedSubCategory.Any(z => z.Id == y))).ToList();
                 var categories = "";
                 selectedSubCategory.ForEach(x => categories += x.Name+",");
                 categories.Remove(categories.Length - 1);
@@ -77,8 +78,8 @@ namespace NohandicapNative.Droid
             var image = Utils.GetImage(Activity, "wheelchair" + NohandicapApplication.SelectedMainCategory.Id);
             mainCategoryImage.SetImageDrawable(Utils.SetDrawableSize(Activity, image, 140, 65));
 
-            Products = SortProductsByDistance(Products);
-            cardViewAdapter = new CardViewAdapter(Activity, Products);
+           // productsList = SortProductsByDistance(productsList);
+            cardViewAdapter = new CardViewAdapter(Activity, productsList);
             listView.Adapter = cardViewAdapter;   
         }
 

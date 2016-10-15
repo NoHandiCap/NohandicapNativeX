@@ -11,20 +11,23 @@ using System.Threading.Tasks;
 using Square.Picasso;
 using NohandicapNative.Droid.Model;
 using Android.Content;
+using System.Threading;
+using System.Collections.ObjectModel;
 
 namespace NohandicapNative.Droid.Adapters
 {
-    public class CardViewAdapter : BaseAdapter<ProductModel>
+    public class CardViewAdapter : BaseAdapter<ProductMarkerModel>
     {
         string TAG = "X: " + typeof(CardView).Name;
         private readonly Activity context;
-        private readonly List<ProductModel> products;
+        private readonly ObservableCollection<ProductMarkerModel> products;
         List<CategoryModel> selectedCategory;
         List<CategoryModel> categories;
-        public CardViewAdapter(Activity context, List<ProductModel> products)
+        int PageNumber =1;
+        public CardViewAdapter(Activity context, List<ProductMarkerModel> products)
         {
             this.context = context;
-            this.products = products;
+            this.products = new ObservableCollection<ProductMarkerModel>(products);
             var conn = Utils.GetDatabaseConnection();
             categories = conn.GetDataList<CategoryModel>();
             selectedCategory = conn.GetSubSelectedCategory();
@@ -33,7 +36,7 @@ namespace NohandicapNative.Droid.Adapters
         }
       
 
-        public override ProductModel this[int position]
+        public override ProductMarkerModel this[int position]
         {
             get
             {
@@ -68,12 +71,12 @@ namespace NohandicapNative.Droid.Adapters
             var adress = view.FindViewById<TextView>(Resource.Id.adressTextView);
             var positionTextView = view.FindViewById<TextView>(Resource.Id.positionTextView);
             var distanceLayout = view.FindViewById<LinearLayout>(Resource.Id.distanceLayout);
-            title.Text = products[position].FirmName;
-            adress.Text = products[position].Adress;
+            title.Text = products[position].Name;
+            adress.Text = products[position].Address;
 
-            if (products[position].DistanceToMyLocation != 0)
+            if (products[position].Distance != null)
             {
-                positionTextView.Text = NohandicapLibrary.ConvertMetersToKilometers(products[position].DistanceToMyLocation);
+                positionTextView.Text = products[position].Distance;
             }
             else
             {
@@ -81,9 +84,9 @@ namespace NohandicapNative.Droid.Adapters
             }
 
             string imageUrl = "";
-            if (!string.IsNullOrEmpty(products[position].MainImageUrl))
+            if (!string.IsNullOrEmpty(products[position].ProdImg))
             {
-                imageUrl = products[position].MainImageUrl;
+                imageUrl = products[position].ProdImg;
             }
             else
             {
@@ -105,9 +108,36 @@ namespace NohandicapNative.Droid.Adapters
                 }
             }          
                Picasso.With(context).Load(imageUrl).Resize(60, 60).Into(imageView);
-
+            if (products.Count - 5 == position)
+            {
+            ThreadPool.QueueUserWorkItem(o => LoadNextData());
+               
+            }
                 return view;
         }
-        
+        private async void LoadNextData()
+        {
+            var conn = Utils.GetDatabaseConnection();
+            var selectedSubCategory = conn.GetSubSelectedCategory();
+            double lat = NohandicapApplication.MainActivity.CurrentLocation.Latitude;
+            double lng = NohandicapApplication.MainActivity.CurrentLocation.Longitude;
+            PageNumber++;
+            var newProducts= await RestApiService.GetMarkers(NohandicapApplication.SelectedMainCategory, selectedSubCategory, NohandicapApplication.CurrentLang.Id, lat, lng,PageNumber);       
+            foreach (var product in newProducts)
+            {
+                products.Add(product);
+                try
+                {
+                    context.RunOnUiThread(() => {
+                    NotifyDataSetChanged();
+                    });
+                }
+                catch(Exception e)
+                {
+
+                }
+            }
+            
+        }
     }
 }
