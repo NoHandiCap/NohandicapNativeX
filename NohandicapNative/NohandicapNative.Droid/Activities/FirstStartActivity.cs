@@ -34,6 +34,8 @@ namespace NohandicapNative.Droid
         List<CategoryModel> CategoriesList;
         RelativeLayout languageLayout;
         LinearLayout agreementLayout;
+        LinearLayout dataProtectionLayout;
+
         protected override void OnCreate(Bundle bundle)
         {
             Log.Debug(TAG, "Set Theme");
@@ -43,14 +45,17 @@ namespace NohandicapNative.Droid
             SetContentView(Resource.Layout.FirstStart);      
             Log.Debug(TAG, "Set loadContent");
                      
-                agreementLayout = FindViewById<LinearLayout>(Resource.Id.agreementLayout);
-                languageLayout = FindViewById<RelativeLayout>(Resource.Id.languageLayout);
-                var agreementTextView = FindViewById<TextView>(Resource.Id.agreementTextView);
-                var agreeButton = agreementLayout.FindViewById<Button>(Resource.Id.agreeButton);
+            agreementLayout = FindViewById<LinearLayout>(Resource.Id.agreementLayout);
+            languageLayout = FindViewById<RelativeLayout>(Resource.Id.languageLayout);
+            dataProtectionLayout = FindViewById<LinearLayout>(Resource.Id.dataProtectionLayout);
+            var agreementTextView = FindViewById<TextView>(Resource.Id.agreementTextView);
+            var dataProtectionTextView = FindViewById<TextView>(Resource.Id.dataProtectionTextView);
+
+            var agreeButton = agreementLayout.FindViewById<Button>(Resource.Id.agreeButton);
                 agreeButton.Click += (s, e) =>
                 {
                     agreementLayout.Visibility = ViewStates.Gone;
-                    languageLayout.Visibility = ViewStates.Visible;
+                    dataProtectionLayout.Visibility = ViewStates.Visible;
                 };
          
                 string content;
@@ -60,9 +65,24 @@ namespace NohandicapNative.Droid
                     content = sr.ReadToEnd();
                 }
 
-                // Set TextView.Text to our asset content
-                agreementTextView.Text = content;
-                LanguagesList = new List<LanguageModel>();         
+            agreementTextView.Text = content; // Set TextView.Text to our asset content
+
+
+            var agreeDataProtectionButton = dataProtectionLayout.FindViewById<Button>(Resource.Id.agreeDataProtectionButton);
+            agreeDataProtectionButton.Click += (s, e) =>
+            {
+                dataProtectionLayout.Visibility = ViewStates.Gone;
+                languageLayout.Visibility = ViewStates.Visible;
+            };
+
+            using (StreamReader sr = new StreamReader(assets.Open("DataProtection.txt")))
+            {
+                content = sr.ReadToEnd();
+            }
+            
+            dataProtectionTextView.Text = content; // Set TextView.Text to our asset content
+
+            LanguagesList = new List<LanguageModel>();         
                 nextButton = FindViewById<Button>(Resource.Id.next_button);
                 spinnerPrompt = FindViewById<TextView>(Resource.Id.lang_spinner_prompt);
                 langListView = FindViewById<ListView>(Resource.Id.languageList);

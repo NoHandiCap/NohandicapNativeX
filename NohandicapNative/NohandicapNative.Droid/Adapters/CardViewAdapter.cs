@@ -70,6 +70,7 @@ namespace NohandicapNative.Droid.Adapters
             var distanceLayout = view.FindViewById<LinearLayout>(Resource.Id.distanceLayout);
             title.Text = products[position].FirmName;
             adress.Text = products[position].Adress;
+
             if (products[position].DistanceToMyLocation != 0)
             {
                 positionTextView.Text = NohandicapLibrary.ConvertMetersToKilometers(products[position].DistanceToMyLocation);
@@ -78,6 +79,7 @@ namespace NohandicapNative.Droid.Adapters
             {
                 distanceLayout.Visibility = ViewStates.Gone;
             }
+
             string imageUrl = "";
             if (!string.IsNullOrEmpty(products[position].MainImageUrl))
             {
