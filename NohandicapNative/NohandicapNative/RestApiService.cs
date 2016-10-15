@@ -196,7 +196,7 @@ namespace NohandicapNative
                 
             }
             var token = JObject.Parse(result).SelectToken("result");
-            var productTable= token.SelectToken("prod").ToString();
+          //  var productTable= token.SelectToken("prod").ToString();
             var categoryTable = token.SelectToken("cat").ToString();
             var langTable = token.SelectToken("lang").ToString();
 
@@ -208,14 +208,14 @@ namespace NohandicapNative
             {
                 lang = await conn.SynchronizeDataBase(langID, NohandicapLibrary.LANGUAGE_TABLE);
             }
-            if (productTable !=lastUpdate[NohandicapLibrary.PRODUCT_TABLE])
-            {
-             prod = await conn.SynchronizeDataBase(langID, NohandicapLibrary.PRODUCT_TABLE);
-            }                
-            if (lang || prod || cat)
+            //if (productTable !=lastUpdate[NohandicapLibrary.PRODUCT_TABLE])
+            //{
+            // prod = await conn.SynchronizeDataBase(langID, NohandicapLibrary.PRODUCT_TABLE);
+            //}                
+            if (lang|| cat)
             {
                updateList = new Dictionary<string, string>();
-                updateList.Add(NohandicapLibrary.PRODUCT_TABLE, productTable);
+               // updateList.Add(NohandicapLibrary.PRODUCT_TABLE, productTable);
                 updateList.Add(NohandicapLibrary.CATEGORY_TABLE, categoryTable);
                 updateList.Add(NohandicapLibrary.LANGUAGE_TABLE, langTable);
                 

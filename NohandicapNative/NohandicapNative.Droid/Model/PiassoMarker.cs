@@ -8,8 +8,8 @@ namespace NohandicapNative.Droid.Model
 {
     public class PicassoMarker : Java.Lang.Object, ITarget
     {
-        MarkerOptions marker;
-        public PicassoMarker(MarkerOptions marker)
+        Marker marker;
+        public PicassoMarker(Marker marker)
         {
            this.marker = marker;
         }
@@ -20,7 +20,7 @@ namespace NohandicapNative.Droid.Model
         public override bool Equals(Java.Lang.Object o)
         {
             if (typeof(PicassoMarker)==o.GetType()) {
-                MarkerOptions marker = ((PicassoMarker)o).marker;
+                Marker marker = ((PicassoMarker)o).marker;
                 return marker.Equals(marker);
             } else {
                 return false;

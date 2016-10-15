@@ -40,7 +40,7 @@ namespace NohandicapNative
                     conn.CreateTable<LanguageModel>();
                     conn.CreateTable<UserModel>();
                     conn.CreateTable<ProductModel>();
-
+                    conn.CreateTable<ProductMarkerModel>();
                 }
 
                 return true;
@@ -207,32 +207,32 @@ namespace NohandicapNative
                     }
                     return false;
                     break;
-                case NohandicapLibrary.PRODUCT_TABLE:
-                    products = await RestApiService.GetDataFromUrl<List<ProductModel>>(NohandicapLibrary.LINK_PRODUCT + langID);
-                    if (products != null)
-                    {
-                        try
-                        {
-                            using (var conn = GetSQLiteConnetion())
-                            {
-                                conn.DeleteAll(typeof(ProductModel));
-                                conn.CreateTable<ProductModel>();
-                            }
-                            InsertUpdateProductList(products);
+                //case NohandicapLibrary.PRODUCT_TABLE:
+                //    products = await RestApiService.GetDataFromUrl<List<ProductModel>>(NohandicapLibrary.LINK_PRODUCT + langID);
+                //    if (products != null)
+                //    {
+                //        try
+                //        {
+                //            using (var conn = GetSQLiteConnetion())
+                //            {
+                //                conn.DeleteAll(typeof(ProductModel));
+                //                conn.CreateTable<ProductModel>();
+                //            }
+                //            InsertUpdateProductList(products);
 
-                            return true;
-                        } catch (Exception e)
-                        {
-                            var s = e;
-                        }
-                    }
-                    return false;
-                    break;
+                //            return true;
+                //        } catch (Exception e)
+                //        {
+                //            var s = e;
+                //        }
+                //    }
+                //    return false;
+                //    break;
                 default:
                     var l = await SynchronizeDataBase(langID, NohandicapLibrary.LANGUAGE_TABLE);
                     var c = await SynchronizeDataBase(langID, NohandicapLibrary.CATEGORY_TABLE);
-                    var p = await SynchronizeDataBase(langID, NohandicapLibrary.PRODUCT_TABLE);
-                    if (l || c || p)
+               //     var p = await SynchronizeDataBase(langID, NohandicapLibrary.PRODUCT_TABLE);
+                    if (l || c)
                     {
                         return true;
                     } else

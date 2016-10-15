@@ -27,13 +27,13 @@ namespace NohandicapNative.Droid
         LayoutInflater inflater;
         GoogleMap map;       
         List<Marker> markersList;
-        List<ProductModel> products;
+
         List<MarkerOptions> markerOptons;    
         MapView mapView;
         List<CategoryModel> currentCategories;
         List<ProductMarkerModel> productsInBounds;
         LatLngBounds latLngBounds = null;   
-        ClusterManager _clusterManager;
+      //  ClusterManager _clusterManager;
         static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1,1);
         CameraPosition currentCameraPosition;     
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -52,7 +52,7 @@ namespace NohandicapNative.Droid
                 var conn = Utils.GetDatabaseConnection();
                 markersList = new List<Marker>();
                 markerOptons = new List<MarkerOptions>();             
-                products = conn.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= NohandicapApplication.SelectedMainCategory.Id).ToList();
+              //  products = conn.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= NohandicapApplication.SelectedMainCategory.Id).ToList();
                 productsInBounds = new List<ProductMarkerModel>();
                 var allCategoriesList = conn.GetSubSelectedCategory();
                 if (allCategoriesList.Count != 0)
@@ -106,9 +106,7 @@ namespace NohandicapNative.Droid
                      //    //---------------
 
                      var newProductsInBound = productsForCategories
-                     .Where(x => latLngBounds.Contains(new LatLng(
-                     double.Parse(x.Lat, CultureInfo.InvariantCulture),
-                     double.Parse(x.Lng, CultureInfo.InvariantCulture))) && !productsInBounds.Contains(x))
+                     .Where(x =>!productsInBounds.Contains(x))
                      .ToList();
                      if (currentCameraPosition != null)
                      {
@@ -122,22 +120,36 @@ namespace NohandicapNative.Droid
                          var lat = double.Parse(product.Lat, CultureInfo.InvariantCulture);
                          var lng = double.Parse(product.Lng, CultureInfo.InvariantCulture);
                          var clusterItem = new ClusterItem(lat, lng);
-                         //var catMarker = currentCategories.FirstOrDefault(x => product.Categories.Any(y => y == x.Id)).Marker;
-                         //string imageUrl = "";
-                         //if (string.IsNullOrEmpty(product.ProductMarkerImg))
-                         //{
-                         //    imageUrl = ContentResolver.SchemeAndroidResource + "://" + Activity.PackageName + "/drawable/" + catMarker;
-                         //}
-                         //else
-                         //{
-                         //    imageUrl = product.ProductMarkerImg;
-                         //}
-                         var markerImg = Picasso.With(Activity).Load(product.ProdimgPin).Resize(32, 34).Get();
-                         clusterItem.Icon = BitmapDescriptorFactory.FromBitmap(markerImg);
-                         clusterItem.ProductId = product.Id;
-                         //   productsInBounds.Add(product);
-                      
-                         _clusterManager.AddItem(clusterItem);
+                        var catMarker = currentCategories.FirstOrDefault(x => product.Categories.Any(y => y == x.Id)).Marker;
+                         string imageUrl = "";
+                         if (string.IsNullOrEmpty(product.ProdimgPin))
+                         {
+                             imageUrl = ContentResolver.SchemeAndroidResource + "://" + Activity.PackageName + "/drawable/" + catMarker;
+                         }
+                         else
+                         {
+                             imageUrl = product.ProdimgPin;
+                         }
+                     //    var markerImg = Picasso.With(Activity).Load(product.ProdimgPin).Resize(32, 34).Get();
+                         // clusterItem.Icon = BitmapDescriptorFactory.FromBitmap(markerImg);
+                         // clusterItem.ProductId = product.Id;
+                          var options = new MarkerOptions();
+                         options.SetPosition(new LatLng(lat, lng));
+                         try
+                         {
+                             Activity.RunOnUiThread(() => {
+                             var marker = map.AddMarker(options);
+                             var picassoMarker = new PicassoMarker(marker);
+                             Picasso.With(Activity).Load(imageUrl).Into(picassoMarker);
+                             markersList.Add(marker);
+                             productsInBounds.Add(product);
+                             });
+                         }
+                         catch(Exception e)
+                         {
+
+                         }
+                       //  _clusterManager.AddItem(clusterItem);
                      }
                  }).ContinueWith(t =>
                  {
@@ -163,7 +175,7 @@ namespace NohandicapNative.Droid
                 markerOptons.Clear();
                 markersList.Clear();
                 productsInBounds.Clear();
-                _clusterManager.ClearItems();
+             //   _clusterManager.ClearItems();
               
             }
             //----
@@ -181,12 +193,12 @@ namespace NohandicapNative.Droid
             base.OnHiddenChanged(hidden);
             if (!hidden)
             {
-                if (products.Count == 0)
-                {
+               // if (products.Count == 0)
+               // {
                     var conn = Utils.GetDatabaseConnection();
-                    products = conn.GetDataList<ProductModel>();
+                 //   products = conn.GetDataList<ProductModel>();
                     
-                }
+              //  }
                 await LoadData();           
             }
         }
@@ -202,7 +214,7 @@ namespace NohandicapNative.Droid
             map.InfoWindowClick += (s, e) => {
                 var product = FindProductFromMarker((Marker)e.Marker);
                 var activity = new Intent(Activity, typeof(DetailActivity));
-                activity.PutExtra(Utils.PRODUCT_ID, product.ID);
+               // activity.PutExtra(Utils.PRODUCT_ID, product.ID);
                Activity.StartActivity(activity);
             };
             CameraPosition.Builder builder = CameraPosition.InvokeBuilder();                     
@@ -217,8 +229,8 @@ namespace NohandicapNative.Droid
             {
                 builder.Target(new LatLng(48.2274656, 16.4067023)).Zoom(10);
             }          
-            _clusterManager = new ClusterManager(Activity, map);                    
-            _clusterManager.SetRenderer(new ClusterIconRendered(Activity, map, _clusterManager));
+         // _clusterManager = new ClusterManager(Activity, map);                    
+          //  _clusterManager.SetRenderer(new ClusterIconRendered(Activity, map, _clusterManager));
             map.SetOnCameraChangeListener(this);
             CameraPosition cameraPosition = builder.Build();
             CameraUpdate cameraUpdate = CameraUpdateFactory.NewCameraPosition(cameraPosition);
@@ -232,44 +244,44 @@ namespace NohandicapNative.Droid
             var imageView = info.FindViewById<ImageView>(Resource.Id.info_mainImageView);
             var title = info.FindViewById<TextView>(Resource.Id.info_titleTextView);
             var adress = info.FindViewById<TextView>(Resource.Id.info_adressTextView);
-            var mainimage = product.ImageCollection.Images;
-            if (mainimage.Count != 0)
-            {
-                var img = mainimage[0];
-                try
-                {
-                    if (img != null)
-                    {
-                        Picasso.With(Activity).Load(img).Placeholder(Resource.Drawable.placeholder).Resize(50, 50).Into(imageView, new CustomCallback(() =>
-                        {
-                            if (marker.IsInfoWindowShown)
-                            {
-                                marker.HideInfoWindow();
-                                marker.ShowInfoWindow();
-                            }
+            //var mainimage = product.ImageCollection.Images;
+            //if (mainimage.Count != 0)
+            //{
+            //    var img = mainimage[0];
+            //    try
+            //    {
+            //        if (img != null)
+            //        {
+            //            Picasso.With(Activity).Load(img).Placeholder(Resource.Drawable.placeholder).Resize(50, 50).Into(imageView, new CustomCallback(() =>
+            //            {
+            //                if (marker.IsInfoWindowShown)
+            //                {
+            //                    marker.HideInfoWindow();
+            //                    marker.ShowInfoWindow();
+            //                }
 
-                        }));
+            //            }));
 
-                    }
+            //        }
 
 
-                }
-                catch (System.Exception e)
-                {
-                    Log.Error(TAG, e.Message);
-                }
-            }
-            title.Text = product.FirmName;
-            adress.Text = product.Adress;
+            //    }
+            //    catch (System.Exception e)
+            //    {
+            //        Log.Error(TAG, e.Message);
+            //    }
+            //}
+            //title.Text = product.FirmName;
+            //adress.Text = product.Adress;
             return info;
         }
         public View GetInfoWindow(Marker marker)
         {
             return null;
         }
-        private ProductModel FindProductFromMarker (Marker marker)
+        private ProductMarkerModel FindProductFromMarker (Marker marker)
         {
-            return products.FirstOrDefault(x => x.ID.ToString() == marker.Title);
+            return productsInBounds.FirstOrDefault(x => x.Id.ToString() == marker.Title);
         }
         #endregion
 
@@ -319,7 +331,7 @@ namespace NohandicapNative.Droid
                 {
                     if (await LoadData())
                     {
-                        _clusterManager.OnCameraChange(position);                    
+                        //_clusterManager.OnCameraChange(position);                    
                     }
                 }catch(Exception e)
                 {
@@ -334,7 +346,7 @@ namespace NohandicapNative.Droid
             }
             else
             {
-                _clusterManager.OnCameraChange(position);
+             //   _clusterManager.OnCameraChange(position);
             }
            
         }

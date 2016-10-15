@@ -181,7 +181,7 @@ namespace NohandicapNative.Droid
                
                     if (result.Count != 0)
                     {
-                        Utils.WriteToSettings(this, NohandicapLibrary.PRODUCT_TABLE, result[NohandicapLibrary.PRODUCT_TABLE]);
+                      //  Utils.WriteToSettings(this, NohandicapLibrary.PRODUCT_TABLE, result[NohandicapLibrary.PRODUCT_TABLE]);
                         Utils.WriteToSettings(this, NohandicapLibrary.CATEGORY_TABLE, result[NohandicapLibrary.CATEGORY_TABLE]);
                         Utils.WriteToSettings(this, NohandicapLibrary.LANGUAGE_TABLE, result[NohandicapLibrary.LANGUAGE_TABLE]);
                     }

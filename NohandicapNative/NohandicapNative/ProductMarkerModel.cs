@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
 using SQLite.Net.Attributes;
+using SQLiteNetExtensions.Attributes;
+using System.Collections.Generic;
 
 namespace NohandicapNative
 {
@@ -26,10 +28,12 @@ namespace NohandicapNative
         public string Lat { get; set; }
         [JsonProperty(PropertyName = "lng")]
         public string Lng { get; set; }
+        [JsonProperty(PropertyName = "cat"), TextBlob("categoriesBlobbed")]
+        public List<int> Categories { get; set; }
         [JsonProperty(PropertyName = "dist")]
         public string Distance { get; set; }
 
-
+        public string categoriesBlobbed { get; set; }
 
     }
 }
