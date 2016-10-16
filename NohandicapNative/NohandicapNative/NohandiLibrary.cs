@@ -18,7 +18,7 @@ namespace NohandicapNative
 
         public const string LINK_LANGUAGE       = LINK_API + "action=getlang";
         public const string LINK_CATEGORY       = LINK_API + "action=getcat&idlang=";
-        public const string LINK_PRODUCT_DETAIL = LINK_API + "action=getprod&idlang={0}&idprod={1}";
+        public const string LINK_PRODUCT_DETAIL = LINK_API + "action=getproduct&idlang={0}&idprod={1}";
         public const string LINK_GET_UPDATE     = LINK_API + "action=getlastupdated";
         public const string LINK_DELFAV         = LINK_API + "action=delfave&iduser={0}&idprod={1}";
         public const string LINK_SAVEFAV        = LINK_API + "action=savefave&iduser={0}&idprod={1}";
