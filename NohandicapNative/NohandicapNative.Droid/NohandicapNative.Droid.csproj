@@ -153,10 +153,11 @@
     <Compile Include="Model\ClusterItem.cs" />
     <Compile Include="Model\CustomCallback.cs" />
     <Compile Include="Model\ClusterIconRendered.cs" />
-    <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Fragments\HomeFragment.cs" />
     <Compile Include="Fragments\ListFragment.cs" />
+    <Compile Include="Resources\Resource.designer.cs" />
+    <Compile Include="Services\NetworkStateReceiver.cs" />
     <Compile Include="Services\Utils.cs" />
     <Compile Include="Activities\SettingsActivity.cs" />
     <Compile Include="Activities\SignUpActivity.cs" />
@@ -454,12 +455,6 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values-sw600dp\dimens.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="Xamarin.Android.Maps.Utils\GoogleMapsUtility.csproj">
-      <Project>{bc829f65-b3b0-43c3-a282-fd5497656434}</Project>
-      <Name>GoogleMapsUtility</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-hdpi\logo_small.png" />

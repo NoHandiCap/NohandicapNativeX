@@ -10,6 +10,11 @@ namespace NohandicapNative
     [JsonObject]
     public  class ImageJsonModel
     {
+        public ImageJsonModel()
+        {
+            Thumbs = new List<string>();
+            Images = new List<string>();
+        }
        
        [JsonProperty(PropertyName = "thumbs"), TextBlob("ThumbsBlobbed")]      
         public List<string> Thumbs { get; set; }

@@ -247,7 +247,7 @@ namespace NohandicapNative.Droid
 
             }
             }
-            catch (Exception)
+            catch (Exception e)
             {
 
 #if DEBUG

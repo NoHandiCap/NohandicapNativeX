@@ -10,6 +10,11 @@ namespace NohandicapNative
     [JsonObject]
     public class ProductDetailModel
     {
+        public ProductDetailModel()
+        {
+            ImageCollection = new ImageJsonModel();
+            Categories = new List<int>();
+        }
         [PrimaryKey]
         [JsonProperty(PropertyName = "id")]
         public int ID { get; set; }

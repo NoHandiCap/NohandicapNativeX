@@ -86,7 +86,10 @@ namespace NohandicapNative
             string url = string.Format(NohandicapLibrary.LINK_GET_MARKERS, mainCategory, count, boundBox, subCatList);
 
             var products=await GetDataFromUrl<List<ProductMarkerModel>>(url);
-
+            if (products == null)
+            {
+                return new List<ProductMarkerModel>();
+            }
             return products;
         }
         public static async Task<List<ProductMarkerModel>> GetMarkers(CategoryModel mainCat, List<CategoryModel> subCategories, int langId,string lat,string lng,int page, int count = 50)
@@ -100,7 +103,10 @@ namespace NohandicapNative
             string url = string.Format(NohandicapLibrary.LINK_GET_PRODUCTS, mainCategory, subCatList, langId,lat,lng,count,page);
 
             var products = await GetDataFromUrl<List<ProductMarkerModel>>(url);
-
+            if (products == null)
+            {
+                return new List<ProductMarkerModel>();
+            }
             return products;
         }
         public static async Task<List<ProductMarkerModel>> GetFavorites(string userId, int page, int count = 50)
@@ -109,7 +115,10 @@ namespace NohandicapNative
             string url = string.Format(NohandicapLibrary.LINK_GET_FAV, userId, count, page);
 
             var products = await GetDataFromUrl<List<ProductMarkerModel>>(url);
-
+            if (products == null)
+            {
+                return new List<ProductMarkerModel>();
+            }
             return products;
         }
         public static async Task<ProductDetailModel> GetProductDetail(int productId, int langId)
@@ -117,9 +126,12 @@ namespace NohandicapNative
 
             string url = string.Format(NohandicapLibrary.LINK_PRODUCT_DETAIL,langId, productId);
 
-            var products = await GetDataFromUrl<List<ProductDetailModel>>(url);
-
-            return products.FirstOrDefault(x=>x.ID==productId);
+            var product = await GetDataFromUrl<List<ProductDetailModel>>(url);
+            if (product == null)
+            {
+                return new ProductDetailModel();
+            }
+            return product.FirstOrDefault(x=>x.ID==productId);
         }
         public static T Deserializedata<T>(string content, string rootName = "result")
         {
@@ -226,8 +238,7 @@ namespace NohandicapNative
                 return null;
                 
             }
-            var token = JObject.Parse(result).SelectToken("result");
-          //  var productTable= token.SelectToken("prod").ToString();
+            var token = JObject.Parse(result).SelectToken("result");         
             var categoryTable = token.SelectToken("cat").ToString();
             var langTable = token.SelectToken("lang").ToString();
 
@@ -238,11 +249,7 @@ namespace NohandicapNative
             if (langTable != lastUpdate[NohandicapLibrary.LANGUAGE_TABLE])
             {
                 lang = await conn.SynchronizeDataBase(langID, NohandicapLibrary.LANGUAGE_TABLE);
-            }
-            //if (productTable !=lastUpdate[NohandicapLibrary.PRODUCT_TABLE])
-            //{
-            // prod = await conn.SynchronizeDataBase(langID, NohandicapLibrary.PRODUCT_TABLE);
-            //}                
+            }            
             if (lang|| cat)
             {
                updateList = new Dictionary<string, string>();

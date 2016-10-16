@@ -80,7 +80,17 @@ namespace NohandicapNative
                 result = conn.GetAllWithChildren<T>(null, true).ToList();
                 return result;
             }
-        }       
+        }
+        public List<T> GetDataList<T>(int count) where T : class
+        {
+            List<T> result = default(List<T>);
+
+            using (var conn = GetSQLiteConnetion())
+            {
+                result = conn.GetAllWithChildren<T>(null, true).Take(count).ToList();
+                return result;
+            }
+        }
         public List<T> GetDataList<T>(Func<T,bool> where) where T : class
         {
             List<T> result = default(List<T>);
@@ -90,16 +100,7 @@ namespace NohandicapNative
                 result = conn.GetAllWithChildren<T>(null, true).Where(where).ToList();
                 return result;
             }
-        }
-        public T Find<T>(int pk) where T : class
-        {
-            using (var conn = GetSQLiteConnetion())
-            {
-                var s = conn.GetAllWithChildren<T>().FirstOrDefault(m => m.GetHashCode() == pk);
-                var k = s.GetHashCode();
-                return s;
-            }
-        }
+        }       
         public void SetSelectedCategory(CategoryModel category, bool isSelected = true)
         {
             using (var conn = GetSQLiteConnetion())

@@ -117,8 +117,7 @@
                     <TextView
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:text="@string/medium_text"
+                        android:textAppearance="?android:attr/textAppearanceSmall"                      
                         android:id="@+id/descriptionTextView"
                         android:layout_marginLeft="20dp"
                         android:layout_marginRight="20dp"
@@ -180,32 +179,28 @@
                             <TextView
                                 android:layout_width="fill_parent"
                                 android:layout_height="wrap_content"
-                                android:textAppearance="?android:attr/textAppearanceSmall"
-                                android:text="@string/medium_text"
+                                android:textAppearance="?android:attr/textAppearanceSmall"                             
                                 android:id="@+id/adressTextView"
                                 android:textColor="#000000"
                                 android:layout_marginBottom="4dp" />
                             <TextView
                                 android:layout_width="fill_parent"
                                 android:layout_height="wrap_content"
-                                android:textAppearance="?android:attr/textAppearanceSmall"
-                                android:text="@string/medium_text"
+                                android:textAppearance="?android:attr/textAppearanceSmall"                             
                                 android:id="@+id/ortTextView"
                                 android:textColor="#000000"
                                 android:layout_marginBottom="4dp" />
                             <TextView
                                 android:layout_width="fill_parent"
                                 android:layout_height="wrap_content"
-                                android:textAppearance="?android:attr/textAppearanceSmall"
-                                android:text="@string/medium_text"
+                                android:textAppearance="?android:attr/textAppearanceSmall"                          
                                 android:id="@+id/plzTextView"
                                 android:textColor="#000000"
                                 android:layout_marginBottom="4dp" />
                             <TextView
                                 android:layout_width="fill_parent"
                                 android:layout_height="wrap_content"
-                                android:textAppearance="?android:attr/textAppearanceSmall"
-                                android:text="@string/medium_text"
+                                android:textAppearance="?android:attr/textAppearanceSmall"                        
                                 android:id="@+id/phoneTextView"
                                 android:textColor="#000000"
                                 android:autoLink="phone"
@@ -213,8 +208,7 @@
                             <TextView
                                 android:layout_width="fill_parent"
                                 android:layout_height="wrap_content"
-                                android:textAppearance="?android:attr/textAppearanceSmall"
-                                android:text="@string/medium_text"
+                                android:textAppearance="?android:attr/textAppearanceSmall"                               
                                 android:id="@+id/emailTextView"
                                 android:textColor="#000000"
                                 android:autoLink="email"
@@ -222,8 +216,7 @@
                             <TextView
                                 android:layout_width="fill_parent"
                                 android:layout_height="wrap_content"
-                                android:textAppearance="?android:attr/textAppearanceSmall"
-                                android:text="@string/medium_text"
+                                android:textAppearance="?android:attr/textAppearanceSmall"                                
                                 android:id="@+id/linkTextView"
                                 android:textColor="#000000"
                                 android:autoLink="web"
@@ -267,8 +260,7 @@
                             <TextView
                                 android:layout_width="fill_parent"
                                 android:layout_height="wrap_content"
-                                android:textAppearance="?android:attr/textAppearanceSmall"
-                                android:text="@string/medium_text"
+                                android:textAppearance="?android:attr/textAppearanceSmall"                               
                                 android:id="@+id/openHoursTextView"
                                 android:textColor="#000000" />
                         </LinearLayout>
@@ -330,8 +322,7 @@
                             <TextView
                                 android:layout_width="fill_parent"
                                 android:layout_height="wrap_content"
-                                android:textAppearance="?android:attr/textAppearanceSmall"
-                                android:text="@string/medium_text"
+                                android:textAppearance="?android:attr/textAppearanceSmall"                        
                                 android:id="@+id/categoriesTextView"
                                 android:textColor="#000000" />
                         </LinearLayout>

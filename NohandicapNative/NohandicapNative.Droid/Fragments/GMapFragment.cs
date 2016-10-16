@@ -12,7 +12,6 @@ using Android.Util;
 using Android.Gms.Maps;
 using System.Globalization;
 using System.Threading.Tasks;
-using Com.Google.Maps.Android.Clustering;
 using static Android.Gms.Maps.GoogleMap;
 using NohandicapNative.Droid.Model;
 using System.Threading;
@@ -34,7 +33,8 @@ namespace NohandicapNative.Droid
         MapView mapView;
         List<CategoryModel> currentCategories;
         List<ProductMarkerModel> productsInBounds;
-        LatLngBounds latLngBounds = null;   
+        LatLngBounds latLngBounds = null;
+        SqliteService conn;
       //  ClusterManager _clusterManager;
         static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1,1);
         CameraPosition currentCameraPosition;     
@@ -44,15 +44,14 @@ namespace NohandicapNative.Droid
             this.inflater = inflater;          
             var view = inflater.Inflate(Resource.Layout.MapPage, container, false);
             view.SetBackgroundColor(NohandicapApplication.MainActivity.Resources.GetColor(Resource.Color.backgroundColor));
-
+            conn = Utils.GetDatabaseConnection();
             HasOptionsMenu = true;
             mapView = view.FindViewById<MapView>(Resource.Id.map);
             mapView.OnCreate(savedInstanceState);
             mapView.OnResume();
             mapView.GetMapAsync(this);
             try
-            {
-                var conn = Utils.GetDatabaseConnection();
+            {               
             
                 markersList = new List<Marker>();
                 markerOptons = new List<MarkerOptions>();             
@@ -100,18 +99,25 @@ namespace NohandicapNative.Droid
                              semaphoreSlim.Release();
                          }
                          return;
-                     }
-                     var cachedProducts = NohandicapApplication.MainActivity.CurrentProductsList;
+                     }                  
                      var loadedProducts =
                        await RestApiService.GetMarkers(latLngBounds.Southwest.Latitude, latLngBounds.Southwest.Longitude,
                        latLngBounds.Northeast.Latitude, latLngBounds.Northeast.Longitude,
                        NohandicapApplication.SelectedMainCategory, currentCategories);
-                   
-             
-                    
-                     var newProductsInBound = loadedProducts
-                     .Where(x =>!productsInBounds.Contains(x))
-                     .ToList();                                       
+
+                     List<ProductMarkerModel> newProductsInBound;
+                     if (NohandicapApplication.IsInternetConnection)
+                     {
+                         newProductsInBound = loadedProducts
+                     .Where(x => !productsInBounds.Contains(x))
+                     .ToList();                      
+
+                     }
+                     else
+                     {
+                         newProductsInBound = conn.GetDataList<ProductMarkerModel>(x => !productsInBounds.Contains(x))
+                     .ToList();
+                     }                                                         
                          foreach (var product in newProductsInBound)
                          {
                              var lat = double.Parse(product.Lat, CultureInfo.InvariantCulture);
@@ -171,13 +177,7 @@ namespace NohandicapNative.Droid
         {
             base.OnHiddenChanged(hidden);
             if (!hidden)
-            {
-               // if (products.Count == 0)
-               // {
-                    var conn = Utils.GetDatabaseConnection();
-                 //   products = conn.GetDataList<ProductModel>();
-                    
-              //  }
+            {              
                 await LoadData();           
             }
         }
@@ -193,7 +193,7 @@ namespace NohandicapNative.Droid
             map.InfoWindowClick += (s, e) => {
                 var product = FindProductFromMarker((Marker)e.Marker);
                 var activity = new Intent(Activity, typeof(DetailActivity));
-               // activity.PutExtra(Utils.PRODUCT_ID, product.ID);
+               activity.PutExtra(Utils.PRODUCT_ID, product.Id);
                Activity.StartActivity(activity);
             };
             CameraPosition.Builder builder = CameraPosition.InvokeBuilder();                     
@@ -252,8 +252,8 @@ namespace NohandicapNative.Droid
             return null;
         }
         private ProductMarkerModel FindProductFromMarker (Marker marker)
-        {
-            return productsInBounds.FirstOrDefault(x => x.Id.ToString() == marker.Title);
+        {       
+            return conn.GetDataList<ProductMarkerModel>(x => x.Id.ToString() == marker.Title).FirstOrDefault();
         }
         #endregion
 
@@ -274,8 +274,7 @@ namespace NohandicapNative.Droid
                 case Android.Resource.Id.Home:
                     NohandicapApplication.MainActivity.SetCurrentTab(0);
                     break;
-                case Resource.Id.select_all:
-                    var conn = Utils.GetDatabaseConnection();
+                case Resource.Id.select_all:           
                     conn.UnSelectAllCategories();                  
                     SetData(conn.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.MainCatGroup));
                     

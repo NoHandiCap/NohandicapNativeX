@@ -43,38 +43,7 @@ namespace NohandicapNative.Droid
             ReloadData();
             return view;
         }
-        public ListFragment()
-        {
-            LoadCache();
-        }
-        private async void LoadCache()
-        {
-            try
-            {
-                var conn = Utils.GetDatabaseConnection();
-                var selectedSubCategory = conn.GetSubSelectedCategory();
-                var position = NohandicapApplication.MainActivity.CurrentLocation;
-                string lat = "";
-                string lng = "";
-                if (position != null)
-                {
-                    lat = position.Latitude.ToString();
-                    lng = position.Longitude.ToString();
-                }
-
-                var coll = await RestApiService.GetMarkers(NohandicapApplication.SelectedMainCategory, selectedSubCategory, NohandicapApplication.CurrentLang.Id, lat, lng, 1);
-                NohandicapApplication.MainActivity.AddProductsToCache(coll);
-
-            }
-            catch (System.Exception e)
-            {
-#if DEBUG
-                System.Diagnostics.Debugger.Break();
-#endif
-              
-            }
-           
-        }
+       
         public override void OnHiddenChanged(bool hidden)
         {
             base.OnHiddenChanged(hidden);

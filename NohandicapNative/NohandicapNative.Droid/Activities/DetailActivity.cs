@@ -48,6 +48,7 @@ namespace NohandicapNative.Droid
         MapView mapView;
         FloatingActionButton fab;
         ViewPager viewPager;
+        SqliteService conn;
         // MapView mapView;
 
 
@@ -61,7 +62,7 @@ namespace NohandicapNative.Droid
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.DetailPage);
 
-          
+            conn = Utils.GetDatabaseConnection();
                 Window.DecorView.SetBackgroundColor(Color.White);
             mapView = FindViewById<MapView>(Resource.Id.map);
             mapView.OnCreate(bundle);
@@ -85,54 +86,47 @@ namespace NohandicapNative.Droid
                 SetSupportActionBar(toolbar);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Resources.GetColor(Resource.Color.themeColor)));
-                                 
-                fab.SetOnClickListener(this);
+            SupportActionBar.Title ="";
+            fab.SetOnClickListener(this);
                 await LoadProduct();
              
 
 
 
-        }   
+        }
         private async Task LoadProduct()
         {
             try
-            {           
-            var conn = Utils.GetDatabaseConnection();
-            var productId = Intent.GetIntExtra(Utils.PRODUCT_ID, -1);
-                product =await RestApiService.GetProductDetail(productId, NohandicapApplication.CurrentLang.Id);
-
-            SupportActionBar.Title = product.FirmName;
-
-            if (product.ImageCollection.Images.Count == 0)
             {
-                viewPager.Visibility = ViewStates.Gone;
-            }
-            else
-            {
+                var productId = Intent.GetIntExtra(Utils.PRODUCT_ID, -1);
+                if (NohandicapApplication.IsInternetConnection)
+                {
+                    product = await RestApiService.GetProductDetail(productId, NohandicapApplication.CurrentLang.Id);
+                }
+                else
+                {
+                    product = conn.GetDataList<ProductDetailModel>(x => x.ID == productId).FirstOrDefault();
+                }
+                SupportActionBar.Title = product.FirmName;
+                if (product.ImageCollection.Images.Count == 0)
+                {
+                    viewPager.Visibility = ViewStates.Gone;
+                }
+                else
+                {
 
-                SliderAdapter adapter = new SliderAdapter(this, product);
-                viewPager.Adapter = adapter;
-                
-            }
-            
+                    SliderAdapter adapter = new SliderAdapter(this, product);
+                    viewPager.Adapter = adapter;
+
+                }
                 categories = conn.GetDataList<CategoryModel>();
-            Drawable icon;
-            if (!string.IsNullOrEmpty(product.MainImageUrl))
-            {
-                var img= await Utils.LoadBitmapAsync(product.MainImageUrl);
-                icon = new BitmapDrawable(Resources, Bitmap.CreateScaledBitmap(img, 70, 70, true)); 
-            }
-            else
-            {
-                icon = Utils.GetImage(this, categories.FirstOrDefault(x => x.Id == product.Categories[0]).Icon);
+                Drawable icon = Utils.GetImage(this, categories.FirstOrDefault(x => x.Id == product.Categories[0]).Icon);
+                SupportActionBar.SetIcon(Utils.SetDrawableSize(this, icon, 70, 70));
 
-            }
-            SupportActionBar.SetIcon(Utils.SetDrawableSize(this, icon, 70, 70));        
-            
                 descriptionTextView.TextFormatted = Html.FromHtml(product.Description);
                 adressTextView.Text = product.Adress;
-            ortTextView.Text = product.Ort;
-            plzTextView.Text = product.Plz;
+                ortTextView.Text = product.Ort;
+                plzTextView.Text = product.Plz;
                 phoneTextView.Text = product.Telefon.Replace(" ", "");
                 emailTextView.Text = product.Email;
                 linkTextView.Text = product.HomePage;
@@ -145,9 +139,6 @@ namespace NohandicapNative.Droid
                     bulledList += "&#8226;" + categories.FirstOrDefault(y => y.Id == x).Name + "<br/>";
                 });
                 categoriesTextView.TextFormatted = Html.FromHtml(bulledList);
-           
-              RunOnUiThread(()=> { HideEmptyTextView(); });
-            
                 user = conn.GetDataList<UserModel>().FirstOrDefault();
                 if (user != null)
                 {
@@ -159,7 +150,9 @@ namespace NohandicapNative.Droid
                     }
 
                 }
-                RunOnUiThread(async() => {
+                RunOnUiThread(async () =>
+                {
+                    HideEmptyTextView();
                     var options = new MarkerOptions().SetPosition(new LatLng(double.Parse(product.Lat, CultureInfo.InvariantCulture), double.Parse(product.Long, CultureInfo.InvariantCulture))).SetTitle(product.FirmName);
                     if (string.IsNullOrEmpty(product.ProductMarkerImg))
                     {
@@ -168,24 +161,21 @@ namespace NohandicapNative.Droid
                         var drawImage = Utils.SetDrawableSize(this, Utils.GetImage(this, cat), 70, 80);
                         var bitmap = Utils.convertDrawableToBitmap(drawImage);
                         options.SetIcon(BitmapDescriptorFactory.FromBitmap(bitmap));
-
-
                     }
                     else
                     {
                         var markerImg = await Utils.LoadBitmapAsync(product.ProductMarkerImg);
-
                         options.SetIcon(BitmapDescriptorFactory.FromBitmap(Bitmap.CreateScaledBitmap(markerImg, markerImg.Width + 20, markerImg.Height + 20, true)));
-
                     }
+                    if (map == null) return;
                     map.AddMarker(options);
                     CameraPosition cameraPosition = new CameraPosition.Builder().Target(options.Position).Zoom(14.0f).Build();
                     CameraUpdate cameraUpdate = CameraUpdateFactory.NewCameraPosition(cameraPosition);
                     map.MoveCamera(cameraUpdate);
                 });
-
+                conn.InsertUpdateProduct(product);
             }
-            catch (Exception)
+            catch (Exception e)
             {
 
 #if DEBUG
@@ -193,7 +183,7 @@ namespace NohandicapNative.Droid
 #endif
 
             }
-        }     
+        }
       private void HideEmptyTextView()
         {           
             CheckTextView(adressTextView);
@@ -259,9 +249,6 @@ namespace NohandicapNative.Droid
 #if DEBUG
                 System.Diagnostics.Debugger.Break();
 #endif
-
-
-
                 Log.Error(TAG, "OnMapReady: " + e.Message + " " + e.StackTrace);
             }
         }
@@ -283,7 +270,7 @@ namespace NohandicapNative.Droid
         {
             if (user != null)
             {
-                var conn = Utils.GetDatabaseConnection();
+               
                 if (!fab.Selected)
                 {
                     fab.SetImageResource(Resource.Drawable.filled_star);
