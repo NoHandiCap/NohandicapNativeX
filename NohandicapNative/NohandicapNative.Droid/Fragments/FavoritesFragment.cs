@@ -19,13 +19,13 @@ namespace NohandicapNative.Droid
     {            
         View view;          
         ListView listView;
-        List<ProductModel> products;
+        List<ProductDetailModel> products;
         TextView noFav;
         CardViewAdapter cardViewAdapter;
         public FavoritesFragment()
         {
            
-            products = new List<ProductModel>();
+            products = new List<ProductDetailModel>();
         }
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
@@ -235,8 +235,7 @@ namespace NohandicapNative.Droid
             var user = conn.GetDataList<UserModel>().FirstOrDefault();
             if (user != null)
             {
-              //  products = conn.GetDataList<ProductModel>(x => user.Favorites.Any(y => y == x.ID));
-                
+            
                 if (products.Count == 0)
                 {
                     noFav.Visibility = ViewStates.Visible;
@@ -246,8 +245,8 @@ namespace NohandicapNative.Droid
                     noFav.Visibility = ViewStates.Gone;
 
                 }
-               // cardViewAdapter = new CardViewAdapter(Activity, products);
-              //  listView.Adapter = cardViewAdapter;
+               cardViewAdapter = new CardViewAdapter(Activity, false);
+            listView.Adapter = cardViewAdapter;
             }
         }
         #endregion

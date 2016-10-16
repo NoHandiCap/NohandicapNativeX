@@ -24,15 +24,20 @@ namespace NohandicapNative.Droid.Adapters
         List<CategoryModel> selectedCategory;
         List<CategoryModel> categories;
         int PageNumber =1;
-        public CardViewAdapter(Activity context, List<ProductMarkerModel> products)
+        bool isFav = false;
+        public CardViewAdapter(Activity context,bool isFav)
         {
             this.context = context;
-            this.products = new ObservableCollection<ProductMarkerModel>(products);
+            products =NohandicapApplication.MainActivity.CurrentProductsList;
             var conn = Utils.GetDatabaseConnection();
             categories = conn.GetDataList<CategoryModel>();
             selectedCategory = conn.GetSubSelectedCategory();
-   
-            
+            this.isFav = isFav;
+            if (isFav)
+            {
+                products = new ObservableCollection<ProductMarkerModel>();
+                LoadNextData();
+            }
         }
       
 
@@ -119,25 +124,37 @@ namespace NohandicapNative.Droid.Adapters
         {
             var conn = Utils.GetDatabaseConnection();
             var selectedSubCategory = conn.GetSubSelectedCategory();
-            double lat = NohandicapApplication.MainActivity.CurrentLocation.Latitude;
-            double lng = NohandicapApplication.MainActivity.CurrentLocation.Longitude;
+            var position = NohandicapApplication.MainActivity.CurrentLocation;
+            string lat = "";
+            string lng = "";
+            if (position != null)
+            {
+                lat = position.Latitude.ToString();
+                lng = position.Longitude.ToString();
+            }
+            List<ProductMarkerModel> newProducts;
+
             PageNumber++;
-            var newProducts= await RestApiService.GetMarkers(NohandicapApplication.SelectedMainCategory, selectedSubCategory, NohandicapApplication.CurrentLang.Id, lat, lng,PageNumber);       
+            if (isFav)
+            {
+                var user = conn.GetDataList<UserModel>().FirstOrDefault();
+                if (user == null) return;
+                newProducts = await RestApiService.GetFavorites(user.Id, PageNumber);               
+            }
+            else
+            {
+                newProducts = await RestApiService.GetMarkers(NohandicapApplication.SelectedMainCategory, selectedSubCategory, NohandicapApplication.CurrentLang.Id, lat, lng, PageNumber);             
+            }
+
             foreach (var product in newProducts)
             {
                 products.Add(product);
-                try
+                context.RunOnUiThread(() =>
                 {
-                    context.RunOnUiThread(() => {
                     NotifyDataSetChanged();
-                    });
-                }
-                catch(Exception e)
-                {
-
-                }
+                });
             }
-            
+
         }
     }
 }

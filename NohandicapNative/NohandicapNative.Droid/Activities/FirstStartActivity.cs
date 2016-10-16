@@ -140,7 +140,11 @@ namespace NohandicapNative.Droid
             }
         }
         private async void FillLanguageLocalTable()
-        { 
+        {
+            try
+            {
+
+          
             string[] defaultLanguages = Resources.GetStringArray(Resource.Array.lang_array);
             var defaultShortLanguages = Resources.GetStringArray(Resource.Array.lang_short_array);
            
@@ -162,9 +166,17 @@ namespace NohandicapNative.Droid
             langListView.Adapter = new RadioButtonListAdapter(this, flags, langList);
             langListView.PerformItemClick(langListView, 0, 0);
             OnItemClick(null, null, 0, 0);
+            }
+            catch (Exception)
+            {
 
+#if DEBUG
+                System.Diagnostics.Debugger.Break();
+#endif
+
+            }
         }
-        private async void FillCategiesLocalTable()
+        private void FillCategiesLocalTable()
         {
 
             List<string> mainItems = Resources.GetStringArray(Resource.Array.main_category_array).ToList();
@@ -182,7 +194,7 @@ namespace NohandicapNative.Droid
         }
         private async void LoadData()
         {
-               
+            try { 
             var conn = Utils.GetDatabaseConnection();
             conn.CreateTables();
             conn.InsertUpdateProductList(LanguagesList);
@@ -234,7 +246,15 @@ namespace NohandicapNative.Droid
 
 
             }
+            }
+            catch (Exception)
+            {
 
+#if DEBUG
+                System.Diagnostics.Debugger.Break();
+#endif
+
+            }
         }
         protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
         {

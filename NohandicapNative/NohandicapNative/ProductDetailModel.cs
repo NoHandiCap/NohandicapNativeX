@@ -8,7 +8,7 @@ using System.Collections.Generic;
 namespace NohandicapNative
 {
     [JsonObject]
-    public class ProductModel
+    public class ProductDetailModel
     {
         [PrimaryKey]
         [JsonProperty(PropertyName = "id")]

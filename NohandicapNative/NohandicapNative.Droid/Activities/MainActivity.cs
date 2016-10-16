@@ -27,6 +27,9 @@ using Android.Locations;
 using Xamarin.Auth;
 using System.Json;
 using Square.Picasso;
+using System.Collections.ObjectModel;
+
+using Java.Net;
 
 namespace NohandicapNative.Droid
 {
@@ -56,7 +59,22 @@ namespace NohandicapNative.Droid
                 Utils.WriteToSettings(MainActivity, Utils.LANG_SHORT, value.ShortName);
             }
         }
+        public static bool IsInternetConnection
+        {
+            get
+            {
+                try
+                {
+                    InetAddress ipAddr = InetAddress.GetByName(NohandicapLibrary.LINK_MAIN);
+                    return !ipAddr.Equals("");
 
+                }
+                catch (Exception e)
+                {
+                    return false;
+                }
+            }
+        }
         public static CategoryModel SelectedMainCategory
         {
             get
@@ -126,7 +144,7 @@ namespace NohandicapNative.Droid
        .SetTitle("Error")
        .Show();
         }
-
+        
         protected override void Dispose(bool disposing)
         {
             AppDomain currentDomain = AppDomain.CurrentDomain;
@@ -150,16 +168,24 @@ namespace NohandicapNative.Droid
         public HomeFragment HomePage { get; set; }
         public GMapFragment MapPage { get; set; }
         public ListFragment ListPage { get; set; }
-        public FavoritesFragment Favorites { get; set; }       
-     
+        public FavoritesFragment Favorites { get; set; }        
         int lastPos = 0;
         public  Location CurrentLocation { get; set; }
-
-          LocationManager _locationManager;
-
+        LocationManager _locationManager;
         string _locationProvider;
-      
-     
+        ObservableCollection<ProductMarkerModel> _currentProductsList;
+        public ObservableCollection<ProductMarkerModel> CurrentProductsList
+        {
+            get
+            {
+                return _currentProductsList;
+            }
+            set
+            {
+                _currentProductsList = value;
+
+            }
+        }
         #endregion
 
         protected override void OnCreate(Bundle bundle)
@@ -167,39 +193,41 @@ namespace NohandicapNative.Droid
         
             SetTheme(Resource.Style.AppThemeNoBar);
             base.OnCreate(bundle);
-         //   CrashManager.Register(this);
-            SetContentView(Resource.Layout.Main);
-            NohandicapApplication.isTablet = Resources.GetBoolean(Resource.Boolean.is_tablet);
-            NohandicapApplication.MainActivity = this;
-          if(NohandicapApplication.SelectedMainCategory == null)
-            {
-                var conn = Utils.GetDatabaseConnection();
-                var mainCategory = conn.GetDataList<CategoryModel>().FirstOrDefault(x => x.Group == NohandicapLibrary.MainCatGroup && x.Id==1);
-                conn.SetSelectedCategory(mainCategory);
-                
-            }
-            toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);          
-            _bottomBar = BottomBar.AttachShy(FindViewById<CoordinatorLayout>(Resource.Id.myCoordinator), FindViewById<LinearLayout>(Resource.Id.linContent), bundle);
-            HomePage = new HomeFragment();
-            RunOnUiThread(() => {
-            MapPage = new GMapFragment();
-            ListPage = new ListFragment();     
-            Favorites = new FavoritesFragment();
-            });
-            items = NohandicapLibrary.GetTabs(NohandicapApplication.isTablet);
          
-            PrepareBar();
-            if (bundle != null)
-            {
-                
-                var postion = bundle.GetInt(Utils.TAB_ID);
-                _bottomBar.SelectTabAtPosition(postion, false);
-            }
+                //   CrashManager.Register(this);
+                SetContentView(Resource.Layout.Main);
+                NohandicapApplication.isTablet = Resources.GetBoolean(Resource.Boolean.is_tablet);
+                NohandicapApplication.MainActivity = this;
+                if (NohandicapApplication.SelectedMainCategory == null)
+                {
+                    var conn = Utils.GetDatabaseConnection();
+                    var mainCategory = conn.GetDataList<CategoryModel>().FirstOrDefault(x => x.Group == NohandicapLibrary.MainCatGroup && x.Id == 1);
+                    conn.SetSelectedCategory(mainCategory);
 
-            ThreadPool.QueueUserWorkItem(o => CheckUpdate());
-            ThreadPool.QueueUserWorkItem(o => InitializeLocationManager());
+                }
+                toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
+                _bottomBar = BottomBar.AttachShy(FindViewById<CoordinatorLayout>(Resource.Id.myCoordinator), FindViewById<LinearLayout>(Resource.Id.linContent), bundle);
+                HomePage = new HomeFragment();
+            RunOnUiThread(() => { 
+            MapPage = new GMapFragment();
+                ListPage = new ListFragment();
+                Favorites = new FavoritesFragment();
+                });
+                _currentProductsList = new ObservableCollection<ProductMarkerModel>();
+                items = NohandicapLibrary.GetTabs(NohandicapApplication.isTablet);
+                PrepareBar();
+                if (bundle != null)
+                {
 
+                    var postion = bundle.GetInt(Utils.TAB_ID);
+                    _bottomBar.SelectTabAtPosition(postion, false);
+                }
+
+                ThreadPool.QueueUserWorkItem(o => CheckUpdate());
+                ThreadPool.QueueUserWorkItem(o => InitializeLocationManager());
+            
         }
+     
         public async void CheckUpdate()
         {
             try
@@ -219,11 +247,12 @@ namespace NohandicapNative.Droid
                 }
           
             }catch(Exception e)
-            {
-                Log.Debug(TAG, "Check Update " + e.Message);
-            }
-
-           
+            {       
+#if DEBUG
+                System.Diagnostics.Debugger.Break();
+#endif         
+            Log.Debug(TAG, "Check Update " + e.Message);
+            }           
         }
         private void PrepareBar()
         {
@@ -359,7 +388,7 @@ namespace NohandicapNative.Droid
                         var obj = JsonValue.Parse(t.Result.GetResponseText());
 
                         user = new UserModel();
-                        user.ID = obj["id"].ToString();
+                        user.Id = obj["id"].ToString();
                         user.Name = obj["name"];
                         user.Favorites = new List<int>();
                         fragment.UserLoginSuccess(user);
@@ -464,7 +493,7 @@ namespace NohandicapNative.Droid
             base.OnConfigurationChanged(newConfig);
 
         }
-        public async void OnLocationChanged(Location location)
+        public void OnLocationChanged(Location location)
         {
             CurrentLocation = location;           
         }
@@ -510,8 +539,8 @@ namespace NohandicapNative.Droid
                     if (currentProductId != -1)
                     {
                         var conn = Utils.GetDatabaseConnection();
-                        var products = conn.GetDataList<ProductModel>();
-                        var currentProduct = conn.GetDataList<ProductModel>(x => x.ID == currentProductId);
+                        var products = conn.GetDataList<ProductDetailModel>();
+                        var currentProduct = conn.GetDataList<ProductDetailModel>(x => x.ID == currentProductId);
                         MapPage.SetData(new List<CategoryModel>());
                         SetCurrentTab(1);
                         SupportActionBar.Title = currentProduct[0].FirmName;
@@ -545,10 +574,33 @@ namespace NohandicapNative.Droid
                 Log.Error(TAG, "OnPause(): " +e.Message);
             }
        
-        }     
+        }
 
         #endregion
-
+        protected override void OnDestroy()
+        {
+            SaveProductsBeforeExit();
+            base.OnDestroy();
+        }
+        private void SaveProductsBeforeExit()
+        {
+            Task.Run(() => { 
+            var conn = Utils.GetDatabaseConnection();
+            conn.InsertUpdateProductList(CurrentProductsList.ToList());
+            });
+        }
+        public void AddProductsToCache(List<ProductMarkerModel> products)
+        {
+            Task.Run(() => {
+            foreach (var prod in products)
+            {
+                if (!_currentProductsList.Any(x => x.Id == prod.Id))
+                {
+                    _currentProductsList.Add(prod);
+                }
+            }
+            });
+        }
     }
 }
 

@@ -1,12 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
 using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.Support.V7.App;
@@ -18,14 +15,11 @@ using Android.Graphics;
 using Android.Support.Design.Widget;
 using Android.Text;
 using Android.Gms.Maps;
-using Android.Gms.Common;
 using Android.Gms.Maps.Model;
 using Android.Util;
 using System.Globalization;
 using System.Threading.Tasks;
-using Android.Text.Method;
 using static Android.Views.View;
-using System.Threading;
 
 namespace NohandicapNative.Droid
 {
@@ -37,7 +31,7 @@ namespace NohandicapNative.Droid
         Android.Support.V7.Widget.Toolbar toolbar;
         List<CategoryModel> categories;
         UserModel user;
-        ProductModel product;       
+        ProductDetailModel product;       
         TextView descriptionTextView;
         TextView adressTextView;
         TextView ortTextView;
@@ -101,9 +95,11 @@ namespace NohandicapNative.Droid
         }   
         private async Task LoadProduct()
         {
+            try
+            {           
             var conn = Utils.GetDatabaseConnection();
             var productId = Intent.GetIntExtra(Utils.PRODUCT_ID, -1);
-            product = conn.GetDataList<ProductModel>().FirstOrDefault(x => x.ID == productId);
+                product =await RestApiService.GetProductDetail(productId, NohandicapApplication.CurrentLang.Id);
 
             SupportActionBar.Title = product.FirmName;
 
@@ -163,8 +159,40 @@ namespace NohandicapNative.Droid
                     }
 
                 }
-            
-          
+                RunOnUiThread(async() => {
+                    var options = new MarkerOptions().SetPosition(new LatLng(double.Parse(product.Lat, CultureInfo.InvariantCulture), double.Parse(product.Long, CultureInfo.InvariantCulture))).SetTitle(product.FirmName);
+                    if (string.IsNullOrEmpty(product.ProductMarkerImg))
+                    {
+
+                        var cat = categories.FirstOrDefault(y => y.Id == product.Categories[0]).Marker;
+                        var drawImage = Utils.SetDrawableSize(this, Utils.GetImage(this, cat), 70, 80);
+                        var bitmap = Utils.convertDrawableToBitmap(drawImage);
+                        options.SetIcon(BitmapDescriptorFactory.FromBitmap(bitmap));
+
+
+                    }
+                    else
+                    {
+                        var markerImg = await Utils.LoadBitmapAsync(product.ProductMarkerImg);
+
+                        options.SetIcon(BitmapDescriptorFactory.FromBitmap(Bitmap.CreateScaledBitmap(markerImg, markerImg.Width + 20, markerImg.Height + 20, true)));
+
+                    }
+                    map.AddMarker(options);
+                    CameraPosition cameraPosition = new CameraPosition.Builder().Target(options.Position).Zoom(14.0f).Build();
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.NewCameraPosition(cameraPosition);
+                    map.MoveCamera(cameraUpdate);
+                });
+
+            }
+            catch (Exception)
+            {
+
+#if DEBUG
+                System.Diagnostics.Debugger.Break();
+#endif
+
+            }
         }     
       private void HideEmptyTextView()
         {           
@@ -205,51 +233,36 @@ namespace NohandicapNative.Droid
             }
             return true;
         }
-       
-       
+
+
         public async void OnMapReady(GoogleMap googleMap)
         {
-            try {
-              
-            var options = new MarkerOptions().SetPosition(new LatLng(double.Parse(product.Lat, CultureInfo.InvariantCulture), double.Parse(product.Long, CultureInfo.InvariantCulture))).SetTitle(product.FirmName);
-                if (string.IsNullOrEmpty(product.ProductMarkerImg))
-                {
-                
-                var cat = categories.FirstOrDefault(y => y.Id == product.Categories[0]).Marker;
-                var drawImage = Utils.SetDrawableSize(this, Utils.GetImage(this, cat), 70, 80);
-                var bitmap = Utils.convertDrawableToBitmap(drawImage);
-                options.SetIcon(BitmapDescriptorFactory.FromBitmap(bitmap));
-             
-
-                }
-                else
-                {
-          var      markerImg = await Utils.LoadBitmapAsync(product.ProductMarkerImg);
-                 
-                options.SetIcon(BitmapDescriptorFactory.FromBitmap(Bitmap.CreateScaledBitmap(markerImg, markerImg.Width+20, markerImg.Height+20, true)));
-
-            }
-            googleMap.AddMarker(options);
-                googleMap.UiSettings.ScrollGesturesEnabled=false;
-                CameraPosition cameraPosition = new CameraPosition.Builder().Target(options.Position).Zoom(14.0f).Build();
-            CameraUpdate cameraUpdate = CameraUpdateFactory.NewCameraPosition(cameraPosition);
-            googleMap.MoveCamera(cameraUpdate);                
+            try
+            {
+                map = googleMap;
+                map.UiSettings.ScrollGesturesEnabled = false;               
                 View toolbar = ((View)mapView.FindViewById(int.Parse("1")).
             Parent).FindViewById(int.Parse("4"));
-               
+
                 // and next place it, for example, on bottom right (as Google Maps app)
                 RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams)toolbar.LayoutParameters;
                 // position on right bottom
                 rlp.AddRule(LayoutRules.AlignParentTop, 0);
-               rlp.AddRule(LayoutRules.AlignParentBottom,(int)LayoutRules.True);  
-               rlp.AddRule(LayoutRules.AlignParentLeft,(int)LayoutRules.True);
-                rlp.SetMargins(100, 0, 0,30);
-             
+                rlp.AddRule(LayoutRules.AlignParentBottom, (int)LayoutRules.True);
+                rlp.AddRule(LayoutRules.AlignParentLeft, (int)LayoutRules.True);
+                rlp.SetMargins(100, 0, 0, 30);
+
             }
             catch (Exception e)
             {
-                Log.Error(TAG, "OnMapReady: " + e.Message + " " + e.StackTrace);
 
+#if DEBUG
+                System.Diagnostics.Debugger.Break();
+#endif
+
+
+
+                Log.Error(TAG, "OnMapReady: " + e.Message + " " + e.StackTrace);
             }
         }
        
@@ -277,7 +290,7 @@ namespace NohandicapNative.Droid
                     fab.Selected = true;
                     user.Favorites.Add(product.ID);
                     conn.InsertUpdateProduct(user);
-                    var url = String.Format(NohandicapLibrary.LINK_SAVEFAV, user.ID, product.ID);
+                    var url = String.Format(NohandicapLibrary.LINK_SAVEFAV, user.Id, product.ID);
                     RestApiService.GetDataFromUrl<UserModel>(url, readBack: false);
                 }
                 else
@@ -287,7 +300,7 @@ namespace NohandicapNative.Droid
                     user.Favorites.Remove(product.ID);
                     conn.InsertUpdateProduct(user);
                     NohandicapApplication.MainActivity.Favorites.ReloadData();
-                    var url = String.Format(NohandicapLibrary.LINK_DELFAV, user.ID, product.ID);
+                    var url = String.Format(NohandicapLibrary.LINK_DELFAV, user.Id, product.ID);
                     RestApiService.GetDataFromUrl<UserModel>(url, readBack: false);
                 }
                 

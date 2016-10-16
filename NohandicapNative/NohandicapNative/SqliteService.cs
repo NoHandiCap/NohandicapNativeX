@@ -39,7 +39,7 @@ namespace NohandicapNative
                     conn.CreateTable<CategoryModel>();
                     conn.CreateTable<LanguageModel>();
                     conn.CreateTable<UserModel>();
-                    conn.CreateTable<ProductModel>();
+                    conn.CreateTable<ProductDetailModel>();
                     conn.CreateTable<ProductMarkerModel>();
                 }
 
@@ -47,21 +47,21 @@ namespace NohandicapNative
             }
             catch (Exception e)
             {
+#if DEBUG
+                System.Diagnostics.Debugger.Break();
+#endif
+
                 return false;
             }
 
         }
         public string InsertUpdateProduct<T>(T data)
         {
-
-
             using (var conn = GetSQLiteConnetion())
             {
                 conn.InsertOrReplaceWithChildren(data, true);
             }
             return "Single data file inserted or updated";
-
-
         }
         public string InsertUpdateProductList<T>(List<T> data)
         {
@@ -70,9 +70,6 @@ namespace NohandicapNative
                 conn.InsertOrReplaceAllWithChildren(data, true);
                 return "Single data file inserted or updated";
             }
-
-
-
         }
         public List<T> GetDataList<T>() where T : class
         {
@@ -159,7 +156,7 @@ namespace NohandicapNative
             bool result;
             List<LanguageModel> languages;
             List<CategoryModel> categories;
-            List<ProductModel> products;
+            List<ProductDetailModel> products;
 
             switch (TableName)
             {
@@ -178,7 +175,9 @@ namespace NohandicapNative
                         }
                         catch (Exception e)
                         {
-                            var s = e;
+#if DEBUG
+                            System.Diagnostics.Debugger.Break();
+#endif
                         }
                         return true;
                     }
@@ -212,32 +211,11 @@ namespace NohandicapNative
 
                     }
                     return false;
-                    break;
-                //case NohandicapLibrary.PRODUCT_TABLE:
-                //    products = await RestApiService.GetDataFromUrl<List<ProductModel>>(NohandicapLibrary.LINK_PRODUCT + langID);
-                //    if (products != null)
-                //    {
-                //        try
-                //        {
-                //            using (var conn = GetSQLiteConnetion())
-                //            {
-                //                conn.DeleteAll(typeof(ProductModel));
-                //                conn.CreateTable<ProductModel>();
-                //            }
-                //            InsertUpdateProductList(products);
-
-                //            return true;
-                //        } catch (Exception e)
-                //        {
-                //            var s = e;
-                //        }
-                //    }
-                //    return false;
-                //    break;
+                    break;                
                 default:
                     var l = await SynchronizeDataBase(langID, NohandicapLibrary.LANGUAGE_TABLE);
                     var c = await SynchronizeDataBase(langID, NohandicapLibrary.CATEGORY_TABLE);
-               //     var p = await SynchronizeDataBase(langID, NohandicapLibrary.PRODUCT_TABLE);
+            
                     if (l || c)
                     {
                         return true;
@@ -268,16 +246,6 @@ namespace NohandicapNative
                     }
                 });
             }
-        }
-
-        public void BeginTransaction()
-        {
-            using (var conn = GetSQLiteConnetion())
-            {
-                conn.BeginTransaction();
-
-            }
-
         }
     }
 }

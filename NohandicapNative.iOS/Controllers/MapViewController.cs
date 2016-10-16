@@ -11,15 +11,15 @@ namespace NohandicapNative.iOS
     public partial class MapViewController : UIViewController
     {
         MapView mapView;
-        List<ProductModel> productsToShow;
-        public MapViewController(List<ProductModel> productsToShow):base()
+        List<ProductDetailModel> productsToShow;
+        public MapViewController(List<ProductDetailModel> productsToShow):base()
         {
             this.productsToShow = productsToShow;
         }
         public MapViewController (IntPtr handle) : base (handle)
         {
         }
-        public void SetDataProduct(List<ProductModel> productsToShow)
+        public void SetDataProduct(List<ProductDetailModel> productsToShow)
         {
             this.productsToShow = productsToShow;
 

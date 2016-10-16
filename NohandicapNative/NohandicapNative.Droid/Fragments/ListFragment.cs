@@ -9,18 +9,19 @@ using Android.App;
 using NohandicapNative.Droid.Services;
 using Android.Locations;
 using System.Globalization;
+using System.Collections.ObjectModel;
 
 namespace NohandicapNative.Droid
 {
   public  class ListFragment : Android.Support.V4.App.Fragment
     {           
         ListView listView;
-        List<ProductMarkerModel> productsList;     
+         
         CardViewAdapter cardViewAdapter;
         TextView mainCategoryName;
         ImageView mainCategoryImage;
         TextView subCategoryName;
-
+       
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
@@ -36,13 +37,44 @@ namespace NohandicapNative.Droid
                 int position = e.Position;
 
                 var activity = new Intent(Activity, typeof(DetailActivity));
-                activity.PutExtra(Utils.PRODUCT_ID, productsList[position].Id);
+                activity.PutExtra(Utils.PRODUCT_ID, NohandicapApplication.MainActivity.CurrentProductsList[position].Id);
                 NohandicapApplication.MainActivity.StartActivityForResult(activity,1);         
             };
             ReloadData();
             return view;
-        }   
-       
+        }
+        public ListFragment()
+        {
+            LoadCache();
+        }
+        private async void LoadCache()
+        {
+            try
+            {
+                var conn = Utils.GetDatabaseConnection();
+                var selectedSubCategory = conn.GetSubSelectedCategory();
+                var position = NohandicapApplication.MainActivity.CurrentLocation;
+                string lat = "";
+                string lng = "";
+                if (position != null)
+                {
+                    lat = position.Latitude.ToString();
+                    lng = position.Longitude.ToString();
+                }
+
+                var coll = await RestApiService.GetMarkers(NohandicapApplication.SelectedMainCategory, selectedSubCategory, NohandicapApplication.CurrentLang.Id, lat, lng, 1);
+                NohandicapApplication.MainActivity.AddProductsToCache(coll);
+
+            }
+            catch (System.Exception e)
+            {
+#if DEBUG
+                System.Diagnostics.Debugger.Break();
+#endif
+              
+            }
+           
+        }
         public override void OnHiddenChanged(bool hidden)
         {
             base.OnHiddenChanged(hidden);
@@ -53,17 +85,13 @@ namespace NohandicapNative.Droid
         }
         private async void ReloadData()
         {
-            var conn = Utils.GetDatabaseConnection();        
+            var conn = Utils.GetDatabaseConnection();
+
             var selectedSubCategory = conn.GetSubSelectedCategory();
-            double lat = NohandicapApplication.MainActivity.CurrentLocation.Latitude;
-            double lng = NohandicapApplication.MainActivity.CurrentLocation.Longitude;
-
             //Products = conn.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= NohandicapApplication.SelectedMainCategory.Id).ToList();
-            productsList =await RestApiService.GetMarkers(NohandicapApplication.SelectedMainCategory, selectedSubCategory, NohandicapApplication.CurrentLang.Id, lat, lng, 1);
-
             if (selectedSubCategory.Count != 0)
             {
-                productsList = productsList.Where(x => x.Categories.Any(y => selectedSubCategory.Any(z => z.Id == y))).ToList();
+
                 var categories = "";
                 selectedSubCategory.ForEach(x => categories += x.Name+",");
                 categories.Remove(categories.Length - 1);
@@ -71,6 +99,7 @@ namespace NohandicapNative.Droid
             }
             else
             {
+              
                 subCategoryName.Text = Resources.GetString(Resource.String.all_cat);
             }
 
@@ -79,29 +108,10 @@ namespace NohandicapNative.Droid
             mainCategoryImage.SetImageDrawable(Utils.SetDrawableSize(Activity, image, 140, 65));
 
            // productsList = SortProductsByDistance(productsList);
-            cardViewAdapter = new CardViewAdapter(Activity, productsList);
+            cardViewAdapter = new CardViewAdapter(Activity,false);
             listView.Adapter = cardViewAdapter;   
         }
-
-        public List<ProductModel> SortProductsByDistance(List<ProductModel> products)
-        {
-            var myLocation = NohandicapApplication.MainActivity.CurrentLocation;
-            if (myLocation != null)
-            {
-             var sorted = products.Select(product =>
-                {
-                    var point = new Location("");
-                    point.Latitude = double.Parse(product.Lat, CultureInfo.InvariantCulture);
-                    point.Longitude = double.Parse(product.Long, CultureInfo.InvariantCulture);
-                    var distance = Utils.GetDistance(myLocation, point);
-                    product.DistanceToMyLocation = distance;
-                    return product;
-                }).OrderBy(x => x.DistanceToMyLocation).ToList();
-                return sorted;
-            }
-            return products;
-        }
-
+      
        
     }
 }

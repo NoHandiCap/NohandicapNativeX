@@ -139,7 +139,6 @@
     <Compile Include="Activities\SplashActivity.cs" />
     <Compile Include="Adapters\GridViewAdapter.cs" />
     <Compile Include="Adapters\CardViewAdapter.cs" />
-    <Compile Include="Adapters\ProductsRecyclerViewAdapter.cs" />
     <Compile Include="Adapters\RadioButtonListAdapter.cs" />
     <Compile Include="Adapters\SliderAdapter.cs" />
     <Compile Include="Adapters\SpinnerAdapter.cs" />

@@ -12,6 +12,7 @@ using NohandicapNative.Droid.Services;
 using Android.Content.Res;
 using static Android.Widget.AdapterView;
 using System.Threading.Tasks;
+using System;
 
 namespace NohandicapNative.Droid
 {
@@ -112,7 +113,7 @@ namespace NohandicapNative.Droid
         }       
         private async Task<bool> ReloadData()
         {
-            
+            try { 
             ProgressDialog progressDialog = new ProgressDialog(this,
            Resource.Style.StyledDialog);
 
@@ -132,7 +133,16 @@ namespace NohandicapNative.Droid
             {              
                 progressDialog.Dismiss();
                 return false;
-            }           
+            }
+            }
+            catch (Exception e)
+            {
+
+#if DEBUG
+                System.Diagnostics.Debugger.Break();
+#endif
+                return false;
+            }
         }
         public void OnItemClick(AdapterView parent, View view, int position, long languageId)
         {

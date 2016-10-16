@@ -15,7 +15,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)LanguageModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NohandiLibrary.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProductMarkerModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ProductModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ProductDetailModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RestApiService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SqliteService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)JsonDataConverter.cs" />

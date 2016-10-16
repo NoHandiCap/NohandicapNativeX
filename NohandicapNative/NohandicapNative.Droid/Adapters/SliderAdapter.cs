@@ -14,9 +14,9 @@ namespace NohandicapNative.Droid.Adapters
         string TAG = "X: " + typeof(SliderAdapter).Name;
 
         private Context context;
-       ProductModel product;
+       ProductDetailModel product;
 
-        public SliderAdapter(Context context, ProductModel product)
+        public SliderAdapter(Context context, ProductDetailModel product)
         {
             this.context = context;
             this.product = product;

@@ -18,6 +18,7 @@ using NohandicapNative.Droid.Model;
 using System.Threading;
 using Square.Picasso;
 using Android.Graphics.Drawables;
+using System.Collections.ObjectModel;
 
 namespace NohandicapNative.Droid
 {
@@ -28,7 +29,7 @@ namespace NohandicapNative.Droid
         LayoutInflater inflater;
         GoogleMap map;       
         List<Marker> markersList;
-
+        private static int DELAY_TIME_IN_MILLI = 500;
         List<MarkerOptions> markerOptons;    
         MapView mapView;
         List<CategoryModel> currentCategories;
@@ -100,70 +101,49 @@ namespace NohandicapNative.Droid
                          }
                          return;
                      }
-                       
-                     var productsForCategories =
+                     var cachedProducts = NohandicapApplication.MainActivity.CurrentProductsList;
+                     var loadedProducts =
                        await RestApiService.GetMarkers(latLngBounds.Southwest.Latitude, latLngBounds.Southwest.Longitude,
                        latLngBounds.Northeast.Latitude, latLngBounds.Northeast.Longitude,
                        NohandicapApplication.SelectedMainCategory, currentCategories);
-                     //var productsForCategories = products.Where(x => x.Categories.Any(y => currentCategories.Any(z => z.Id == y))).ToList();
-                     //    //Reload task untill latLngBounds not null
-                     //   
-                     //}
-                     //    //---------------
-
-                     var newProductsInBound = productsForCategories
+                   
+             
+                    
+                     var newProductsInBound = loadedProducts
                      .Where(x =>!productsInBounds.Contains(x))
-                     .ToList();
-                     if (currentCameraPosition != null)
-                     {
-                         if (currentCameraPosition.Zoom < 11)
+                     .ToList();                                       
+                         foreach (var product in newProductsInBound)
                          {
-                             newProductsInBound = newProductsInBound.Take(50).ToList();
-                         }
-                     }
-                     foreach (var product in newProductsInBound)
-                     {
-                         var lat = double.Parse(product.Lat, CultureInfo.InvariantCulture);
-                         var lng = double.Parse(product.Lng, CultureInfo.InvariantCulture);
+                             var lat = double.Parse(product.Lat, CultureInfo.InvariantCulture);
+                             var lng = double.Parse(product.Lng, CultureInfo.InvariantCulture);
 
-                     //    var clusterItem = new ClusterItem(lat, lng);
-                         var catMarker = currentCategories.FirstOrDefault(x => product.Categories.Any(y => y == x.Id)).Marker;
-                         string catPinUrl = ContentResolver.SchemeAndroidResource + "://" + Activity.PackageName + "/drawable/" + catMarker;
-                         string customPinUrl = product.ProdimgPin;
-                         var catBitmap = Picasso.With(Activity).Load(catPinUrl).Get();
-                         var bitmapDesc = BitmapDescriptorFactory.FromBitmap(catBitmap);
+                             var catMarker = currentCategories.FirstOrDefault(x => product.Categories.Any(y => y == x.Id)).Marker;
+                             string catPinUrl = ContentResolver.SchemeAndroidResource + "://" + Activity.PackageName + "/drawable/" + catMarker;
+                             string customPinUrl = product.ProdimgPin;
+                           
+                             var catBitmap = Picasso.With(Activity).Load(catPinUrl).Get();
+                             var bitmapDesc = BitmapDescriptorFactory.FromBitmap(catBitmap);
 
-                         //    var markerImg = Picasso.With(Activity).Load(product.ProdimgPin).Resize(32, 34).Get();
-                         // clusterItem.Icon = BitmapDescriptorFactory.FromBitmap(markerImg);
-                         // clusterItem.ProductId = product.Id;
-                         var options = new MarkerOptions();
-                         options.SetPosition(new LatLng(lat, lng));
-                         options.Visible(false);
-                         Activity.RunOnUiThread(() =>
-                         {
-                             var marker = map.AddMarker(options);                           
-                             var picassoMarker = new PicassoMarker(marker);
-                             if (!string.IsNullOrEmpty(customPinUrl))
+                             var options = new MarkerOptions();
+                             options.SetPosition(new LatLng(lat, lng));
+                             options.Visible(false);
+                            options.SetTitle(product.Id.ToString());
+
+                             Activity.RunOnUiThread(() =>
                              {
-                                 Picasso.With(Activity).Load(customPinUrl).Error(new BitmapDrawable(catBitmap)).Into(picassoMarker);
-                             }
-                             markersList.Add(marker);
-                             productsInBounds.Add(product);
-                         });
-
-                         //  _clusterManager.AddItem(clusterItem);
-                     }
-                 }).ContinueWith(t =>
-                 {
-                     //Activity.RunOnUiThread(() =>
-                     //{
-                     //    _clusterManager.Cluster();//Workaround show markers after add new
-                     //    });
-
-                 }, TaskScheduler.FromCurrentSynchronizationContext());
-
+                                 var marker = map.AddMarker(options);
+                                 var picassoMarker = new PicassoMarker(marker);
+                                 if (!string.IsNullOrEmpty(customPinUrl))
+                                 {
+                                     Picasso.With(Activity).Load(customPinUrl).Into(picassoMarker);
+                                 }
+                                 markersList.Add(marker);
+                                 productsInBounds.Add(product);
+                             });
+                         }
+                     NohandicapApplication.MainActivity.AddProductsToCache(loadedProducts);
+                 });
                 return true;
-
             }
             return false;
         }
@@ -176,11 +156,8 @@ namespace NohandicapNative.Droid
                 map.Clear();
                 markerOptons.Clear();
                 markersList.Clear();
-                productsInBounds.Clear();
-             //   _clusterManager.ClearItems();
-              
-            }
-            //----
+                productsInBounds.Clear();                      
+            }   
            this.currentCategories = currentCategories;
         }
        
@@ -246,35 +223,28 @@ namespace NohandicapNative.Droid
             var imageView = info.FindViewById<ImageView>(Resource.Id.info_mainImageView);
             var title = info.FindViewById<TextView>(Resource.Id.info_titleTextView);
             var adress = info.FindViewById<TextView>(Resource.Id.info_adressTextView);
-            //var mainimage = product.ImageCollection.Images;
-            //if (mainimage.Count != 0)
-            //{
-            //    var img = mainimage[0];
-            //    try
-            //    {
-            //        if (img != null)
-            //        {
-            //            Picasso.With(Activity).Load(img).Placeholder(Resource.Drawable.placeholder).Resize(50, 50).Into(imageView, new CustomCallback(() =>
-            //            {
-            //                if (marker.IsInfoWindowShown)
-            //                {
-            //                    marker.HideInfoWindow();
-            //                    marker.ShowInfoWindow();
-            //                }
 
-            //            }));
+            try
+            {
+                Picasso.With(Activity).Load(product.ProdImg).Placeholder(Resource.Drawable.placeholder).Resize(50, 50).Into(imageView, 
+                    new CustomCallback(() =>
+                {
+                    if (marker.IsInfoWindowShown)
+                    {
+                        marker.HideInfoWindow();
+                        marker.ShowInfoWindow();
+                    }
 
-            //        }
+                }));
 
+            }
+            catch (System.Exception e)
+            {
+                Log.Error(TAG, e.Message);
+            }
 
-            //    }
-            //    catch (System.Exception e)
-            //    {
-            //        Log.Error(TAG, e.Message);
-            //    }
-            //}
-            //title.Text = product.FirmName;
-            //adress.Text = product.Adress;
+            title.Text = product.Name;
+            adress.Text = product.Address;
             return info;
         }
         public View GetInfoWindow(Marker marker)
@@ -330,11 +300,9 @@ namespace NohandicapNative.Droid
                 //Make LoadData in queue 
                 await semaphoreSlim.WaitAsync();
                 try
-                {
-                    if (await LoadData())
-                    {
-                        //_clusterManager.OnCameraChange(position);                    
-                    }
+                {                   
+                        await LoadData();                  
+                   
                 }catch(Exception e)
                 {
                     Log.Error(TAG, "OnCameraChanged: "+e.Message) ;
@@ -345,11 +313,7 @@ namespace NohandicapNative.Droid
                     //This is why it is important to do the Release within a try...finally clause; program execution may crash or take a different path, this way you are guaranteed execution
                     semaphoreSlim.Release();
                 }
-            }
-            else
-            {
-             //   _clusterManager.OnCameraChange(position);
-            }
+            }          
            
         }
 

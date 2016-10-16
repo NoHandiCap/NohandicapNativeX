@@ -80,7 +80,7 @@ namespace NohandicapNative.iOS.Controllers
             tab1 = new UINavigationController(new HomeViewController()
             { Title ="Nohandicap"});
 
-            tab2 = new UINavigationController(new MapViewController(new List<ProductModel>())
+            tab2 = new UINavigationController(new MapViewController(new List<ProductDetailModel>())
             { Title = tabItems[1].Title });           
 
             tab3 = new UINavigationController(new UIViewController()

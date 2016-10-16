@@ -16,6 +16,7 @@ namespace NohandicapNative
     {
         public static async Task<string> GetStringContent(string dataUri, string rootName = "result")
         {
+
             var url = dataUri;
             var httpClient = new HttpClient() ;
             var cts = new CancellationTokenSource();
@@ -88,7 +89,7 @@ namespace NohandicapNative
 
             return products;
         }
-        public static async Task<List<ProductMarkerModel>> GetMarkers(CategoryModel mainCat, List<CategoryModel> subCategories, int langId,double lat,double lng,int page, int count = 50)
+        public static async Task<List<ProductMarkerModel>> GetMarkers(CategoryModel mainCat, List<CategoryModel> subCategories, int langId,string lat,string lng,int page, int count = 50)
         {
             var mainCategory = mainCat.Id;  
             string subCatList = "";
@@ -101,6 +102,24 @@ namespace NohandicapNative
             var products = await GetDataFromUrl<List<ProductMarkerModel>>(url);
 
             return products;
+        }
+        public static async Task<List<ProductMarkerModel>> GetFavorites(string userId, int page, int count = 50)
+        {
+        
+            string url = string.Format(NohandicapLibrary.LINK_GET_FAV, userId, count, page);
+
+            var products = await GetDataFromUrl<List<ProductMarkerModel>>(url);
+
+            return products;
+        }
+        public static async Task<ProductDetailModel> GetProductDetail(int productId, int langId)
+        {
+
+            string url = string.Format(NohandicapLibrary.LINK_PRODUCT_DETAIL,langId, productId);
+
+            var products = await GetDataFromUrl<List<ProductDetailModel>>(url);
+
+            return products.FirstOrDefault(x=>x.ID==productId);
         }
         public static T Deserializedata<T>(string content, string rootName = "result")
         {
