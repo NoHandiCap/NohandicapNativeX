@@ -39,6 +39,8 @@ namespace NohandicapNative.Droid.Services
         public const string LOGIN_ID = "loginID";
         public const string PRODUCT_ID = "productId";  
         public const string LAST_UPDATE_DATE = "lastUp";
+        public const string MAIN_CAT_SELECTED_ID= "mainCat";
+
         private static Locale SLocale;
         public static  Dictionary<string,string> GetLastUpdate(Context context)
         {
@@ -47,6 +49,39 @@ namespace NohandicapNative.Droid.Services
             lastUpdate.Add(NohandicapLibrary.CATEGORY_TABLE, Utils.ReadFromSettings(context, NohandicapLibrary.CATEGORY_TABLE));
             lastUpdate.Add(NohandicapLibrary.LANGUAGE_TABLE, Utils.ReadFromSettings(context, NohandicapLibrary.LANGUAGE_TABLE));
             return lastUpdate;
+        }
+        public static bool isAppIsInBackground(Context context)
+        {
+            bool isInBackground = true;
+            ActivityManager am = (ActivityManager)context.GetSystemService(Context.ActivityService);
+            if (Build.VERSION.SdkInt> Build.VERSION_CODES.KitkatWatch)
+            {
+              var runningProcesses = am.RunningAppProcesses;
+                foreach (ActivityManager.RunningAppProcessInfo processInfo in runningProcesses)
+                {
+                    if (processInfo.Importance == ActivityManager.RunningAppProcessInfo.ImportanceForeground)
+                    {
+                        foreach (string activeProcess in processInfo.PkgList)
+                        {
+                            if (activeProcess.Equals(context.PackageName))
+                            {
+                                isInBackground = false;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                var taskInfo = am.GetRunningTasks(1);
+                ComponentName componentInfo = taskInfo[0].TopActivity;
+                if (componentInfo.PackageName.Equals(context.PackageName))
+                {
+                    isInBackground = false;
+                }
+            }
+
+            return isInBackground;
         }
         public static Android.Graphics.Drawables.Drawable GetImage(Context context, string image)
         {

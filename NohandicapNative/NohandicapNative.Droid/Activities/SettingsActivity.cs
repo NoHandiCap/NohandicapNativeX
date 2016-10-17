@@ -30,7 +30,8 @@ namespace NohandicapNative.Droid
         TextView lastUpdateTextView;
         TextView userTextView;
         LinearLayout loginLayout;
-        MainActivity mainActivity;
+      
+ 
         public SettingsActivity()
         {
             Utils.UpdateConfig(this);

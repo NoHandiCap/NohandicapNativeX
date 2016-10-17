@@ -59,7 +59,7 @@ namespace NohandicapNative
         {
             using (var conn = GetSQLiteConnetion())
             {
-                conn.InsertOrReplaceWithChildren(data, true);
+                conn.InsertOrReplace(data);
             }
             return "Single data file inserted or updated";
         }
@@ -67,7 +67,7 @@ namespace NohandicapNative
         {
             using (var conn = GetSQLiteConnetion())
             {
-                conn.InsertOrReplaceAllWithChildren(data, true);
+                conn.InsertOrReplaceAll(data);
                 return "Single data file inserted or updated";
             }
         }
@@ -92,12 +92,10 @@ namespace NohandicapNative
             }
         }
         public List<T> GetDataList<T>(Func<T,bool> where) where T : class
-        {
-            List<T> result = default(List<T>);
-
+        {        
             using (var conn = GetSQLiteConnetion())
             {
-                result = conn.GetAllWithChildren<T>(null, true).Where(where).ToList();
+              var result = conn.GetAllWithChildren<T>(null, true).Where(where).ToList();
                 return result;
             }
         }       
@@ -118,7 +116,6 @@ namespace NohandicapNative
                             cat.IsSelected = false;
                             conn.InsertOrReplace(cat);
                         }
-
                     }
                 }
                 if (category.Group == NohandicapLibrary.SubCatGroup)
@@ -126,6 +123,8 @@ namespace NohandicapNative
                     category.IsSelected = isSelected;
                     conn.InsertOrReplace(category);
                 }
+                var mainCat = conn.Table<CategoryModel>().Where(x => x.Group == NohandicapLibrary.MainCatGroup).ToList();
+
             }
         }
         public List<CategoryModel> GetSubSelectedCategory()
@@ -140,8 +139,8 @@ namespace NohandicapNative
         {
             using (var conn = GetSQLiteConnetion())
             {
-                var mainCat = conn.Table<CategoryModel>().Where(x => x.Group == NohandicapLibrary.MainCatGroup).ToList();
-                return conn.Table<CategoryModel>().FirstOrDefault(x => x.IsSelected && x.Group == NohandicapLibrary.MainCatGroup);
+                var mainCat = conn.Table<CategoryModel>().Where(x => x.Group == NohandicapLibrary.MainCatGroup).ToList() ;
+                return mainCat.FirstOrDefault() ;
             }
         }
         public void Logout()
@@ -188,10 +187,13 @@ namespace NohandicapNative
                     categories = await RestApiService.GetDataFromUrl<List<CategoryModel>>(NohandicapLibrary.LINK_CATEGORY + langID);
                     if (categories != null)
                     {
+                        CategoryModel saveSelectedCat;
                         using (var conn = GetSQLiteConnetion())
                         {
+                            saveSelectedCat = conn.Table<CategoryModel>().Where(x => x.IsSelected && x.Group == NohandicapLibrary.MainCatGroup).FirstOrDefault();
                             conn.DeleteAll(typeof(CategoryModel));
                             conn.CreateTable<CategoryModel>();
+                           
                         }
                         var localCategories = NohandicapLibrary.GetAdditionalCategory();
                         foreach (var x in categories)
@@ -203,8 +205,16 @@ namespace NohandicapNative
                                 x.Color = cat.Color;
                                 x.Marker = "marker_" + cat.Icon;
                             }
+                            else
+                            {
+                                if (x.Id == saveSelectedCat.Id)
+                                {
+                                    x.IsSelected = true;
+                                }
+                            }
+                            
                         }
-
+                        
                         InsertUpdateProductList(categories);
                         return true;
 

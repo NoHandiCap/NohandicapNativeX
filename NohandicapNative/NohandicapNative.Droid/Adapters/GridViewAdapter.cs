@@ -100,6 +100,7 @@ namespace NohandicapNative.Droid.Adapters
            
             grid.Click +=async (s, e) =>
                {
+               
                    var db = Utils.GetDatabaseConnection();
                    var mainActivity = (MainActivity)context;
                    //var products = db.GetDataList<ProductModel>();
@@ -160,7 +161,7 @@ namespace NohandicapNative.Droid.Adapters
             return grid;
         
         }
-
+       
         public bool OnTouch(View v, MotionEvent e)
         {
             if (e.Action == MotionEventActions.Scroll)

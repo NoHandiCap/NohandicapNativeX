@@ -25,21 +25,24 @@ namespace NohandicapNative.Droid.Adapters
         List<CategoryModel> categories;
         int PageNumber =1;
         bool isFav = false;
+        SqliteService conn;
         public CardViewAdapter(Activity context,bool isFav)
         {
+            conn = Utils.GetDatabaseConnection();
             this.context = context;
-            products =NohandicapApplication.MainActivity.CurrentProductsList;
-            var conn = Utils.GetDatabaseConnection();
-            categories = conn.GetDataList<CategoryModel>();
             selectedCategory = conn.GetSubSelectedCategory();
+            products = new ObservableCollection<ProductMarkerModel>();
+            categories = conn.GetDataList<CategoryModel>();
             this.isFav = isFav;
             if (isFav)
             {
                 products = new ObservableCollection<ProductMarkerModel>();
                 LoadNextData();
             }
+            LoadNextData();
+
         }
-      
+
 
         public override ProductMarkerModel this[int position]
         {
@@ -134,7 +137,7 @@ namespace NohandicapNative.Droid.Adapters
             }
             List<ProductMarkerModel> newProducts;
 
-            PageNumber++;
+           
             if (isFav)
             {
                 var user = conn.GetDataList<UserModel>().FirstOrDefault();
@@ -145,10 +148,13 @@ namespace NohandicapNative.Droid.Adapters
             {
                 newProducts = await RestApiService.GetMarkers(NohandicapApplication.SelectedMainCategory, selectedSubCategory, NohandicapApplication.CurrentLang.Id, lat, lng, PageNumber);             
             }
-
+            PageNumber++;
             foreach (var product in newProducts)
             {
+             
                 products.Add(product);
+                NohandicapApplication.MainActivity.CurrentProductsList.Add(product);
+             
                 context.RunOnUiThread(() =>
                 {
                     NotifyDataSetChanged();

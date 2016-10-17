@@ -252,13 +252,10 @@ namespace NohandicapNative
             }            
             if (lang|| cat)
             {
-               updateList = new Dictionary<string, string>();
-               // updateList.Add(NohandicapLibrary.PRODUCT_TABLE, productTable);
-                updateList.Add(NohandicapLibrary.CATEGORY_TABLE, categoryTable);
-                updateList.Add(NohandicapLibrary.LANGUAGE_TABLE, langTable);
-                
-                return updateList;
-               
+               updateList = new Dictionary<string, string>();         
+               updateList.Add(NohandicapLibrary.CATEGORY_TABLE, categoryTable);
+               updateList.Add(NohandicapLibrary.LANGUAGE_TABLE, langTable);                
+                return updateList;               
             }
             else
             {

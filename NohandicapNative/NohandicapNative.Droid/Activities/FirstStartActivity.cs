@@ -199,7 +199,7 @@ namespace NohandicapNative.Droid
             conn.CreateTables();
             conn.InsertUpdateProductList(LanguagesList);
             conn.InsertUpdateProductList(CategoriesList);
-            conn.SetSelectedCategory(CategoriesList[0]);
+             conn.SetSelectedCategory(CategoriesList[0]);  
             var result = await RestApiService.CheckUpdate(conn, _selecteLangID.ToString(), Utils.GetLastUpdate(this));
       
             if (result != null)
@@ -218,16 +218,17 @@ namespace NohandicapNative.Droid
                         Utils.WriteToSettings(this, NohandicapLibrary.LANGUAGE_TABLE, result[NohandicapLibrary.LANGUAGE_TABLE]);
                     }
                     Utils.WriteToSettings(this, Utils.LAST_UPDATE_DATE, DateTime.Now.ToShortDateString());
-                
+               
                 StartActivity(new Intent(Application.Context, typeof(MainActivity)));
                 Finish();
              
             }
             else
             {
+                    RunOnUiThread(() => { 
                 progressDialog.Dismiss();
-                
-                new Android.Support.V7.App.AlertDialog.Builder(this)
+            
+                    new Android.Support.V7.App.AlertDialog.Builder(this)
      .SetPositiveButton(Resources.GetString(Resource.String.try_text), (sender, args) =>
      {
          LoadData();
@@ -243,9 +244,9 @@ namespace NohandicapNative.Droid
      .SetMessage(Resources.GetString(Resource.String.server_not_responding))
      .SetTitle(Resources.GetString(Resource.String.error))
      .Show();
+                    });
 
-
-            }
+                }
             }
             catch (Exception e)
             {

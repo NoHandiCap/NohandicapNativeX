@@ -57,10 +57,10 @@ namespace NohandicapNative.Droid
                 markerOptons = new List<MarkerOptions>();             
               //  products = conn.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= NohandicapApplication.SelectedMainCategory.Id).ToList();
                 productsInBounds = new List<ProductMarkerModel>();
-                var allCategoriesList = conn.GetSubSelectedCategory();
-                if (allCategoriesList.Count != 0)
+                var selectedCategories = conn.GetSubSelectedCategory();
+                if (selectedCategories.Count != 0)
                 {
-                    SetData(allCategoriesList);
+                    SetData(selectedCategories);
                 }
                 else
                 {
@@ -99,61 +99,71 @@ namespace NohandicapNative.Droid
                              semaphoreSlim.Release();
                          }
                          return;
-                     }                  
+                     }              
+                     Log.Debug(TAG, "Start Load ");
+
                      var loadedProducts =
                        await RestApiService.GetMarkers(latLngBounds.Southwest.Latitude, latLngBounds.Southwest.Longitude,
                        latLngBounds.Northeast.Latitude, latLngBounds.Northeast.Longitude,
                        NohandicapApplication.SelectedMainCategory, currentCategories);
-
+                     Log.Debug(TAG, "LoadedProducts " + loadedProducts.Count);
                      List<ProductMarkerModel> newProductsInBound;
                      if (NohandicapApplication.IsInternetConnection)
                      {
-                         newProductsInBound = loadedProducts
-                     .Where(x => !productsInBounds.Contains(x))
-                     .ToList();                      
-
+                         newProductsInBound = loadedProducts;            
+                                
                      }
                      else
                      {
                          newProductsInBound = conn.GetDataList<ProductMarkerModel>(x => !productsInBounds.Contains(x))
                      .ToList();
-                     }                                                         
-                         foreach (var product in newProductsInBound)
-                         {
-                             var lat = double.Parse(product.Lat, CultureInfo.InvariantCulture);
-                             var lng = double.Parse(product.Lng, CultureInfo.InvariantCulture);
-
-                             var catMarker = currentCategories.FirstOrDefault(x => product.Categories.Any(y => y == x.Id)).Marker;
-                             string catPinUrl = ContentResolver.SchemeAndroidResource + "://" + Activity.PackageName + "/drawable/" + catMarker;
-                             string customPinUrl = product.ProdimgPin;
-                           
-                             var catBitmap = Picasso.With(Activity).Load(catPinUrl).Get();
-                             var bitmapDesc = BitmapDescriptorFactory.FromBitmap(catBitmap);
-
-                             var options = new MarkerOptions();
-                             options.SetPosition(new LatLng(lat, lng));
-                             options.Visible(false);
-                            options.SetTitle(product.Id.ToString());
-
-                             Activity.RunOnUiThread(() =>
-                             {
-                                 var marker = map.AddMarker(options);
-                                 var picassoMarker = new PicassoMarker(marker);
-                                 if (!string.IsNullOrEmpty(customPinUrl))
-                                 {
-                                     Picasso.With(Activity).Load(customPinUrl).Into(picassoMarker);
-                                 }
-                                 markersList.Add(marker);
-                                 productsInBounds.Add(product);
-                             });
-                         }
+                     }
+                     LoadMarkerIntoMap(newProductsInBound);                                         
+                       
                      NohandicapApplication.MainActivity.AddProductsToCache(loadedProducts);
                  });
                 return true;
             }
             return false;
         }
-       
+       private async void LoadMarkerIntoMap(List<ProductMarkerModel> prdoucts)
+        {
+           await Task.Run(() => {
+            foreach (var product in prdoucts)
+            {
+                var lat = double.Parse(product.Lat, CultureInfo.InvariantCulture);
+                var lng = double.Parse(product.Lng, CultureInfo.InvariantCulture);
+                   Log.Debug(TAG, "CurrentCategories count "+ currentCategories.Count);
+                   var catMarker = currentCategories.FirstOrDefault(x => product.Categories.Any(y => y == x.Id)).Marker;
+                string catPinUrl = ContentResolver.SchemeAndroidResource + "://" + Activity.PackageName + "/drawable/" + catMarker;
+                string customPinUrl = product.ProdimgPin;
+                Log.Debug(TAG, "Set customPin ");
+
+                var options = new MarkerOptions();
+                options.SetPosition(new LatLng(lat, lng));
+                options.Visible(false);
+                options.SetTitle(product.Id.ToString());
+                Log.Debug(TAG, "SetOptions ");
+                Activity.RunOnUiThread(() =>
+                {
+                    var marker = map.AddMarker(options);
+                    var picassoMarker = new PicassoMarker(marker);
+                    if (!string.IsNullOrEmpty(customPinUrl))
+                    {
+                        Picasso.With(Activity).Load(customPinUrl).Into(picassoMarker);
+                    }
+                    else
+                    {
+                        Picasso.With(Activity).Load(catPinUrl).Into(picassoMarker);
+                    }
+                    markersList.Add(marker);
+                    productsInBounds.Add(product);
+                    Log.Debug(TAG, "Added Marker ");
+
+                });
+            }
+            });
+        }
         public void SetData(List<CategoryModel> currentCategories)
         {
            //Reload markers if catecories changed
@@ -164,7 +174,17 @@ namespace NohandicapNative.Droid
                 markersList.Clear();
                 productsInBounds.Clear();                      
             }   
-           this.currentCategories = currentCategories;
+            if(currentCategories.Count==0)
+            {
+
+                this.currentCategories = conn.GetDataList<CategoryModel>(x => x.IsSelected && x.Group == NohandicapLibrary.SubCatGroup);
+
+            }
+            else
+            {
+                this.currentCategories = currentCategories;
+
+            }
         }
        
         public override void OnResume()
@@ -207,9 +227,7 @@ namespace NohandicapNative.Droid
             else
             {
                 builder.Target(new LatLng(48.2274656, 16.4067023)).Zoom(10);
-            }          
-         // _clusterManager = new ClusterManager(Activity, map);                    
-          //  _clusterManager.SetRenderer(new ClusterIconRendered(Activity, map, _clusterManager));
+            }               
             map.SetOnCameraChangeListener(this);
             CameraPosition cameraPosition = builder.Build();
             CameraUpdate cameraUpdate = CameraUpdateFactory.NewCameraPosition(cameraPosition);
@@ -218,12 +236,15 @@ namespace NohandicapNative.Droid
         #region InfoWindowAdapter
         public View GetInfoContents(Marker marker)
         {
+            Log.Debug(TAG, "Get Infowindows");
             var info = inflater.Inflate(Resource.Layout.infoWindow, null);
             var product = FindProductFromMarker(marker);
+            if (product == null) return null;
+            Log.Debug(TAG, "Product id"+product.Id);
+
             var imageView = info.FindViewById<ImageView>(Resource.Id.info_mainImageView);
             var title = info.FindViewById<TextView>(Resource.Id.info_titleTextView);
             var adress = info.FindViewById<TextView>(Resource.Id.info_adressTextView);
-
             try
             {
                 Picasso.With(Activity).Load(product.ProdImg).Placeholder(Resource.Drawable.placeholder).Resize(50, 50).Into(imageView, 
@@ -245,6 +266,8 @@ namespace NohandicapNative.Droid
 
             title.Text = product.Name;
             adress.Text = product.Address;
+            Log.Debug(TAG, "return infowindow");
+
             return info;
         }
         public View GetInfoWindow(Marker marker)
@@ -252,8 +275,16 @@ namespace NohandicapNative.Droid
             return null;
         }
         private ProductMarkerModel FindProductFromMarker (Marker marker)
-        {       
-            return conn.GetDataList<ProductMarkerModel>(x => x.Id.ToString() == marker.Title).FirstOrDefault();
+        {
+            ProductMarkerModel product;
+            product = NohandicapApplication.MainActivity.CurrentProductsList.Where(x => x.Id.ToString() == marker.Title).FirstOrDefault();
+            if (product == null)
+            {
+                product = conn.GetDataList<ProductMarkerModel>(x => x.Id.ToString() == marker.Title).FirstOrDefault();
+
+            }
+
+            return product;
         }
         #endregion
 

@@ -47,7 +47,7 @@ namespace NohandicapNative.Droid
             
                 var conn = Utils.GetDatabaseConnection();
                List<CategoryModel> mainCategoriesList = conn.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.MainCatGroup);
-                List<CategoryModel> subCategoriesList = conn.GetSubSelectedCategory();
+                List<CategoryModel> subCategoriesList = conn.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.SubCatGroup);
                 
                 TextView[] mainCat = new TextView[mainCategoriesList.Count];
             ImageView[] mainImg = new ImageView[mainCategoriesList.Count];
@@ -125,14 +125,12 @@ namespace NohandicapNative.Droid
                             Sort = i + 1
                         });
                     }
-                }
-              
+                }           
          
-            //  List<TabItem> mainItems = NohandiLibrary.GetMainCategory();
-            //  mainCategory.Adapter = new GridViewAdapter(myContext, mainItems);
+      
 
             additionalCategory.Adapter = new GridViewAdapter(NohandicapApplication.MainActivity, subCategoriesList.OrderBy(x => x.Sort).ToList());
-                //mainCategory.OnItemClickListener = this;
+            
            
         }
 
@@ -173,14 +171,7 @@ namespace NohandicapNative.Droid
         }      
         public override void OnConfigurationChanged(Configuration newConfig)
         {
-            base.OnConfigurationChanged(newConfig);
-            //NohandicapApplication.MainActivity.HomePage = null;
-            //var fav = new HomeFragment();
-            ////  _myContext.ShowFragment(fav, "fav");
-            //Android.Support.V4.App.FragmentManager fragmentManager = myContext.SupportFragmentManager;
-            //var trans = fragmentManager.BeginTransaction();
-            //trans.Replace(Resource.Id.flContent, fav);
-            //trans.Commit();
+            base.OnConfigurationChanged(newConfig);      
              GridRotation();
         }
         #region Menu implementation

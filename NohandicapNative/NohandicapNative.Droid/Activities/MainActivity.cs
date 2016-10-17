@@ -68,11 +68,11 @@ namespace NohandicapNative.Droid
                 CategoryModel cat;
                 var conn = Utils.GetDatabaseConnection();
                 cat = conn.GetSelectedMainCategory();
-                
+               
                 return cat;
             }
             set {
-                var conn = Utils.GetDatabaseConnection();
+                var conn = Utils.GetDatabaseConnection();                         
                 conn.SetSelectedCategory(value);
                 
             }
@@ -184,18 +184,13 @@ namespace NohandicapNative.Droid
 
             SetTheme(Resource.Style.AppThemeNoBar);
             base.OnCreate(bundle);
-
+            
             //   CrashManager.Register(this);
             SetContentView(Resource.Layout.Main);
             NohandicapApplication.isTablet = Resources.GetBoolean(Resource.Boolean.is_tablet);
             NohandicapApplication.MainActivity = this;
-            if (NohandicapApplication.SelectedMainCategory == null)
-            {
-                var conn = Utils.GetDatabaseConnection();
-                var mainCategory = conn.GetDataList<CategoryModel>().FirstOrDefault(x => x.Group == NohandicapLibrary.MainCatGroup && x.Id == 1);
-                conn.SetSelectedCategory(mainCategory);
-
-            }
+            NohandicapApplication.IsInternetConnection = true;
+          
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             _bottomBar = BottomBar.AttachShy(FindViewById<CoordinatorLayout>(Resource.Id.myCoordinator), FindViewById<LinearLayout>(Resource.Id.linContent), bundle);
             HomePage = new HomeFragment();
@@ -583,7 +578,19 @@ namespace NohandicapNative.Droid
         protected override void OnPause()
         {
             base.OnPause();
-            SaveProductsBeforeExit();
+            try
+            {
+
+                if (Utils.isAppIsInBackground(this))
+            {
+                SaveProductsToDatabase();
+                Log.Debug(TAG, "Go to background");
+            }
+            }
+            catch (Exception e)
+            {
+                Log.Error(TAG, "OnPause(): " + e.Message);
+            }
             try
             {
                 _locationManager.RemoveUpdates(this);
@@ -597,19 +604,19 @@ namespace NohandicapNative.Droid
         public override void OnLowMemory()
         {
             base.OnLowMemory();
-            SaveProductsBeforeExit();
+            SaveProductsToDatabase();
             CurrentProductsList.Clear();
             GC.Collect();
         }
         protected override void OnDestroy()
         {
-            SaveProductsBeforeExit();
+            SaveProductsToDatabase();
             base.OnDestroy();
 
         }
         #endregion
 
-        private void SaveProductsBeforeExit()
+        private void SaveProductsToDatabase()
         {
             Task.Run(() => { 
             var conn = Utils.GetDatabaseConnection();
