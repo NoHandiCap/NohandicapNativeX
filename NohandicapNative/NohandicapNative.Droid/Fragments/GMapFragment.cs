@@ -18,10 +18,11 @@ using System.Threading;
 using Square.Picasso;
 using Android.Graphics.Drawables;
 using System.Collections.ObjectModel;
+using NohandicapNative.Droid.Fragments;
 
 namespace NohandicapNative.Droid
 {
-    public class GMapFragment : Android.Support.V4.App.Fragment, GoogleMap.IInfoWindowAdapter, IOnMapReadyCallback,IOnCameraChangeListener
+    public class GMapFragment : BaseFragment, GoogleMap.IInfoWindowAdapter, IOnMapReadyCallback,IOnCameraChangeListener
     {     
 
         static readonly string TAG = "X:" + typeof(GMapFragment).Name;
@@ -43,7 +44,7 @@ namespace NohandicapNative.Droid
 
             this.inflater = inflater;          
             var view = inflater.Inflate(Resource.Layout.MapPage, container, false);
-            view.SetBackgroundColor(NohandicapApplication.MainActivity.Resources.GetColor(Resource.Color.backgroundColor));
+            view.SetBackgroundColor(MainActivity.Resources.GetColor(Resource.Color.backgroundColor));
             conn = Utils.GetDatabaseConnection();
             HasOptionsMenu = true;
             mapView = view.FindViewById<MapView>(Resource.Id.map);
@@ -105,10 +106,10 @@ namespace NohandicapNative.Droid
                      var loadedProducts =
                        await RestApiService.GetMarkers(latLngBounds.Southwest.Latitude, latLngBounds.Southwest.Longitude,
                        latLngBounds.Northeast.Latitude, latLngBounds.Northeast.Longitude,
-                       NohandicapApplication.SelectedMainCategory, currentCategories);
+                       SelectedMainCategory, currentCategories);
                      Log.Debug(TAG, "LoadedProducts " + loadedProducts.Count);
                      List<ProductMarkerModel> newProductsInBound;
-                     if (NohandicapApplication.IsInternetConnection)
+                     if (IsInternetConnection)
                      {
                          newProductsInBound = loadedProducts;            
                                 
@@ -118,9 +119,8 @@ namespace NohandicapNative.Droid
                          newProductsInBound = conn.GetDataList<ProductMarkerModel>(x => !productsInBounds.Contains(x))
                      .ToList();
                      }
-                     LoadMarkerIntoMap(newProductsInBound);                                         
-                       
-                     NohandicapApplication.MainActivity.AddProductsToCache(loadedProducts);
+                     LoadMarkerIntoMap(newProductsInBound);                                                               
+                     AddProductsToCache(loadedProducts);
                  });
                 return true;
             }
@@ -217,9 +217,9 @@ namespace NohandicapNative.Droid
                Activity.StartActivity(activity);
             };
             CameraPosition.Builder builder = CameraPosition.InvokeBuilder();                     
-            if (NohandicapApplication.MainActivity.CurrentLocation != null)
+            if (MainActivity.CurrentLocation != null)
             {
-                var myLocation = NohandicapApplication.MainActivity.CurrentLocation;
+                var myLocation = MainActivity.CurrentLocation;
                 var lat = myLocation.Latitude;
                 var lng = myLocation.Longitude;
                 builder.Target(new LatLng(lat, lng)).Zoom(13);
@@ -277,7 +277,7 @@ namespace NohandicapNative.Droid
         private ProductMarkerModel FindProductFromMarker (Marker marker)
         {
             ProductMarkerModel product;
-            product = NohandicapApplication.MainActivity.CurrentProductsList.Where(x => x.Id.ToString() == marker.Title).FirstOrDefault();
+            product = CurrentProductsList.Where(x => x.Id.ToString() == marker.Title).FirstOrDefault();
             if (product == null)
             {
                 product = conn.GetDataList<ProductMarkerModel>(x => x.Id.ToString() == marker.Title).FirstOrDefault();
@@ -291,7 +291,7 @@ namespace NohandicapNative.Droid
         #region Menu implementation
         public override void OnCreateOptionsMenu(IMenu menu, MenuInflater inflater)
         {
-            if (!NohandicapApplication.isTablet)
+            if (!IsTablet)
             {
                 inflater.Inflate(Resource.Menu.map_menu, menu);
             }
@@ -303,13 +303,12 @@ namespace NohandicapNative.Droid
             switch (item.ItemId)
             {
                 case Android.Resource.Id.Home:
-                    NohandicapApplication.MainActivity.SetCurrentTab(0);
+                    MainActivity.SetCurrentTab(0);
                     break;
                 case Resource.Id.select_all:           
                     conn.UnSelectAllCategories();                  
-                    SetData(conn.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.MainCatGroup));
-                    
-                    NohandicapApplication.MainActivity.SupportActionBar.Title = "Map";                            
+                    SetData(conn.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.MainCatGroup));                    
+                    MainActivity.SupportActionBar.Title = "Map";                            
                       LoadData();
                  
                     break;

@@ -79,7 +79,7 @@ namespace NohandicapNative.Droid
 
         }
      
-        public static bool isTablet {get;set;}
+        public static bool IsTablet {get;set;}
         
         public NohandicapApplication(IntPtr javaReference, JniHandleOwnership transfer) : base(javaReference, transfer)
         {
@@ -183,25 +183,20 @@ namespace NohandicapNative.Droid
         {
 
             SetTheme(Resource.Style.AppThemeNoBar);
-            base.OnCreate(bundle);
-            
-            //   CrashManager.Register(this);
+            base.OnCreate(bundle);            
             SetContentView(Resource.Layout.Main);
-            NohandicapApplication.isTablet = Resources.GetBoolean(Resource.Boolean.is_tablet);
+            NohandicapApplication.IsTablet = Resources.GetBoolean(Resource.Boolean.is_tablet);
             NohandicapApplication.MainActivity = this;
             NohandicapApplication.IsInternetConnection = true;
-          
+                      
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             _bottomBar = BottomBar.AttachShy(FindViewById<CoordinatorLayout>(Resource.Id.myCoordinator), FindViewById<LinearLayout>(Resource.Id.linContent), bundle);
-            HomePage = new HomeFragment();
-            RunOnUiThread(() =>
-            {
-                MapPage = new GMapFragment();
-                ListPage = new ListFragment();
-                Favorites = new FavoritesFragment();
-            });
+            HomePage = new HomeFragment();           
+            MapPage = new GMapFragment();
+            ListPage = new ListFragment();
+            Favorites = new FavoritesFragment();      
             _currentProductsList = new ObservableCollection<ProductMarkerModel>();
-            items = NohandicapLibrary.GetTabs(NohandicapApplication.isTablet);
+            items = NohandicapLibrary.GetTabs(NohandicapApplication.IsTablet);
             PrepareBar();
             if (bundle != null)
             {
@@ -212,7 +207,7 @@ namespace NohandicapNative.Droid
 
             ThreadPool.QueueUserWorkItem(o => CheckUpdate());
             ThreadPool.QueueUserWorkItem(o => InitializeLocationManager());
-            ThreadPool.QueueUserWorkItem(o => LoadCache());
+           
 
         }
 
@@ -242,33 +237,7 @@ namespace NohandicapNative.Droid
             Log.Debug(TAG, "Check Update " + e.Message);
             }           
         }
-        private async void LoadCache()
-        {
-            try
-            {
-                var conn = Utils.GetDatabaseConnection();
-                var selectedSubCategory = conn.GetSubSelectedCategory();
-                var position = NohandicapApplication.MainActivity.CurrentLocation;
-                string lat = "";
-                string lng = "";
-                if (position != null)
-                {
-                    lat = position.Latitude.ToString();
-                    lng = position.Longitude.ToString();
-                }
-
-                var coll = await RestApiService.GetMarkers(NohandicapApplication.SelectedMainCategory, selectedSubCategory, NohandicapApplication.CurrentLang.Id, lat, lng, 1);
-                NohandicapApplication.MainActivity.AddProductsToCache(coll);
-
-            }
-            catch (System.Exception e)
-            {
-#if DEBUG
-                System.Diagnostics.Debugger.Break();
-#endif
-
-            }
-        }
+        
         private void PrepareBar()
         {
            
@@ -323,7 +292,7 @@ namespace NohandicapNative.Droid
                     ShowFragment(HomePage, position.ToString());
                     break;
                 case 1:
-                    if (NohandicapApplication.isTablet)
+                    if (NohandicapApplication.IsTablet)
                     {
                         ShowFragment(ListPage, position.ToString());
                     }
@@ -334,7 +303,7 @@ namespace NohandicapNative.Droid
 
                     break;
                 case 2:
-                    if (NohandicapApplication.isTablet)
+                    if (NohandicapApplication.IsTablet)
                     {
                         ShowFragment(Favorites, position.ToString());
                     }
@@ -540,28 +509,7 @@ namespace NohandicapNative.Droid
         public MainActivity()
         {
             Utils.UpdateConfig(this);
-        }
-        protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
-        {
-            base.OnActivityResult(requestCode, resultCode, data);
-            if (requestCode == 1)
-            {
-                if (resultCode == Result.Ok)
-                {
-                  var currentProductId= data.GetIntExtra(Utils.PRODUCT_ID,-1);
-                    if (currentProductId != -1)
-                    {
-                        var conn = Utils.GetDatabaseConnection();
-                        var products = conn.GetDataList<ProductDetailModel>();
-                        var currentProduct = conn.GetDataList<ProductDetailModel>(x => x.ID == currentProductId);
-                        MapPage.SetData(new List<CategoryModel>());
-                        SetCurrentTab(1);
-                        SupportActionBar.Title = currentProduct[0].FirmName;
-                        
-                    }
-                }
-            }
-        }
+        }      
 
         protected override void OnResume()
         {
@@ -623,26 +571,7 @@ namespace NohandicapNative.Droid
             conn.InsertUpdateProductList(CurrentProductsList.ToList());
             });
         }
-        public void AddProductsToCache(List<ProductMarkerModel> products)
-        {
-            Task.Run(() =>
-            {
-                foreach (var prod in products)
-                {
-                    if (!_currentProductsList.Contains(prod))
-                    {
-                        _currentProductsList.Add(prod);
-                    }
-                    else
-                    {
-                        if (_currentProductsList.Any(x => x.Distance != prod.Distance))
-                        {
-                            _currentProductsList.FirstOrDefault(x => x.Id == prod.Id).Distance = prod.Distance;
-                        }
-                    }
-                }
-            });
-        }
+       
     }
 }
 

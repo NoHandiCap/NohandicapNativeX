@@ -179,7 +179,7 @@ namespace NohandicapNative.Droid.Services
             name = name.Replace(".jpg", "");              
             using (var os = new System.IO.FileStream(System.IO.Path.Combine(NohandicapApplication.MainActivity.FilesDir.ToString(), name), System.IO.FileMode.Create))
             {
-                if (NohandicapApplication.isTablet)
+                if (NohandicapApplication.IsTablet)
                 {
                     bitmap.Compress(Bitmap.CompressFormat.Png, 95, os);
                 }

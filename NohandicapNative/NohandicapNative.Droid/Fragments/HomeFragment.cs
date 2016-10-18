@@ -11,10 +11,11 @@ using Android.Content.Res;
 using BottomNavigationBar.Listeners;
 using System;
 using Android.Util;
+using NohandicapNative.Droid.Fragments;
 
 namespace NohandicapNative.Droid
 {
-  public  class HomeFragment: Android.Support.V4.App.Fragment, IOnMenuTabSelectedListener
+  public  class HomeFragment: BaseFragment, IOnMenuTabSelectedListener
     {
         int[] mainCategoriesText = { Resource.Id.first_category, Resource.Id.second_category, Resource.Id.thrity_category };
        int[] mainCategoriesImgView = { Resource.Id.imageView, Resource.Id.imageView2, Resource.Id.imageView3 };
@@ -23,7 +24,11 @@ namespace NohandicapNative.Droid
         ButtonGridView additionalCategory;     
         View rootView;
         LayoutInflater inflater;
-        ViewGroup container;        
+        ViewGroup container;
+        List<CategoryModel> subCategoriesList;
+        List<CategoryModel> mainCategoriesList;
+
+        GridViewAdapter buttonsAdapter;
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             this.inflater = inflater;
@@ -36,22 +41,17 @@ namespace NohandicapNative.Droid
         {
 
             Log.Debug(Tag, "Start HomeFragment ");
-           
-                rootView = inflater.Inflate(Resource.Layout.HomePage, null);
 
-           
-
+            rootView = inflater.Inflate(Resource.Layout.HomePage, null);
             rootView.SetBackgroundColor(Activity.Resources.GetColor(Resource.Color.backgroundColor));
-         
             this.HasOptionsMenu = true;
-            
-                var conn = Utils.GetDatabaseConnection();
-               List<CategoryModel> mainCategoriesList = conn.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.MainCatGroup);
-                List<CategoryModel> subCategoriesList = conn.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.SubCatGroup);
-                
-                TextView[] mainCat = new TextView[mainCategoriesList.Count];
+           
+            mainCategoriesList = DbConnection.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.MainCatGroup);
+            subCategoriesList = DbConnection.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.SubCatGroup);
+
+            TextView[] mainCat = new TextView[mainCategoriesList.Count];
             ImageView[] mainImg = new ImageView[mainCategoriesList.Count];
-            LinearLayout[] mainLayout = new LinearLayout[mainCategoriesList.Count];   
+            LinearLayout[] mainLayout = new LinearLayout[mainCategoriesList.Count];
             for (int i = 0; i < mainCat.Length; i++)
             {
                 mainCat[i] = rootView.FindViewById<TextView>(mainCategoriesText[i]);
@@ -86,19 +86,19 @@ namespace NohandicapNative.Droid
                                 mainLayout[y].Selected = true;
                                 var conn2 = Utils.GetDatabaseConnection();
                                 conn2.SetSelectedCategory(mainCategoriesList[y]);
-                                
+
                             }
                         }
                     }
-                    NohandicapApplication.MainActivity.MapPage.LoadData();
+                   MainActivity.MapPage.LoadData();
                 };
 
             }
-          
-            var categorySelected = NohandicapApplication.SelectedMainCategory.Id;
 
-            mainCat[categorySelected-1].SetTextColor(Color.Black);
-            mainCat[categorySelected-1].SetTypeface(null, TypefaceStyle.Bold);
+            var categorySelected = SelectedMainCategory.Id;
+
+            mainCat[categorySelected - 1].SetTextColor(Color.Black);
+            mainCat[categorySelected - 1].SetTypeface(null, TypefaceStyle.Bold);
             mainLayout[categorySelected - 1].Selected = true;
             mainImg[0].SetImageDrawable(Utils.SetDrawableSize(Activity, Resource.Drawable.wheelchair1, 140, 65));
             mainImg[1].SetImageDrawable(Utils.SetDrawableSize(Activity, Resource.Drawable.wheelchair2, 140, 65));
@@ -107,31 +107,66 @@ namespace NohandicapNative.Droid
             additionalCategory = rootView.FindViewById<ButtonGridView>(Resource.Id.additionalCategory);
             GridRotation();
 
-           
-                if (subCategoriesList.Count == 0)
-                {
-                    var localCategories = NohandicapLibrary.GetAdditionalCategory();
-                    var localCategoriesLocalization = Resources.GetStringArray(Resource.Array.additional_category_array);
-                    for (int i = 0; i < localCategories.Count; i++)
-                    {
-                        var cat = localCategories[i];
-                        var loc = localCategoriesLocalization[i];
-                        subCategoriesList.Add(new CategoryModel()
-                        {
-                            Id = cat.Id,
-                            Name = loc,
-                            Color = cat.Color,
-                            Icon = cat.Icon,
-                            Sort = i + 1
-                        });
-                    }
-                }           
-         
-      
 
-            additionalCategory.Adapter = new GridViewAdapter(NohandicapApplication.MainActivity, subCategoriesList.OrderBy(x => x.Sort).ToList());
-            
-           
+            if (subCategoriesList.Count == 0)
+            {
+                var localCategories = NohandicapLibrary.GetAdditionalCategory();
+                var localCategoriesLocalization = Resources.GetStringArray(Resource.Array.additional_category_array);
+                for (int i = 0; i < localCategories.Count; i++)
+                {
+                    var cat = localCategories[i];
+                    var loc = localCategoriesLocalization[i];
+                    subCategoriesList.Add(new CategoryModel()
+                    {
+                        Id = cat.Id,
+                        Name = loc,
+                        Color = cat.Color,
+                        Icon = cat.Icon,
+                        Sort = i + 1
+                    });
+                }
+            }
+
+
+            subCategoriesList = subCategoriesList.OrderBy(x => x.Sort).ToList();
+            buttonsAdapter= new GridViewAdapter(MainActivity, subCategoriesList);
+            additionalCategory.Adapter = buttonsAdapter;
+            additionalCategory.ItemClick += AdditionalCategory_ItemClick;
+
+        }
+
+        private async void AdditionalCategory_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
+        {
+            var position = e.Position;
+            var category = subCategoriesList[position];
+
+            if (!IsTablet)
+            {
+                MainActivity.MapPage.SetData(new List<CategoryModel> { category });
+                MainActivity.SetCurrentTab(1);
+                MainActivity.SupportActionBar.Title = category.Name;
+                DbConnection.SetSelectedCategory(category);               
+            }
+            else
+            {
+                DbConnection.SetSelectedCategory(category);              
+                buttonsAdapter.NotifyDataSetChanged();
+                
+                var selectedCategories = DbConnection.GetDataList<CategoryModel>(x => x.IsSelected).ToList();
+                if (selectedCategories.Count == 0)
+                {
+
+                    MainActivity.MapPage.SetData(subCategoriesList);
+                }
+                else
+                {
+                    MainActivity.MapPage.SetData(selectedCategories);
+
+                }
+
+                await MainActivity.MapPage.LoadData();
+
+            }
         }
 
         private void GridRotation()
@@ -147,7 +182,7 @@ namespace NohandicapNative.Droid
             {
                 additionalCategory.NumColumns = 5;
             }
-            if (NohandicapApplication.isTablet)
+            if (IsTablet)
             {
                 if (orientation == Android.Content.Res.Orientation.Landscape)
                 {
@@ -166,7 +201,7 @@ namespace NohandicapNative.Droid
            
                 Android.Support.V4.App.FragmentTransaction transaction = ChildFragmentManager.BeginTransaction();
                
-                transaction.Replace(Resource.Id.mapFragment, NohandicapApplication.MainActivity.MapPage).Commit();
+                transaction.Replace(Resource.Id.mapFragment, MainActivity.MapPage).Commit();
             
         }      
         public override void OnConfigurationChanged(Configuration newConfig)
@@ -186,10 +221,10 @@ namespace NohandicapNative.Droid
             switch (item.ItemId)
             {
                 case Android.Resource.Id.Home:
-                 NohandicapApplication.MainActivity.SetCurrentTab(0);
+                 MainActivity.SetCurrentTab(0);
                     break;
                 case Resource.Id.settings:
-                    NohandicapApplication.MainActivity.StartActivity(typeof(SettingsActivity));
+                   MainActivity.StartActivity(typeof(SettingsActivity));
                     break;
             }
             return true;

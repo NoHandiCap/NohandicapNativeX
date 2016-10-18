@@ -153,6 +153,8 @@
     <Compile Include="Adapters\SliderAdapter.cs" />
     <Compile Include="Adapters\SpinnerAdapter.cs" />
     <Compile Include="Adapters\SquareLinearLayout.cs" />
+    <Compile Include="Fragments\BaseFragment.cs" />
+    <Compile Include="IBaseFragment.cs" />
     <Compile Include="Model\ButtonGridView.cs" />
     <Compile Include="Activities\DetailActivity.cs" />
     <Compile Include="Fragments\FavoritesFragment.cs" />

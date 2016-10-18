@@ -12,10 +12,11 @@ using System.Threading.Tasks;
 using Android.Graphics.Drawables;
 using Android.Support.V7.Widget;
 using Android.Content.Res;
+using NohandicapNative.Droid.Fragments;
 
 namespace NohandicapNative.Droid
 {
-  public class FavoritesFragment : Android.Support.V4.App.Fragment
+  public class FavoritesFragment :BaseFragment
     {            
         View view;          
         ListView listView;
@@ -80,7 +81,7 @@ namespace NohandicapNative.Droid
                 StartActivityForResult(new Intent(Application.Context, typeof(SigUpActivity)), 1) ;
             };
             fbButton.Click +=  (s, e) => {
-             NohandicapApplication.MainActivity.LoginToFacebook(this,true);               
+           MainActivity.LoginToFacebook(this,true);               
             };
           
         }
@@ -98,8 +99,8 @@ namespace NohandicapNative.Droid
         {
             if (user != null)
             {
-                var conn = Utils.GetDatabaseConnection();
-                conn.InsertUpdateProduct(user);
+
+                DbConnection.InsertUpdateProduct(user);
                 
                 Utils.WriteToSettings(Activity, Utils.IS_LOGIN, Utils.IS_SUCCESS_LOGED);
                 ReloadFragment();
@@ -109,7 +110,7 @@ namespace NohandicapNative.Droid
         {
             var fav = new FavoritesFragment();
             //  _myContext.ShowFragment(fav, "fav");
-            Android.Support.V4.App.FragmentManager fragmentManager = NohandicapApplication.MainActivity.SupportFragmentManager;
+            Android.Support.V4.App.FragmentManager fragmentManager = MainActivity.SupportFragmentManager;
             var trans = fragmentManager.BeginTransaction();
             trans.Replace(Resource.Id.flContent, fav);
             trans.Commit();
@@ -156,8 +157,8 @@ namespace NohandicapNative.Droid
             var user = await RestApiService.Login(emailText.Text, passwordText.Text);
             if (user != null)
             {
-                var conn = Utils.GetDatabaseConnection();
-                conn.InsertUpdateProduct(user);
+
+                DbConnection.InsertUpdateProduct(user);
                 
                 Utils.WriteToSettings(Activity, Utils.IS_LOGIN, Utils.IS_SUCCESS_LOGED);
                 return true;
@@ -220,7 +221,7 @@ namespace NohandicapNative.Droid
 
                     var activity = new Intent(Activity, typeof(DetailActivity));
                     activity.PutExtra(Utils.PRODUCT_ID, products[position].ID);
-                    NohandicapApplication.MainActivity.StartActivity(activity);
+                   MainActivity.StartActivity(activity);
                 };
             noFav = view.FindViewById<TextView>(Resource.Id.noFavoritesTextView);
        
@@ -231,8 +232,8 @@ namespace NohandicapNative.Droid
         }
         public async void ReloadData()
         {
-            var conn = Utils.GetDatabaseConnection();
-            var user = conn.GetDataList<UserModel>().FirstOrDefault();
+            
+            var user = DbConnection.GetDataList<UserModel>().FirstOrDefault();
             if (user != null)
             {
             

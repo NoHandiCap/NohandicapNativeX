@@ -10,10 +10,11 @@ using NohandicapNative.Droid.Services;
 using Android.Locations;
 using System.Globalization;
 using System.Collections.ObjectModel;
+using NohandicapNative.Droid.Fragments;
 
 namespace NohandicapNative.Droid
 {
-  public  class ListFragment : Android.Support.V4.App.Fragment
+  public  class ListFragment : BaseFragment
     {           
         ListView listView;
          
@@ -27,18 +28,17 @@ namespace NohandicapNative.Droid
         {
             var view = inflater.Inflate(Resource.Layout.ListPage, container, false);
             listView = view.FindViewById<ListView>(Resource.Id.listview);
-            view.SetBackgroundColor(Activity.Resources.GetColor(Resource.Color.backgroundColor));
+            view.SetBackgroundColor(Resources.GetColor(Resource.Color.backgroundColor));
             mainCategoryName = view.FindViewById<TextView>(Resource.Id.mainCategoryTextView);
             mainCategoryImage = view.FindViewById<ImageView>(Resource.Id.mainCategoryImageView);
-            subCategoryName = view.FindViewById<TextView>(Resource.Id.subCategoryTextView);        
-
+            subCategoryName = view.FindViewById<TextView>(Resource.Id.subCategoryTextView);       
             listView.ItemClick += (s, e) =>
             {
                 int position = e.Position;
 
                 var activity = new Intent(Activity, typeof(DetailActivity));
-                activity.PutExtra(Utils.PRODUCT_ID, NohandicapApplication.MainActivity.CurrentProductsList[position].Id);
-                NohandicapApplication.MainActivity.StartActivityForResult(activity,1);         
+                activity.PutExtra(Utils.PRODUCT_ID, CurrentProductsList[position].Id);
+                MainActivity.StartActivityForResult(activity,1);         
             };
             ReloadData();
             return view;
@@ -54,9 +54,9 @@ namespace NohandicapNative.Droid
         }
         private async void ReloadData()
         {
-            var conn = Utils.GetDatabaseConnection();
+           
 
-            var selectedSubCategory = conn.GetSubSelectedCategory();
+            var selectedSubCategory = DbConnection.GetSubSelectedCategory();
             //Products = conn.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= NohandicapApplication.SelectedMainCategory.Id).ToList();
             if (selectedSubCategory.Count != 0)
             {
@@ -72,8 +72,8 @@ namespace NohandicapNative.Droid
                 subCategoryName.Text = Resources.GetString(Resource.String.all_cat);
             }
 
-            mainCategoryName.Text = NohandicapApplication.SelectedMainCategory.Name;         
-            var image = Utils.GetImage(Activity, "wheelchair" + NohandicapApplication.SelectedMainCategory.Id);
+            mainCategoryName.Text = SelectedMainCategory.Name;         
+            var image = Utils.GetImage(Activity, "wheelchair" + SelectedMainCategory.Id);
             mainCategoryImage.SetImageDrawable(Utils.SetDrawableSize(Activity, image, 140, 65));
 
            // productsList = SortProductsByDistance(productsList);

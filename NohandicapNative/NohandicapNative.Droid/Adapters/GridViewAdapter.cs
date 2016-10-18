@@ -78,7 +78,7 @@ namespace NohandicapNative.Droid.Adapters
             imageView.LayoutParameters.Height = width/3;
             imageView.LayoutParameters.Width = width/3;
             bgShape.SetColor(Color.ParseColor(category.Color));
-            if (NohandicapApplication.isTablet)
+            if (NohandicapApplication.IsTablet)
             {
 
 
@@ -98,7 +98,8 @@ namespace NohandicapNative.Droid.Adapters
                 bgBorder.SetColor(Color.ParseColor(category.Color));
             }
            
-            grid.Click +=async (s, e) =>
+            grid.Click +=
+                async (s, e) =>
                {
                
                    var db = Utils.GetDatabaseConnection();
@@ -106,7 +107,7 @@ namespace NohandicapNative.Droid.Adapters
                    //var products = db.GetDataList<ProductModel>();
 
 
-                   if (!NohandicapApplication.isTablet)
+                   if (!NohandicapApplication.IsTablet)
                    {                      
                        mainActivity.MapPage.SetData(new List<CategoryModel> { categories[position] });
                        mainActivity.SetCurrentTab(1);
