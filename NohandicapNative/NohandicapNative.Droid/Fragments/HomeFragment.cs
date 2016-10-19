@@ -144,7 +144,7 @@ namespace NohandicapNative.Droid
         {
             var position = e.Position;
             var category = subCategoriesList[position];
-            OnSubCategoryChaged(new List<CategoryModel> { category });
+           // OnSubCategoryChaged(new List<CategoryModel> { category });
             if (!IsTablet)
             {
                 MainActivity.MapPage.SetData(new List<CategoryModel> { category });

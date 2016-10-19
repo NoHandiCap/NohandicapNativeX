@@ -13,12 +13,14 @@ using NohandicapNative.Droid.Services;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.Threading;
+using System.Globalization;
 
 namespace NohandicapNative.Droid.Fragments
 {
     public abstract class BaseFragment : Android.Support.V4.App.Fragment
     {
         public  SqliteService DbConnection { get; set; }
+
         public BaseFragment(Boolean loadFromCache = true)
         {
             DbConnection = Utils.GetDatabaseConnection();
@@ -86,6 +88,7 @@ namespace NohandicapNative.Droid.Fragments
                 NohandicapApplication.IsTablet = value;
             }
         }
+
         private async void LoadCache()
         {
             try
@@ -96,8 +99,8 @@ namespace NohandicapNative.Droid.Fragments
                 string lng = "";
                 if (position != null)
                 {
-                    lat = position.Latitude.ToString();
-                    lng = position.Longitude.ToString();
+                    lat = position.Latitude.ToString(CultureInfo.InvariantCulture);
+                    lng = position.Longitude.ToString(CultureInfo.InvariantCulture);
                 }
 
                 var coll = await RestApiService.GetMarkers(NohandicapApplication.SelectedMainCategory, selectedSubCategory, NohandicapApplication.CurrentLang.Id, lat, lng, 1);
