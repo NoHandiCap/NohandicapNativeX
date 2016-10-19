@@ -136,7 +136,7 @@ namespace NohandicapNative.Droid
             buttonsAdapter= new GridViewAdapter(MainActivity, subCategoriesList);
             additionalCategory.Adapter = buttonsAdapter;
             additionalCategory.ItemClick += SubCategory_ItemClick;
-            ThreadPool.QueueUserWorkItem(o => LoadCache());
+            //ThreadPool.QueueUserWorkItem(o => LoadCache());
 
         }
 
@@ -242,6 +242,7 @@ namespace NohandicapNative.Droid
 
         #endregion
 
+        
         private async void LoadCache()
         {
             try

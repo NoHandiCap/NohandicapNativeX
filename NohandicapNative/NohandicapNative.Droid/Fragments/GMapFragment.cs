@@ -107,6 +107,11 @@ namespace NohandicapNative.Droid
 
                      Log.Debug(TAG, "Start Load ");
 
+                     if (!IsInternetConnection)
+                     {
+                         Toast.MakeText(this.Activity, "No Internet connection", ToastLength.Short).Show();
+                     }
+
                      var loadedProducts =
                        await RestApiService.GetMarkers(latLngBounds.Southwest.Latitude, latLngBounds.Southwest.Longitude,
                        latLngBounds.Northeast.Latitude, latLngBounds.Northeast.Longitude,

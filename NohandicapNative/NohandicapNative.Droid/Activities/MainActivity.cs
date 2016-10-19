@@ -31,6 +31,7 @@ using System.Collections.ObjectModel;
 
 using Java.Net;
 using System.Globalization;
+using Android.Net;
 
 namespace NohandicapNative.Droid
 {
@@ -157,7 +158,7 @@ namespace NohandicapNative.Droid
         public ListFragment ListPage { get; set; }
         public FavoritesFragment Favorites { get; set; }        
         int lastPos = 0;
-        public  Location CurrentLocation { get; set; }
+        public Location CurrentLocation { get; set; }
         LocationManager _locationManager;
         string _locationProvider;
         ObservableCollection<ProductMarkerModel> _currentProductsList;
@@ -180,19 +181,26 @@ namespace NohandicapNative.Droid
         }
         #endregion
 
+        private bool CheckIfConnectedToInternet()
+        {
+            ConnectivityManager connectivityManager = (ConnectivityManager)GetSystemService(ConnectivityService);
+            NetworkInfo activeConnection = connectivityManager.ActiveNetworkInfo;
+            bool isOnline = (activeConnection != null) && activeConnection.IsConnected;
+            return isOnline;
+        }
+
         protected override void OnCreate(Bundle bundle)
         {
-
             SetTheme(Resource.Style.AppThemeNoBar);
             base.OnCreate(bundle);            
             SetContentView(Resource.Layout.Main);
             NohandicapApplication.IsTablet = Resources.GetBoolean(Resource.Boolean.is_tablet);
             NohandicapApplication.MainActivity = this;
-            NohandicapApplication.IsInternetConnection = true;
+            NohandicapApplication.IsInternetConnection = CheckIfConnectedToInternet();
                       
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             _bottomBar = BottomBar.AttachShy(FindViewById<CoordinatorLayout>(Resource.Id.myCoordinator), FindViewById<LinearLayout>(Resource.Id.linContent), bundle);
-            HomePage = new HomeFragment(false);   // TODO: probably also false, should be done in mapfragment after clicking subcategory
+            HomePage = new HomeFragment(false);
             MapPage = new GMapFragment(false);
             ListPage = new ListFragment(false);
             Favorites = new FavoritesFragment(false);      
@@ -209,7 +217,6 @@ namespace NohandicapNative.Droid
             ThreadPool.QueueUserWorkItem(o => CheckUpdate());
             ThreadPool.QueueUserWorkItem(o => InitializeLocationManager());
            
-
         }
 
         public async void CheckUpdate()
@@ -336,8 +343,8 @@ namespace NohandicapNative.Droid
             var auth = new OAuth2Authenticator(
                 clientId: "105055836622734",
                 scope: "",
-                authorizeUrl: new Uri("https://m.facebook.com/dialog/oauth/"),
-                redirectUrl: new Uri("http://www.facebook.com/connect/login_success.html"));
+                authorizeUrl: new System.Uri("https://m.facebook.com/dialog/oauth/"),
+                redirectUrl: new System.Uri("http://www.facebook.com/connect/login_success.html"));
 
             auth.AllowCancel = allowCancel;
 

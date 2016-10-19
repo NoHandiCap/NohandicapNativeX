@@ -62,7 +62,6 @@ namespace NohandicapNative.Droid.Adapters
 
         public override long GetItemId(int position)
         {
-
             return products[position].Id;
         }
 
