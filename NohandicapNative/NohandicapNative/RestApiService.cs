@@ -78,17 +78,13 @@ namespace NohandicapNative
             double lngHight,CategoryModel mainCat, List<CategoryModel> subCategories,int count=50)
         {
             var mainCategory = mainCat.Id;
-            string boundBox = latLow.ToString(CultureInfo.InvariantCulture) + "," + lngLow.ToString(CultureInfo.InvariantCulture) + "," + latHight.ToString(CultureInfo.InvariantCulture) + "," + lngHight.ToString(CultureInfo.InvariantCulture);
-            string subCatList = "";
+            // for security
+            if (mainCategory == 0)
+                mainCategory = NohandicapLibrary.DEFAULT_MAIN_CATEGORY;
 
-            foreach (var item in subCategories)
-            {
-                subCatList += item.Id + ",";
-            }
-
-            subCatList = subCatList.Substring(0, subCatList.Length - 1);
-
-            string url = string.Format(NohandicapLibrary.LINK_GET_MARKERS, mainCategory, count, boundBox, subCatList);
+            string boundBox = latLow.ToString(CultureInfo.InvariantCulture) + "," + lngLow.ToString(CultureInfo.InvariantCulture) + "," + latHight.ToString(CultureInfo.InvariantCulture) + "," + lngHight.ToString(CultureInfo.InvariantCulture); //invariantculture to have double with "." and not with ","
+ 
+            string url = string.Format(NohandicapLibrary.LINK_GET_MARKERS, mainCategory, count, boundBox, PrepareSubCategoryString(subCategories));
 
             var products=await GetDataFromUrl<List<ProductMarkerModel>>(url);
             if (products == null)
@@ -100,14 +96,25 @@ namespace NohandicapNative
         public static async Task<List<ProductMarkerModel>> GetMarkers(CategoryModel mainCat, List<CategoryModel> subCategories, int langId,string lat,string lng,int page, int count = 50)
         {
             var mainCategory = mainCat.Id;  
-
-            // for security
+            // simply check
             if (mainCategory == 0)
                 mainCategory = NohandicapLibrary.DEFAULT_MAIN_CATEGORY;
+            
+            string url = string.Format(NohandicapLibrary.LINK_GET_PRODUCTS, mainCategory, PrepareSubCategoryString(subCategories), langId, lat, lng, count, page);
 
+            var products = await GetDataFromUrl<List<ProductMarkerModel>>(url);
+            if (products == null)
+            {
+                return new List<ProductMarkerModel>();
+            }
+            return products;
+        }
+
+        private static String PrepareSubCategoryString(List<CategoryModel> subCategories)
+        {
             string subCatList = "";
 
-            // for security
+            // checking against null and empty (and if then use default subcategory)
             if (subCategories == null || subCategories.Count == 0)
             {
                 subCategories.Add(new CategoryModel()
@@ -116,21 +123,16 @@ namespace NohandicapNative
                 });
             }
 
+            //join all subcategories with comma
             foreach (var item in subCategories)
-            {
-                subCatList +=  item.Id + ",";
-            }
+                subCatList += item.Id + ",";
 
+            //take the last comma
             subCatList = subCatList.Substring(0, subCatList.Length - 1);
 
-            string url = string.Format(NohandicapLibrary.LINK_GET_PRODUCTS, mainCategory, subCatList, langId,lat,lng,count,page);
-            var products = await GetDataFromUrl<List<ProductMarkerModel>>(url);
-            if (products == null)
-            {
-                return new List<ProductMarkerModel>();
-            }
-            return products;
+            return subCatList;
         }
+
         public static async Task<List<ProductMarkerModel>> GetFavorites(string userId, int page, int count = 50)
         {
         
@@ -253,9 +255,7 @@ namespace NohandicapNative
             var result = await GetStringContent(NohandicapLibrary.LINK_GET_UPDATE);
             if (result == null)
             {
-                
                 return null;
-                
             }
             var token = JObject.Parse(result).SelectToken("result");         
             var categoryTable = token.SelectToken("cat").ToString();
@@ -278,9 +278,7 @@ namespace NohandicapNative
             }
             else
             {
-            
                 return updateList;
-            
             }
    
         }

@@ -103,13 +103,16 @@ namespace NohandicapNative.Droid
                              semaphoreSlim.Release();
                          }
                          return;
-                     }              
+                     }
+
                      Log.Debug(TAG, "Start Load ");
+
                      var loadedProducts =
-                       await Utils.GetMarkers(latLngBounds.Southwest.Latitude, latLngBounds.Southwest.Longitude,
+                       await RestApiService.GetMarkers(latLngBounds.Southwest.Latitude, latLngBounds.Southwest.Longitude,
                        latLngBounds.Northeast.Latitude, latLngBounds.Northeast.Longitude,
                        SelectedMainCategory, currentCategories);
                      Log.Debug(TAG, "LoadedProducts " + loadedProducts.Count);
+
                      List<ProductMarkerModel> newProductsInBound;
                      if (IsInternetConnection)
                      {
