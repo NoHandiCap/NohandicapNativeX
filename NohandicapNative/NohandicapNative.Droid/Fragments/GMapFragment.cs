@@ -107,9 +107,9 @@ namespace NohandicapNative.Droid
 
                      Log.Debug(TAG, "Start Load ");
 
-                     if (!IsInternetConnection)
+                     if (!IsInternetConnection) //if not internet then dont ask server and waste time for timeout, display toast information instead
                      {
-                         Toast.MakeText(this.Activity, "No Internet connection", ToastLength.Short).Show();
+                         //Toast.MakeText(this.Activity, "No Internet connection", ToastLength.Short).Show();
                      }
 
                      var loadedProducts =

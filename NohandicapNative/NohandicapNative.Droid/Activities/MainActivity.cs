@@ -360,7 +360,7 @@ namespace NohandicapNative.Droid
                 }
 
                 // Now that we're logged in, make a OAuth2 request to get the user's info.
-                var request = new OAuth2Request("GET", new Uri("https://graph.facebook.com/me"), null, ee.Account);
+                var request = new OAuth2Request("GET", new System.Uri("https://graph.facebook.com/me"), null, ee.Account);
                 request.GetResponseAsync().ContinueWith(t => {
                     var builder = new Android.Support.V7.App.AlertDialog.Builder(this);
                     if (t.IsFaulted)
