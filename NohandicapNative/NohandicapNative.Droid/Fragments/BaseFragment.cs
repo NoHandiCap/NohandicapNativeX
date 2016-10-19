@@ -1,29 +1,18 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using NohandicapNative.Droid.Services;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
-using System.Threading;
+
+
 
 namespace NohandicapNative.Droid.Fragments
 {
     public abstract class BaseFragment : Android.Support.V4.App.Fragment
     {
-      public  SqliteService DbConnection { get; set; }
-        public BaseFragment()
-        {
-            DbConnection = Utils.GetDatabaseConnection();
-            ThreadPool.QueueUserWorkItem(o => LoadCache());
-        }
+
+        #region Public Properties
+        public SqliteService DbConnection { get; set; }
         public MainActivity MainActivity
         {
             get
@@ -74,7 +63,8 @@ namespace NohandicapNative.Droid.Fragments
 
         }
 
-        public bool IsTablet {
+        public bool IsTablet
+        {
             get
             {
                 return NohandicapApplication.IsTablet;
@@ -84,36 +74,20 @@ namespace NohandicapNative.Droid.Fragments
                 NohandicapApplication.IsTablet = value;
             }
         }
-        private async void LoadCache()
+        #endregion
+
+        #region ctor
+        public BaseFragment()
         {
-            try
-            {
-             
-                var selectedSubCategory = DbConnection.GetSubSelectedCategory();
-                var position = NohandicapApplication.MainActivity.CurrentLocation;
-                string lat = "";
-                string lng = "";
-                if (position != null)
-                {
-                    lat = position.Latitude.ToString();
-                    lng = position.Longitude.ToString();
-                }
-
-                var coll = await RestApiService.GetMarkers(NohandicapApplication.SelectedMainCategory, selectedSubCategory, NohandicapApplication.CurrentLang.Id, lat, lng, 1);
-                AddProductsToCache(coll);
-
-            }
-            catch (System.Exception e)
-            {
-#if DEBUG
-                System.Diagnostics.Debugger.Break();
-#endif
-
-            }
+            DbConnection = Utils.GetDatabaseConnection();
         }
+        #endregion
+
+        #region Public Methods
+       
         public async void AddProductsToCache(List<ProductMarkerModel> products)
         {
-           await Task.Run(() =>
+            await Task.Run(() =>
             {
                 foreach (var prod in products)
                 {
@@ -131,6 +105,21 @@ namespace NohandicapNative.Droid.Fragments
                 }
             });
         }
+
+        public virtual void OnMainCategoryChaged(CategoryModel currentCategory)
+        {
+
+        }
+
+        public virtual void OnSubCategoryChaged(List<CategoryModel> currentCategory)
+        {
+
+        }
+        
+
+
+        #endregion
+
 
     }
 }

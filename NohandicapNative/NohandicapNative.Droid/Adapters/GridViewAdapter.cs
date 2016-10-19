@@ -12,7 +12,7 @@ using Android.Graphics.Drawables;
 
 namespace NohandicapNative.Droid.Adapters
 {
-    public class GridViewAdapter : BaseAdapter, IOnTouchListener
+    public class GridViewAdapter : BaseAdapter
     {
         private Context context;
         private List<CategoryModel> categories;
@@ -52,36 +52,30 @@ namespace NohandicapNative.Droid.Adapters
 
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
-         
+
             View grid;
             LayoutInflater inflater = (LayoutInflater)context
                 .GetSystemService(Context.LayoutInflaterService);
             GridView gridView = (GridView)parent;
-                var category =categories[position];
-                grid = new View(context);
-                grid = inflater.Inflate(Resource.Layout.grid_item, null);
-         //   var backgroundButton = grid.FindViewById<RelativeLayout>(Resource.Id.backgroundLayout);
-                TextView textView = (TextView)grid.FindViewById(Resource.Id.grid_text);
-                ImageView imageView = (ImageView)grid.FindViewById(Resource.Id.grid_image);
-                textView.Text = category.Name;
-                imageView.SetImageDrawable(Utils.GetImage(context, category.Icon));
-
+            var category = categories[position];
+            grid = new View(context);
+            grid = inflater.Inflate(Resource.Layout.grid_item, null);
+            //   var backgroundButton = grid.FindViewById<RelativeLayout>(Resource.Id.backgroundLayout);
+            TextView textView = (TextView)grid.FindViewById(Resource.Id.grid_text);
+            ImageView imageView = (ImageView)grid.FindViewById(Resource.Id.grid_image);
+            textView.Text = category.Name;
+            imageView.SetImageDrawable(Utils.GetImage(context, category.Icon));
             LayerDrawable bgDrawable = (LayerDrawable)grid.Background;
             GradientDrawable bgShape = (GradientDrawable)bgDrawable.FindDrawableByLayerId(Resource.Id.shape_id);
             GradientDrawable bgBorder = (GradientDrawable)bgDrawable.FindDrawableByLayerId(Resource.Id.border_id);
 
-
             int width = gridView.ColumnWidth;
             var orientation = context.Resources.Configuration.Orientation;
-            
-        
-            imageView.LayoutParameters.Height = width/3;
-            imageView.LayoutParameters.Width = width/3;
+            imageView.LayoutParameters.Height = width / 3;
+            imageView.LayoutParameters.Width = width / 3;
             bgShape.SetColor(Color.ParseColor(category.Color));
             if (NohandicapApplication.IsTablet)
             {
-
-
                 if (category.IsSelected)
                 {
                     bgBorder.SetColor(context.Resources.GetColor(Resource.Color.selectedCategoryColor));
@@ -90,86 +84,13 @@ namespace NohandicapNative.Droid.Adapters
                 {
                     bgBorder.SetColor(Color.ParseColor(category.Color));
                 }
-
-
             }
             else
             {
                 bgBorder.SetColor(Color.ParseColor(category.Color));
             }
-           
-            grid.Click +=
-                async (s, e) =>
-               {
-               
-                   var db = Utils.GetDatabaseConnection();
-                   var mainActivity = (MainActivity)context;
-                   //var products = db.GetDataList<ProductModel>();
-
-
-                   if (!NohandicapApplication.IsTablet)
-                   {                      
-                       mainActivity.MapPage.SetData(new List<CategoryModel> { categories[position] });
-                       mainActivity.SetCurrentTab(1);
-                      NohandicapApplication.MainActivity.SupportActionBar.Title = category.Name;
-
-                       categories.ForEach(x => {
-                           if (category.Id == x.Id)
-                           {
-                               category.IsSelected = true;
-                               db.InsertUpdateProduct(category);
-                           }
-                           else
-                           {
-                               x.IsSelected = false;
-                               db.InsertUpdateProduct(x);
-                           }
-                       });
-                   }
-                   else
-                   {
-                      
-                       if (category.IsSelected)
-                       {
-                           category.IsSelected = false;
-                           db.InsertUpdateProduct(category);
-                           NotifyDataSetChanged();
-                       }else
-                       {
-                           category.IsSelected = true;
-                           db.InsertUpdateProduct(category);
-                           NotifyDataSetChanged();
-                       }
-                       var selectedCategories = db.GetDataList<CategoryModel>(x => x.IsSelected).ToList();
-                       if (selectedCategories.Count == 0)
-                       {
-
-                       mainActivity.MapPage.SetData(categories);
-                       }
-                       else
-                       {
-                           mainActivity.MapPage.SetData(selectedCategories);
-
-                       }
-                     
-               await mainActivity.MapPage.LoadData();
-                       
-                   }                 
-
-               };
-
-        
             return grid;
-        
-        }
-       
-        public bool OnTouch(View v, MotionEvent e)
-        {
-            if (e.Action == MotionEventActions.Scroll)
-            {
-            return false;
-        }
-        return false;
-        }
+
+        }  
     }
 }

@@ -208,35 +208,29 @@ namespace NohandicapNative.Droid
 
         #region FavListFragment
         private void InitiallizeFavListFragment(LayoutInflater inflater, ViewGroup container)
-        {          
-         
-                view = inflater.Inflate(Resource.Layout.ListPage, container, false);
-                listView = view.FindViewById<ListView>(Resource.Id.listview);
+        {
+            view = inflater.Inflate(Resource.Layout.ListPage, container, false);
+            listView = view.FindViewById<ListView>(Resource.Id.listview);
             var categoryLabel = view.FindViewById<LinearLayout>(Resource.Id.category_linearLayout);
             categoryLabel.Visibility = ViewStates.Gone;
-
-                listView.ItemClick += (s, e) =>
-                {
-                    int position = e.Position;
-
-                    var activity = new Intent(Activity, typeof(DetailActivity));
-                    activity.PutExtra(Utils.PRODUCT_ID, products[position].ID);
-                   MainActivity.StartActivity(activity);
-                };
+            listView.ItemClick += ListView_ItemClick;
             noFav = view.FindViewById<TextView>(Resource.Id.noFavoritesTextView);
-       
-
             ReloadData();
-
-
         }
-        public async void ReloadData()
+
+        private void ListView_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
         {
-            
+            int productId = (int)e.Id;
+            var activity = new Intent(Activity, typeof(DetailActivity));
+            activity.PutExtra(Utils.PRODUCT_ID, productId);
+            MainActivity.StartActivity(activity);
+        }
+
+        public async void ReloadData()
+        {            
             var user = DbConnection.GetDataList<UserModel>().FirstOrDefault();
             if (user != null)
-            {
-            
+            {            
                 if (products.Count == 0)
                 {
                     noFav.Visibility = ViewStates.Visible;

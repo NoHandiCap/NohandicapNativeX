@@ -145,7 +145,7 @@ namespace NohandicapNative.Droid
         Android.Content.PM.ConfigChanges.ScreenSize
        )]
 	public class MainActivity :AppCompatActivity,  IOnTabClickListener, ILocationListener
-    {
+    {      
         #region Properties
         static readonly string TAG = "X:" + typeof(MainActivity).Name;
         private BottomBar _bottomBar;
@@ -572,6 +572,7 @@ namespace NohandicapNative.Droid
             });
         }
        
+
     }
 }
 

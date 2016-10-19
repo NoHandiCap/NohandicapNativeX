@@ -31,11 +31,10 @@ namespace NohandicapNative.Droid
         ListView langListView;
         Resources res;
         List<LanguageModel> LanguagesList;
-        List<CategoryModel> CategoriesList;
+        List<CategoryModel> MainCategoriesList;
         RelativeLayout languageLayout;
         LinearLayout agreementLayout;
         LinearLayout dataProtectionLayout;
-
         protected override void OnCreate(Bundle bundle)
         {
             Log.Debug(TAG, "Set Theme");
@@ -43,14 +42,12 @@ namespace NohandicapNative.Droid
             base.OnCreate(bundle);           
             Log.Debug(TAG, "Set view");        
             SetContentView(Resource.Layout.FirstStart);      
-            Log.Debug(TAG, "Set loadContent");
-                     
+            Log.Debug(TAG, "Set loadContent");                     
             agreementLayout = FindViewById<LinearLayout>(Resource.Id.agreementLayout);
             languageLayout = FindViewById<RelativeLayout>(Resource.Id.languageLayout);
             dataProtectionLayout = FindViewById<LinearLayout>(Resource.Id.dataProtectionLayout);
             var agreementTextView = FindViewById<TextView>(Resource.Id.agreementTextView);
             var dataProtectionTextView = FindViewById<TextView>(Resource.Id.dataProtectionTextView);
-
             var agreeButton = agreementLayout.FindViewById<Button>(Resource.Id.agreeButton);
                 agreeButton.Click += (s, e) =>
                 {
@@ -66,8 +63,6 @@ namespace NohandicapNative.Droid
                 }
 
             agreementTextView.Text = content; // Set TextView.Text to our asset content
-
-
             var agreeDataProtectionButton = dataProtectionLayout.FindViewById<Button>(Resource.Id.agreeDataProtectionButton);
             agreeDataProtectionButton.Click += (s, e) =>
             {
@@ -87,7 +82,7 @@ namespace NohandicapNative.Droid
                 spinnerPrompt = FindViewById<TextView>(Resource.Id.lang_spinner_prompt);
                 langListView = FindViewById<ListView>(Resource.Id.languageList);
                 FillLanguageLocalTable();
-                FillCategiesLocalTable();
+                FillMainCategiesLocalTable();
                 nextButton.Text = Resources.GetString(Resource.String.next);
                 nextButton.Click += (s, e) =>
                 {
@@ -121,7 +116,6 @@ namespace NohandicapNative.Droid
             }
             for (int i = 0; i < langListView.ChildCount; i++)
             {
-
                 var text = langListView.GetChildAt(i).FindViewById<TextView>(Resource.Id.grid_text);
                 var viewLayout = langListView.GetChildAt(i).FindViewById<LinearLayout>(Resource.Id.grid_layout);
                 if (position == i)
@@ -135,7 +129,6 @@ namespace NohandicapNative.Droid
                     text.SetTypeface(null, TypefaceStyle.Normal);
                     text.SetTextColor(Color.Black);
                     viewLayout.SetBackgroundColor(Color.White);
-
                 }               
             }
         }
@@ -144,28 +137,27 @@ namespace NohandicapNative.Droid
             try
             {
 
-          
-            string[] defaultLanguages = Resources.GetStringArray(Resource.Array.lang_array);
-            var defaultShortLanguages = Resources.GetStringArray(Resource.Array.lang_short_array);
-           
+                string[] defaultLanguages = Resources.GetStringArray(Resource.Array.lang_array);
+                var defaultShortLanguages = Resources.GetStringArray(Resource.Array.lang_short_array);
+
                 for (int i = 0; i < defaultLanguages.Length; i++)
                 {
                     LanguageModel lang = new LanguageModel();
                     lang.Id = i + 1;
                     lang.ShortName = defaultShortLanguages[i];
                     lang.LanguageName = defaultLanguages[i];
-               
+
                     LanguagesList.Add(lang);
                 }
-          
-            List<CustomRadioButton> langList = new List<CustomRadioButton>();
-            LanguagesList.ForEach(x => langList.Add(new CustomRadioButton()
-            {
-                Text = x.LanguageName
-            }));
-            langListView.Adapter = new RadioButtonListAdapter(this, flags, langList);
-            langListView.PerformItemClick(langListView, 0, 0);
-            OnItemClick(null, null, 0, 0);
+
+                List<CustomRadioButton> langList = new List<CustomRadioButton>();
+                LanguagesList.ForEach(x => langList.Add(new CustomRadioButton()
+                {
+                    Text = x.LanguageName
+                }));
+                langListView.Adapter = new RadioButtonListAdapter(this, flags, langList);
+                langListView.PerformItemClick(langListView, 0, 0);
+                OnItemClick(null, null, 0, 0);
             }
             catch (Exception)
             {
@@ -176,14 +168,14 @@ namespace NohandicapNative.Droid
 
             }
         }
-        private void FillCategiesLocalTable()
+        private void FillMainCategiesLocalTable()
         {
 
             List<string> mainItems = Resources.GetStringArray(Resource.Array.main_category_array).ToList();
-           CategoriesList = new List<CategoryModel>();
+           MainCategoriesList = new List<CategoryModel>();
             foreach (var item in mainItems)
             {
-                CategoriesList.Add(new CategoryModel()
+                MainCategoriesList.Add(new CategoryModel()
                 {
                     Id = mainItems.IndexOf(item) + 1,
                     Name = item,
@@ -198,13 +190,12 @@ namespace NohandicapNative.Droid
             var conn = Utils.GetDatabaseConnection();
             conn.CreateTables();
             conn.InsertUpdateProductList(LanguagesList);
-            conn.InsertUpdateProductList(CategoriesList);
-             conn.SetSelectedCategory(CategoriesList[0]);  
+            conn.InsertUpdateProductList(MainCategoriesList);
+            conn.SetSelectedCategory(MainCategoriesList[0]);  
             var result = await RestApiService.CheckUpdate(conn, _selecteLangID.ToString(), Utils.GetLastUpdate(this));
       
             if (result != null)
             {
-
                 // On complete call either onLoginSuccess or onLoginFailed
 
                 // onLoginFailed();
@@ -212,13 +203,11 @@ namespace NohandicapNative.Droid
                 Log.Debug(TAG, "Work is finished - start MainActivity.");
                
                     if (result.Count != 0)
-                    {
-                      //  Utils.WriteToSettings(this, NohandicapLibrary.PRODUCT_TABLE, result[NohandicapLibrary.PRODUCT_TABLE]);
+                    {                     
                         Utils.WriteToSettings(this, NohandicapLibrary.CATEGORY_TABLE, result[NohandicapLibrary.CATEGORY_TABLE]);
                         Utils.WriteToSettings(this, NohandicapLibrary.LANGUAGE_TABLE, result[NohandicapLibrary.LANGUAGE_TABLE]);
                     }
-                    Utils.WriteToSettings(this, Utils.LAST_UPDATE_DATE, DateTime.Now.ToShortDateString());
-               
+                    Utils.WriteToSettings(this, Utils.LAST_UPDATE_DATE, DateTime.Now.ToShortDateString());               
                 StartActivity(new Intent(Application.Context, typeof(MainActivity)));
                 Finish();
              

@@ -102,17 +102,15 @@ namespace NohandicapNative.Droid
                          return;
                      }              
                      Log.Debug(TAG, "Start Load ");
-
                      var loadedProducts =
-                       await RestApiService.GetMarkers(latLngBounds.Southwest.Latitude, latLngBounds.Southwest.Longitude,
+                       await Utils.GetMarkers(latLngBounds.Southwest.Latitude, latLngBounds.Southwest.Longitude,
                        latLngBounds.Northeast.Latitude, latLngBounds.Northeast.Longitude,
                        SelectedMainCategory, currentCategories);
                      Log.Debug(TAG, "LoadedProducts " + loadedProducts.Count);
                      List<ProductMarkerModel> newProductsInBound;
                      if (IsInternetConnection)
                      {
-                         newProductsInBound = loadedProducts;            
-                                
+                         newProductsInBound = loadedProducts.Where(x => !productsInBounds.Contains(x)).ToList();                                        
                      }
                      else
                      {
@@ -143,10 +141,11 @@ namespace NohandicapNative.Droid
                 options.SetPosition(new LatLng(lat, lng));
                 options.Visible(false);
                 options.SetTitle(product.Id.ToString());
+                 
                 Log.Debug(TAG, "SetOptions ");
                 Activity.RunOnUiThread(() =>
                 {
-                    var marker = map.AddMarker(options);
+                    var marker = map.AddMarker(options);                  
                     var picassoMarker = new PicassoMarker(marker);
                     if (!string.IsNullOrEmpty(customPinUrl))
                     {
@@ -241,7 +240,7 @@ namespace NohandicapNative.Droid
             var product = FindProductFromMarker(marker);
             if (product == null) return null;
             Log.Debug(TAG, "Product id"+product.Id);
-
+            
             var imageView = info.FindViewById<ImageView>(Resource.Id.info_mainImageView);
             var title = info.FindViewById<TextView>(Resource.Id.info_titleTextView);
             var adress = info.FindViewById<TextView>(Resource.Id.info_adressTextView);
@@ -309,8 +308,7 @@ namespace NohandicapNative.Droid
                     conn.UnSelectAllCategories();                  
                     SetData(conn.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.MainCatGroup));                    
                     MainActivity.SupportActionBar.Title = "Map";                            
-                      LoadData();
-                 
+                      LoadData();                 
                     break;
             }
             return true;

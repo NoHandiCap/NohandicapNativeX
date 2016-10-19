@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -84,8 +85,8 @@ namespace NohandicapNative
                 subCatList += "," + item.Id;
             }
             string url = string.Format(NohandicapLibrary.LINK_GET_MARKERS, mainCategory, count, boundBox, subCatList);
-
-            var products=await GetDataFromUrl<List<ProductMarkerModel>>(url);
+            Debug.WriteLine("URL ", url);
+            var products =await GetDataFromUrl<List<ProductMarkerModel>>(url);
             if (products == null)
             {
                 return new List<ProductMarkerModel>();
@@ -100,8 +101,7 @@ namespace NohandicapNative
             {
                 subCatList += "," + item.Id;
             }
-            string url = string.Format(NohandicapLibrary.LINK_GET_PRODUCTS, mainCategory, subCatList, langId,lat,lng,count,page);
-
+            string url = string.Format(NohandicapLibrary.LINK_GET_PRODUCTS, mainCategory, subCatList, langId,lat,lng,count,page);       
             var products = await GetDataFromUrl<List<ProductMarkerModel>>(url);
             if (products == null)
             {
@@ -113,7 +113,6 @@ namespace NohandicapNative
         {
         
             string url = string.Format(NohandicapLibrary.LINK_GET_FAV, userId, count, page);
-
             var products = await GetDataFromUrl<List<ProductMarkerModel>>(url);
             if (products == null)
             {
@@ -123,9 +122,7 @@ namespace NohandicapNative
         }
         public static async Task<ProductDetailModel> GetProductDetail(int productId, int langId)
         {
-
             string url = string.Format(NohandicapLibrary.LINK_PRODUCT_DETAIL,langId, productId);
-
             var product = await GetDataFromUrl<List<ProductDetailModel>>(url);
             if (product == null)
             {

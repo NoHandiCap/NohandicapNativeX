@@ -98,8 +98,8 @@ namespace NohandicapNative
               var result = conn.GetAllWithChildren<T>(null, true).Where(where).ToList();
                 return result;
             }
-        }       
-        public void SetSelectedCategory(CategoryModel category, bool isSelected = true)
+        }
+        public void SetSelectedCategory(CategoryModel category, bool isSelected = true, bool isTablet = false)
         {
             using (var conn = GetSQLiteConnetion())
             {
@@ -122,6 +122,18 @@ namespace NohandicapNative
                 {
                     category.IsSelected = isSelected;
                     conn.InsertOrReplace(category);
+                    if (!isTablet)
+                    {
+                        var subCategories = conn.Table<CategoryModel>().Where(x => x.Group == NohandicapLibrary.SubCatGroup).ToList();
+                        foreach (var cat in subCategories)
+                        {
+                            if (cat.Id != category.Id)
+                            {
+                                cat.IsSelected = false;
+                                conn.InsertOrReplace(cat);
+                            }
+                        }
+                    }
                 }
                 var mainCat = conn.Table<CategoryModel>().Where(x => x.Group == NohandicapLibrary.MainCatGroup).ToList();
 
@@ -132,6 +144,10 @@ namespace NohandicapNative
             using (var conn = GetSQLiteConnetion())
             {
                 var categories = conn.Table<CategoryModel>().Where(x => x.IsSelected && x.Group == NohandicapLibrary.SubCatGroup).ToList();
+                if(categories.Count==0)
+                {
+                    categories = conn.Table<CategoryModel>().Where(x => x.Group == NohandicapLibrary.SubCatGroup).ToList();
+                }
                 return categories;
             }
         }
