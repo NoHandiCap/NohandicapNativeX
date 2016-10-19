@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -77,12 +78,16 @@ namespace NohandicapNative
             double lngHight,CategoryModel mainCat, List<CategoryModel> subCategories,int count=50)
         {
             var mainCategory = mainCat.Id;
-            string boundBox = latLow + "," + lngLow + "," + latHight + "," + lngHight;
+            string boundBox = latLow.ToString(CultureInfo.InvariantCulture) + "," + lngLow.ToString(CultureInfo.InvariantCulture) + "," + latHight.ToString(CultureInfo.InvariantCulture) + "," + lngHight.ToString(CultureInfo.InvariantCulture);
             string subCatList = "";
+
             foreach (var item in subCategories)
             {
-                subCatList += "," + item.Id;
+                subCatList += item.Id + ",";
             }
+
+            subCatList = subCatList.Substring(0, subCatList.Length - 1);
+
             string url = string.Format(NohandicapLibrary.LINK_GET_MARKERS, mainCategory, count, boundBox, subCatList);
 
             var products=await GetDataFromUrl<List<ProductMarkerModel>>(url);
@@ -94,12 +99,30 @@ namespace NohandicapNative
         }
         public static async Task<List<ProductMarkerModel>> GetMarkers(CategoryModel mainCat, List<CategoryModel> subCategories, int langId,string lat,string lng,int page, int count = 50)
         {
-            var mainCategory = mainCat.Id;  
+            var mainCategory = mainCat.Id;
+
+            // for security
+            if (mainCategory == 0)
+                mainCategory = NohandicapLibrary.DEFAULT_MAIN_CATEGORY;
+
             string subCatList = "";
+
+            // for security
+            if (subCategories == null || subCategories.Count == 0)
+            {
+                subCategories.Add(new CategoryModel()
+                {
+                    Id = NohandicapLibrary.DEFAULT_SUB_CATEGORY,
+                });
+            }
+
             foreach (var item in subCategories)
             {
-                subCatList += "," + item.Id;
+                subCatList +=  item.Id + ",";
             }
+
+            subCatList = subCatList.Substring(0, subCatList.Length - 1);
+
             string url = string.Format(NohandicapLibrary.LINK_GET_PRODUCTS, mainCategory, subCatList, langId,lat,lng,count,page);
 
             var products = await GetDataFromUrl<List<ProductMarkerModel>>(url);

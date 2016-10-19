@@ -18,11 +18,13 @@ namespace NohandicapNative.Droid.Fragments
 {
     public abstract class BaseFragment : Android.Support.V4.App.Fragment
     {
-      public  SqliteService DbConnection { get; set; }
-        public BaseFragment()
+        public  SqliteService DbConnection { get; set; }
+        public BaseFragment(Boolean loadFromCache = true)
         {
             DbConnection = Utils.GetDatabaseConnection();
-            ThreadPool.QueueUserWorkItem(o => LoadCache());
+
+            if(loadFromCache)
+                ThreadPool.QueueUserWorkItem(o => LoadCache());
         }
         public MainActivity MainActivity
         {
@@ -88,7 +90,6 @@ namespace NohandicapNative.Droid.Fragments
         {
             try
             {
-             
                 var selectedSubCategory = DbConnection.GetSubSelectedCategory();
                 var position = NohandicapApplication.MainActivity.CurrentLocation;
                 string lat = "";

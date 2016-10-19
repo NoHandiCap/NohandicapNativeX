@@ -38,7 +38,10 @@ namespace NohandicapNative.Droid
         SqliteService conn;
       //  ClusterManager _clusterManager;
         static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1,1);
-        CameraPosition currentCameraPosition;     
+        CameraPosition currentCameraPosition;
+
+        public GMapFragment(Boolean loadFromCache = true) : base(loadFromCache) { }
+
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
 

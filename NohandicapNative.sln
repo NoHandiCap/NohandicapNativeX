@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NohandicapNative.Droid", "NohandicapNative\NohandicapNative.Droid\NohandicapNative.Droid.csproj", "{F28A8718-D1A4-4D9D-8B9E-6D7714A4B07D}"
 EndProject
@@ -15,9 +15,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoogleMapsUtility", "Nohand
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		NohandicapNative\NohandicapNative\NohandicapNative.projitems*{af1e88eb-cf94-4b89-9b8b-80166d5b41dd}*SharedItemsImports = 13
 		NohandicapNative\NohandicapNative\NohandicapNative.projitems*{950262b1-29d2-494c-a226-8211555395af}*SharedItemsImports = 4
 		NohandicapNative\NohandicapNative\NohandicapNative.projitems*{a9508e2e-9ac3-437f-b2f3-7bb4fd0d4be8}*SharedItemsImports = 4
-		NohandicapNative\NohandicapNative\NohandicapNative.projitems*{af1e88eb-cf94-4b89-9b8b-80166d5b41dd}*SharedItemsImports = 13
 		NohandicapNative\NohandicapNative\NohandicapNative.projitems*{f28a8718-d1a4-4d9d-8b9e-6d7714a4b07d}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

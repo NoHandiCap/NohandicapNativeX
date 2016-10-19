@@ -29,6 +29,9 @@ namespace NohandicapNative.Droid
         List<CategoryModel> mainCategoriesList;
 
         GridViewAdapter buttonsAdapter;
+
+        public HomeFragment(Boolean loadFromCache = true) : base(loadFromCache) { }
+
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             this.inflater = inflater;

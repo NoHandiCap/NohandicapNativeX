@@ -22,7 +22,8 @@ namespace NohandicapNative.Droid
         TextView mainCategoryName;
         ImageView mainCategoryImage;
         TextView subCategoryName;
-       
+
+        public ListFragment(bool loadFromCache = true) : base(loadFromCache) { }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
@@ -62,8 +63,16 @@ namespace NohandicapNative.Droid
             {
 
                 var categories = "";
-                selectedSubCategory.ForEach(x => categories += x.Name+",");
-                categories.Remove(categories.Length - 1);
+
+                foreach (var item in selectedSubCategory)
+                {
+                    categories += item.Name + ",";
+                }
+
+                categories = categories.Substring(0, categories.Length - 1);
+
+                //selectedSubCategory.ForEach(x => categories += x.Name+",");
+                //categories.Remove(categories.Length - 1);
                 subCategoryName.Text = categories;
             }
             else

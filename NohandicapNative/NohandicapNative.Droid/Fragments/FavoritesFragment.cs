@@ -23,9 +23,8 @@ namespace NohandicapNative.Droid
         List<ProductDetailModel> products;
         TextView noFav;
         CardViewAdapter cardViewAdapter;
-        public FavoritesFragment()
+        public FavoritesFragment(Boolean loadFromCache = true) : base(loadFromCache)
         {
-           
             products = new List<ProductDetailModel>();
         }
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
