@@ -11,18 +11,18 @@ using Android.Locations;
 using System.Globalization;
 using System.Collections.ObjectModel;
 using NohandicapNative.Droid.Fragments;
+using System;
 
 namespace NohandicapNative.Droid
 {
   public  class ListFragment : BaseFragment
     {           
         ListView listView;
-         
         CardViewAdapter cardViewAdapter;
         TextView mainCategoryName;
         ImageView mainCategoryImage;
         TextView subCategoryName;
-
+       
         public ListFragment(bool loadFromCache = true) : base(loadFromCache) { }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -33,16 +33,17 @@ namespace NohandicapNative.Droid
             mainCategoryName = view.FindViewById<TextView>(Resource.Id.mainCategoryTextView);
             mainCategoryImage = view.FindViewById<ImageView>(Resource.Id.mainCategoryImageView);
             subCategoryName = view.FindViewById<TextView>(Resource.Id.subCategoryTextView);       
-            listView.ItemClick += (s, e) =>
-            {
-                int position = e.Position;
-
-                var activity = new Intent(Activity, typeof(DetailActivity));
-                activity.PutExtra(Utils.PRODUCT_ID, CurrentProductsList[position].Id);
-                MainActivity.StartActivityForResult(activity,1);         
-            };
+            listView.ItemClick += ListView_ItemClick; 
             ReloadData();
             return view;
+        }
+
+        private void ListView_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
+        {          
+            var productId = (int)e.Id;
+                var activity = new Intent(Activity, typeof(DetailActivity));
+            activity.PutExtra(Utils.PRODUCT_ID, productId);
+            MainActivity.StartActivityForResult(activity, 1);
         }
        
         public override void OnHiddenChanged(bool hidden)
@@ -53,15 +54,12 @@ namespace NohandicapNative.Droid
                 ReloadData();
             }
         }
+
         private async void ReloadData()
         {
-           
-
             var selectedSubCategory = DbConnection.GetSubSelectedCategory();
-            //Products = conn.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= NohandicapApplication.SelectedMainCategory.Id).ToList();
-            if (selectedSubCategory.Count != 0)
+            if (selectedSubCategory.Count != 9)
             {
-
                 var categories = "";
 
                 foreach (var item in selectedSubCategory)
@@ -77,19 +75,13 @@ namespace NohandicapNative.Droid
             }
             else
             {
-              
                 subCategoryName.Text = Resources.GetString(Resource.String.all_cat);
             }
-
             mainCategoryName.Text = SelectedMainCategory.Name;         
             var image = Utils.GetImage(Activity, "wheelchair" + SelectedMainCategory.Id);
             mainCategoryImage.SetImageDrawable(Utils.SetDrawableSize(Activity, image, 140, 65));
-
-           // productsList = SortProductsByDistance(productsList);
             cardViewAdapter = new CardViewAdapter(Activity,false);
             listView.Adapter = cardViewAdapter;   
         }
-      
-       
     }
 }

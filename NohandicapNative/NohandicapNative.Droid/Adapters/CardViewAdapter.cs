@@ -31,7 +31,8 @@ namespace NohandicapNative.Droid.Adapters
             conn = Utils.GetDatabaseConnection();
             this.context = context;
             selectedCategory = conn.GetSubSelectedCategory();
-            products = new ObservableCollection<ProductMarkerModel>();
+            var filtredProducts = NohandicapApplication.MainActivity.CurrentProductsList.Where(x => x.Categories.Any(y => selectedCategory.Any(z => z.Id == y))).ToList();
+            products = new ObservableCollection<ProductMarkerModel>(filtredProducts);
             categories = conn.GetDataList<CategoryModel>();
             this.isFav = isFav;
             if (isFav)
@@ -40,7 +41,6 @@ namespace NohandicapNative.Droid.Adapters
                 LoadNextData();
             }
             LoadNextData();
-
         }
 
 
@@ -62,7 +62,8 @@ namespace NohandicapNative.Droid.Adapters
 
         public override long GetItemId(int position)
         {
-            return position;
+
+            return products[position].Id;
         }
 
         public override View GetView(int position, View convertView, ViewGroup parent)
@@ -100,7 +101,7 @@ namespace NohandicapNative.Droid.Adapters
             {
                 //lat.low, long.low, lat.hig
                 CategoryModel catImage;
-                if (selectedCategory.Count != 0)
+                if (selectedCategory.Count !=0)
                 {
                     catImage = selectedCategory.FirstOrDefault(x => products[position].Categories.Any(y => y == x.Id));
                 }
@@ -151,14 +152,16 @@ namespace NohandicapNative.Droid.Adapters
             PageNumber++;
             foreach (var product in newProducts)
             {
-             
-                products.Add(product);
-                NohandicapApplication.MainActivity.CurrentProductsList.Add(product);
-             
-                context.RunOnUiThread(() =>
+                if (!products.Any(x=>x.Id==product.Id))
                 {
-                    NotifyDataSetChanged();
-                });
+                    products.Add(product);
+                    NohandicapApplication.MainActivity.CurrentProductsList.Add(product);
+
+                    context.RunOnUiThread(() =>
+                    {
+                        NotifyDataSetChanged();
+                    });
+                }
             }
 
         }

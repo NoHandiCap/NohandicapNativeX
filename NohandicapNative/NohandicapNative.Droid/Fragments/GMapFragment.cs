@@ -38,7 +38,7 @@ namespace NohandicapNative.Droid
         SqliteService conn;
       //  ClusterManager _clusterManager;
         static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1,1);
-        CameraPosition currentCameraPosition;
+        CameraPosition currentCameraPosition;     
 
         public GMapFragment(Boolean loadFromCache = true) : base(loadFromCache) { }
 
@@ -105,17 +105,15 @@ namespace NohandicapNative.Droid
                          return;
                      }              
                      Log.Debug(TAG, "Start Load ");
-
                      var loadedProducts =
-                       await RestApiService.GetMarkers(latLngBounds.Southwest.Latitude, latLngBounds.Southwest.Longitude,
+                       await Utils.GetMarkers(latLngBounds.Southwest.Latitude, latLngBounds.Southwest.Longitude,
                        latLngBounds.Northeast.Latitude, latLngBounds.Northeast.Longitude,
                        SelectedMainCategory, currentCategories);
                      Log.Debug(TAG, "LoadedProducts " + loadedProducts.Count);
                      List<ProductMarkerModel> newProductsInBound;
                      if (IsInternetConnection)
                      {
-                         newProductsInBound = loadedProducts;            
-                                
+                         newProductsInBound = loadedProducts.Where(x => !productsInBounds.Contains(x)).ToList();                                        
                      }
                      else
                      {
@@ -146,6 +144,7 @@ namespace NohandicapNative.Droid
                 options.SetPosition(new LatLng(lat, lng));
                 options.Visible(false);
                 options.SetTitle(product.Id.ToString());
+                 
                 Log.Debug(TAG, "SetOptions ");
                 Activity.RunOnUiThread(() =>
                 {
@@ -313,7 +312,6 @@ namespace NohandicapNative.Droid
                     SetData(conn.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.MainCatGroup));                    
                     MainActivity.SupportActionBar.Title = "Map";                            
                       LoadData();
-                 
                     break;
             }
             return true;

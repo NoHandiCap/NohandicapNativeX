@@ -13,6 +13,8 @@ using System;
 using Android.Util;
 using NohandicapNative.Droid.Fragments;
 
+using System.Threading;
+
 namespace NohandicapNative.Droid
 {
   public  class HomeFragment: BaseFragment, IOnMenuTabSelectedListener
@@ -129,20 +131,20 @@ namespace NohandicapNative.Droid
                     });
                 }
             }
-
-
             subCategoriesList = subCategoriesList.OrderBy(x => x.Sort).ToList();
+           
             buttonsAdapter= new GridViewAdapter(MainActivity, subCategoriesList);
             additionalCategory.Adapter = buttonsAdapter;
-            additionalCategory.ItemClick += AdditionalCategory_ItemClick;
+            additionalCategory.ItemClick += SubCategory_ItemClick;
+            ThreadPool.QueueUserWorkItem(o => LoadCache());
 
         }
 
-        private async void AdditionalCategory_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
+        private async void SubCategory_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
         {
             var position = e.Position;
             var category = subCategoriesList[position];
-
+            OnSubCategoryChaged(new List<CategoryModel> { category });
             if (!IsTablet)
             {
                 MainActivity.MapPage.SetData(new List<CategoryModel> { category });
@@ -232,11 +234,40 @@ namespace NohandicapNative.Droid
             }
             return true;
         }
-        public void OnMenuItemSelected(int menuItemId)
+        public  void OnMenuItemSelected(int menuItemId)
         {
 
         }
+
+
         #endregion
 
+        private async void LoadCache()
+        {
+            try
+            {
+
+                var selectedSubCategory = DbConnection.GetSubSelectedCategory();
+                var position = NohandicapApplication.MainActivity.CurrentLocation;
+                string lat = "";
+                string lng = "";
+                if (position != null)
+                {
+                    lat = position.Latitude.ToString();
+                    lng = position.Longitude.ToString();
+                }
+
+                var coll = await RestApiService.GetMarkers(NohandicapApplication.SelectedMainCategory, selectedSubCategory, NohandicapApplication.CurrentLang.Id, lat, lng, 1);
+                AddProductsToCache(coll);
+
+            }
+            catch (System.Exception e)
+            {
+#if DEBUG
+                System.Diagnostics.Debugger.Break();
+#endif
+
+            }
+        }
     }
 }

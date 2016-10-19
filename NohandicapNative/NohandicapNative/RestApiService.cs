@@ -99,7 +99,7 @@ namespace NohandicapNative
         }
         public static async Task<List<ProductMarkerModel>> GetMarkers(CategoryModel mainCat, List<CategoryModel> subCategories, int langId,string lat,string lng,int page, int count = 50)
         {
-            var mainCategory = mainCat.Id;
+            var mainCategory = mainCat.Id;  
 
             // for security
             if (mainCategory == 0)
@@ -124,7 +124,6 @@ namespace NohandicapNative
             subCatList = subCatList.Substring(0, subCatList.Length - 1);
 
             string url = string.Format(NohandicapLibrary.LINK_GET_PRODUCTS, mainCategory, subCatList, langId,lat,lng,count,page);
-
             var products = await GetDataFromUrl<List<ProductMarkerModel>>(url);
             if (products == null)
             {
@@ -136,7 +135,6 @@ namespace NohandicapNative
         {
         
             string url = string.Format(NohandicapLibrary.LINK_GET_FAV, userId, count, page);
-
             var products = await GetDataFromUrl<List<ProductMarkerModel>>(url);
             if (products == null)
             {
@@ -146,9 +144,7 @@ namespace NohandicapNative
         }
         public static async Task<ProductDetailModel> GetProductDetail(int productId, int langId)
         {
-
             string url = string.Format(NohandicapLibrary.LINK_PRODUCT_DETAIL,langId, productId);
-
             var product = await GetDataFromUrl<List<ProductDetailModel>>(url);
             if (product == null)
             {

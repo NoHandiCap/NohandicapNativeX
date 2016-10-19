@@ -20,12 +20,12 @@ using Java.IO;
 using Android.Gms.Maps.Model;
 using Android.Locations;
 using System.Threading.Tasks;
+using Java.Net;
 
 namespace NohandicapNative.Droid.Services
 {
     public class Utils
-    {     
-        
+    {          
         public static string PATH = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);   
         public const string LANG_ID_TAG = "langID";
         public const string LANG_SHORT = "langShort";
@@ -49,6 +49,29 @@ namespace NohandicapNative.Droid.Services
             lastUpdate.Add(NohandicapLibrary.CATEGORY_TABLE, Utils.ReadFromSettings(context, NohandicapLibrary.CATEGORY_TABLE));
             lastUpdate.Add(NohandicapLibrary.LANGUAGE_TABLE, Utils.ReadFromSettings(context, NohandicapLibrary.LANGUAGE_TABLE));
             return lastUpdate;
+        }
+        public static async Task<List<ProductMarkerModel>> GetMarkers(double latLow, double lngLow, double latHight,
+           double lngHight, CategoryModel mainCat, List<CategoryModel> subCategories, int count = 50)
+        {
+            var mainCategory = mainCat.Id;
+            Log.Debug("mainCategory ", mainCat.Id.ToString());
+            string boundBox = latLow + "," + lngLow + "," + latHight + "," + lngHight;
+            Log.Debug("boundBox ", boundBox);
+            string subCatList = "";
+            Log.Debug("subCatList ", subCategories.Count.ToString());
+
+            foreach (var item in subCategories)
+            {
+                subCatList += item.Id+",";
+            }
+            string url = string.Format(NohandicapLibrary.LINK_GET_MARKERS, mainCategory, count, boundBox, subCatList);
+            Log.Debug("Url", url);
+            var products = await RestApiService.GetDataFromUrl<List<ProductMarkerModel>>(url);
+            if (products == null)
+            {
+                return new List<ProductMarkerModel>();
+            }
+            return products;
         }
         public static bool isAppIsInBackground(Context context)
         {

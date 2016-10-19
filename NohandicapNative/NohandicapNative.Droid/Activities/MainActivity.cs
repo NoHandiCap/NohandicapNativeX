@@ -192,7 +192,7 @@ namespace NohandicapNative.Droid
                       
             toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             _bottomBar = BottomBar.AttachShy(FindViewById<CoordinatorLayout>(Resource.Id.myCoordinator), FindViewById<LinearLayout>(Resource.Id.linContent), bundle);
-            HomePage = new HomeFragment(true);   // TODO: probably also false, should be done in mapfragment after clicking subcategory
+            HomePage = new HomeFragment(false);   // TODO: probably also false, should be done in mapfragment after clicking subcategory
             MapPage = new GMapFragment(false);
             ListPage = new ListFragment(false);
             Favorites = new FavoritesFragment(false);      
