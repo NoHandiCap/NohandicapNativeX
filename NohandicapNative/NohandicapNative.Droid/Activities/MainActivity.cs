@@ -39,7 +39,7 @@ namespace NohandicapNative.Droid
 #if DEBUG
     [Application(Debuggable = true)]
 #else
-    [Application(Debuggable = true)]
+    [Application(Debuggable = false)]
 #endif
 
     public class NohandicapApplication : Application
