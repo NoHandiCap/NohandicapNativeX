@@ -336,10 +336,11 @@ namespace NohandicapNative.Droid
 
       public void LoginToFacebook(FavoritesFragment fragment,bool allowCancel)
         {
+            
             UserModel user = null;
             var auth = new OAuth2Authenticator(
                 clientId: "105055836622734",
-                scope: "",
+                scope: "email",
                 authorizeUrl: new System.Uri("https://m.facebook.com/dialog/oauth/"),
                 redirectUrl: new System.Uri("http://www.facebook.com/connect/login_success.html"));
 
@@ -357,8 +358,8 @@ namespace NohandicapNative.Droid
                 }
 
                 // Now that we're logged in, make a OAuth2 request to get the user's info.
-                var request = new OAuth2Request("GET", new System.Uri("https://graph.facebook.com/me"), null, ee.Account);
-                request.GetResponseAsync().ContinueWith(t => {
+                var request = new OAuth2Request("GET", new System.Uri("https://graph.facebook.com/me?fields=email,name,first_name,last_name,gender,picture"),null , ee.Account);
+                request.GetResponseAsync().ContinueWith(async t => {
                     var builder = new Android.Support.V7.App.AlertDialog.Builder(this);
                     if (t.IsFaulted)
                     {                       
@@ -375,9 +376,15 @@ namespace NohandicapNative.Droid
                         var obj = JsonValue.Parse(t.Result.GetResponseText());
 
                         user = new UserModel();
-                        user.Id = obj["id"].ToString();
-                        user.Name = obj["name"];
-                        user.Favorites = new List<int>();
+                        user.FbId = obj["id"];
+                        user.Vname = obj["first_name"];
+                        user.Nname = obj["last_name"];
+                        user.Email= obj["email"];
+                        user.Login = obj["name"];
+                        user.Sex = obj["gender"] == "male" ? "m" : "w";
+                        user.Favorites = new List<int>();                     
+                   var result=   await  RestApiService.SignUp(user, true);
+                        user.Id =result[2];
                         fragment.UserLoginSuccess(user);
                     }
                    

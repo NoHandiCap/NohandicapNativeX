@@ -37,8 +37,11 @@ namespace NohandicapNative.Droid.Adapters
             this.isFav = isFav;
             if (isFav)
             {
-                products = new List<ProductMarkerModel>();
-                LoadNextData();
+                products = new List<ProductMarkerModel>();               
+               LoadNextData();               
+               NohandicapApplication.MainActivity.Favorites.NoFavLayoutVisibility(ViewStates.Visible);
+              
+            
             }
             LoadNextData();
         }
@@ -74,6 +77,7 @@ namespace NohandicapNative.Droid.Adapters
              view = context.LayoutInflater.Inflate(Resource.Layout.list_item_first, parent, false);
                 view.SetBackgroundColor(Color.White);
             }
+            NohandicapApplication.MainActivity.Favorites.NoFavLayoutVisibility(ViewStates.Gone);
             var imageView = view.FindViewById<ImageView>(Resource.Id.mainImageView);
             var title = view.FindViewById<TextView>(Resource.Id.titleTextView);
             var adress = view.FindViewById<TextView>(Resource.Id.adressTextView);
@@ -115,7 +119,7 @@ namespace NohandicapNative.Droid.Adapters
                     imageView.SetBackgroundColor(Color.ParseColor(catImage.Color));
                 }
             }          
-               Picasso.With(context).Load(imageUrl).Resize(60, 60).Into(imageView);
+               Picasso.With(context).Load(imageUrl).Resize(60, 60).CenterInside().Into(imageView);
             if (products.Count - 5 == position)
             {
             ThreadPool.QueueUserWorkItem(o => LoadNextData());
@@ -141,7 +145,7 @@ namespace NohandicapNative.Droid.Adapters
             if (isFav)
             {
                 var user = conn.GetDataList<UserModel>().FirstOrDefault();
-                if (user == null) return;
+                if (user == null) return ;
                 newProducts = await RestApiService.GetFavorites(user.Id, PageNumber);               
             }
             else

@@ -213,7 +213,7 @@ namespace NohandicapNative
             }
 
         }
-        public static async Task<Dictionary<int,string>> SignUp(UserModel user)
+        public static async Task<Dictionary<int,string>> SignUp(UserModel user,bool isFB=false)
         {
             var result = new Dictionary<int, string>();
             try
@@ -229,12 +229,28 @@ namespace NohandicapNative
                     reqparm.Add("pwd", user.Password);
                     reqparm.Add("pwd2", user.Password);
                     reqparm.Add("geschlecht", user.Sex);
-                    byte[] responsebytes = client.UploadValues(NohandicapLibrary.LINK_SIGN_UP, "POST", reqparm);
-                    string responsebody = Encoding.UTF8.GetString(responsebytes);
+                    reqparm.Add("facebookid", user.FbId);
+                    byte[] responsebytes;
+                    if (isFB)
+                    {
+                        responsebytes = client.UploadValues(NohandicapLibrary.LINK_SIGN_UP_WITH_FACEBOOK, "POST", reqparm);
+                        string responsebody = Encoding.UTF8.GetString(responsebytes);
+                        var root = JObject.Parse(responsebody).SelectToken("status").ToString();
+                        var id = Deserializedata<int>(responsebody, rootName: "id");             
+                        var message = JObject.Parse(responsebody).SelectToken("message").ToString();
+                        result.Add(1, message);
+                        result.Add(2, id.ToString());
+                    }
+                    else
+                    {
+                        responsebytes = client.UploadValues(NohandicapLibrary.LINK_SIGN_UP, "POST", reqparm);
+                          string responsebody = Encoding.UTF8.GetString(responsebytes);
                     var root = JObject.Parse(responsebody).SelectToken("status").ToString();
                     var code = JsonConvert.DeserializeObject<int>(root);
                     var message = JObject.Parse(responsebody).SelectToken("message").ToString();
                     result.Add(code, message);                
+                    }
+                
 
                 }
             }
@@ -243,8 +259,7 @@ namespace NohandicapNative
            
             }
             return result;
-        }
-
+        }        
         public static async Task<Dictionary<string,string>> CheckUpdate(SqliteService conn,string langID, Dictionary<string, string> lastUpdate)
         {
             
