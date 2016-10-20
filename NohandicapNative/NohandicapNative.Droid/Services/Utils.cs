@@ -60,7 +60,12 @@ namespace NohandicapNative.Droid.Services
               var runningProcesses = am.RunningAppProcesses;
                 foreach (ActivityManager.RunningAppProcessInfo processInfo in runningProcesses)
                 {
+
                     if (processInfo.Importance == ActivityManager.RunningAppProcessInfo.ImportanceForeground)
+                    {
+
+                    }
+                        if (processInfo.Importance == ActivityManager.RunningAppProcessInfo.ImportanceForeground)
                     {
                         foreach (string activeProcess in processInfo.PkgList)
                         {

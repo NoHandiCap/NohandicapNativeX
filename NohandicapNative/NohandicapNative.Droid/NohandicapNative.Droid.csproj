@@ -54,13 +54,14 @@
     <EnableProguard>True</EnableProguard>
     <DebugSymbols>False</DebugSymbols>
     <BundleAssemblies>False</BundleAssemblies>
-    <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
+    <AndroidCreatePackagePerAbi>True</AndroidCreatePackagePerAbi>
     <AotAssemblies>False</AotAssemblies>
     <EnableLLVM>False</EnableLLVM>
     <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
     <DefineConstants>
     </DefineConstants>
     <AndroidSupportedAbis>armeabi;armeabi-v7a;x86</AndroidSupportedAbis>
+    <JavaMaximumHeapSize>1G</JavaMaximumHeapSize>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BottomNavigationBar, Version=1.4.0.2, Culture=neutral, processorArchitecture=MSIL">
@@ -397,6 +398,9 @@
     <AndroidResource Include="Resources\drawable\splash_screen.xml" />
   </ItemGroup>
   <ItemGroup>
+    <AndroidAsset Include="Assets\Agreement_de.txt" />
+  </ItemGroup>
+  <ItemGroup>
     <AndroidResource Include="Resources\drawable\logo_handicap.png" />
   </ItemGroup>
   <ItemGroup>
@@ -505,22 +509,19 @@
     <AndroidResource Include="Resources\drawable-mdpi\ic_map.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Agreement-fr.txt" />
+    <AndroidAsset Include="Assets\DataProtection_de.txt" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Agreement-de.txt" />
+    <AndroidAsset Include="Assets\DataProtection_fr.txt" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Agreement-en.txt" />
+    <AndroidAsset Include="Assets\DataProtection_en.txt" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\DataProtection-fr.txt" />
+    <AndroidAsset Include="Assets\Agreement_en.txt" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\DataProtection-de.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\DataProtection-en.txt" />
+    <AndroidAsset Include="Assets\Agreement_fr.txt" />
   </ItemGroup>
   <Import Project="..\NohandicapNative\NohandicapNative.projitems" Label="Shared" Condition="Exists('..\NohandicapNative\NohandicapNative.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

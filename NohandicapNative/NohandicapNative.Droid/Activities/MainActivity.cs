@@ -117,27 +117,24 @@ namespace NohandicapNative.Droid
             built.IndicatorsEnabled=false;
             built.LoggingEnabled=false;
             Picasso.SetSingletonInstance(built);
-
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            new Android.Support.V7.App.AlertDialog.Builder(this)
-       .SetPositiveButton("Ok", (s, args) =>
-       {
-           MainActivity.Finish();
-
-       })
-       .SetMessage(e.ExceptionObject.ToString())
-       .SetTitle("Error")
-       .Show();
+            var builder = new Android.Support.V7.App.AlertDialog.Builder(this);
+            builder.SetPositiveButton("Ok", (s, args) =>
+            {
+                MainActivity.Finish();
+            });
+            builder.SetMessage(e.ExceptionObject.ToString());
+            builder.SetTitle("Error");
+            builder.Show();
         }
         
         protected override void Dispose(bool disposing)
         {
             AppDomain currentDomain = AppDomain.CurrentDomain;
-            currentDomain.UnhandledException -= CurrentDomain_UnhandledException;
-            
+            currentDomain.UnhandledException -= CurrentDomain_UnhandledException;            
             base.Dispose(disposing);
         }
     }

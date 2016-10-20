@@ -20,7 +20,7 @@ namespace NohandicapNative.Droid.Adapters
     {
         string TAG = "X: " + typeof(CardView).Name;
         private readonly Activity context;
-        private readonly ObservableCollection<ProductMarkerModel> products;
+        private readonly List<ProductMarkerModel> products;
         List<CategoryModel> selectedCategory;
         List<CategoryModel> categories;
         int PageNumber =1;
@@ -31,13 +31,13 @@ namespace NohandicapNative.Droid.Adapters
             conn = Utils.GetDatabaseConnection();
             this.context = context;
             selectedCategory = conn.GetSubSelectedCategory();
-            var filtredProducts = NohandicapApplication.MainActivity.CurrentProductsList.Where(x => x.Categories.Any(y => selectedCategory.Any(z => z.Id == y))).ToList();
-            products = new ObservableCollection<ProductMarkerModel>(filtredProducts);
+         ///   var filtredProducts = NohandicapApplication.MainActivity.CurrentProductsList.Where(x => x.Categories.Any(y => selectedCategory.Any(z => z.Id == y))).ToList();
+            products = new List<ProductMarkerModel>();
             categories = conn.GetDataList<CategoryModel>();
             this.isFav = isFav;
             if (isFav)
             {
-                products = new ObservableCollection<ProductMarkerModel>();
+                products = new List<ProductMarkerModel>();
                 LoadNextData();
             }
             LoadNextData();
@@ -149,15 +149,15 @@ namespace NohandicapNative.Droid.Adapters
                 newProducts = await RestApiService.GetMarkers(NohandicapApplication.SelectedMainCategory, selectedSubCategory, NohandicapApplication.CurrentLang.Id, lat, lng, PageNumber);             
             }
             PageNumber++;
+            
             foreach (var product in newProducts)
             {
                 if (!products.Any(x=>x.Id==product.Id))
-                {
-                    products.Add(product);
+                {                    
                     NohandicapApplication.MainActivity.CurrentProductsList.Add(product);
-
                     context.RunOnUiThread(() =>
                     {
+                        products.Add(product);
                         NotifyDataSetChanged();
                     });
                 }
