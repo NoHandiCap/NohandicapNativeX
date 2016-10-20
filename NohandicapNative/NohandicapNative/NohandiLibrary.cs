@@ -42,6 +42,8 @@ namespace NohandicapNative
         public const int DEFAULT_MAIN_CATEGORY = 1; //as fallback, should be taken from DB by sync (reihe=1, gruppe=2)
         public const int DEFAULT_SUB_CATEGORY = 6; //as fallback, should be taken from DB by sync (reihe=1, gruppe=1)
 
+        public const String DEFAULT_LANG_CODE = "de";
+
         public static List<TabItem> GetTabs(bool isTablet=false)
         {
             List<TabItem> items = new List<TabItem>();

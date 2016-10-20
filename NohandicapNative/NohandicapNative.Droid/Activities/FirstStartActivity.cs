@@ -35,8 +35,11 @@ namespace NohandicapNative.Droid
         RelativeLayout languageLayout;
         LinearLayout agreementLayout;
         LinearLayout dataProtectionLayout;
+
         protected override void OnCreate(Bundle bundle)
         {
+            String langCode = NohandicapLibrary.DEFAULT_LANG_CODE;
+
             Log.Debug(TAG, "Set Theme");
             SetTheme(Resource.Style.AppThemeNoBar);
             base.OnCreate(bundle);           
@@ -54,15 +57,8 @@ namespace NohandicapNative.Droid
                     agreementLayout.Visibility = ViewStates.Gone;
                     dataProtectionLayout.Visibility = ViewStates.Visible;
                 };
-         
-                string content;
-                AssetManager assets = this.Assets;
-                using (StreamReader sr = new StreamReader(assets.Open("Agreement.txt")))
-                {
-                    content = sr.ReadToEnd();
-                }
 
-            agreementTextView.Text = content; // Set TextView.Text to our asset content
+            agreementTextView.Text = ReadFileContent(langCode, "Agreement", ".txt");
             var agreeDataProtectionButton = dataProtectionLayout.FindViewById<Button>(Resource.Id.agreeDataProtectionButton);
             agreeDataProtectionButton.Click += (s, e) =>
             {
@@ -70,12 +66,7 @@ namespace NohandicapNative.Droid
                 languageLayout.Visibility = ViewStates.Visible;
             };
 
-            using (StreamReader sr = new StreamReader(assets.Open("DataProtection.txt")))
-            {
-                content = sr.ReadToEnd();
-            }
-            
-            dataProtectionTextView.Text = content; // Set TextView.Text to our asset content
+            dataProtectionTextView.Text = ReadFileContent(langCode, "DataProtection", ".txt");
 
             LanguagesList = new List<LanguageModel>();         
                 nextButton = FindViewById<Button>(Resource.Id.next_button);
@@ -100,6 +91,40 @@ namespace NohandicapNative.Droid
                 langListView.OnItemClickListener = this;              
            
         }
+
+        //TODO migrate to the common place for both: android and iOS
+        /// <summary>
+        /// Reads file with given filename from folder Assets.
+        /// Tries to read given language version and if failed then default DE version.
+        /// </summary>
+        /// <param name="langCode"></param>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        private String ReadFileContent(String langCode, String fileName, String fileExtension)
+        {
+            String content = "";
+            AssetManager assets = this.Assets;
+
+            if (langCode == null || langCode == "")
+                langCode = NohandicapLibrary.DEFAULT_LANG_CODE;
+
+            using (StreamReader sr = new StreamReader(assets.Open(fileName + "-" + langCode + fileExtension)))
+            {
+                content = sr.ReadToEnd();
+            }
+
+            //if no content then try in default DE language
+            if(langCode != NohandicapLibrary.DEFAULT_LANG_CODE && content == "")
+            {
+                using (StreamReader sr = new StreamReader(assets.Open(fileName + "-" + NohandicapLibrary.DEFAULT_LANG_CODE + fileExtension)))
+                {
+                    content = sr.ReadToEnd();
+                }
+            }
+
+            return content;
+        }
+
         private void SetLocale(int position)
         {
             Utils.WriteToSettings(this, Utils.LANG_ID_TAG, LanguagesList[position].Id.ToString());

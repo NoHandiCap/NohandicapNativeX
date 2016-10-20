@@ -397,9 +397,6 @@
     <AndroidResource Include="Resources\drawable\splash_screen.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Agreement.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\drawable\logo_handicap.png" />
   </ItemGroup>
   <ItemGroup>
@@ -508,7 +505,22 @@
     <AndroidResource Include="Resources\drawable-mdpi\ic_map.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\DataProtection.txt" />
+    <AndroidAsset Include="Assets\Agreement-fr.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Agreement-de.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Agreement-en.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\DataProtection-fr.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\DataProtection-de.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\DataProtection-en.txt" />
   </ItemGroup>
   <Import Project="..\NohandicapNative\NohandicapNative.projitems" Label="Shared" Condition="Exists('..\NohandicapNative\NohandicapNative.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
