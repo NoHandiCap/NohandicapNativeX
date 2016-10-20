@@ -142,6 +142,10 @@ namespace NohandicapNative.Droid
                 user = conn.GetDataList<UserModel>().FirstOrDefault();
                 if (user != null)
                 {
+                    if (user.Favorites == null)
+                    {
+                        user.Favorites = new List<int>();
+                    }
                     var userFavorites = user.Favorites;
                     if (userFavorites.Any(x => x == product.ID))
                     {

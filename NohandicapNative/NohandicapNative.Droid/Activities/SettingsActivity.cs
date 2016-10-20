@@ -97,7 +97,7 @@ namespace NohandicapNative.Droid
             var user = conn.GetDataList<UserModel>().FirstOrDefault();
             if (user != null)
             {
-                userTextView.Text = user.Name??user.Vname;
+                userTextView.Text = user.Vname;
                 logoutButton.Click += (s, e) =>
                 {
                     conn.Logout();

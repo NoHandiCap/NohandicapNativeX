@@ -59,7 +59,15 @@ namespace NohandicapNative
         {
             using (var conn = GetSQLiteConnetion())
             {
-                conn.InsertOrReplace(data);
+                try
+                {
+                    conn.InsertOrReplaceWithChildren(data,true);
+
+                }
+                catch (Exception e)
+                {
+
+                }
             }
             return "Single data file inserted or updated";
         }
@@ -67,7 +75,7 @@ namespace NohandicapNative
         {
             using (var conn = GetSQLiteConnetion())
             {
-                conn.InsertOrReplaceAll(data);
+                conn.InsertOrReplaceAllWithChildren(data,true);
                 return "Single data file inserted or updated";
             }
         }
@@ -155,8 +163,8 @@ namespace NohandicapNative
         {
             using (var conn = GetSQLiteConnetion())
             {
-                var mainCat = conn.Table<CategoryModel>().Where(x => x.Group == NohandicapLibrary.MainCatGroup).ToList() ;
-                return mainCat.FirstOrDefault() ;
+                var mainCat = conn.Table<CategoryModel>().Where(x => x.Group == NohandicapLibrary.MainCatGroup&&x.IsSelected).FirstOrDefault() ;
+                return mainCat ;
             }
         }
         public void Logout()

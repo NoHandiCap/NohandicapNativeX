@@ -210,10 +210,13 @@ namespace NohandicapNative.Droid
         {          
                 view = inflater.Inflate(Resource.Layout.ListPage, container, false);
                 listView = view.FindViewById<ListView>(Resource.Id.listview);
-            var categoryLabel = view.FindViewById<LinearLayout>(Resource.Id.category_linearLayout);
+            noFav = view.FindViewById<TextView>(Resource.Id.noFavoritesTextView);
+            noFav.Visibility = ViewStates.Gone;
+
+            var categoryLabel = view.FindViewById<LinearLayout>(Resource.Id.categoryContainer);
             categoryLabel.Visibility = ViewStates.Gone;
             listView.ItemClick += ListView_ItemClick;
-            noFav = view.FindViewById<TextView>(Resource.Id.noFavoritesTextView);
+           
             ReloadData();
         }
 
@@ -230,18 +233,20 @@ namespace NohandicapNative.Droid
             var user = DbConnection.GetDataList<UserModel>().FirstOrDefault();
             if (user != null)
             {
-                if (products.Count == 0)
-                {
-                    noFav.Visibility = ViewStates.Visible;
-                }
-                else
-                {
-                    noFav.Visibility = ViewStates.Gone;
-
-                }
-               cardViewAdapter = new CardViewAdapter(Activity, false);
+               
+               cardViewAdapter = new CardViewAdapter(Activity, true);
             listView.Adapter = cardViewAdapter;
             }
+        }
+        public void NoFavLayoutVisibility(ViewStates state)
+        {
+            try
+            {             
+                noFav = view.FindViewById<TextView>(Resource.Id.noFavoritesTextView);
+                noFav.Visibility = state;
+            }
+            catch (Exception e) { }
+
         }
         #endregion
 
