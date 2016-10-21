@@ -78,7 +78,7 @@ namespace NohandicapNative
             double lngHight,CategoryModel mainCat, List<CategoryModel> subCategories,int count=50)
         {
             var mainCategory = mainCat.Id;
-            // for security
+            
             if (mainCategory == 0)
                 mainCategory = NohandicapLibrary.DEFAULT_MAIN_CATEGORY;
 

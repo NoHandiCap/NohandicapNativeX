@@ -107,10 +107,10 @@ namespace NohandicapNative.Droid
 
                      Log.Debug(TAG, "Start Load ");
 
-                     if (!IsInternetConnection) //if not internet then dont ask server and waste time for timeout, display toast information instead
-                     {
-                         //Toast.MakeText(this.Activity, "No Internet connection", ToastLength.Short).Show();
-                     }
+                     //if (!IsInternetConnection) //if not internet then dont ask server and waste time for timeout, display toast information instead
+                     //{
+                     //    //Toast.MakeText(this.Activity, "No Internet connection", ToastLength.Short).Show();
+                     //}
 
                      var loadedProducts =
                        await RestApiService.GetMarkers(latLngBounds.Southwest.Latitude, latLngBounds.Southwest.Longitude,
@@ -318,12 +318,14 @@ namespace NohandicapNative.Droid
                 case Resource.Id.select_all:           
                     conn.UnSelectAllCategories();                  
                     SetData(conn.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.MainCatGroup));                    
-                    MainActivity.SupportActionBar.Title = "Map";                            
-                      LoadData();
+                    MainActivity.SupportActionBar.Title = "Map";
+                    currentCategories = DbConnection.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.SubCatGroup);
+                    OnCameraChange(currentCameraPosition);
                     break;
             }
             return true;
         }
+        
         public void OnMenuItemSelected(int menuItemId)
         {
 

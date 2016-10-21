@@ -31,15 +31,23 @@ namespace NohandicapNative.Droid.Adapters
             conn = Utils.GetDatabaseConnection();
             this.context = context;
             selectedCategory = conn.GetSubSelectedCategory();
-         ///   var filtredProducts = NohandicapApplication.MainActivity.CurrentProductsList.Where(x => x.Categories.Any(y => selectedCategory.Any(z => z.Id == y))).ToList();
-            products = new List<ProductMarkerModel>();
+            var filtredProducts = NohandicapApplication.MainActivity.CurrentProductsList.Where(x => x.Categories.Any(y => selectedCategory.Any(z => z.Id == y))).ToList();
+            if (NohandicapApplication.MainActivity.CurrentLocation !=null)
+            {
+                var byDistance = Utils.SortProductsByDistance(filtredProducts);
+                products = new List<ProductMarkerModel>(byDistance);
+            }
+            else
+            {
+                products = new List<ProductMarkerModel>(filtredProducts);
+            }           
             categories = conn.GetDataList<CategoryModel>();
             this.isFav = isFav;
             if (isFav)
             {
                 products = new List<ProductMarkerModel>();               
-               LoadNextData();               
-               NohandicapApplication.MainActivity.Favorites.NoFavLayoutVisibility(ViewStates.Visible);
+            
+            //NohandicapApplication.MainActivity.Favorites.NoFavLayoutVisibility(ViewStates.Visible);
               
             
             }
@@ -77,7 +85,7 @@ namespace NohandicapNative.Droid.Adapters
              view = context.LayoutInflater.Inflate(Resource.Layout.list_item_first, parent, false);
                 view.SetBackgroundColor(Color.White);
             }
-            NohandicapApplication.MainActivity.Favorites.NoFavLayoutVisibility(ViewStates.Gone);
+       
             var imageView = view.FindViewById<ImageView>(Resource.Id.mainImageView);
             var title = view.FindViewById<TextView>(Resource.Id.titleTextView);
             var adress = view.FindViewById<TextView>(Resource.Id.adressTextView);
@@ -86,7 +94,7 @@ namespace NohandicapNative.Droid.Adapters
             title.Text = products[position].Name;
             adress.Text = products[position].Address;
 
-            if (products[position].Distance != null)
+            if (NohandicapApplication.MainActivity.CurrentLocation != null)
             {
                 positionTextView.Text = products[position].Distance;
             }

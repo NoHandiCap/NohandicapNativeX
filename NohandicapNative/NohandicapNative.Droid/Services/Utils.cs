@@ -21,6 +21,7 @@ using Android.Gms.Maps.Model;
 using Android.Locations;
 using System.Threading.Tasks;
 using Java.Net;
+using System.Globalization;
 
 namespace NohandicapNative.Droid.Services
 {
@@ -270,8 +271,25 @@ namespace NohandicapNative.Droid.Services
                 wrapper.ApplyOverrideConfiguration(configuration);
             }
         }
-
-        public static void updateConfig(Application app, Configuration configuration)
+        public static List<ProductMarkerModel> SortProductsByDistance(List<ProductMarkerModel> products)
+        {
+            var myLocation = NohandicapApplication.MainActivity.CurrentLocation;
+            if (myLocation != null)
+            {
+                var sorted = products.Select(product =>
+                  {
+                      var point = new Location("");
+                      point.Latitude = double.Parse(product.Lat, CultureInfo.InvariantCulture);
+                      point.Longitude = double.Parse(product.Lng, CultureInfo.InvariantCulture);
+                      var distance = Utils.GetDistance(myLocation, point);
+                      product.Distance = NohandicapLibrary.ConvertMetersToKilometers(distance);
+                      return product;
+                  }).OrderBy(x => x.Distance).ToList();
+                return sorted;
+            }
+            return products;
+        }
+                 public static void updateConfig(Application app, Configuration configuration)
         {
             if (SLocale != null && Build.VERSION.SdkInt < Build.VERSION_CODES.JellyBeanMr1)
             {
