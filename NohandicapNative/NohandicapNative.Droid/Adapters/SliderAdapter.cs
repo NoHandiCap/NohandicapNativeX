@@ -43,8 +43,10 @@ namespace NohandicapNative.Droid.Adapters
             var img = product.ImageCollection.Images[position];
           
             try
-            { 
-                Picasso.With(context).Load(img).MemoryPolicy(MemoryPolicy.NoCache).Placeholder(Resource.Drawable.placeholder).Into(imageView);
+            {
+                var disp = NohandicapApplication.MainActivity.WindowManager.DefaultDisplay;               
+                var width = disp.Width;              
+                Picasso.With(context).Load(img).MemoryPolicy(MemoryPolicy.NoCache).Placeholder(Resource.Drawable.placeholder).Fit().Into(imageView);
 
                     
             }

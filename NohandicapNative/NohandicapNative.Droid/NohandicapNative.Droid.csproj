@@ -162,6 +162,7 @@
     <Compile Include="Activities\FirstStartActivity.cs" />
     <Compile Include="Activities\MainActivity.cs" />
     <Compile Include="Fragments\GMapFragment.cs" />
+    <Compile Include="Model\MultiSelectSpinner.cs" />
     <Compile Include="Model\PiassoMarker.cs" />
     <Compile Include="Model\ClusterItem.cs" />
     <Compile Include="Model\CustomCallback.cs" />
