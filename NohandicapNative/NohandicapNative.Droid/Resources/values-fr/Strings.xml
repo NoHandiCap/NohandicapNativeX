@@ -19,7 +19,7 @@
   <string name="next">Prochain</string>
   <string name="label">Étiquette</string>
   <string name="large_text">Grand texte</string>
-  <string name="bookingcom">Booking.com</string>
+  <string name="bookingcom">Booking</string>
   <string name="home_page">Home Page</string>
   <string name="live_reload">LiveReload works with iOS devices out of the box if you add a correct SCRIPT tag (there are no browser extensions on mobile devices).  When your site is running on your local computer (i.e. on the same one that runs LiveReload app), the default script tag is fine.</string>
   <string name="open_hours">Heures d\'ouverture</string>

@@ -40,6 +40,7 @@ namespace NohandicapNative.Droid
         TextView emailTextView;
         TextView linkTextView;
         TextView bookingTextView;
+        TextView openHoursLabel;
         TextView openHoursTextView;
         TextView categoriesTitleTextView;
         TextView categoriesTextView;
@@ -81,7 +82,8 @@ namespace NohandicapNative.Droid
                 bookingTextView = (TextView)FindViewById(Resource.Id.bookingTextView);
                 phoneTextView = (TextView)FindViewById(Resource.Id.phoneTextView);
                 categoriesTextView = (TextView)FindViewById(Resource.Id.categoriesTextView);
-                openHoursTextView = (TextView)FindViewById(Resource.Id.openHoursTextView);
+            openHoursLabel = (TextView)FindViewById(Resource.Id.openHoursLabel);
+            openHoursTextView = (TextView)FindViewById(Resource.Id.openHoursTextView);
                 viewPager = FindViewById<ViewPager>(Resource.Id.viewPager);
                 SetSupportActionBar(toolbar);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
@@ -108,16 +110,15 @@ namespace NohandicapNative.Droid
                     product = conn.GetDataList<ProductDetailModel>(x => x.ID == productId).FirstOrDefault();
                 }
                 SupportActionBar.Title = product.FirmName;
-                if (product.ImageCollection.Images.Count == 0)
+
+                if (product.ImageCollection.Images == null || product.ImageCollection.Images.Count == 0)
                 {
                     viewPager.Visibility = ViewStates.Gone;
                 }
                 else
                 {
-
                     SliderAdapter adapter = new SliderAdapter(this, product);
                     viewPager.Adapter = adapter;
-
                 }
                 categories = conn.GetDataList<CategoryModel>();
                 Drawable icon = Utils.GetImage(this, categories.FirstOrDefault(x => x.Id == product.Categories[0]).Icon);
@@ -130,9 +131,17 @@ namespace NohandicapNative.Droid
                 phoneTextView.Text = product.Telefon.Replace(" ", "");
                 emailTextView.Text = product.Email;
                 linkTextView.Text = product.HomePage;
-                string bookingLink = string.Format("<a href='{0}'> booking.com </a>", product.HomePage);
-                bookingTextView.TextFormatted = Html.FromHtml(bookingLink);
-                openHoursTextView.TextFormatted = Html.FromHtml(product.OpenTime);
+
+                if (!string.IsNullOrEmpty(product.BookingPage)) { 
+                    string bookingLink = string.Format("<a href='{0}'> "+Resource.String.bookingcom+ " </a>", product.BookingPage);
+                    bookingTextView.TextFormatted = Html.FromHtml(bookingLink);
+                    bookingTextView.Visibility = ViewStates.Visible;
+                }
+                if (!string.IsNullOrEmpty(product.OpenTime))
+                    openHoursTextView.TextFormatted = Html.FromHtml(product.OpenTime);
+                else
+                    openHoursLabel.Visibility = ViewStates.Gone;
+
                 string bulledList = "";
                 product.Categories.ForEach(x =>
                 {

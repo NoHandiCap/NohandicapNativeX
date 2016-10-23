@@ -220,15 +220,16 @@
                                 android:id="@+id/linkTextView"
                                 android:textColor="#000000"
                                 android:autoLink="web"
-                                android:layout_marginBottom="4dp" />
+                                android:layout_marginBottom="4dp"
+                                android:visibility="gone" />
                             <TextView
                                 android:layout_width="fill_parent"
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceSmall"
-                                android:text="booking.com"
                                 android:id="@+id/bookingTextView"
                                 android:textColor="#000000"
-                                android:autoLink="web" />
+                                android:autoLink="web"
+                                android:visibility="gone" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -248,7 +249,7 @@
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:text="@string/open_hours"
-                            android:id="@+id/textView"
+                            android:id="@+id/openHoursLabel"
                             android:textColor="#000000" />
                         <LinearLayout
                             android:orientation="vertical"
