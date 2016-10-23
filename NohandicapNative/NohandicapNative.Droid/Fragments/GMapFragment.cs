@@ -26,6 +26,10 @@ namespace NohandicapNative.Droid
     {     
 
         static readonly string TAG = "X:" + typeof(GMapFragment).Name;
+        public string RESOURCE_PATH {
+            get { return ContentResolver.SchemeAndroidResource + "://" + Activity.PackageName + "/drawable/"; }
+        }
+
         LayoutInflater inflater;
         GoogleMap map;       
         List<Marker> markersList;
@@ -184,7 +188,7 @@ namespace NohandicapNative.Droid
 
                    Log.Info(TAG, product.Id + " : " + product.Name + " : " + catMarker);
 
-                string catPinUrl = ContentResolver.SchemeAndroidResource + "://" + Activity.PackageName + "/drawable/" + catMarker;
+                string catPinUrl = RESOURCE_PATH + catMarker;   // ContentResolver.SchemeAndroidResource + "://" + Activity.PackageName + "/drawable/" + catMarker;
                 string customPinUrl = product.ProdimgPin;
                 Log.Debug(TAG, "Set customPin ");
 
@@ -192,6 +196,7 @@ namespace NohandicapNative.Droid
                 options.SetPosition(new LatLng(lat, lng));
                 options.Visible(false);
                 options.SetTitle(product.Id.ToString());
+                options.SetSnippet(catMarker);
                  
                 Log.Debug(TAG, "Set Marker Options.");
 
@@ -200,14 +205,12 @@ namespace NohandicapNative.Droid
                     var marker = map.AddMarker(options);
                     var picassoMarker = new PicassoMarker(marker);
 
-                    if (!string.IsNullOrEmpty(customPinUrl))
+                    if (string.IsNullOrEmpty(customPinUrl))
                     {
-                        Picasso.With(Activity).Load(customPinUrl).Resize(32, 0).Into(picassoMarker);
+                        customPinUrl = catPinUrl;
                     }
-                    else
-                    {
-                        Picasso.With(Activity).Load(catPinUrl).Resize(32,0).Into(picassoMarker);
-                    }
+
+                    Picasso.With(Activity).Load(customPinUrl).Resize(32,0).Into(picassoMarker);
 
                     markersList.Add(marker);
                     productsInBounds.Add(product);
@@ -304,7 +307,15 @@ namespace NohandicapNative.Droid
 
             try
             {
-                Picasso.With(Activity).Load(product.ProdImg).Placeholder(Resource.Drawable.placeholder).Resize(50, 50).Into(imageView, 
+                string tooltipProdImg = product.ProdImg;
+
+                if (string.IsNullOrEmpty(tooltipProdImg) && !string.IsNullOrEmpty(marker.Snippet))
+                {
+                    var name = marker.Snippet.Replace("marker_", ""); //remove that marker prefix from name
+                    tooltipProdImg = RESOURCE_PATH + name;
+                }
+
+                Picasso.With(Activity).Load(tooltipProdImg).Placeholder(Resource.Drawable.placeholder).Resize(50, 50).Into(imageView, 
                     new CustomCallback(() =>
                 {
                     if (marker.IsInfoWindowShown)
