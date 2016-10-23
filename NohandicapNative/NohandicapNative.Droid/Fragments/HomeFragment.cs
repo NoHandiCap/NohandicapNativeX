@@ -57,6 +57,7 @@ namespace NohandicapNative.Droid
             TextView[] mainCat = new TextView[mainCategoriesList.Count];
             ImageView[] mainImg = new ImageView[mainCategoriesList.Count];
             LinearLayout[] mainLayout = new LinearLayout[mainCategoriesList.Count];
+
             for (int i = 0; i < mainCat.Length; i++)
             {
                 mainCat[i] = rootView.FindViewById<TextView>(mainCategoriesText[i]);
@@ -64,6 +65,7 @@ namespace NohandicapNative.Droid
                 mainImg[i] = rootView.FindViewById<ImageView>(mainCategoriesImgView[i]);
                 mainLayout[i] = rootView.FindViewById<LinearLayout>(mainCategoriesLayout[i]);
             }
+
             for (int i = 0; i < mainCat.Length; i++)
             {
                 mainCat[i].SetTextColor(Color.Gray);
@@ -145,17 +147,18 @@ namespace NohandicapNative.Droid
         {
             var position = e.Position;
             var category = subCategoriesList[position];
-           // OnSubCategoryChaged(new List<CategoryModel> { category });
+            // OnSubCategoryChaged(new List<CategoryModel> { category });
+
+            DbConnection.SetSelectedCategory(category);
+
             if (!IsTablet)
             {
                 MainActivity.MapPage.SetData(new List<CategoryModel> { category });
                 MainActivity.SetCurrentTab(1);
                 MainActivity.SupportActionBar.Title = category.Name;
-                DbConnection.SetSelectedCategory(category);               
             }
             else
             {
-                DbConnection.SetSelectedCategory(category);              
                 buttonsAdapter.NotifyDataSetChanged();
                 
                 var selectedCategories = DbConnection.GetDataList<CategoryModel>(x => x.IsSelected).ToList();

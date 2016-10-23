@@ -361,7 +361,7 @@ namespace NohandicapNative.Droid
                 case Android.Resource.Id.Home:
                     MainActivity.SetCurrentTab(0);
                     break;
-                case Resource.Id.select_all:           
+                case Resource.Id.select_all:    
                     conn.UnSelectAllCategories();                  
                     SetData(conn.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.MainCatGroup));                    
                     MainActivity.SupportActionBar.Title = "Map";

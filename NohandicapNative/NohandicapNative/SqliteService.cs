@@ -163,7 +163,14 @@ namespace NohandicapNative
         {
             using (var conn = GetSQLiteConnetion())
             {
-                var mainCat = conn.Table<CategoryModel>().Where(x => x.Group == NohandicapLibrary.MainCatGroup&&x.IsSelected).FirstOrDefault() ;
+                var mainCat = conn.Table<CategoryModel>().Where(x => x.Group == NohandicapLibrary.MainCatGroup&&x.IsSelected).FirstOrDefault();
+
+                if(mainCat == null)
+                {
+                    mainCat = conn.Table<CategoryModel>().Where(x => x.Group == NohandicapLibrary.MainCatGroup).FirstOrDefault();
+                    SetSelectedCategory(mainCat, true, false); 
+                }
+
                 return mainCat ;
             }
         }
@@ -260,8 +267,6 @@ namespace NohandicapNative
                     }
                     break;
             }
-
-
 
             return true;
 

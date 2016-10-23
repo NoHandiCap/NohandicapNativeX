@@ -77,11 +77,11 @@ namespace NohandicapNative
         public static async Task<List<ProductMarkerModel>> GetMarkers(double latLow,double lngLow, double latHight, 
             double lngHight,CategoryModel mainCat, List<CategoryModel> subCategories,int count=50)
         {
-            var mainCategory = mainCat.Id;
-            
-            if (mainCategory == 0)
-                mainCategory = NohandicapLibrary.DEFAULT_MAIN_CATEGORY;
+            var mainCategory = NohandicapLibrary.DEFAULT_MAIN_CATEGORY; //default main category in case of unselected maincategory
 
+            if (mainCat != null && mainCategory == 0)
+                mainCategory = mainCat.Id;
+            
             string boundBox = latLow.ToString(CultureInfo.InvariantCulture) + "," + lngLow.ToString(CultureInfo.InvariantCulture) + "," + latHight.ToString(CultureInfo.InvariantCulture) + "," + lngHight.ToString(CultureInfo.InvariantCulture); //invariantculture to have double with "." and not with ","
  
             string url = string.Format(NohandicapLibrary.LINK_GET_MARKERS, mainCategory, count, boundBox, PrepareSubCategoryString(subCategories));

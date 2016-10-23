@@ -46,6 +46,7 @@ namespace NohandicapNative.Droid
     {
         static readonly string TAG = "X:" + typeof(NohandicapApplication).Name;
         public static MainActivity MainActivity { get; set; }
+
         public static LanguageModel CurrentLang
         {
             get
@@ -93,7 +94,6 @@ namespace NohandicapNative.Droid
                 CategoryModel cat;
                 var conn = Utils.GetDatabaseConnection();
                 cat = conn.GetSelectedMainCategory();
-
                 return cat;
             }
             set
