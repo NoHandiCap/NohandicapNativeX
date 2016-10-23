@@ -127,6 +127,7 @@ namespace NohandicapNative.Droid
                         Name = loc,
                         Color = cat.Color,
                         Icon = cat.Icon,
+                        Group = cat.Group,
                         Sort = i + 1
                     });
                 }

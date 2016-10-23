@@ -80,6 +80,7 @@ namespace NohandicapNative
                     Id =buttonId[i],
                     Name = buttonTitles[i],
                     Color = buttonColors[i],
+                    Group = 1,
                     Icon = buttonImage[i]
                 });
             }
