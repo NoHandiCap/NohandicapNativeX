@@ -86,24 +86,35 @@ namespace NohandicapNative.Droid
             FillLanguageLocalTable();
             FillMainCategiesLocalTable();
             nextButton.Text = Resources.GetString(Resource.String.next);
+
             nextButton.Click += (s, e) =>
              {
-                 agreementTextView.Text = ReadStream("Agreement_" + currentLanguage.ShortName + ".txt"); ; // Set TextView.Text to our asset content
-                 dataProtectionTextView.Text = ReadStream("DataProtection_" + currentLanguage.ShortName + ".txt"); // Set TextView.Text to our asset content
+                 agreementTextView.Text = ReadStream("Agreement_",currentLanguage.ShortName, ".txt"); ; // Set TextView.Text to our asset content
+                 dataProtectionTextView.Text = ReadStream("DataProtection_", currentLanguage.ShortName, ".txt"); // Set TextView.Text to our asset content
                  languageLayout.Visibility = ViewStates.Gone;
                  agreementLayout.Visibility = ViewStates.Visible;
              };
             langListView.OnItemClickListener = this;
 
         }
-        private string ReadStream(string file)
+        private string ReadStream(string file, string langCode, string extension)
         {
-            string content;
+            string content = "";
             AssetManager assets = this.Assets;
-            using (StreamReader sr = new StreamReader(assets.Open(file)))
+
+            using (StreamReader sr = new StreamReader(assets.Open(file+langCode+extension)))
             {
                 content = sr.ReadToEnd();
             }
+
+            if(content == null || content.Trim().Length==0)
+            {
+                using (StreamReader sr = new StreamReader(assets.Open(file+NohandicapLibrary.DEFAULT_LANG_CODE+extension)))
+                {
+                    content = sr.ReadToEnd();
+                }
+            }
+
             return content;
         }
         private void SetLocale(int position)
