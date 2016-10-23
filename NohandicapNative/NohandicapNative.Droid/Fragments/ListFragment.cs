@@ -41,7 +41,7 @@ namespace NohandicapNative.Droid
         private void ListView_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
         {          
             var productId = (int)e.Id;
-                var activity = new Intent(Activity, typeof(DetailActivity));
+            var activity = new Intent(Activity, typeof(DetailActivity));
             activity.PutExtra(Utils.PRODUCT_ID, productId);
             MainActivity.StartActivityForResult(activity, 1);
         }
@@ -80,7 +80,7 @@ namespace NohandicapNative.Droid
             mainCategoryName.Text = SelectedMainCategory.Name;         
             var image = Utils.GetImage(Activity, "wheelchair" + SelectedMainCategory.Id);
             mainCategoryImage.SetImageDrawable(Utils.SetDrawableSize(Activity, image, 140, 65));
-            cardViewAdapter = new CardViewAdapter(Activity,false);
+            cardViewAdapter = new CardViewAdapter(this,false);
             listView.Adapter = cardViewAdapter;   
         }
     }

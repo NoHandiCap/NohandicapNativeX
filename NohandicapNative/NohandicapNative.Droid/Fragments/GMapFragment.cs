@@ -37,8 +37,8 @@ namespace NohandicapNative.Droid
         List<MarkerOptions> markerOptons;    
         MapView mapView;
         List<CategoryModel> currentCategories;
-        List<ProductMarkerModel> productsInBounds;
-        LatLngBounds latLngBounds = null;
+        public  ObservableCollection<ProductMarkerModel> ProductsInBounds;
+        public LatLngBounds LatLngBounds = null;
         SqliteService conn;
       //  ClusterManager _clusterManager;
         static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1,1);
@@ -51,7 +51,7 @@ namespace NohandicapNative.Droid
             this.inflater = inflater;          
             var view = inflater.Inflate(Resource.Layout.MapPage, container, false);
             view.SetBackgroundColor(MainActivity.Resources.GetColor(Resource.Color.backgroundColor));
-
+          
             conn = Utils.GetDatabaseConnection();
             HasOptionsMenu = true;
             mapView = view.FindViewById<MapView>(Resource.Id.map);
@@ -68,7 +68,7 @@ namespace NohandicapNative.Droid
                 markersList = new List<Marker>();
                 markerOptons = new List<MarkerOptions>();             
               //  products = conn.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= NohandicapApplication.SelectedMainCategory.Id).ToList();
-                productsInBounds = new List<ProductMarkerModel>();
+                ProductsInBounds = new ObservableCollection<ProductMarkerModel>();
                 var selectedCategories = conn.GetSubSelectedCategory();
                 if (selectedCategories.Count != 0)
                 {
@@ -125,12 +125,13 @@ namespace NohandicapNative.Droid
                 {
                     Activity.RunOnUiThread(() =>
                     {
-                        latLngBounds = map.Projection.VisibleRegion.LatLngBounds;
+                        LatLngBounds = map.Projection.VisibleRegion.LatLngBounds;
 
                     });
                 }).ContinueWith(async t =>
                  {
-                     if (latLngBounds == null)
+                   
+                     if (LatLngBounds == null)
                      {
                          await semaphoreSlim.WaitAsync();
                          try
@@ -144,37 +145,38 @@ namespace NohandicapNative.Droid
                          }
                          return;
                      }
-
                      Log.Debug(TAG, "Start Load ");
-
                      //if (!IsInternetConnection) //if not internet then dont ask server and waste time for timeout, display toast information instead
                      //{
                      //    //Toast.MakeText(this.Activity, "No Internet connection", ToastLength.Short).Show();
                      //}
 
                      var loadedProducts =
-                       await RestApiService.GetMarkers(latLngBounds.Southwest.Latitude, latLngBounds.Southwest.Longitude,
-                       latLngBounds.Northeast.Latitude, latLngBounds.Northeast.Longitude,
+                       await RestApiService.GetMarkers(LatLngBounds.Southwest.Latitude, LatLngBounds.Southwest.Longitude,
+                       LatLngBounds.Northeast.Latitude, LatLngBounds.Northeast.Longitude,
                        SelectedMainCategory, currentCategories);
                      Log.Debug(TAG, "LoadedProducts " + loadedProducts.Count);
 
                      List<ProductMarkerModel> newProductsInBound;
                      if (IsInternetConnection)
                      {
-                         newProductsInBound = loadedProducts.Where(x => !productsInBounds.Contains(x)).ToList();                                        
+                         newProductsInBound = loadedProducts.Where(x => !ProductsInBounds.Contains(x)).ToList();                                        
                      }
                      else
                      {
-                         newProductsInBound = conn.GetDataList<ProductMarkerModel>(x => !productsInBounds.Contains(x))
+                         newProductsInBound = conn.GetDataList<ProductMarkerModel>(x => !ProductsInBounds.Contains(x))
                      .ToList();
                      }
-                     LoadMarkerIntoMap(newProductsInBound);                                                               
+                     ProductsInBounds.Clear();
+                     LoadMarkerIntoMap(newProductsInBound);                                                                     
                      AddProductsToCache(loadedProducts);
+                  
                  });
                 return true;
             }
             return false;
         }
+       
        private async void LoadMarkerIntoMap(List<ProductMarkerModel> prdoucts)
         {
            await Task.Run(() => {
@@ -213,7 +215,7 @@ namespace NohandicapNative.Droid
                     Picasso.With(Activity).Load(customPinUrl).Resize(32,0).Into(picassoMarker);
 
                     markersList.Add(marker);
-                    productsInBounds.Add(product);
+                    ProductsInBounds.Add(product);
                     Log.Debug(TAG, "Added Marker ");
 
                 });
@@ -228,7 +230,7 @@ namespace NohandicapNative.Droid
                 map.Clear();
                 markerOptons.Clear();
                 markersList.Clear();
-                productsInBounds.Clear();                      
+                ProductsInBounds.Clear();                      
             }   
             if(currentCategories.Count==0)
             {
@@ -392,8 +394,7 @@ namespace NohandicapNative.Droid
         public async void OnCameraChange(CameraPosition position)
         {
             currentCameraPosition = position;
-            if (position.Zoom > 8)
-            {
+            
                 //Make LoadData in queue 
                 await semaphoreSlim.WaitAsync();
                 try
@@ -410,7 +411,7 @@ namespace NohandicapNative.Droid
                     //This is why it is important to do the Release within a try...finally clause; program execution may crash or take a different path, this way you are guaranteed execution
                     semaphoreSlim.Release();
                 }
-            }          
+                   
            
         }
 

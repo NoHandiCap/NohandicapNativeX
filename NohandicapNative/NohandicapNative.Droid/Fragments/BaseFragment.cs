@@ -19,13 +19,15 @@ namespace NohandicapNative.Droid.Fragments
 {
     public abstract class BaseFragment : Android.Support.V4.App.Fragment
     {
+        private SpinnerFragment _spinnerFragment;
+        
         public  SqliteService DbConnection { get; set; }
 
         public BaseFragment(Boolean loadFromCache = true)
         {
             DbConnection = Utils.GetDatabaseConnection();
-
-            if(loadFromCache)
+            _spinnerFragment = new SpinnerFragment();
+            if (loadFromCache)
                 ThreadPool.QueueUserWorkItem(o => LoadCache());
         }
         public MainActivity MainActivity
@@ -134,6 +136,20 @@ namespace NohandicapNative.Droid.Fragments
                     }
                 }
             });
+        }
+        public async void ShowSpinner(bool visibility)
+        {
+           
+            if (visibility)
+            {
+                MainActivity.SupportFragmentManager.BeginTransaction().Add(Resource.Id.flContent, _spinnerFragment).Commit();
+
+            }
+            else
+            {
+                MainActivity.SupportFragmentManager.BeginTransaction().Remove(_spinnerFragment).Commit();
+            }
+
         }
 
     }

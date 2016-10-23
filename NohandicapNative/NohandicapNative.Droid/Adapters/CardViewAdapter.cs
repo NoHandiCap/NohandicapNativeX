@@ -13,48 +13,59 @@ using NohandicapNative.Droid.Model;
 using Android.Content;
 using System.Threading;
 using System.Collections.ObjectModel;
+using NohandicapNative.Droid.Fragments;
 
 namespace NohandicapNative.Droid.Adapters
 {
     public class CardViewAdapter : BaseAdapter<ProductMarkerModel>
     {
         string TAG = "X: " + typeof(CardView).Name;
-        private readonly Activity context;
-        private readonly List<ProductMarkerModel> products;
+        private readonly BaseFragment baseFragment;
+        private readonly ObservableCollection<ProductMarkerModel> products;
         List<CategoryModel> selectedCategory;
         List<CategoryModel> categories;
         int PageNumber =1;
         bool isFav = false;
         SqliteService conn;
-        public CardViewAdapter(Activity context,bool isFav)
+        public CardViewAdapter(BaseFragment context,bool isFav)
         {
+
             conn = Utils.GetDatabaseConnection();
-            this.context = context;
+            baseFragment = context;
+    
             selectedCategory = conn.GetSubSelectedCategory();
-            var filtredProducts = NohandicapApplication.MainActivity.CurrentProductsList.Where(x => x.Categories.Any(y => selectedCategory.Any(z => z.Id == y))).ToList();
-            if (NohandicapApplication.MainActivity.CurrentLocation !=null)
-            {
-                var byDistance = Utils.SortProductsByDistance(filtredProducts);
-                products = new List<ProductMarkerModel>(byDistance);
-            }
-            else
-            {
-                products = new List<ProductMarkerModel>(filtredProducts);
-            }           
+        //    var filtredProducts = NohandicapApplication.MainActivity.CurrentProductsList.Where(x => x.Categories.Any(y => selectedCategory.Any(z => z.Id == y))).ToList();
+          //  if (NohandicapApplication.MainActivity.CurrentLocation !=null)
+            //{
+            //    var byDistance = Utils.SortProductsByDistance(filtredProducts);
+            //    products = new List<ProductMarkerModel>(byDistance);
+            //}
+            //else
+            //{
+            //    products = new List<ProductMarkerModel>(filtredProducts.OrderBy(x=>x.Name));
+            //}           
             categories = conn.GetDataList<CategoryModel>();
             this.isFav = isFav;
             if (isFav)
             {
-                products = new List<ProductMarkerModel>();               
+                products = new ObservableCollection<ProductMarkerModel>();               
             
-            //NohandicapApplication.MainActivity.Favorites.NoFavLayoutVisibility(ViewStates.Visible);
-              
+            //NohandicapApplication.MainActivity.Favorites.NoFavLayoutVisibility(ViewStates.Visible);             
             
             }
-            LoadNextData();
+            products = baseFragment.MainActivity.MapPage.ProductsInBounds;
+            baseFragment.ShowSpinner(products.Count == 0);           
+            StartLoad();
+
         }
 
-
+        private async void StartLoad()
+        {
+            if (await LoadNextData())
+            {
+                baseFragment.ShowSpinner(false);
+            }
+        }
         public override ProductMarkerModel this[int position]
         {
             get
@@ -82,7 +93,7 @@ namespace NohandicapNative.Droid.Adapters
 
             if (view == null)
             {// view = context.LayoutInflater.Inflate(Resource.Layout.list_item, parent, false);
-             view = context.LayoutInflater.Inflate(Resource.Layout.list_item_first, parent, false);
+             view = baseFragment.MainActivity.LayoutInflater.Inflate(Resource.Layout.list_item_first, parent, false);
                 view.SetBackgroundColor(Color.White);
             }
        
@@ -94,9 +105,9 @@ namespace NohandicapNative.Droid.Adapters
             title.Text = products[position].Name;
             adress.Text = products[position].Address;
 
-            if (NohandicapApplication.MainActivity.CurrentLocation != null)
+            if (baseFragment.MainActivity.CurrentLocation != null)
             {
-                positionTextView.Text = products[position].Distance;
+                positionTextView.Text = products[position].Distance+" km";
             }
             else
             {
@@ -123,11 +134,11 @@ namespace NohandicapNative.Droid.Adapters
                 }
                 if (catImage != null)
                 {
-                    imageUrl = ContentResolver.SchemeAndroidResource + "://" + context.PackageName + "/drawable/" + catImage.Icon;
+                    imageUrl = ContentResolver.SchemeAndroidResource + "://" + baseFragment.MainActivity.PackageName + "/drawable/" + catImage.Icon;
                     imageView.SetBackgroundColor(Color.ParseColor(catImage.Color));
                 }
             }          
-               Picasso.With(context).Load(imageUrl).Resize(60, 60).CenterInside().Into(imageView);
+               Picasso.With(baseFragment.MainActivity).Load(imageUrl).Resize(60, 60).CenterInside().Into(imageView);
             if (products.Count - 5 == position)
             {
             ThreadPool.QueueUserWorkItem(o => LoadNextData());
@@ -135,11 +146,11 @@ namespace NohandicapNative.Droid.Adapters
             }
                 return view;
         }
-        private async void LoadNextData()
+        private async Task<bool> LoadNextData()
         {
             var conn = Utils.GetDatabaseConnection();
             var selectedSubCategory = conn.GetSubSelectedCategory();
-            var position = NohandicapApplication.MainActivity.CurrentLocation;
+            var position = baseFragment.MainActivity.CurrentLocation;
             string lat = "";
             string lng = "";
             if (position != null)
@@ -153,27 +164,42 @@ namespace NohandicapNative.Droid.Adapters
             if (isFav)
             {
                 var user = conn.GetDataList<UserModel>().FirstOrDefault();
-                if (user == null) return ;
+                if (user == null) return true;
                 newProducts = await RestApiService.GetFavorites(user.Id, PageNumber);               
             }
             else
             {
-                newProducts = await RestApiService.GetMarkers(NohandicapApplication.SelectedMainCategory, selectedSubCategory, NohandicapApplication.CurrentLang.Id, lat, lng, PageNumber);             
+                var latLngBounds = baseFragment.MainActivity.MapPage.LatLngBounds;
+                if (latLngBounds != null)
+                {
+                    var page = PageNumber + 1;
+                    newProducts =
+                     await RestApiService.GetMarkers(latLngBounds.Southwest.Latitude, latLngBounds.Southwest.Longitude,
+                    latLngBounds.Northeast.Latitude, latLngBounds.Northeast.Longitude,
+                   baseFragment.SelectedMainCategory, selectedSubCategory,50,page);
+                }
+                else
+                {
+                    newProducts = await RestApiService.GetMarkers(baseFragment.SelectedMainCategory, selectedSubCategory, baseFragment.CurrentLang.Id, lat, lng, PageNumber);
+
+                }
+
             }
             PageNumber++;
-            
-            foreach (var product in newProducts)
+           
+            foreach (var product in newProducts.OrderBy(x => x.Name))
             {
                 if (!products.Any(x=>x.Id==product.Id))
-                {                    
-                    NohandicapApplication.MainActivity.CurrentProductsList.Add(product);
-                    context.RunOnUiThread(() =>
+                {
+                 //   baseFragment.MainActivity.CurrentProductsList.Add(product);
+                    baseFragment.MainActivity.RunOnUiThread(() =>
                     {
                         products.Add(product);
                         NotifyDataSetChanged();
                     });
                 }
             }
+            return true;
 
         }
     }

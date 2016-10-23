@@ -75,7 +75,7 @@ namespace NohandicapNative
         }   
 
         public static async Task<List<ProductMarkerModel>> GetMarkers(double latLow,double lngLow, double latHight, 
-            double lngHight,CategoryModel mainCat, List<CategoryModel> subCategories,int count=50)
+            double lngHight,CategoryModel mainCat, List<CategoryModel> subCategories,int count=50,int page=1)
         {
             var mainCategory = NohandicapLibrary.DEFAULT_MAIN_CATEGORY; //default main category in case of unselected maincategory
 
@@ -84,7 +84,7 @@ namespace NohandicapNative
             
             string boundBox = latLow.ToString(CultureInfo.InvariantCulture) + "," + lngLow.ToString(CultureInfo.InvariantCulture) + "," + latHight.ToString(CultureInfo.InvariantCulture) + "," + lngHight.ToString(CultureInfo.InvariantCulture); //invariantculture to have double with "." and not with ","
  
-            string url = string.Format(NohandicapLibrary.LINK_GET_MARKERS, mainCategory, count, boundBox, PrepareSubCategoryString(subCategories));
+            string url = string.Format(NohandicapLibrary.LINK_GET_MARKERS, mainCategory, count, boundBox, PrepareSubCategoryString(subCategories),page);
 
             var products=await GetDataFromUrl<List<ProductMarkerModel>>(url);
             if (products == null)

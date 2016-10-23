@@ -232,9 +232,8 @@ namespace NohandicapNative.Droid
         {
             var user = DbConnection.GetDataList<UserModel>().FirstOrDefault();
             if (user != null)
-            {
-               
-               cardViewAdapter = new CardViewAdapter(Activity, true);
+            {               
+            cardViewAdapter = new CardViewAdapter(this, true);
             listView.Adapter = cardViewAdapter;
             }
         }
