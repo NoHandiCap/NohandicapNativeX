@@ -7,98 +7,98 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:fillViewport="true">
-  <RelativeLayout
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:gravity="bottom|top">
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="@dimen/main_category_height"
-        android:id="@+id/category_linearLayout"
-        android:layout_marginTop="5dp"
-        android:background="#ffffff">
-      <ImageView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:id="@+id/imageView"
-          android:layout_gravity="center"
-          android:layout_marginRight="5dp" />
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:textAppearance="?android:attr/textAppearanceSmall"
-          android:text="@string/large_text"
-          android:id="@+id/first_category"
-          android:layout_gravity="center"
-          android:textColor="#000000" />
-    </LinearLayout>
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="@dimen/main_category_height"
-        android:id="@+id/category_linearLayout2"
-        android:layout_below="@+id/category_linearLayout3"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:background="#ffffff">
-      <ImageView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:id="@+id/imageView3"
-          android:layout_gravity="center"
-          android:layout_marginLeft="5dp" />
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:textAppearance="?android:attr/textAppearanceSmall"
-          android:text="@string/large_text"
-          android:id="@+id/thrity_category"
-          android:layout_gravity="center"
-          android:textColor="#000000" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="@dimen/main_category_height"
-        android:id="@+id/category_linearLayout3"
-        android:layout_below="@+id/category_linearLayout"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:background="#ffffff">
-      <ImageView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:id="@+id/imageView2"
-          android:layout_gravity="center"
-          android:layout_marginRight="5dp" />
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:textAppearance="?android:attr/textAppearanceSmall"
-          android:text="@string/large_text"
-          android:id="@+id/second_category"
-          android:layout_gravity="center"
-          android:textColor="#000000" />
-    </LinearLayout>
-    <NohandicapNative.Droid.ButtonGridView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/additionalCategory"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentStart="false"
-        android:layout_alignParentEnd="false"
-        android:horizontalSpacing="5dp"
-        android:verticalSpacing="5dp"
-        android:layout_marginBottom="5dp"
-        android:numColumns="3"
-        android:scrollbars="none"
-        android:layout_below="@+id/category_linearLayout2"
-        android:layout_marginTop="20dp"
-        android:stretchMode="columnWidth"
-        android:layout_weight="1" />
-  </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="bottom|top">
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/main_category_height"
+            android:id="@+id/category_linearLayout"
+            android:layout_marginTop="5dp"
+            android:background="#ffffff">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageView"
+                android:layout_gravity="center"
+                android:layout_marginRight="5dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/large_text"
+                android:id="@+id/first_category"
+                android:layout_gravity="center"
+                android:textColor="#000000" />
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/main_category_height"
+            android:id="@+id/category_linearLayout2"
+            android:layout_below="@+id/category_linearLayout3"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:background="#ffffff">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageView3"
+                android:layout_gravity="center"
+                android:layout_marginLeft="5dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/large_text"
+                android:id="@+id/thrity_category"
+                android:layout_gravity="center"
+                android:textColor="#000000" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/main_category_height"
+            android:id="@+id/category_linearLayout3"
+            android:layout_below="@+id/category_linearLayout"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:background="#ffffff">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageView2"
+                android:layout_gravity="center"
+                android:layout_marginRight="5dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/large_text"
+                android:id="@+id/second_category"
+                android:layout_gravity="center"
+                android:textColor="#000000" />
+        </LinearLayout>
+        <NohandicapNative.Droid.ButtonGridView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/additionalCategory"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentEnd="false"
+            android:horizontalSpacing="5dp"
+            android:verticalSpacing="5dp"
+            android:layout_marginBottom="5dp"
+            android:numColumns="3"
+            android:scrollbars="none"
+            android:layout_below="@+id/category_linearLayout2"
+            android:layout_marginTop="20dp"
+            android:stretchMode="columnWidth"
+            android:layout_weight="1" />
+    </RelativeLayout>
 </ScrollView>
