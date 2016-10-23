@@ -4121,8 +4121,8 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f090048
 			public const int activity_chooser_view_content = 2131296328;
 			
-			// aapt resource value: 0x7f0900ba
-			public const int additionalCategory = 2131296442;
+			// aapt resource value: 0x7f0900b9
+			public const int additionalCategory = 2131296441;
 			
 			// aapt resource value: 0x7f090010
 			public const int adjust_height = 2131296272;
@@ -4229,17 +4229,17 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f0900d0
 			public const int categoryContainer = 2131296464;
 			
-			// aapt resource value: 0x7f0900b0
-			public const int categoryLayout = 2131296432;
+			// aapt resource value: 0x7f0900ba
+			public const int categoryLayout = 2131296442;
 			
-			// aapt resource value: 0x7f0900b1
-			public const int category_linearLayout = 2131296433;
+			// aapt resource value: 0x7f0900b0
+			public const int category_linearLayout = 2131296432;
+			
+			// aapt resource value: 0x7f0900b3
+			public const int category_linearLayout2 = 2131296435;
 			
 			// aapt resource value: 0x7f0900b4
-			public const int category_linearLayout2 = 2131296436;
-			
-			// aapt resource value: 0x7f0900b5
-			public const int category_linearLayout3 = 2131296437;
+			public const int category_linearLayout3 = 2131296436;
 			
 			// aapt resource value: 0x7f090036
 			public const int center = 2131296310;
@@ -4358,8 +4358,8 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f090039
 			public const int fill_vertical = 2131296313;
 			
-			// aapt resource value: 0x7f0900b3
-			public const int first_category = 2131296435;
+			// aapt resource value: 0x7f0900b2
+			public const int first_category = 2131296434;
 			
 			// aapt resource value: 0x7f090043
 			public const int @fixed = 2131296323;
@@ -4400,14 +4400,14 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f09004a
 			public const int image = 2131296330;
 			
-			// aapt resource value: 0x7f0900b2
-			public const int imageView = 2131296434;
+			// aapt resource value: 0x7f0900b1
+			public const int imageView = 2131296433;
 			
-			// aapt resource value: 0x7f0900b8
-			public const int imageView2 = 2131296440;
+			// aapt resource value: 0x7f0900b7
+			public const int imageView2 = 2131296439;
 			
-			// aapt resource value: 0x7f0900b6
-			public const int imageView3 = 2131296438;
+			// aapt resource value: 0x7f0900b5
+			public const int imageView3 = 2131296437;
 			
 			// aapt resource value: 0x7f0900c6
 			public const int image_layout = 2131296454;
@@ -4703,8 +4703,8 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f090072
 			public const int search_voice_btn = 2131296370;
 			
-			// aapt resource value: 0x7f0900b9
-			public const int second_category = 2131296441;
+			// aapt resource value: 0x7f0900b8
+			public const int second_category = 2131296440;
 			
 			// aapt resource value: 0x7f090109
 			public const int select_all = 2131296521;
@@ -4814,8 +4814,8 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f09009c
 			public const int textView6 = 2131296412;
 			
-			// aapt resource value: 0x7f0900b7
-			public const int thrity_category = 2131296439;
+			// aapt resource value: 0x7f0900b6
+			public const int thrity_category = 2131296438;
 			
 			// aapt resource value: 0x7f0900e8
 			public const int time = 2131296488;
