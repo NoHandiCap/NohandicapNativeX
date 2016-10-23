@@ -12,6 +12,7 @@ namespace NohandicapNative
         public const string COM = "placemap";
         public const string LOGIN_ARTIKEL_ID = "1";
         public const string REGISTER_ARTIKEL_ID = "73";
+        public const string FACEBOOK_APP_KEY_API = "105055836622734";
 
         public const string LINK_MAIN           = "http://www.stage.nohandicap.net/cms/";
         public const string LINK_API            = LINK_MAIN + "component/" + COM + "/ajax/api.php?";

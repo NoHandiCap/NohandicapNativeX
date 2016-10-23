@@ -262,40 +262,31 @@ namespace NohandicapNative
         }        
         public static async Task<Dictionary<string,string>> CheckUpdate(SqliteService conn,string langID, Dictionary<string, string> lastUpdate)
         {
-            
             Dictionary<string, string> updateList = new Dictionary<string, string>();
-            bool prod = false;
-            bool cat = false;
-            bool lang = false;
-            var result = await GetStringContent(NohandicapLibrary.LINK_GET_UPDATE);
-            if (result == null)
-            {
-                return null;
-            }
+            bool cat = false, lang = false;
+            var result = await GetStringContent(NohandicapLibrary.LINK_GET_UPDATE); //get json from server
+            if (result == null) return null;
+
             var token = JObject.Parse(result).SelectToken("result");         
             var categoryTable = token.SelectToken("cat").ToString();
             var langTable = token.SelectToken("lang").ToString();
 
+            // update categories
             if (categoryTable != lastUpdate[NohandicapLibrary.CATEGORY_TABLE])
-            {
                 cat = await conn.SynchronizeDataBase(langID, NohandicapLibrary.CATEGORY_TABLE);
-            }
+
+            // update languages
             if (langTable != lastUpdate[NohandicapLibrary.LANGUAGE_TABLE])
-            {
                 lang = await conn.SynchronizeDataBase(langID, NohandicapLibrary.LANGUAGE_TABLE);
-            }            
+
             if (lang|| cat)
             {
                updateList = new Dictionary<string, string>();         
                updateList.Add(NohandicapLibrary.CATEGORY_TABLE, categoryTable);
                updateList.Add(NohandicapLibrary.LANGUAGE_TABLE, langTable);                
-                return updateList;               
             }
-            else
-            {
-                return updateList;
-            }
-   
+
+            return updateList;
         }
 
     }

@@ -22,7 +22,7 @@ using NohandicapNative.Droid.Fragments;
 
 namespace NohandicapNative.Droid
 {
-    public class GMapFragment : BaseFragment, GoogleMap.IInfoWindowAdapter, IOnMapReadyCallback,IOnCameraChangeListener
+    public class GMapFragment : BaseFragment, GoogleMap.IInfoWindowAdapter, IOnMapReadyCallback, IOnCameraChangeListener
     {     
 
         static readonly string TAG = "X:" + typeof(GMapFragment).Name;
@@ -44,19 +44,23 @@ namespace NohandicapNative.Droid
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-
             this.inflater = inflater;          
             var view = inflater.Inflate(Resource.Layout.MapPage, container, false);
             view.SetBackgroundColor(MainActivity.Resources.GetColor(Resource.Color.backgroundColor));
+
             conn = Utils.GetDatabaseConnection();
             HasOptionsMenu = true;
             mapView = view.FindViewById<MapView>(Resource.Id.map);
             mapView.OnCreate(savedInstanceState);
             mapView.OnResume();
-            mapView.GetMapAsync(this);
+
+            //if (!NohandicapApplication.CheckIfGPSenabled())
+              //  ShowNoGPSEnabled();
+
+            mapView.GetMapAsync(this); //asynchronic loading map
+
             try
             {               
-            
                 markersList = new List<Marker>();
                 markerOptons = new List<MarkerOptions>();             
               //  products = conn.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= NohandicapApplication.SelectedMainCategory.Id).ToList();
@@ -77,6 +81,38 @@ namespace NohandicapNative.Droid
             }
             return view;
         }
+
+        /**
+         * Function to show settings alert dialog
+         * On pressing Settings button will lauch Settings Options
+         * */
+        public void ShowNoGPSEnabled()
+        {
+            var alertDialog = new Android.Support.V7.App.AlertDialog.Builder(MainActivity);
+
+            // Setting Dialog Title
+            alertDialog.SetTitle("GPS settings");
+
+            // Setting Dialog Message
+            alertDialog.SetMessage("GPS is not enabled. Do you want to go to settings menu?");
+
+            // On pressing Settings button
+            alertDialog.SetPositiveButton("Settings", (sender, args) =>
+            {
+                StartActivity(new Intent(NohandicapApplication.Context, typeof(SettingsActivity)/*Settings.ACTION_LOCATION_SOURCE_SETTINGS*/));
+            });
+
+            // on pressing cancel button
+            alertDialog.SetNegativeButton("Cancel", (sender, args) =>
+            {
+                alertDialog.Dispose();
+                  //alertDialog.Cancel();
+            });
+
+            // Showing Alert Message
+            alertDialog.Show();
+        }
+
         public async Task<bool> LoadData()
         {
             if (map != null)
@@ -142,8 +178,12 @@ namespace NohandicapNative.Droid
             {
                 var lat = double.Parse(product.Lat, CultureInfo.InvariantCulture);
                 var lng = double.Parse(product.Lng, CultureInfo.InvariantCulture);
-                   Log.Debug(TAG, "CurrentCategories count "+ currentCategories.Count);
-                   var catMarker = currentCategories.FirstOrDefault(x => product.Categories.Any(y => y == x.Id)).Marker;
+                Log.Debug(TAG, "CurrentCategories count "+ currentCategories.Count);
+
+                var catMarker = currentCategories.FirstOrDefault(x => product.Categories.Any(y => y == x.Id)).Marker;
+
+                   Log.Info(TAG, product.Id + " : " + product.Name + " : " + catMarker);
+
                 string catPinUrl = ContentResolver.SchemeAndroidResource + "://" + Activity.PackageName + "/drawable/" + catMarker;
                 string customPinUrl = product.ProdimgPin;
                 Log.Debug(TAG, "Set customPin ");
@@ -153,19 +193,22 @@ namespace NohandicapNative.Droid
                 options.Visible(false);
                 options.SetTitle(product.Id.ToString());
                  
-                Log.Debug(TAG, "SetOptions ");
+                Log.Debug(TAG, "Set Marker Options.");
+
                 Activity.RunOnUiThread(() =>
                 {
                     var marker = map.AddMarker(options);
                     var picassoMarker = new PicassoMarker(marker);
+
                     if (!string.IsNullOrEmpty(customPinUrl))
                     {
-                        Picasso.With(Activity).Load(customPinUrl).Into(picassoMarker);
+                        Picasso.With(Activity).Load(customPinUrl).Resize(32, 0).Into(picassoMarker);
                     }
                     else
                     {
-                        Picasso.With(Activity).Load(catPinUrl).Into(picassoMarker);
+                        Picasso.With(Activity).Load(catPinUrl).Resize(32,0).Into(picassoMarker);
                     }
+
                     markersList.Add(marker);
                     productsInBounds.Add(product);
                     Log.Debug(TAG, "Added Marker ");
@@ -220,12 +263,14 @@ namespace NohandicapNative.Droid
             map.UiSettings.MapToolbarEnabled = true;
             map.UiSettings.ZoomControlsEnabled = true;
             map.SetInfoWindowAdapter(this);
+
             map.InfoWindowClick += (s, e) => {
                 var product = FindProductFromMarker((Marker)e.Marker);
                 var activity = new Intent(Activity, typeof(DetailActivity));
                activity.PutExtra(Utils.PRODUCT_ID, product.Id);
                Activity.StartActivity(activity);
             };
+
             CameraPosition.Builder builder = CameraPosition.InvokeBuilder();                     
             if (MainActivity.CurrentLocation != null)
             {
@@ -236,13 +281,14 @@ namespace NohandicapNative.Droid
             }
             else
             {
-                builder.Target(new LatLng(48.2274656, 16.4067023)).Zoom(10);
+                builder.Target(new LatLng(48.2274656, 16.4067023)).Zoom(10); //Vienna
             }               
             map.SetOnCameraChangeListener(this);
             CameraPosition cameraPosition = builder.Build();
             CameraUpdate cameraUpdate = CameraUpdateFactory.NewCameraPosition(cameraPosition);
             map.MoveCamera(cameraUpdate);     
         }
+
         #region InfoWindowAdapter
         public View GetInfoContents(Marker marker)
         {
@@ -255,6 +301,7 @@ namespace NohandicapNative.Droid
             var imageView = info.FindViewById<ImageView>(Resource.Id.info_mainImageView);
             var title = info.FindViewById<TextView>(Resource.Id.info_titleTextView);
             var adress = info.FindViewById<TextView>(Resource.Id.info_adressTextView);
+
             try
             {
                 Picasso.With(Activity).Load(product.ProdImg).Placeholder(Resource.Drawable.placeholder).Resize(50, 50).Into(imageView, 
@@ -280,6 +327,7 @@ namespace NohandicapNative.Droid
 
             return info;
         }
+
         public View GetInfoWindow(Marker marker)
         {
             return null;
@@ -288,11 +336,9 @@ namespace NohandicapNative.Droid
         {
             ProductMarkerModel product;
             product = CurrentProductsList.Where(x => x.Id.ToString() == marker.Title).FirstOrDefault();
-            if (product == null)
-            {
-                product = conn.GetDataList<ProductMarkerModel>(x => x.Id.ToString() == marker.Title).FirstOrDefault();
 
-            }
+            if (product == null)
+                product = conn.GetDataList<ProductMarkerModel>(x => x.Id.ToString() == marker.Title).FirstOrDefault();
 
             return product;
         }

@@ -59,10 +59,6 @@ namespace NohandicapNative.Droid
                     dataProtectionLayout.Visibility = ViewStates.Visible;
                 };
 
-
-
-
-
             var agreeDataProtectionButton = dataProtectionLayout.FindViewById<Button>(Resource.Id.agreeDataProtectionButton);
             agreeDataProtectionButton.Click += (s, e) =>
             {
