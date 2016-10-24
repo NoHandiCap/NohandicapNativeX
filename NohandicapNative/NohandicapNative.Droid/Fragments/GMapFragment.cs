@@ -69,11 +69,12 @@ namespace NohandicapNative.Droid
 
         public GMapFragment(Boolean loadFromCache = true) : base(loadFromCache)
         {
+            ProductsInBounds = new ObservableCollection<ProductMarkerModel>();
         }
 
- 
 
-    public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+
+        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             this.inflater = inflater;          
             var view = inflater.Inflate(Resource.Layout.MapPage, container, false);
@@ -97,7 +98,6 @@ namespace NohandicapNative.Droid
                 markersList = new List<Marker>();
                 markerOptons = new List<MarkerOptions>();             
               //  products = conn.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= NohandicapApplication.SelectedMainCategory.Id).ToList();
-                ProductsInBounds = new ObservableCollection<ProductMarkerModel>();
                 var selectedCategories = conn.GetSubSelectedCategory();
                 if (selectedCategories.Count != 0)
                 {

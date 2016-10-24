@@ -31,29 +31,15 @@ namespace NohandicapNative.Droid.Adapters
         {
 
             conn = Utils.GetDatabaseConnection();
-            baseFragment = context;
-    
-            selectedCategory = conn.GetSubSelectedCategory();
-        //    var filtredProducts = NohandicapApplication.MainActivity.CurrentProductsList.Where(x => x.Categories.Any(y => selectedCategory.Any(z => z.Id == y))).ToList();
-          //  if (NohandicapApplication.MainActivity.CurrentLocation !=null)
-            //{
-            //    var byDistance = Utils.SortProductsByDistance(filtredProducts);
-            //    products = new List<ProductMarkerModel>(byDistance);
-            //}
-            //else
-            //{
-            //    products = new List<ProductMarkerModel>(filtredProducts.OrderBy(x=>x.Name));
-            //}           
+            baseFragment = context;    
+            selectedCategory = conn.GetSubSelectedCategory();               
             categories = conn.GetDataList<CategoryModel>();
+            products = new ObservableCollection<ProductMarkerModel>();
             this.isFav = isFav;
-            if (isFav)
+            if (!isFav)
             {
-                products = new ObservableCollection<ProductMarkerModel>();               
-            
-            //NohandicapApplication.MainActivity.Favorites.NoFavLayoutVisibility(ViewStates.Visible);             
-            
-            }
-            products = baseFragment.MainActivity.MapPage.ProductsInBounds;
+                products =baseFragment.MainActivity.MapPage.ProductsInBounds;
+            }            
             baseFragment.ShowSpinner(products.Count == 0);           
             StartLoad();
 
