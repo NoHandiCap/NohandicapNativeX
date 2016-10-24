@@ -19,6 +19,22 @@ using Square.Picasso;
 using Android.Graphics.Drawables;
 using System.Collections.ObjectModel;
 using NohandicapNative.Droid.Fragments;
+using Android.Provider;
+
+//using android.support.v7.app.AppCompatActivity;
+//using com.google.android.gms.maps.SupportMapFragment;
+//using android.location.Location;
+/*using static Android.Gms.Common.ConnectionResult;
+using static Android.Gms.Common.Api.Internal. GoogleApiClient;
+using com.google.android.gms.location.LocationRequest;
+using com.google.android.gms.location.LocationServices;
+using com.google.android.gms.location.LocationListener;
+using com.google.android.gms.maps.model.BitmapDescriptorFactory;
+using com.google.android.gms.maps.model.LatLng;
+using com.google.android.gms.maps.model.Marker;
+using com.google.android.gms.maps.model.MarkerOptions;
+using com.google.android.gms.maps.OnMapReadyCallback;
+*/
 
 namespace NohandicapNative.Droid
 {
@@ -31,7 +47,14 @@ namespace NohandicapNative.Droid
         }
 
         LayoutInflater inflater;
-        GoogleMap map;       
+        //LocationRequest mLocationRequest;
+        //GoogleApiClient mGoogleApiClient;
+
+        //LatLng latLng;
+        GoogleMap map;
+        //SupportMapFragment mFragment;
+        //Marker currLocationMarker;
+
         List<Marker> markersList;
         private static int DELAY_TIME_IN_MILLI = 500;
         List<MarkerOptions> markerOptons;    
@@ -42,11 +65,15 @@ namespace NohandicapNative.Droid
         SqliteService conn;
       //  ClusterManager _clusterManager;
         static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1,1);
-        CameraPosition currentCameraPosition;     
+        CameraPosition currentCameraPosition;
 
-        public GMapFragment(Boolean loadFromCache = true) : base(loadFromCache) { }
+        public GMapFragment(Boolean loadFromCache = true) : base(loadFromCache)
+        {
+        }
 
-        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+ 
+
+    public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             this.inflater = inflater;          
             var view = inflater.Inflate(Resource.Layout.MapPage, container, false);
@@ -58,8 +85,10 @@ namespace NohandicapNative.Droid
             mapView.OnCreate(savedInstanceState);
             mapView.OnResume();
 
-            //if (!NohandicapApplication.CheckIfGPSenabled())
-              //  ShowNoGPSEnabled();
+            if (!NohandicapApplication.CheckIfGPSenabled())
+                ShowNoGPSEnabled();
+            else
+                Toast.MakeText(this.Context, "GPS enabled", ToastLength.Short).Show();
 
             mapView.GetMapAsync(this); //asynchronic loading map
 
@@ -94,26 +123,21 @@ namespace NohandicapNative.Droid
         {
             var alertDialog = new Android.Support.V7.App.AlertDialog.Builder(MainActivity);
 
-            // Setting Dialog Title
             alertDialog.SetTitle("GPS settings");
-
-            // Setting Dialog Message
             alertDialog.SetMessage("GPS is not enabled. Do you want to go to settings menu?");
 
             // On pressing Settings button
             alertDialog.SetPositiveButton("Settings", (sender, args) =>
             {
-                StartActivity(new Intent(NohandicapApplication.Context, typeof(SettingsActivity)/*Settings.ACTION_LOCATION_SOURCE_SETTINGS*/));
+                StartActivity(new Intent(Settings.ActionLocationSourceSettings));
             });
 
             // on pressing cancel button
             alertDialog.SetNegativeButton("Cancel", (sender, args) =>
             {
                 alertDialog.Dispose();
-                  //alertDialog.Cancel();
             });
 
-            // Showing Alert Message
             alertDialog.Show();
         }
 
@@ -151,10 +175,19 @@ namespace NohandicapNative.Droid
                      //    //Toast.MakeText(this.Activity, "No Internet connection", ToastLength.Short).Show();
                      //}
 
-                     var loadedProducts =
-                       await RestApiService.GetMarkers(LatLngBounds.Southwest.Latitude, LatLngBounds.Southwest.Longitude,
+                     List<ProductMarkerModel> loadedProducts = null;
+
+                     if (NohandicapApplication.CheckIfGPSenabled() && MainActivity.CurrentLocation != null)
+                     {
+                       loadedProducts = await RestApiService.GetMarkers(LatLngBounds.Southwest.Latitude, LatLngBounds.Southwest.Longitude,
+                       LatLngBounds.Northeast.Latitude, LatLngBounds.Northeast.Longitude, CurrentLang.Id, MainActivity.CurrentLocation.Latitude, MainActivity.CurrentLocation.Longitude, SelectedMainCategory, currentCategories);
+                     }
+                     else { 
+                       loadedProducts = await RestApiService.GetMarkers(LatLngBounds.Southwest.Latitude, LatLngBounds.Southwest.Longitude,
                        LatLngBounds.Northeast.Latitude, LatLngBounds.Northeast.Longitude,
                        SelectedMainCategory, currentCategories);
+                     }
+
                      Log.Debug(TAG, "LoadedProducts " + loadedProducts.Count);
 
                      List<ProductMarkerModel> newProductsInBound;
@@ -234,14 +267,11 @@ namespace NohandicapNative.Droid
             }   
             if(currentCategories.Count==0)
             {
-
                 this.currentCategories = conn.GetDataList<CategoryModel>(x => x.IsSelected && x.Group == NohandicapLibrary.SubCatGroup);
-
             }
             else
             {
                 this.currentCategories = currentCategories;
-
             }
         }
        
@@ -251,7 +281,7 @@ namespace NohandicapNative.Droid
            mapView.OnResume();
         }            
       
-        public async  override void OnHiddenChanged(bool hidden)
+        public async override void OnHiddenChanged(bool hidden)
         {
             base.OnHiddenChanged(hidden);
             if (!hidden)
@@ -399,9 +429,9 @@ namespace NohandicapNative.Droid
                 await semaphoreSlim.WaitAsync();
                 try
                 {                   
-                        await LoadData();                  
-                   
-                }catch(Exception e)
+                    await LoadData();                  
+                }
+                catch (Exception e)
                 {
                     Log.Error(TAG, "OnCameraChanged: "+e.Message) ;
                 }
@@ -411,11 +441,7 @@ namespace NohandicapNative.Droid
                     //This is why it is important to do the Release within a try...finally clause; program execution may crash or take a different path, this way you are guaranteed execution
                     semaphoreSlim.Release();
                 }
-                   
-           
         }
-
-     
     }
     
 }

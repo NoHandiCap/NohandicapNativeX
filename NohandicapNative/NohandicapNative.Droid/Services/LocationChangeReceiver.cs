@@ -14,16 +14,23 @@ using Android.Net;
 namespace NohandicapNative.Droid.Services
 {
     [BroadcastReceiver]
-    [IntentFilter(new[] { Android.Net.ConnectivityManager.ConnectivityAction, Android.Content.Intent.ActionBootCompleted})]
-    public class NetworkStateReceiver : BroadcastReceiver
+   //[IntentFilter(new[] { Android. Android.ConnectivityManager.ConnectivityAction, Android.Content.Intent.ActionBootCompleted})]
+    public class LocationChangeReceiver : BroadcastReceiver
     {
+        public static readonly string LOCATION_UPDATED = "LOCATION_UPDATED";
+
         public override void OnReceive(Context context, Intent intent)
         {
-            if (intent.Extras != null)
+            if (intent.Action.Equals(LOCATION_UPDATED))
+            {
+                MainActivity.Instance.UpdateUI(intent);
+            }
+
+            /*if (intent.Extras != null)
             {
                 NetworkInfo ni = (NetworkInfo)intent.Extras.Get(ConnectivityManager.ExtraNetworkInfo);               
                     NohandicapApplication.IsInternetConnection = ni.IsConnected;
-            }
+            }*/
         }
     }
 }

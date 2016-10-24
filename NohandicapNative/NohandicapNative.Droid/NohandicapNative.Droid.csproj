@@ -173,6 +173,7 @@
     <Compile Include="Fragments\ListFragment.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Services\NetworkStateReceiver.cs" />
+    <Compile Include="Services\LocationChangeReceiver.cs" />
     <Compile Include="Services\Utils.cs" />
     <Compile Include="Activities\SettingsActivity.cs" />
     <Compile Include="Activities\SignUpActivity.cs" />

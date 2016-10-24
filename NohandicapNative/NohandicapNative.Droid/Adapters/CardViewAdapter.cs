@@ -105,7 +105,7 @@ namespace NohandicapNative.Droid.Adapters
             title.Text = products[position].Name;
             adress.Text = products[position].Address;
 
-            if (baseFragment.MainActivity.CurrentLocation != null)
+            if (baseFragment.MainActivity.CurrentLocation != null && NohandicapApplication.CheckIfGPSenabled())
             {
                 positionTextView.Text = products[position].Distance+" km";
             }
@@ -153,11 +153,13 @@ namespace NohandicapNative.Droid.Adapters
             var position = baseFragment.MainActivity.CurrentLocation;
             string lat = "";
             string lng = "";
+
             if (position != null)
             {
                 lat = position.Latitude.ToString();
                 lng = position.Longitude.ToString();
             }
+
             List<ProductMarkerModel> newProducts;
 
            
@@ -169,22 +171,28 @@ namespace NohandicapNative.Droid.Adapters
             }
             else
             {
-                var latLngBounds = baseFragment.MainActivity.MapPage.LatLngBounds;
-                if (latLngBounds != null)
+                var LatLngBounds = baseFragment.MainActivity.MapPage.LatLngBounds;
+               
+                if (NohandicapApplication.CheckIfGPSenabled() && position != null)
                 {
-                    var page = PageNumber + 1;
-                    newProducts =
-                     await RestApiService.GetMarkers(latLngBounds.Southwest.Latitude, latLngBounds.Southwest.Longitude,
-                    latLngBounds.Northeast.Latitude, latLngBounds.Northeast.Longitude,
-                   baseFragment.SelectedMainCategory, selectedSubCategory,50,page);
+                    //if gps enabled and position is defined then in listview dont use boundingbox because of scrolling
+                    newProducts = await RestApiService.GetMarkers(0.00, 0.00,
+                    0.00, 0.00, baseFragment.CurrentLang.Id, baseFragment.MainActivity.CurrentLocation.Latitude,
+                    baseFragment.MainActivity.CurrentLocation.Longitude, baseFragment.SelectedMainCategory, selectedSubCategory, 50, PageNumber + 1);
+
+                }
+                else if (LatLngBounds != null)
+                {
+                     newProducts = await RestApiService.GetMarkers(LatLngBounds.Southwest.Latitude, LatLngBounds.Southwest.Longitude,
+                        LatLngBounds.Northeast.Latitude, LatLngBounds.Northeast.Longitude, baseFragment.SelectedMainCategory, selectedSubCategory, 50, PageNumber + 1);
                 }
                 else
                 {
                     newProducts = await RestApiService.GetMarkers(baseFragment.SelectedMainCategory, selectedSubCategory, baseFragment.CurrentLang.Id, lat, lng, PageNumber);
-
                 }
 
             }
+
             PageNumber++;
            
             foreach (var product in newProducts.OrderBy(x => x.Name))

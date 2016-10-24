@@ -180,7 +180,11 @@ namespace NohandicapNative.Droid
         public FavoritesFragment Favorites { get; set; }
         int lastPos = 0;
         public Location CurrentLocation { get; set; }
-        LocationManager _locationManager;
+
+        LocationManager _locationManager = (LocationManager)Android.App.Application.Context.GetSystemService(LocationService);
+
+        public static MainActivity Instance;
+
         string _locationProvider;
         ObservableCollection<ProductMarkerModel> _currentProductsList;
         public ObservableCollection<ProductMarkerModel> CurrentProductsList
@@ -455,17 +459,31 @@ namespace NohandicapNative.Droid
             }
             return base.OnOptionsItemSelected(item);
         }
+
+        public void UpdateUI(Intent intent)
+        {
+            Toast.MakeText(this, "Location update.", ToastLength.Short).Show();
+
+            Log.Debug(TAG, intent.GetStringExtra("Location"));
+            //intent.get
+
+            //MapPage.OnCameraChange(new Android.Gms.Maps.Model.CameraPosition(new LatLng(lat, lng));
+
+            //_locationText.Text = intent.GetStringExtra("Location");
+            //_addressText.Text = intent.GetStringExtra("Address");
+            //_remarksText.Text = intent.GetStringExtra("Remarks");
+        }
+
         void InitializeLocationManager()
         {
             try
             {
-                LocationManager lm = (LocationManager)GetSystemService(LocationService);
-
-                IList<String> providers = lm.GetProviders(true);
+                //LocationManager lm = (LocationManager)GetSystemService(LocationService);
+                IList<String> providers = _locationManager.GetProviders(true);
 
                 foreach (String provider in providers)
                 {
-                    Location l = lm.GetLastKnownLocation(provider);
+                    Location l = _locationManager.GetLastKnownLocation(provider);
                     if (l == null)
                     {
                         continue;
@@ -479,13 +497,18 @@ namespace NohandicapNative.Droid
                 _locationManager = (LocationManager)GetSystemService(LocationService);
                 Criteria criteriaForLocationService = new Criteria
                 {
-                    Accuracy = Accuracy.Fine
+                    Accuracy = Accuracy.Coarse
                 };
+
                 IList<string> acceptableLocationProviders = _locationManager.GetProviders(criteriaForLocationService, true);
+
+                //var locationProvider = _locationManager.GetBestProvider(criteriaForLocationService, true);
+                //_locationManager.RequestLocationUpdates(locationProvider, 0, 0, this);
 
                 if (acceptableLocationProviders.Any())
                 {
                     _locationProvider = acceptableLocationProviders.First();
+                    //_locationManager.RequestLocationUpdates(_locationProvider, 0, 0, this);
                 }
                 else
                 {
@@ -496,7 +519,6 @@ namespace NohandicapNative.Droid
             catch (Exception e)
             {
                 Log.Error(TAG, "InitializeLocationManager: " + e.Message);
-
             }
         }
         public override void OnConfigurationChanged(Configuration newConfig)
@@ -504,26 +526,26 @@ namespace NohandicapNative.Droid
             base.OnConfigurationChanged(newConfig);
 
         }
-        public void OnLocationChanged(Location location)
+
+    public void OnLocationChanged(Location location)
         {
             CurrentLocation = location;
         }
 
         public void OnProviderDisabled(string provider)
         {
-
+            Log.Debug(TAG, "Provider: " + provider + " disabled.");
         }
 
         public void OnProviderEnabled(string provider)
         {
-
+            Log.Debug(TAG, "Provider: " + provider + " enabled.");
         }
 
         public void OnStatusChanged(string provider, [GeneratedEnum] Availability status, Bundle extras)
         {
-
+            Log.Debug(TAG, "Provider: " + provider + " status changed.");
         }
-
 
         #region ActivityLifeCycle implementation
 
@@ -545,7 +567,8 @@ namespace NohandicapNative.Droid
             base.OnResume();
             try
             {
-                _locationManager.RequestLocationUpdates(_locationProvider, 0, 0, this);
+                if(!string.IsNullOrEmpty(_locationProvider))
+                    _locationManager.RequestLocationUpdates(_locationProvider, 0, 0, this);
             }
             catch (Exception e)
             {

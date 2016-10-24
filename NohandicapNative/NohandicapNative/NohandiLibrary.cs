@@ -26,6 +26,7 @@ namespace NohandicapNative
         public const string LINK_SAVEPRODVIEW   = LINK_API + "action=saveproductview&idprod={0}";
         public const string LINK_SAVEAPPSTATI   = LINK_API + "action=saveappstatistic";   //POST:appid,viewname,clickid,clickaction,createdate,iduser
         public const string LINK_GET_MARKERS    = LINK_API + "action=getprodlist&typemap=true&listfave=false&maincat={0}&search=&num={1}&bbox={2}&cat={3}&app=true&page={4}";
+        public const string LINK_GET_MARKERS_GPS= LINK_API + "action=getprodlist&typemap=true&listfave=false&maincat={0}&search=&num={1}&idlang={2}&gpslat={3}&gpslng={4}&bbox={5}&cat={6}&app=true&page={7}";
         public const string LINK_GET_PRODUCTS   = LINK_API + "action=getprodlist&typemap=true&listfave=false&maincat={0}&search=&cat={1}&idlang={2}&gpslat={3}&gpslng={4}&num={5}&page={6}&app=true";
         public const string LINK_GET_FAV        = LINK_API + "action=getprodlist&typemap=true&listfave=true&iduser={0}&search=&num={1}&page={2}&app=true";
 

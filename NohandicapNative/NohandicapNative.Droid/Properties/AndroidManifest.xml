@@ -21,4 +21,9 @@
 			<action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
 		</intent-filter>
 	</receiver>
+ <!-- <receiver android:name="NohandicapNative.Droid.Services.LocationChangeReceiver" android:enabled="true" android:priority="0">
+    <intent-filter>
+      <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+    </intent-filter>
+  </receiver> -->
 </manifest>
