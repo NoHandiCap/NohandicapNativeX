@@ -66,6 +66,7 @@ namespace NohandicapNative.Droid
       //  ClusterManager _clusterManager;
         static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1,1);
         CameraPosition currentCameraPosition;
+        bool isShownNoInternet = false;
 
         public GMapFragment(Boolean loadFromCache = true) : base(loadFromCache)
         {
@@ -170,11 +171,7 @@ namespace NohandicapNative.Droid
                          return;
                      }
                      Log.Debug(TAG, "Start Load ");
-                     //if (!IsInternetConnection) //if not internet then dont ask server and waste time for timeout, display toast information instead
-                     //{
-                     //    //Toast.MakeText(this.Activity, "No Internet connection", ToastLength.Short).Show();
-                     //}
-
+                    
                      List<ProductMarkerModel> loadedProducts = null;
 
                      if (NohandicapApplication.CheckIfGPSenabled() && MainActivity.CurrentLocation != null)
@@ -288,6 +285,7 @@ namespace NohandicapNative.Droid
             {              
                 await LoadData();           
             }
+            isShownNoInternet = false;
         }
 
         public async void OnMapReady(GoogleMap googleMap)
@@ -424,9 +422,14 @@ namespace NohandicapNative.Droid
         public async void OnCameraChange(CameraPosition position)
         {
             currentCameraPosition = position;
-            
-                //Make LoadData in queue 
-                await semaphoreSlim.WaitAsync();
+            if (!IsInternetConnection&&!isShownNoInternet) //if not internet then dont ask server and waste time for timeout, display toast information instead
+            {
+                Toast.MakeText(this.Activity, Resources.GetString(Resource.String.server_not_responding), ToastLength.Short).Show();
+                isShownNoInternet = true;
+            }
+
+            //Make LoadData in queue 
+            await semaphoreSlim.WaitAsync();
                 try
                 {                   
                     await LoadData();                  
