@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" package="nohandicap.droid" android:versionCode="3">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" package="nohandicap.droid" android:versionCode="196612" android:versionName="1.1">
 	<uses-sdk android:minSdkVersion="15" />
-	<application android:label="Nohandicap" android:debuggable="true" android:largeHeap="true" android:theme="@style/Theme.AppCompat.Light" android:icon="@drawable/logo_small" android:logo="@drawable/logo_small" allowBackup="true">
+	<application android:label="Nohandicap" android:debuggable="false" android:largeHeap="true" android:theme="@style/Theme.AppCompat.Light" android:icon="@drawable/logo_small" android:logo="@drawable/logo_small" allowBackup="true">
 		<meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyCEJR1tYPVeTsKLA5PePJY4vD9Cze7Vo8I" />
 		<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
 		<meta-data android:name="com.facebook.sdk.ApplicationId" android:value="105055836622734" />
@@ -21,7 +21,7 @@
 			<action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
 		</intent-filter>
 	</receiver>
- <!-- <receiver android:name="NohandicapNative.Droid.Services.LocationChangeReceiver" android:enabled="true" android:priority="0">
+	<!-- <receiver android:name="NohandicapNative.Droid.Services.LocationChangeReceiver" android:enabled="true" android:priority="0">
     <intent-filter>
       <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
     </intent-filter>
