@@ -164,15 +164,12 @@ namespace NohandicapNative.Droid
                 var selectedCategories = DbConnection.GetDataList<CategoryModel>(x => x.IsSelected).ToList();
                 if (selectedCategories.Count == 0)
                 {
-
                     MainActivity.MapPage.SetData(subCategoriesList);
                 }
                 else
                 {
                     MainActivity.MapPage.SetData(selectedCategories);
-
                 }
-
                 await MainActivity.MapPage.LoadData();
 
             }
@@ -181,8 +178,6 @@ namespace NohandicapNative.Droid
         private void GridRotation()
         {
             var orientation = Activity.Resources.Configuration.Orientation;
-
-
             if (orientation == Android.Content.Res.Orientation.Portrait)
             {
                 additionalCategory.NumColumns = 3;
@@ -202,16 +197,12 @@ namespace NohandicapNative.Droid
                     additionalCategory.NumColumns = 2;
                 }
                 InitializeMapForTablet();
-            }
-         
+            }         
         }
         private void InitializeMapForTablet()
-        {
-           
-                Android.Support.V4.App.FragmentTransaction transaction = ChildFragmentManager.BeginTransaction();
-               
-                transaction.Replace(Resource.Id.mapFragment, MainActivity.MapPage).Commit();
-            
+        {           
+                Android.Support.V4.App.FragmentTransaction transaction = ChildFragmentManager.BeginTransaction();               
+                transaction.Replace(Resource.Id.mapFragment, MainActivity.MapPage).Commit();            
         }      
         public override void OnConfigurationChanged(Configuration newConfig)
         {
@@ -245,13 +236,11 @@ namespace NohandicapNative.Droid
 
 
         #endregion
-
-        
+                
         private async void LoadCache()
         {
             try
             {
-
                 var selectedSubCategory = DbConnection.GetSubSelectedCategory();
                 var position = NohandicapApplication.MainActivity.CurrentLocation;
                 string lat = "";
@@ -261,7 +250,6 @@ namespace NohandicapNative.Droid
                     lat = position.Latitude.ToString();
                     lng = position.Longitude.ToString();
                 }
-
                 var coll = await RestApiService.GetMarkers(NohandicapApplication.SelectedMainCategory, selectedSubCategory, NohandicapApplication.CurrentLang.Id, lat, lng, 1);
                 AddProductsToCache(coll);
 

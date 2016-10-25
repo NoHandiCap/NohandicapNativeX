@@ -7,7 +7,6 @@ using Android.Views;
 using Android.Widget;
 using Android.Gms.Maps.Model;
 using NohandicapNative.Droid.Services;
-using Android.Graphics;
 using Android.Util;
 using Android.Gms.Maps;
 using System.Globalization;
@@ -16,25 +15,10 @@ using static Android.Gms.Maps.GoogleMap;
 using NohandicapNative.Droid.Model;
 using System.Threading;
 using Square.Picasso;
-using Android.Graphics.Drawables;
 using System.Collections.ObjectModel;
 using NohandicapNative.Droid.Fragments;
 using Android.Provider;
-
-//using android.support.v7.app.AppCompatActivity;
-//using com.google.android.gms.maps.SupportMapFragment;
-//using android.location.Location;
-/*using static Android.Gms.Common.ConnectionResult;
-using static Android.Gms.Common.Api.Internal. GoogleApiClient;
-using com.google.android.gms.location.LocationRequest;
-using com.google.android.gms.location.LocationServices;
-using com.google.android.gms.location.LocationListener;
-using com.google.android.gms.maps.model.BitmapDescriptorFactory;
-using com.google.android.gms.maps.model.LatLng;
-using com.google.android.gms.maps.model.Marker;
-using com.google.android.gms.maps.model.MarkerOptions;
-using com.google.android.gms.maps.OnMapReadyCallback;
-*/
+using System.Diagnostics;
 
 namespace NohandicapNative.Droid
 {
@@ -51,8 +35,7 @@ namespace NohandicapNative.Droid
         List<CategoryModel> currentCategories;
         public  ObservableCollection<ProductMarkerModel> ProductsInBounds;
         public LatLngBounds LatLngBounds = null;
-        SqliteService conn;
-      //  ClusterManager _clusterManager;
+       
         static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1,1);
         CameraPosition currentCameraPosition;
         bool isShownNoInternet = false;
@@ -68,9 +51,8 @@ namespace NohandicapNative.Droid
         {
             this.inflater = inflater;          
             var view = inflater.Inflate(Resource.Layout.MapPage, container, false);
-            view.SetBackgroundColor(MainActivity.Resources.GetColor(Resource.Color.backgroundColor));
-          
-            conn = Utils.GetDatabaseConnection();
+            view.SetBackgroundColor(MainActivity.Resources.GetColor(Resource.Color.backgroundColor));        
+            
             HasOptionsMenu = true;
             mapView = view.FindViewById<MapView>(Resource.Id.map);
             mapView.OnCreate(savedInstanceState);
@@ -84,17 +66,16 @@ namespace NohandicapNative.Droid
             mapView.GetMapAsync(this); //asynchronic loading map
 
             try
-            {                             
-                     
-              //  products = conn.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= NohandicapApplication.SelectedMainCategory.Id).ToList();
-                var selectedCategories = conn.GetSubSelectedCategory();
+            {                                         
+              
+                var selectedCategories = DbConnection.GetSubSelectedCategory();
                 if (selectedCategories.Count != 0)
                 {
                     SetData(selectedCategories);
                 }
                 else
                 {
-                    SetData(conn.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.SubCatGroup));
+                    SetData(DbConnection.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.SubCatGroup));
                 }
                 
             } catch(Exception e)
@@ -143,53 +124,60 @@ namespace NohandicapNative.Droid
                     });
                 }).ContinueWith(async t =>
                  {
-                   
-                     if (LatLngBounds == null)
+                     try
                      {
-                         await semaphoreSlim.WaitAsync();
-                         try
+                         if (LatLngBounds == null)
                          {
-                             await LoadData();
+                             await semaphoreSlim.WaitAsync();
+                             try
+                             {
+                                 await LoadData();
 
+                             }
+                             finally
+                             {
+                                 semaphoreSlim.Release();
+                             }
+                             return;
                          }
-                         finally
+                         Log.Debug(TAG, "Start Load ");
+
+                         IEnumerable<ProductMarkerModel> loadedProducts = null;
+
+                         if (MainActivity.CurrentLocation != null)
                          {
-                             semaphoreSlim.Release();
+                             loadedProducts = await RestApiService.GetMarkers(LatLngBounds.Southwest.Latitude, LatLngBounds.Southwest.Longitude,
+                             LatLngBounds.Northeast.Latitude, LatLngBounds.Northeast.Longitude, CurrentLang.Id, MainActivity.CurrentLocation.Latitude, MainActivity.CurrentLocation.Longitude, SelectedMainCategory, currentCategories);
                          }
-                         return;
-                     }
-                     Log.Debug(TAG, "Start Load ");
-                    
-                     IEnumerable<ProductMarkerModel> loadedProducts = null;
+                         else
+                         {
+                             loadedProducts = await RestApiService.GetMarkers(LatLngBounds.Southwest.Latitude, LatLngBounds.Southwest.Longitude,
+                             LatLngBounds.Northeast.Latitude, LatLngBounds.Northeast.Longitude,
+                             SelectedMainCategory, currentCategories);
+                         }
 
-                     if (MainActivity.CurrentLocation != null)
-                     {
-                       loadedProducts = await RestApiService.GetMarkers(LatLngBounds.Southwest.Latitude, LatLngBounds.Southwest.Longitude,
-                       LatLngBounds.Northeast.Latitude, LatLngBounds.Northeast.Longitude, CurrentLang.Id, MainActivity.CurrentLocation.Latitude, MainActivity.CurrentLocation.Longitude, SelectedMainCategory, currentCategories);
-                     }
-                     else { 
-                       loadedProducts = await RestApiService.GetMarkers(LatLngBounds.Southwest.Latitude, LatLngBounds.Southwest.Longitude,
-                       LatLngBounds.Northeast.Latitude, LatLngBounds.Northeast.Longitude,
-                       SelectedMainCategory, currentCategories);
-                     }
+                         //       Log.Debug(TAG, "LoadedProducts " + loadedProducts.Count());
 
-              //       Log.Debug(TAG, "LoadedProducts " + loadedProducts.Count());
+                         IEnumerable<ProductMarkerModel> newProductsInBound;
+                         if (IsInternetConnection)
+                         {
+                             newProductsInBound = loadedProducts.Where(x => !ProductsInBounds.Contains(x));
+                         }
+                         else
+                         {
+                             newProductsInBound = DbConnection.GetDataList<ProductMarkerModel>(x => !ProductsInBounds.Contains(x));
+                         }
+                         ProductsInBounds.Clear();
+                         LoadMarkerIntoMap(newProductsInBound);
+                         AddProductsToCache(loadedProducts);
+                     }
+                     catch (Exception e)
+                     {
+                         Debugger.Break();
 
-                     IEnumerable<ProductMarkerModel> newProductsInBound;
-                     if (IsInternetConnection)
-                     {
-                         newProductsInBound = loadedProducts.Where(x => !ProductsInBounds.Contains(x));                                        
                      }
-                     else
-                     {
-                         newProductsInBound = conn.GetDataList<ProductMarkerModel>(x => !ProductsInBounds.Contains(x));
-                     }
-                     ProductsInBounds.Clear();
-                     LoadMarkerIntoMap(newProductsInBound);                                                                     
-                     AddProductsToCache(loadedProducts);
-                  
                  });
-                return true;
+                return true;             
             }
             return false;
         }
@@ -245,7 +233,7 @@ namespace NohandicapNative.Droid
             }   
             if(currentCategories.Count==0)
             {
-                this.currentCategories = conn.GetDataList<CategoryModel>(x => x.IsSelected && x.Group == NohandicapLibrary.SubCatGroup);
+                this.currentCategories = DbConnection.GetDataList<CategoryModel>(x => x.IsSelected && x.Group == NohandicapLibrary.SubCatGroup);
             }
             else
             {
@@ -360,7 +348,7 @@ namespace NohandicapNative.Droid
             product = CurrentProductsList.Where(x => x.Id.ToString() == marker.Title).FirstOrDefault();
 
             if (product == null)
-                product = conn.GetDataList<ProductMarkerModel>(x => x.Id.ToString() == marker.Title).FirstOrDefault();
+                product = DbConnection.GetDataList<ProductMarkerModel>(x => x.Id.ToString() == marker.Title).FirstOrDefault();
 
             return product;
         }
@@ -384,8 +372,8 @@ namespace NohandicapNative.Droid
                     MainActivity.SetCurrentTab(0);
                     break;
                 case Resource.Id.select_all:    
-                    conn.UnSelectAllCategories();                  
-                    SetData(conn.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.MainCatGroup));                    
+                    DbConnection.UnSelectAllCategories();                  
+                    SetData(DbConnection.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.MainCatGroup));                    
                     MainActivity.SupportActionBar.Title = "Map";
                     currentCategories = DbConnection.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.SubCatGroup);
                     OnCameraChange(currentCameraPosition);
