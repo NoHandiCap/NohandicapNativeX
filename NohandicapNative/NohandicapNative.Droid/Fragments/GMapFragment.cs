@@ -124,17 +124,17 @@ namespace NohandicapNative.Droid
         {
             var alertDialog = new Android.Support.V7.App.AlertDialog.Builder(MainActivity);
 
-            alertDialog.SetTitle("GPS settings");
-            alertDialog.SetMessage("GPS is not enabled. Do you want to go to settings menu?");
+            alertDialog.SetTitle(Resources.GetString(Resource.String.dialog_gps_title));
+            alertDialog.SetMessage(Resources.GetString(Resource.String.dialog_gps_message));
 
             // On pressing Settings button
-            alertDialog.SetPositiveButton("Settings", (sender, args) =>
+            alertDialog.SetPositiveButton(Resources.GetString(Resource.String.dialog_gps_title_positive), (sender, args) =>
             {
                 StartActivity(new Intent(Settings.ActionLocationSourceSettings));
             });
 
             // on pressing cancel button
-            alertDialog.SetNegativeButton("Cancel", (sender, args) =>
+            alertDialog.SetNegativeButton(Resources.GetString(Resource.String.dialog_gps_title_negative), (sender, args) =>
             {
                 alertDialog.Dispose();
             });

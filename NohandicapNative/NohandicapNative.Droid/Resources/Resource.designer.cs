@@ -5406,6 +5406,18 @@ namespace NohandicapNative.Droid
 			// aapt resource value: 0x7f070043
 			public const int description = 2131165251;
 			
+			// aapt resource value: 0x7f070073
+			public const int dialog_gps_message = 2131165299;
+			
+			// aapt resource value: 0x7f070072
+			public const int dialog_gps_title = 2131165298;
+			
+			// aapt resource value: 0x7f070075
+			public const int dialog_gps_title_negative = 2131165301;
+			
+			// aapt resource value: 0x7f070074
+			public const int dialog_gps_title_positive = 2131165300;
+			
 			// aapt resource value: 0x7f07005f
 			public const int distance = 2131165279;
 			

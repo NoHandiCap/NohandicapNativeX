@@ -57,7 +57,10 @@
   <string name="sync">synchronisiert</string>
   <string name="creating_account">Erstellen von Konto ...</string>
   <string name="all_cat">Alle Kategorien</string>
-
+  <string name="dialog_gps_title">GPS Einstellungen</string>
+  <string name="dialog_gps_message">GPS ist nicht aktiviert. Wollen Sie zum Einstellungsmenü gehen?</string>
+  <string name="dialog_gps_title_positive">Einstellen</string>
+  <string name="dialog_gps_title_negative">Cancel</string>
 
   <string-array name="lang_array">
     <item>Deutsch</item>
