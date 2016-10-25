@@ -91,7 +91,9 @@ namespace NohandicapNative.Droid.Adapters
             title.Text = products[position].Name;
             adress.Text = products[position].Address;
 
-            if (baseFragment.MainActivity.CurrentLocation != null && NohandicapApplication.CheckIfGPSenabled())
+            if (baseFragment.MainActivity.CurrentLocation != null 
+                && NohandicapApplication.CheckIfGPSenabled()
+                && !string.IsNullOrEmpty(products[position].Distance))
             {
                 positionTextView.Text = products[position].Distance+" km";
             }
