@@ -58,7 +58,7 @@ namespace NohandicapNative
 
         [JsonProperty(PropertyName = "cat"), TextBlob("categoriesBlobbed")]
         public List<int> Categories { get; set; }  
-        [flield: NonSerialized]
+        [field: NonSerialized]
         private ImageJsonModel _imageCollection;
         [JsonProperty(PropertyName = "img"), JsonConverter(typeof(ImageDataConverter)), TextBlob("imagesBlobbed")]
         public ImageJsonModel ImageCollection
