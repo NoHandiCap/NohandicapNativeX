@@ -74,7 +74,7 @@ namespace NohandicapNative
             }
         }   
 
-        public static async Task<List<ProductMarkerModel>> GetMarkers(double latLow, double lngLow, double latHight, double lngHight, CategoryModel mainCat, List<CategoryModel> subCategories,int count=50,int page=1)
+        public static async Task<IEnumerable<ProductMarkerModel>> GetMarkers(double latLow, double lngLow, double latHight, double lngHight, CategoryModel mainCat, List<CategoryModel> subCategories,int count=50,int page=1)
         {
             var mainCategory = NohandicapLibrary.DEFAULT_MAIN_CATEGORY; //default main category in case of unselected maincategory
 
@@ -85,7 +85,7 @@ namespace NohandicapNative
  
             string url = string.Format(NohandicapLibrary.LINK_GET_MARKERS, mainCategory, count, boundBox, PrepareSubCategoryString(subCategories),page);
 
-            var products=await GetDataFromUrl<List<ProductMarkerModel>>(url);
+            var products=await GetDataFromUrl<IEnumerable<ProductMarkerModel>>(url);
             if (products == null)
             {
                 return new List<ProductMarkerModel>();
