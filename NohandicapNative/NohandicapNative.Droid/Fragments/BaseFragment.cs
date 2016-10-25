@@ -117,7 +117,7 @@ namespace NohandicapNative.Droid.Fragments
 
             }
         }
-        public async void AddProductsToCache(List<ProductMarkerModel> products)
+        public async void AddProductsToCache(IEnumerable<ProductMarkerModel> products)
         {
            await Task.Run(() =>
             {

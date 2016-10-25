@@ -93,7 +93,7 @@ namespace NohandicapNative
             return products;
         }
 
-        public static async Task<List<ProductMarkerModel>> GetMarkers(double latLow, double lngLow, double latHight, double lngHight, int langId, double gpslat, double gpslon, CategoryModel mainCat, List<CategoryModel> subCategories, int count = 50, int page = 1)
+        public static async Task<IEnumerable<ProductMarkerModel>> GetMarkers(double latLow, double lngLow, double latHight, double lngHight, int langId, double gpslat, double gpslon, CategoryModel mainCat, List<CategoryModel> subCategories, int count = 50, int page = 1)
         {
             var mainCategory = NohandicapLibrary.DEFAULT_MAIN_CATEGORY; //default main category in case of unselected maincategory
 
@@ -107,7 +107,7 @@ namespace NohandicapNative
 
             string url = string.Format(NohandicapLibrary.LINK_GET_MARKERS_GPS, mainCategory, count, langId, gpslat.ToString(CultureInfo.InvariantCulture), gpslon.ToString(CultureInfo.InvariantCulture), boundBox, PrepareSubCategoryString(subCategories), page);
 
-            var products = await GetDataFromUrl<List<ProductMarkerModel>>(url);
+            var products = await GetDataFromUrl<IEnumerable<ProductMarkerModel>>(url);
             if (products == null)
             {
                 return new List<ProductMarkerModel>();
@@ -116,7 +116,7 @@ namespace NohandicapNative
         }
 
         //TODO: this method i would delete and use this above, just fullfilling with available parameters, there is gps position then put position parameters, there is boundingbox then put bbox
-        public static async Task<List<ProductMarkerModel>> GetMarkers(CategoryModel mainCat, List<CategoryModel> subCategories, int langId, string lat, string lng, int page, int count = 50)
+        public static async Task<IEnumerable<ProductMarkerModel>> GetMarkers(CategoryModel mainCat, List<CategoryModel> subCategories, int langId, string lat, string lng, int page, int count = 50)
         {
             var mainCategory = NohandicapLibrary.DEFAULT_MAIN_CATEGORY; //default main category in case of unselected maincategory
 
@@ -125,7 +125,7 @@ namespace NohandicapNative
 
             string url = string.Format(NohandicapLibrary.LINK_GET_PRODUCTS, mainCategory, PrepareSubCategoryString(subCategories), langId, lat, lng, count, page);
 
-            var products = await GetDataFromUrl<List<ProductMarkerModel>>(url);
+            var products = await GetDataFromUrl<IEnumerable<ProductMarkerModel>>(url);
             if (products == null)
             {
                 return new List<ProductMarkerModel>();

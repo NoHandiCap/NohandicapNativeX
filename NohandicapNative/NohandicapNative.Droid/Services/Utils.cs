@@ -271,11 +271,10 @@ namespace NohandicapNative.Droid.Services
                 wrapper.ApplyOverrideConfiguration(configuration);
             }
         }
-        public static List<ProductMarkerModel> SortProductsByDistance(List<ProductMarkerModel> products)
+        public static IEnumerable<ProductMarkerModel> SortProductsByDistance(IEnumerable<ProductMarkerModel> products)
         {
             var myLocation = NohandicapApplication.MainActivity.CurrentLocation;
-            if (myLocation != null)
-            {
+            if (myLocation == null) return products;            
                 var sorted = products.Select(product =>
                   {
                       var point = new Location("");
@@ -284,10 +283,10 @@ namespace NohandicapNative.Droid.Services
                       var distance = Utils.GetDistance(myLocation, point);
                       product.Distance = NohandicapLibrary.ConvertMetersToKilometers(distance);
                       return product;
-                  }).OrderBy(x => x.Distance).ToList();
-                return sorted;
-            }
-            return products;
+                  }).OrderBy(x => x.Distance);
+
+                return sorted;           
+      
         }
                  public static void updateConfig(Application app, Configuration configuration)
         {

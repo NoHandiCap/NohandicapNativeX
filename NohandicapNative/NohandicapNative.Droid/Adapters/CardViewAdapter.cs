@@ -148,14 +148,15 @@ namespace NohandicapNative.Droid.Adapters
                 lng = position.Longitude.ToString();
             }
 
-            List<ProductMarkerModel> newProducts;
+            IEnumerable<ProductMarkerModel> newProducts;
 
            
             if (isFav)
             {
                 var user = conn.GetDataList<UserModel>().FirstOrDefault();
                 if (user == null) return true;
-                newProducts = await RestApiService.GetFavorites(user.Id, PageNumber);               
+                newProducts = await RestApiService.GetFavorites(user.Id, PageNumber);
+                newProducts = Utils.SortProductsByDistance(newProducts);    
             }
             else
             {
@@ -177,13 +178,14 @@ namespace NohandicapNative.Droid.Adapters
                 else
                 {
                     newProducts = await RestApiService.GetMarkers(baseFragment.SelectedMainCategory, selectedSubCategory, baseFragment.CurrentLang.Id, lat, lng, PageNumber);
+                    newProducts = newProducts.OrderBy(x => x.Name);
                 }
 
             }
 
             PageNumber++;
            
-            foreach (var product in newProducts.OrderBy(x => x.Name))
+            foreach (var product in newProducts)
             {
                 if (!products.Any(x=>x.Id==product.Id))
                 {

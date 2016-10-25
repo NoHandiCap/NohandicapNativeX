@@ -45,19 +45,8 @@ namespace NohandicapNative.Droid
         public string RESOURCE_PATH {
             get { return ContentResolver.SchemeAndroidResource + "://" + Activity.PackageName + "/drawable/"; }
         }
-
-        LayoutInflater inflater;
-        //LocationRequest mLocationRequest;
-        //GoogleApiClient mGoogleApiClient;
-
-        //LatLng latLng;
-        GoogleMap map;
-        //SupportMapFragment mFragment;
-        //Marker currLocationMarker;
-
-        List<Marker> markersList;
-        private static int DELAY_TIME_IN_MILLI = 500;
-        List<MarkerOptions> markerOptons;    
+        LayoutInflater inflater;   
+        GoogleMap map;            
         MapView mapView;
         List<CategoryModel> currentCategories;
         public  ObservableCollection<ProductMarkerModel> ProductsInBounds;
@@ -95,9 +84,8 @@ namespace NohandicapNative.Droid
             mapView.GetMapAsync(this); //asynchronic loading map
 
             try
-            {               
-                markersList = new List<Marker>();
-                markerOptons = new List<MarkerOptions>();             
+            {                             
+                     
               //  products = conn.GetDataList<ProductModel>().Where(x => x.MainCategoryID >= NohandicapApplication.SelectedMainCategory.Id).ToList();
                 var selectedCategories = conn.GetSubSelectedCategory();
                 if (selectedCategories.Count != 0)
@@ -172,9 +160,9 @@ namespace NohandicapNative.Droid
                      }
                      Log.Debug(TAG, "Start Load ");
                     
-                     List<ProductMarkerModel> loadedProducts = null;
+                     IEnumerable<ProductMarkerModel> loadedProducts = null;
 
-                     if (NohandicapApplication.CheckIfGPSenabled() && MainActivity.CurrentLocation != null)
+                     if (MainActivity.CurrentLocation != null)
                      {
                        loadedProducts = await RestApiService.GetMarkers(LatLngBounds.Southwest.Latitude, LatLngBounds.Southwest.Longitude,
                        LatLngBounds.Northeast.Latitude, LatLngBounds.Northeast.Longitude, CurrentLang.Id, MainActivity.CurrentLocation.Latitude, MainActivity.CurrentLocation.Longitude, SelectedMainCategory, currentCategories);
@@ -185,17 +173,16 @@ namespace NohandicapNative.Droid
                        SelectedMainCategory, currentCategories);
                      }
 
-                     Log.Debug(TAG, "LoadedProducts " + loadedProducts.Count);
+              //       Log.Debug(TAG, "LoadedProducts " + loadedProducts.Count());
 
-                     List<ProductMarkerModel> newProductsInBound;
+                     IEnumerable<ProductMarkerModel> newProductsInBound;
                      if (IsInternetConnection)
                      {
-                         newProductsInBound = loadedProducts.Where(x => !ProductsInBounds.Contains(x)).ToList();                                        
+                         newProductsInBound = loadedProducts.Where(x => !ProductsInBounds.Contains(x));                                        
                      }
                      else
                      {
-                         newProductsInBound = conn.GetDataList<ProductMarkerModel>(x => !ProductsInBounds.Contains(x))
-                     .ToList();
+                         newProductsInBound = conn.GetDataList<ProductMarkerModel>(x => !ProductsInBounds.Contains(x));
                      }
                      ProductsInBounds.Clear();
                      LoadMarkerIntoMap(newProductsInBound);                                                                     
@@ -207,23 +194,19 @@ namespace NohandicapNative.Droid
             return false;
         }
        
-       private async void LoadMarkerIntoMap(List<ProductMarkerModel> prdoucts)
+       private async void LoadMarkerIntoMap(IEnumerable<ProductMarkerModel> products)
         {
            await Task.Run(() => {
-            foreach (var product in prdoucts)
+            foreach (var product in products)
             {
                 var lat = double.Parse(product.Lat, CultureInfo.InvariantCulture);
                 var lng = double.Parse(product.Lng, CultureInfo.InvariantCulture);
                 Log.Debug(TAG, "CurrentCategories count "+ currentCategories.Count);
-
                 var catMarker = currentCategories.FirstOrDefault(x => product.Categories.Any(y => y == x.Id)).Marker;
-
-                   Log.Info(TAG, product.Id + " : " + product.Name + " : " + catMarker);
-
+                Log.Info(TAG, product.Id + " : " + product.Name + " : " + catMarker);
                 string catPinUrl = RESOURCE_PATH + catMarker;   // ContentResolver.SchemeAndroidResource + "://" + Activity.PackageName + "/drawable/" + catMarker;
                 string customPinUrl = product.ProdimgPin;
                 Log.Debug(TAG, "Set customPin ");
-
                 var options = new MarkerOptions();
                 options.SetPosition(new LatLng(lat, lng));
                 options.Visible(false);
@@ -244,7 +227,7 @@ namespace NohandicapNative.Droid
 
                     Picasso.With(Activity).Load(customPinUrl).Resize(32,0).Into(picassoMarker);
 
-                    markersList.Add(marker);
+                    
                     ProductsInBounds.Add(product);
                     Log.Debug(TAG, "Added Marker ");
 
@@ -257,9 +240,7 @@ namespace NohandicapNative.Droid
            //Reload markers if catecories changed
             if (map != null&&!this.currentCategories.Equals(currentCategories))
             {
-                map.Clear();
-                markerOptons.Clear();
-                markersList.Clear();
+                map.Clear();              
                 ProductsInBounds.Clear();                      
             }   
             if(currentCategories.Count==0)
