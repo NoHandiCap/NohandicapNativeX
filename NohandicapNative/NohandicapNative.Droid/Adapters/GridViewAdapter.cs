@@ -24,7 +24,7 @@ namespace NohandicapNative.Droid.Adapters
         }
         public void UpdateCategories()
         {
-            categories = baseFragment.DbConnection.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.SubCatGroup);
+            categories = baseFragment.DbConnection.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.SubCatGroup).OrderBy(x=>x.Sort).ToList();
         }
 
         public override int Count
