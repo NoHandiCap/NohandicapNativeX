@@ -38,13 +38,11 @@ namespace NohandicapNative.Droid
         {
             this.inflater = inflater;
             this.container = container;
-            PopulateViewForOrientation();
-            
+            PopulateViewForOrientation();            
             return rootView;
         }
         private void PopulateViewForOrientation()
         {
-
             Log.Debug(Tag, "Start HomeFragment ");
 
             rootView = inflater.Inflate(Resource.Layout.HomePage, null);
@@ -133,10 +131,11 @@ namespace NohandicapNative.Droid
                         Sort = i + 1
                     });
                 }
+                DbConnection.InsertUpdateProductList(subCategoriesList);
             }
             subCategoriesList = subCategoriesList.OrderBy(x => x.Sort).ToList();
            
-            buttonsAdapter= new GridViewAdapter(MainActivity, subCategoriesList);
+            buttonsAdapter= new GridViewAdapter(this);
             additionalCategory.Adapter = buttonsAdapter;
             additionalCategory.ItemClick += SubCategory_ItemClick;
             //ThreadPool.QueueUserWorkItem(o => LoadCache());
@@ -145,23 +144,20 @@ namespace NohandicapNative.Droid
 
         private async void SubCategory_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
         {
-            var position = e.Position;
-            var category = subCategoriesList[position];
-            // OnSubCategoryChaged(new List<CategoryModel> { category });
-
-            DbConnection.SetSelectedCategory(category);
-
+            var idCategory = e.Id;
+            var category = DbConnection.GetDataList<CategoryModel>(x => x.Id == idCategory).FirstOrDefault();
             if (!IsTablet)
             {
                 MainActivity.MapPage.SetData(new List<CategoryModel> { category });
                 MainActivity.SetCurrentTab(1);
                 MainActivity.SupportActionBar.Title = category.Name;
+                DbConnection.SetSelectedCategory(category);
             }
             else
             {
-                buttonsAdapter.NotifyDataSetChanged();
-                
-                var selectedCategories = DbConnection.GetDataList<CategoryModel>(x => x.IsSelected).ToList();
+                DbConnection.SetSelectedCategory(category, !category.IsSelected,true);               
+       
+                var selectedCategories = DbConnection.GetSubSelectedCategory();
                 if (selectedCategories.Count == 0)
                 {
                     MainActivity.MapPage.SetData(subCategoriesList);
@@ -171,7 +167,8 @@ namespace NohandicapNative.Droid
                     MainActivity.MapPage.SetData(selectedCategories);
                 }
                 await MainActivity.MapPage.LoadData();
-
+                buttonsAdapter.UpdateCategories();
+                buttonsAdapter.NotifyDataSetChanged();
             }
         }
 

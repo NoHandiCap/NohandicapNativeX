@@ -8,27 +8,25 @@ using NohandicapNative.Droid.Services;
 using Android.Graphics;
 using static Android.Views.View;
 using Android.Graphics.Drawables;
-
+using NohandicapNative.Droid.Fragments;
 
 namespace NohandicapNative.Droid.Adapters
 {
     public class GridViewAdapter : BaseAdapter
     {
-        private Context context;
-        private List<CategoryModel> categories;
-       
+        private BaseFragment baseFragment;
+        private List<CategoryModel> categories;   
    
-        public GridViewAdapter(Context context, List<CategoryModel> items)
+        public GridViewAdapter(BaseFragment baseFragment)
         {
-            this.context = context;
-            var conn = Utils.GetDatabaseConnection();
-
-            this.categories = items;
-            
-           
-          
-            //border.SetStroke(2, context.Resources.GetColor(Resource.Color.selectedCategoryColor)); //border with full opacity
+            this.baseFragment = baseFragment;
+            UpdateCategories();
         }
+        public void UpdateCategories()
+        {
+            categories = baseFragment.DbConnection.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.SubCatGroup);
+        }
+
         public override int Count
         {
             get
@@ -54,23 +52,23 @@ namespace NohandicapNative.Droid.Adapters
         {
 
             View grid;
-            LayoutInflater inflater = (LayoutInflater)context
+            LayoutInflater inflater = (LayoutInflater)baseFragment.MainActivity
                 .GetSystemService(Context.LayoutInflaterService);
             GridView gridView = (GridView)parent;
             var category = categories[position];
-            grid = new View(context);
+            grid = new View(baseFragment.MainActivity);
             grid = inflater.Inflate(Resource.Layout.grid_item, null);
             //   var backgroundButton = grid.FindViewById<RelativeLayout>(Resource.Id.backgroundLayout);
             TextView textView = (TextView)grid.FindViewById(Resource.Id.grid_text);
             ImageView imageView = (ImageView)grid.FindViewById(Resource.Id.grid_image);
             textView.Text = category.Name;
-            imageView.SetImageDrawable(Utils.GetImage(context, category.Icon));
+            imageView.SetImageDrawable(Utils.GetImage(baseFragment.MainActivity, category.Icon));
             LayerDrawable bgDrawable = (LayerDrawable)grid.Background;
             GradientDrawable bgShape = (GradientDrawable)bgDrawable.FindDrawableByLayerId(Resource.Id.shape_id);
             GradientDrawable bgBorder = (GradientDrawable)bgDrawable.FindDrawableByLayerId(Resource.Id.border_id);
 
             int width = gridView.ColumnWidth;
-            var orientation = context.Resources.Configuration.Orientation;
+            var orientation = baseFragment.Resources.Configuration.Orientation;
             imageView.LayoutParameters.Height = width / 3;
             imageView.LayoutParameters.Width = width / 3;
             bgShape.SetColor(Color.ParseColor(category.Color));
@@ -78,7 +76,7 @@ namespace NohandicapNative.Droid.Adapters
             {
                 if (category.IsSelected)
                 {
-                    bgBorder.SetColor(context.Resources.GetColor(Resource.Color.selectedCategoryColor));
+                    bgBorder.SetColor(baseFragment.Resources.GetColor(Resource.Color.selectedCategoryColor));
                 }
                 else
                 {

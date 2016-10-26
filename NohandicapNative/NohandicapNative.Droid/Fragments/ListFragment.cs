@@ -61,16 +61,11 @@ namespace NohandicapNative.Droid
             if (selectedSubCategory.Count != 9)
             {
                 var categories = "";
-
                 foreach (var item in selectedSubCategory)
                 {
-                    categories += item.Name + ",";
+                    categories += item.Name + " ,";
                 }
-
-                categories = categories.Substring(0, categories.Length - 1);
-
-                //selectedSubCategory.ForEach(x => categories += x.Name+",");
-                //categories.Remove(categories.Length - 1);
+                categories = categories.Substring(0, categories.Length - 1);                
                 subCategoryName.Text = categories;
             }
             else

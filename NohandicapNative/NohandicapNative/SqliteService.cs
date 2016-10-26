@@ -115,7 +115,7 @@ namespace NohandicapNative
                 {
                     category.IsSelected = true;
                     conn.InsertOrReplace(category);
-                    //Uncheck another category
+                    //Unselect another category
                     var mainCategories = conn.Table<CategoryModel>().Where(x => x.Group == NohandicapLibrary.MainCatGroup).ToList();
                     foreach (var cat in mainCategories)
                     {
@@ -127,21 +127,25 @@ namespace NohandicapNative
                     }
                 }
                 if (category.Group == NohandicapLibrary.SubCatGroup)
-                {
-                    category.IsSelected = isSelected;
-                    conn.InsertOrReplace(category);
-                    if (!isTablet)
+                {                   
+                        category.IsSelected = isSelected;
+                        conn.InsertOrReplace(category);
+                     
+                    //Unselect all another categories if is phone
+                    if (!isTablet) 
                     {
                         var subCategories = conn.Table<CategoryModel>().Where(x => x.Group == NohandicapLibrary.SubCatGroup).ToList();
                         foreach (var cat in subCategories)
                         {
                             if (cat.Id != category.Id)
                             {
-                                cat.IsSelected = false;
+                                cat.IsSelected = !isSelected;
                                 conn.InsertOrReplace(cat);
                             }
                         }
                     }
+                    
+
                 }
                 var mainCat = conn.Table<CategoryModel>().Where(x => x.Group == NohandicapLibrary.MainCatGroup).ToList();
 
