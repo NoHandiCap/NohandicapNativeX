@@ -26,7 +26,6 @@ namespace NohandicapNative.Droid.Adapters
         {
             categories = baseFragment.DbConnection.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.SubCatGroup).OrderBy(x=>x.Sort).ToList();
         }
-
         public override int Count
         {
             get
@@ -50,7 +49,6 @@ namespace NohandicapNative.Droid.Adapters
 
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
-
             View grid;
             LayoutInflater inflater = (LayoutInflater)baseFragment.MainActivity
                 .GetSystemService(Context.LayoutInflaterService);

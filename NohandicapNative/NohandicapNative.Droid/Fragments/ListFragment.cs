@@ -63,9 +63,9 @@ namespace NohandicapNative.Droid
                 var categories = "";
                 foreach (var item in selectedSubCategory)
                 {
-                    categories += item.Name + " ,";
+                    categories += item.Name + ", ";
                 }
-                categories = categories.Substring(0, categories.Length - 1);                
+                categories = categories.Substring(0, categories.Length - 2);                
                 subCategoryName.Text = categories;
             }
             else

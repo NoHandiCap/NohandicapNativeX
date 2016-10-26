@@ -404,7 +404,8 @@ namespace NohandicapNative.Droid
                         user.Sex = obj["gender"] == "male" ? "m" : "w";
                         user.Favorites = new List<int>();
                         var result = await RestApiService.SignUp(user, true);
-                        user.Id = result[2];
+                        user.Id = result[2].ToString();
+                        user.Favorites = (List<int>)result[3];
                         fragment.UserLoginSuccess(user);
                     }
 

@@ -36,7 +36,7 @@
                     <android.support.v4.view.ViewPager
                         android:id="@+id/viewPager"
                         android:layout_width="match_parent"
-                        android:layout_height="300dp" />
+                        android:layout_height="@dimen/detail_image_height" />
                     <RatingBar
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

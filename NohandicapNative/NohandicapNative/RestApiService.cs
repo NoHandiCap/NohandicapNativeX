@@ -236,9 +236,9 @@ namespace NohandicapNative
             }
 
         }
-        public static async Task<Dictionary<int,string>> SignUp(UserModel user,bool isFB=false)
+        public static async Task<Dictionary<int,object>> SignUp(UserModel user,bool isFB=false)
         {
-            var result = new Dictionary<int, string>();
+            var result = new Dictionary<int, object>();
             try
             {
                 using (WebClient client = new WebClient())
@@ -261,8 +261,11 @@ namespace NohandicapNative
                         var root = JObject.Parse(responsebody).SelectToken("status").ToString();
                         var id = Deserializedata<int>(responsebody, rootName: "id");             
                         var message = JObject.Parse(responsebody).SelectToken("message").ToString();
+                        var fav =await GetFavorites(id.ToString(), 1, 100);
+                        List<int> favIdlist = fav.Select(x => x.Id).ToList();
                         result.Add(1, message);
                         result.Add(2, id.ToString());
+                        result.Add(3, favIdlist);
                     }
                     else
                     {

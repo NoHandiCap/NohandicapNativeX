@@ -77,12 +77,12 @@ namespace NohandicapNative.Droid
            var result = await RestApiService.SignUp(createdUser);
             if (result.ContainsKey(1))
             {
-                onSignupSuccess(result[1]);
+                onSignupSuccess(result[1].ToString());
             }
             else
             {
                 progressDialog.Dismiss();
-                OnSignupFailed(result[0]);
+                OnSignupFailed(result[0].ToString());
             }
           
         }
