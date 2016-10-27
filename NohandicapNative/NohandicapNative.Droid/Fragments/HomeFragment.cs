@@ -14,6 +14,8 @@ using Android.Util;
 using NohandicapNative.Droid.Fragments;
 
 using System.Threading;
+using static Android.Support.Design.Widget.AppBarLayout;
+using Android.Graphics.Drawables;
 
 namespace NohandicapNative.Droid
 {
@@ -55,6 +57,15 @@ namespace NohandicapNative.Droid
             TextView[] mainCat = new TextView[mainCategoriesList.Count];
             ImageView[] mainImg = new ImageView[mainCategoriesList.Count];
             LinearLayout[] mainLayout = new LinearLayout[mainCategoriesList.Count];
+            var askBtn1 = rootView.FindViewById<ImageButton>(Resource.Id.imageViewAsk);
+            var askBtn2 = rootView.FindViewById<ImageButton>(Resource.Id.imageViewAsk3);
+            var askBtn3 = rootView.FindViewById<ImageButton>(Resource.Id.imageViewAsk2);
+            askBtn1.Tag = mainCategoriesList[0].Name;
+            askBtn2.Tag = mainCategoriesList[1].Name;
+            askBtn3.Tag = mainCategoriesList[2].Name;
+            askBtn1.Click += AskBtn_Click;
+            askBtn2.Click += AskBtn_Click;
+            askBtn3.Click += AskBtn_Click;
 
             for (int i = 0; i < mainCat.Length; i++)
             {
@@ -139,6 +150,22 @@ namespace NohandicapNative.Droid
             additionalCategory.Adapter = buttonsAdapter;
             additionalCategory.ItemClick += SubCategory_ItemClick;
             //ThreadPool.QueueUserWorkItem(o => LoadCache());
+
+        }
+        private void AskBtn_Click(object sender, EventArgs e)
+        {
+            ShowPopup(((ImageButton)sender).Tag.ToString(), "Description");
+        }      
+        private void ShowPopup(string title,string text)
+        {
+            var builder = new Android.Support.V7.App.AlertDialog.Builder(MainActivity);
+            builder.SetPositiveButton("OK", (sender, args) =>
+            {
+            });
+            builder.SetMessage(text);
+            builder.SetTitle(title);
+            builder.Show();
+
 
         }
 
