@@ -212,7 +212,7 @@ namespace NohandicapNative.Droid
                         customPinUrl = catPinUrl;
                     }
 
-                    Picasso.With(Activity).Load(customPinUrl).Resize(0,32).Into(picassoMarker);
+                    Picasso.With(Activity).Load(customPinUrl).Resize(70,70).Into(picassoMarker);
 
                     
                     ProductsInBounds.Add(product);

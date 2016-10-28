@@ -243,9 +243,8 @@ namespace NohandicapNative.Droid
             try
             {
                 map = googleMap;
-                map.UiSettings.ScrollGesturesEnabled = false;               
-                View toolbar = ((View)mapView.FindViewById(int.Parse("1")).
-            Parent).FindViewById(int.Parse("4"));
+                map.UiSettings.ScrollGesturesEnabled = false;     
+                View toolbar = ((View)mapView.FindViewById(1).Parent).FindViewById(4);
 
                 // and next place it, for example, on bottom right (as Google Maps app)
                 RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams)toolbar.LayoutParameters;

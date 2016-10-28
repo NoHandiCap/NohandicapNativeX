@@ -3,6 +3,7 @@ using Android.Graphics.Drawables;
 using Square.Picasso;
 using Android.Gms.Maps.Model;
 using Android.Gms.Maps;
+using NohandicapNative.Droid.Services;
 
 namespace NohandicapNative.Droid.Model
 {
@@ -33,8 +34,11 @@ namespace NohandicapNative.Droid.Model
 
         public void OnBitmapLoaded(Bitmap p0, Picasso.LoadedFrom p1)
         {
+            //Drawable d = new BitmapDrawable(NohandicapApplication.MainActivity.Resources, Bitmap.CreateScaledBitmap(p0, 70, 70, true));
+            //var img = Utils.convertDrawableToBitmap(d);
             marker.SetIcon(BitmapDescriptorFactory.FromBitmap(p0));
-            marker.Visible = true;        }
+            marker.Visible = true;
+        }
 
         public void OnPrepareLoad(Drawable p0)
         {
