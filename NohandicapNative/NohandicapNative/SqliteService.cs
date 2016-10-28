@@ -156,6 +156,7 @@ namespace NohandicapNative
             using (var conn = GetSQLiteConnetion())
             {
                 var categories = conn.Table<CategoryModel>().Where(x => x.IsSelected && x.Group == NohandicapLibrary.SubCatGroup).ToList();
+                
                 if(categories.Count==0)
                 {
                     categories = conn.Table<CategoryModel>().Where(x => x.Group == NohandicapLibrary.SubCatGroup).ToList();

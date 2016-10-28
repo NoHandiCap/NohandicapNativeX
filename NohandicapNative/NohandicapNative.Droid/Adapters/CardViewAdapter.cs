@@ -117,12 +117,12 @@ namespace NohandicapNative.Droid.Adapters
                 }
                 else
                 {
-                    catImage = categories.FirstOrDefault(x => products[position].Categories.Any(y => y == x.Id));
+                     catImage = selectedCategory.FirstOrDefault(x => products[position].Categories.Any(y => y == x.Id));
 
                 }
                 if (catImage != null)
                 {
-                    imageUrl = ContentResolver.SchemeAndroidResource + "://" + baseFragment.MainActivity.PackageName + "/drawable/" + catImage.Icon;
+                    imageUrl = Utils.RESOURCE_PATH + catImage.Icon;
                     imageView.SetBackgroundColor(Color.ParseColor(catImage.Color));
                 }
             }          

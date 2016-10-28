@@ -41,7 +41,10 @@ namespace NohandicapNative.Droid.Services
         public const string PRODUCT_ID = "productId";  
         public const string LAST_UPDATE_DATE = "lastUp";
         public const string MAIN_CAT_SELECTED_ID= "mainCat";
-
+        public static string RESOURCE_PATH
+        {
+            get { return ContentResolver.SchemeAndroidResource + "://" + NohandicapApplication.MainActivity.PackageName + "/drawable/"; }
+        }
         private static Locale SLocale;
         public static  Dictionary<string,string> GetLastUpdate(Context context)
         {

@@ -19,6 +19,7 @@ using System.Collections.ObjectModel;
 using NohandicapNative.Droid.Fragments;
 using Android.Provider;
 using System.Diagnostics;
+using Android.Graphics;
 
 namespace NohandicapNative.Droid
 {
@@ -26,9 +27,7 @@ namespace NohandicapNative.Droid
     {     
 
         static readonly string TAG = "X:" + typeof(GMapFragment).Name;
-        public string RESOURCE_PATH {
-            get { return ContentResolver.SchemeAndroidResource + "://" + Activity.PackageName + "/drawable/"; }
-        }
+       
         LayoutInflater inflater;   
         GoogleMap map;            
         MapView mapView;
@@ -192,7 +191,7 @@ namespace NohandicapNative.Droid
                 Log.Debug(TAG, "CurrentCategories count "+ currentCategories.Count);
                 var catMarker = currentCategories.FirstOrDefault(x => product.Categories.Any(y => y == x.Id)).Marker;
                 Log.Info(TAG, product.Id + " : " + product.Name + " : " + catMarker);
-                string catPinUrl = RESOURCE_PATH + catMarker;   // ContentResolver.SchemeAndroidResource + "://" + Activity.PackageName + "/drawable/" + catMarker;
+                string catPinUrl = Utils.RESOURCE_PATH+ catMarker;   // ContentResolver.SchemeAndroidResource + "://" + Activity.PackageName + "/drawable/" + catMarker;
                 string customPinUrl = product.ProdimgPin;
                 Log.Debug(TAG, "Set customPin ");
                 var options = new MarkerOptions();
@@ -213,7 +212,7 @@ namespace NohandicapNative.Droid
                         customPinUrl = catPinUrl;
                     }
 
-                    Picasso.With(Activity).Load(customPinUrl).Resize(32,0).Into(picassoMarker);
+                    Picasso.With(Activity).Load(customPinUrl).Resize(0,32).Into(picassoMarker);
 
                     
                     ProductsInBounds.Add(product);
@@ -303,7 +302,7 @@ namespace NohandicapNative.Droid
             var imageView = info.FindViewById<ImageView>(Resource.Id.info_mainImageView);
             var title = info.FindViewById<TextView>(Resource.Id.info_titleTextView);
             var adress = info.FindViewById<TextView>(Resource.Id.info_adressTextView);
-
+            var  catImage = currentCategories.FirstOrDefault(x => product.Categories.Any(y => y == x.Id));
             try
             {
                 string tooltipProdImg = product.ProdImg;
@@ -311,7 +310,13 @@ namespace NohandicapNative.Droid
                 if (string.IsNullOrEmpty(tooltipProdImg) && !string.IsNullOrEmpty(marker.Snippet))
                 {
                     var name = marker.Snippet.Replace("marker_", ""); //remove that marker prefix from name
-                    tooltipProdImg = RESOURCE_PATH + name;
+                    tooltipProdImg = Utils.RESOURCE_PATH + name;
+                    imageView.SetBackgroundColor(Color.ParseColor(catImage.Color));
+                }
+                else
+                {
+                    imageView.SetBackgroundColor(Color.White);
+
                 }
 
                 Picasso.With(Activity).Load(tooltipProdImg).Placeholder(Resource.Drawable.placeholder).Resize(50, 50).Into(imageView, 
@@ -322,7 +327,7 @@ namespace NohandicapNative.Droid
                         marker.HideInfoWindow();
                         marker.ShowInfoWindow();
                     }
-
+                    
                 }));
 
             }
