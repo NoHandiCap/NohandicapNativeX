@@ -148,6 +148,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Activities\FirstStartActivity.cs" />
     <Compile Include="Activities\SplashActivity.cs" />
     <Compile Include="Adapters\GridViewAdapter.cs" />
     <Compile Include="Adapters\CardViewAdapter.cs" />
@@ -160,9 +161,9 @@
     <Compile Include="Model\ButtonGridView.cs" />
     <Compile Include="Activities\DetailActivity.cs" />
     <Compile Include="Fragments\FavoritesFragment.cs" />
-    <Compile Include="Activities\FirstStartActivity.cs" />
     <Compile Include="Activities\MainActivity.cs" />
     <Compile Include="Fragments\GMapFragment.cs" />
+    <Compile Include="Model\HelpPopup.cs" />
     <Compile Include="Model\PiassoMarker.cs" />
     <Compile Include="Model\ClusterItem.cs" />
     <Compile Include="Model\CustomCallback.cs" />
@@ -184,6 +185,15 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+    <AndroidResource Include="Resources\drawable\popup_background.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\anim\float_anim.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\popup_layout.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
     <ProguardConfiguration Include="Proguard.cfg" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Properties\AndroidManifest.xml">
@@ -528,7 +538,40 @@
     <AndroidResource Include="Resources\drawable\marker_sport.png" />
   </ItemGroup>
   <ItemGroup>
+    <AndroidAsset Include="Assets\main_category_1_de.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\main_category_3_de.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\main_category_2_de.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\main_category_3_en.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\main_category_2_en.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\main_category_1_en.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\main_category_3_fr.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\main_category_2_fr.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\main_category_1_fr.txt" />
+  </ItemGroup>
+  <ItemGroup>
     <AndroidResource Include="Resources\drawable\ask.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\up_arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\down_arrow.png" />
   </ItemGroup>
   <Import Project="..\NohandicapNative\NohandicapNative.projitems" Label="Shared" Condition="Exists('..\NohandicapNative\NohandicapNative.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

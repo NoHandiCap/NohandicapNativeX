@@ -8,7 +8,10 @@ using NohandicapNative.Droid.Services;
 using Android.Graphics;
 using static Android.Views.View;
 using Android.Graphics.Drawables;
+using Java.Lang;
 using NohandicapNative.Droid.Fragments;
+using Context = Android.Content.Context;
+
 
 namespace NohandicapNative.Droid.Adapters
 {

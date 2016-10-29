@@ -16,12 +16,13 @@ using Java.Util;
 using Android.Content.Res;
 using Android.Util;
 using Android.Preferences;
-using Java.IO;
 using Android.Gms.Maps.Model;
 using Android.Locations;
 using System.Threading.Tasks;
 using Java.Net;
 using System.Globalization;
+using System.IO;
+using File = Java.IO.File;
 
 namespace NohandicapNative.Droid.Services
 {
@@ -92,6 +93,26 @@ namespace NohandicapNative.Droid.Services
             }
 
             return isInBackground;
+        }
+        public static string ReadStream(Context context,string file, string langCode, string extension)
+        {
+            string content = "";
+            AssetManager assets =context.Assets;
+
+            using (StreamReader sr = new StreamReader(assets.Open(file + langCode + extension)))
+            {
+                content = sr.ReadToEnd();
+            }
+
+            if (content == null || content.Trim().Length == 0)
+            {
+                using (StreamReader sr = new StreamReader(assets.Open(file + NohandicapLibrary.DEFAULT_LANG_CODE + extension)))
+                {
+                    content = sr.ReadToEnd();
+                }
+            }
+
+            return content;
         }
         public static Android.Graphics.Drawables.Drawable GetImage(Context context, string image)
         {

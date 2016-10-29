@@ -20,6 +20,7 @@ using NohandicapNative.Droid.Fragments;
 using Android.Provider;
 using System.Diagnostics;
 using Android.Graphics;
+using CameraPosition = Android.Gms.Maps.Model.CameraPosition;
 
 namespace NohandicapNative.Droid
 {

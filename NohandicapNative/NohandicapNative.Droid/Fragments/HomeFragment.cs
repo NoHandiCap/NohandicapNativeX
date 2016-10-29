@@ -16,6 +16,8 @@ using NohandicapNative.Droid.Fragments;
 using System.Threading;
 using static Android.Support.Design.Widget.AppBarLayout;
 using Android.Graphics.Drawables;
+using Android.Content;
+using NohandicapNative.Droid.Model;
 
 namespace NohandicapNative.Droid
 {
@@ -60,9 +62,9 @@ namespace NohandicapNative.Droid
             var askBtn1 = rootView.FindViewById<ImageButton>(Resource.Id.imageViewAsk);
             var askBtn2 = rootView.FindViewById<ImageButton>(Resource.Id.imageViewAsk3);
             var askBtn3 = rootView.FindViewById<ImageButton>(Resource.Id.imageViewAsk2);
-            askBtn1.Tag = mainCategoriesList[0].Name;
-            askBtn2.Tag = mainCategoriesList[1].Name;
-            askBtn3.Tag = mainCategoriesList[2].Name;
+            askBtn1.Tag = mainCategoriesList[0].Id;
+            askBtn2.Tag = mainCategoriesList[1].Id;
+            askBtn3.Tag = mainCategoriesList[2].Id;
             askBtn1.Click += AskBtn_Click;
             askBtn2.Click += AskBtn_Click;
             askBtn3.Click += AskBtn_Click;
@@ -150,12 +152,36 @@ namespace NohandicapNative.Droid
             additionalCategory.Adapter = buttonsAdapter;
             additionalCategory.ItemClick += SubCategory_ItemClick;
             //ThreadPool.QueueUserWorkItem(o => LoadCache());
-
+       
         }
         private void AskBtn_Click(object sender, EventArgs e)
         {
-            ShowPopup(((ImageButton)sender).Tag.ToString(), "Description");
-        }      
+            var btn = (ImageButton) sender;
+            var category = mainCategoriesList.FirstOrDefault(x => x.Id == (int)btn.Tag);
+            var description = Utils.ReadStream(MainActivity,"main_category_" + category.Id+"_", CurrentLang.ShortName,".txt");
+            HelpPopup helpPopup=new HelpPopup(MainActivity);
+            helpPopup.SetText(description);
+            helpPopup.Show(btn);
+        }
+
+      private void ShowDropDown(View view)
+      {
+            TextView text = new TextView(MainActivity);
+            text.Text = "Lol";
+            PopupWindow popupWindow = new PopupWindow(MainActivity.ApplicationContext);
+           
+            popupWindow.Focusable=true;
+          popupWindow.Width = 100;
+            popupWindow.Height=100;
+            popupWindow.ContentView =text;
+            popupWindow.SetBackgroundDrawable(new ColorDrawable(
+                   Color.White));
+            view.Measure(0, 0);
+           
+            popupWindow.ShowAsDropDown(view);
+        
+        }
+     
         private void ShowPopup(string title,string text)
         {
             var builder = new Android.Support.V7.App.AlertDialog.Builder(MainActivity);
