@@ -24,7 +24,7 @@ using CameraPosition = Android.Gms.Maps.Model.CameraPosition;
 
 namespace NohandicapNative.Droid
 {
-    public class GMapFragment : BaseFragment, GoogleMap.IInfoWindowAdapter, IOnMapReadyCallback, IOnCameraChangeListener
+    public class GMapFragment : BaseFragment, GoogleMap.IInfoWindowAdapter, IOnMapReadyCallback
     {     
 
         static readonly string TAG = "X:" + typeof(GMapFragment).Name;
@@ -37,7 +37,7 @@ namespace NohandicapNative.Droid
         public LatLngBounds LatLngBounds = null;
        
         static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1,1);
-        CameraPosition currentCameraPosition;
+
         bool isShownNoInternet = false;
 
         public GMapFragment(Boolean loadFromCache = true) : base(loadFromCache)
@@ -57,7 +57,7 @@ namespace NohandicapNative.Droid
             mapView = view.FindViewById<MapView>(Resource.Id.map);
             mapView.OnCreate(savedInstanceState);
             mapView.OnResume();
-
+         
             if (!NohandicapApplication.CheckIfGPSenabled())
                 ShowNoGPSEnabled();
             //else
@@ -84,6 +84,8 @@ namespace NohandicapNative.Droid
             }
             return view;
         }
+
+       
 
         /**
          * Function to show settings alert dialog
@@ -161,15 +163,14 @@ namespace NohandicapNative.Droid
                          IEnumerable<ProductMarkerModel> newProductsInBound;
                          if (IsInternetConnection)
                          {
-                             newProductsInBound = loadedProducts.Where(x => !ProductsInBounds.Contains(x));
+                             newProductsInBound = loadedProducts.Where(x => ProductsInBounds.All(y => x.Id != y.Id));
                          }
                          else
                          {
                              newProductsInBound = DbConnection.GetDataList<ProductMarkerModel>(x => !ProductsInBounds.Contains(x));
                          }
-                         ProductsInBounds.Clear();
                          LoadMarkerIntoMap(newProductsInBound);
-                         AddProductsToCache(loadedProducts);
+                        // AddProductsToCache(loadedProducts);
                      }
                      catch (Exception e)
                      {
@@ -190,7 +191,7 @@ namespace NohandicapNative.Droid
                 var lat = double.Parse(product.Lat, CultureInfo.InvariantCulture);
                 var lng = double.Parse(product.Lng, CultureInfo.InvariantCulture);
                 Log.Debug(TAG, "CurrentCategories count "+ currentCategories.Count);
-                var catMarker = currentCategories.FirstOrDefault(x => product.Categories.Any(y => y == x.Id)).Marker;
+                var catMarker = currentCategories.FirstOrDefault(x => product.Categories.Any(y => y == x.Id))?.Marker;
                 Log.Info(TAG, product.Id + " : " + product.Name + " : " + catMarker);
                 string catPinUrl = Utils.RESOURCE_PATH+ catMarker;   // ContentResolver.SchemeAndroidResource + "://" + Activity.PackageName + "/drawable/" + catMarker;
                 string customPinUrl = product.ProdimgPin;
@@ -202,8 +203,8 @@ namespace NohandicapNative.Droid
                 options.SetSnippet(catMarker);
                  
                 Log.Debug(TAG, "Set Marker Options.");
-
-                Activity.RunOnUiThread(() =>
+           
+                   Activity.RunOnUiThread(() =>
                 {
                     var marker = map.AddMarker(options);
                     var picassoMarker = new PicassoMarker(marker);
@@ -213,14 +214,13 @@ namespace NohandicapNative.Droid
                         customPinUrl = catPinUrl;
                     }
 
-                    Picasso.With(Activity).Load(customPinUrl).Resize(32,32).Into(picassoMarker);
-
-                    
-                    ProductsInBounds.Add(product);
+                    Picasso.With(Activity).Load(customPinUrl).Resize(0,32).Into(picassoMarker);
+                  
                     Log.Debug(TAG, "Added Marker ");
 
                 });
-            }
+                   ProductsInBounds.Add(product);
+               }
             });
         }
         public void SetData(List<CategoryModel> currentCategories)
@@ -265,14 +265,14 @@ namespace NohandicapNative.Droid
             map.UiSettings.MapToolbarEnabled = true;
             map.UiSettings.ZoomControlsEnabled = true;
             map.SetInfoWindowAdapter(this);
-
+            map.CameraIdle += Map_CameraIdle;
             map.InfoWindowClick += (s, e) => {
                 var product = FindProductFromMarker((Marker)e.Marker);
                 var activity = new Intent(Activity, typeof(DetailActivity));
                activity.PutExtra(Utils.PRODUCT_ID, product.Id);
                Activity.StartActivity(activity);
             };
-
+          
             CameraPosition.Builder builder = CameraPosition.InvokeBuilder();                     
             if (MainActivity.CurrentLocation != null)
             {
@@ -284,12 +284,39 @@ namespace NohandicapNative.Droid
             else
             {
                 builder.Target(new LatLng(48.2274656, 16.4067023)).Zoom(10); //Vienna
-            }               
-            map.SetOnCameraChangeListener(this);
+            }
             CameraPosition cameraPosition = builder.Build();
             CameraUpdate cameraUpdate = CameraUpdateFactory.NewCameraPosition(cameraPosition);
             map.MoveCamera(cameraUpdate);     
         }
+
+        private async void Map_CameraIdle(object sender, EventArgs arg)
+        {
+            if (!IsInternetConnection && !isShownNoInternet) //if not internet then dont ask server and waste time for timeout, display toast information instead
+            {
+                Toast.MakeText(this.Activity, Resources.GetString(Resource.String.server_not_responding), ToastLength.Short).Show();
+                isShownNoInternet = true;
+            }
+
+            //Make LoadData in queue 
+            await semaphoreSlim.WaitAsync();
+            try
+            {
+                await LoadData();
+            }
+            catch (Exception e)
+            {
+                Log.Error(TAG, "OnCameraChanged: " + e.Message);
+            }
+            finally
+            {
+                //When the task is ready, release the semaphore. It is vital to ALWAYS release the semaphore when we are ready, or else we will end up with a Semaphore that is forever locked.
+                //This is why it is important to do the Release within a try...finally clause; program execution may crash or take a different path, this way you are guaranteed execution
+                semaphoreSlim.Release();
+            }
+        }
+
+
 
         #region InfoWindowAdapter
         public View GetInfoContents(Marker marker)
@@ -351,7 +378,7 @@ namespace NohandicapNative.Droid
         private ProductMarkerModel FindProductFromMarker (Marker marker)
         {
             ProductMarkerModel product;
-            product = CurrentProductsList.Where(x => x.Id.ToString() == marker.Title).FirstOrDefault();
+            product = ProductsInBounds.FirstOrDefault(x => x.Id.ToString() == marker.Title);
 
             if (product == null)
                 product = DbConnection.GetDataList<ProductMarkerModel>(x => x.Id.ToString() == marker.Title).FirstOrDefault();
@@ -379,10 +406,8 @@ namespace NohandicapNative.Droid
                     break;
                 case Resource.Id.select_all:    
                     DbConnection.UnSelectAllCategories();                  
-                    SetData(DbConnection.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.MainCatGroup));                    
+                    SetData(DbConnection.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.SubCatGroup));                    
                     MainActivity.SupportActionBar.Title = "Map";
-                    currentCategories = DbConnection.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.SubCatGroup);
-                    OnCameraChange(currentCameraPosition);
                     break;
             }
             return true;
@@ -394,32 +419,7 @@ namespace NohandicapNative.Droid
         }
 
         #endregion
-        public async void OnCameraChange(CameraPosition position)
-        {
-            currentCameraPosition = position;
-            if (!IsInternetConnection&&!isShownNoInternet) //if not internet then dont ask server and waste time for timeout, display toast information instead
-            {
-                Toast.MakeText(this.Activity, Resources.GetString(Resource.String.server_not_responding), ToastLength.Short).Show();
-                isShownNoInternet = true;
-            }
-
-            //Make LoadData in queue 
-            await semaphoreSlim.WaitAsync();
-                try
-                {                   
-                    await LoadData();                  
-                }
-                catch (Exception e)
-                {
-                    Log.Error(TAG, "OnCameraChanged: "+e.Message) ;
-                }
-                finally
-                {
-                    //When the task is ready, release the semaphore. It is vital to ALWAYS release the semaphore when we are ready, or else we will end up with a Semaphore that is forever locked.
-                    //This is why it is important to do the Release within a try...finally clause; program execution may crash or take a different path, this way you are guaranteed execution
-                    semaphoreSlim.Release();
-                }
-        }
+       
     }
     
 }

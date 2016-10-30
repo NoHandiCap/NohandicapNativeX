@@ -34,7 +34,7 @@ namespace NohandicapNative.Droid.Model
 
         public void OnBitmapLoaded(Bitmap p0, Picasso.LoadedFrom p1)
         {
-            marker.SetIcon(BitmapDescriptorFactory.FromBitmap(Bitmap.CreateScaledBitmap(p0,32,32,false)));
+            marker.SetIcon(BitmapDescriptorFactory.FromBitmap(p0));
             marker.Visible = true;
         }
 

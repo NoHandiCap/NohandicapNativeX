@@ -83,7 +83,7 @@ namespace NohandicapNative.Droid
                 mainCat[i].SetTypeface(null, TypefaceStyle.Normal);
                 mainCat[i].SetBackgroundColor(Color.White);
                 mainLayout[i].Selected = false;
-                mainLayout[i].Click += (s, e) =>
+                mainLayout[i].Click +=async(s, e) =>
                 {
                     var layout = (LinearLayout)s;
                     if (!layout.Selected)
@@ -108,7 +108,7 @@ namespace NohandicapNative.Droid
                             }
                         }
                     }
-                   MainActivity.MapPage.LoadData();
+                await   MainActivity.MapPage.LoadData();
                 };
 
             }

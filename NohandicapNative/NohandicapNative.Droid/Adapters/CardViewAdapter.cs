@@ -13,6 +13,8 @@ using NohandicapNative.Droid.Model;
 using Android.Content;
 using System.Threading;
 using System.Collections.ObjectModel;
+using System.Globalization;
+using Android.Gms.Maps.Model;
 using NohandicapNative.Droid.Fragments;
 
 namespace NohandicapNative.Droid.Adapters
@@ -21,7 +23,7 @@ namespace NohandicapNative.Droid.Adapters
     {
         string TAG = "X: " + typeof(CardView).Name;
         private readonly BaseFragment baseFragment;
-        private readonly ObservableCollection<ProductMarkerModel> products;
+        private readonly List<ProductMarkerModel> products;
         List<CategoryModel> selectedCategory;
         List<CategoryModel> categories;
         int PageNumber =1;
@@ -34,11 +36,17 @@ namespace NohandicapNative.Droid.Adapters
             baseFragment = context;    
             selectedCategory = conn.GetSubSelectedCategory();               
             categories = conn.GetDataList<CategoryModel>();
-            products = new ObservableCollection<ProductMarkerModel>();
+            products = new List<ProductMarkerModel>();
             this.isFav = isFav;
             if (!isFav)
             {
-                products =baseFragment.MainActivity.MapPage.ProductsInBounds;
+                var LatLngBounds = baseFragment.MainActivity.MapPage.LatLngBounds;
+              var  inBounds =baseFragment.MainActivity.MapPage.ProductsInBounds
+                    .Where(x=>LatLngBounds.Contains(new LatLng(
+                        double.Parse(x.Lat, CultureInfo.InvariantCulture), 
+                        double.Parse(x.Lng, CultureInfo.InvariantCulture))
+                        ));
+               products=new List<ProductMarkerModel>(Utils.SortProductsByDistance(inBounds));
             }            
             baseFragment.ShowSpinner(products.Count == 0);           
             StartLoad();

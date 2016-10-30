@@ -278,7 +278,7 @@ namespace NohandicapNative.Droid
             Finish();
         }
 
-        public void OnClick(View v)
+        public async void OnClick(View v)
         {
             if (user != null)
             {
@@ -290,7 +290,7 @@ namespace NohandicapNative.Droid
                     user.Favorites.Add(product.ID);
                     conn.InsertUpdateProduct(user);
                     var url = String.Format(NohandicapLibrary.LINK_SAVEFAV, user.Id, product.ID);
-                    RestApiService.GetDataFromUrl<UserModel>(url, readBack: false);
+               await     RestApiService.GetDataFromUrl<UserModel>(url, readBack: false);
                 }
                 else
                 {
@@ -300,7 +300,7 @@ namespace NohandicapNative.Droid
                     conn.InsertUpdateProduct(user);
                     NohandicapApplication.MainActivity.Favorites.ReloadData();
                     var url = String.Format(NohandicapLibrary.LINK_DELFAV, user.Id, product.ID);
-                    RestApiService.GetDataFromUrl<UserModel>(url, readBack: false);
+                  await RestApiService.GetDataFromUrl<UserModel>(url, readBack: false);
                 }
                 
             }
