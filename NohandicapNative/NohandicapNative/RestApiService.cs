@@ -17,7 +17,6 @@ namespace NohandicapNative
     {
         public static async Task<string> GetStringContent(string dataUri, string rootName = "result")
         {
-
             var url = dataUri;
             var httpClient = new HttpClient() ;
             var cts = new CancellationTokenSource();
@@ -73,88 +72,6 @@ namespace NohandicapNative
                 return default(T);
             }
         }   
-
-        public static async Task<IEnumerable<ProductMarkerModel>> GetMarkers(double latLow, double lngLow, double latHight, double lngHight, CategoryModel mainCat, List<CategoryModel> subCategories,int count=50,int page=1)
-        {
-            var mainCategory = NohandicapLibrary.DEFAULT_MAIN_CATEGORY; //default main category in case of unselected maincategory
-
-            if (mainCat != null && mainCategory == 0)
-                mainCategory = mainCat.Id;
-            
-            string boundBox = latLow.ToString(CultureInfo.InvariantCulture) + "," + lngLow.ToString(CultureInfo.InvariantCulture) + "," + latHight.ToString(CultureInfo.InvariantCulture) + "," + lngHight.ToString(CultureInfo.InvariantCulture); //invariantculture to have double with "." and not with ","
- 
-            string url = string.Format(NohandicapLibrary.LINK_GET_MARKERS, mainCategory, count, boundBox, PrepareSubCategoryString(subCategories),page);
-
-            var products=await GetDataFromUrl<IEnumerable<ProductMarkerModel>>(url);
-            if (products == null)
-            {
-                return new List<ProductMarkerModel>();
-            }
-            return products;
-        }
-
-        public static async Task<IEnumerable<ProductMarkerModel>> GetMarkers(double latLow, double lngLow, double latHight, double lngHight, int langId, double gpslat, double gpslon, CategoryModel mainCat, List<CategoryModel> subCategories, int count = 50, int page = 1)
-        {
-            var mainCategory = NohandicapLibrary.DEFAULT_MAIN_CATEGORY; //default main category in case of unselected maincategory
-
-            if (mainCat != null && mainCategory == 0)
-                mainCategory = mainCat.Id;
-
-            string boundBox = "";
-
-            if (latLow != 0.00)
-                boundBox = latLow.ToString(CultureInfo.InvariantCulture) + "," + lngLow.ToString(CultureInfo.InvariantCulture) + "," + latHight.ToString(CultureInfo.InvariantCulture) + "," + lngHight.ToString(CultureInfo.InvariantCulture); //invariantculture to have double with "." and not with ","
-
-            string url = string.Format(NohandicapLibrary.LINK_GET_MARKERS_GPS, mainCategory, count, langId, gpslat.ToString(CultureInfo.InvariantCulture), gpslon.ToString(CultureInfo.InvariantCulture), boundBox, PrepareSubCategoryString(subCategories), page);
-
-            var products = await GetDataFromUrl<IEnumerable<ProductMarkerModel>>(url);
-            if (products == null)
-            {
-                return new List<ProductMarkerModel>();
-            }
-            return products;
-        }
-
-        //TODO: this method i would delete and use this above, just fullfilling with available parameters, there is gps position then put position parameters, there is boundingbox then put bbox
-        public static async Task<IEnumerable<ProductMarkerModel>> GetMarkers(CategoryModel mainCat, List<CategoryModel> subCategories, int langId, string lat, string lng, int page, int count = 50)
-        {
-            var mainCategory = NohandicapLibrary.DEFAULT_MAIN_CATEGORY; //default main category in case of unselected maincategory
-
-            if (mainCat != null && mainCategory == 0)
-                mainCategory = mainCat.Id;
-
-            string url = string.Format(NohandicapLibrary.LINK_GET_PRODUCTS, mainCategory, PrepareSubCategoryString(subCategories), langId, lat, lng, count, page);
-
-            var products = await GetDataFromUrl<IEnumerable<ProductMarkerModel>>(url);
-            if (products == null)
-            {
-                return new List<ProductMarkerModel>();
-            }
-            return products;
-        }
-
-        private static String PrepareSubCategoryString(List<CategoryModel> subCategories)
-        {
-            string subCatList = "";
-
-            // checking against null and empty (and if then use default subcategory)
-            if (subCategories == null || subCategories.Count == 0)
-            {
-                subCategories.Add(new CategoryModel()
-                {
-                    Id = NohandicapLibrary.DEFAULT_SUB_CATEGORY,
-                });
-            }
-
-            //join all subcategories with comma
-            foreach (var item in subCategories)
-                subCatList += item.Id + ",";
-
-            //take the last comma
-            subCatList = subCatList.Substring(0, subCatList.Length - 1);
-
-            return subCatList;
-        }
 
         public static async Task<List<ProductMarkerModel>> GetFavorites(string userId, int page, int count = 50)
         {

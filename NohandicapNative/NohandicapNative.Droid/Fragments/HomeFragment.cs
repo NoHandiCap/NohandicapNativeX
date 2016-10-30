@@ -300,8 +300,8 @@ namespace NohandicapNative.Droid
                     lat = position.Latitude.ToString();
                     lng = position.Longitude.ToString();
                 }
-                var coll = await RestApiService.GetMarkers(NohandicapApplication.SelectedMainCategory, selectedSubCategory, NohandicapApplication.CurrentLang.Id, lat, lng, 1);
-                AddProductsToCache(coll);
+               // var coll = await RestApiService.GetMarkers(NohandicapApplication.SelectedMainCategory, selectedSubCategory, NohandicapApplication.CurrentLang.Id, lat, lng, 1);
+               // AddProductsToCache(coll);
 
             }
             catch (System.Exception e)

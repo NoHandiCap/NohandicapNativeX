@@ -13,6 +13,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)CustomRadioButton.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ImageJsonModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LanguageModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MarkerUrlBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NohandiLibrary.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProductMarkerModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProductDetailModel.cs" />

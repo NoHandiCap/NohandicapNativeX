@@ -35,7 +35,7 @@ namespace NohandicapNative.Droid
         List<CategoryModel> currentCategories;
         public  ObservableCollection<ProductMarkerModel> ProductsInBounds;
         public LatLngBounds LatLngBounds = null;
-       
+        private MarkerUrlBuilder markerUrlBuilder;
         static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1,1);
 
         bool isShownNoInternet = false;
@@ -43,6 +43,8 @@ namespace NohandicapNative.Droid
         public GMapFragment(Boolean loadFromCache = true) : base(loadFromCache)
         {
             ProductsInBounds = new ObservableCollection<ProductMarkerModel>();
+            markerUrlBuilder=new MarkerUrlBuilder();
+  
         }
 
 
@@ -145,21 +147,22 @@ namespace NohandicapNative.Droid
                          Log.Debug(TAG, "Start Load ");
 
                          IEnumerable<ProductMarkerModel> loadedProducts = null;
-
                          if (MainActivity.CurrentLocation != null)
                          {
-                             loadedProducts = await RestApiService.GetMarkers(LatLngBounds.Southwest.Latitude, LatLngBounds.Southwest.Longitude,
-                             LatLngBounds.Northeast.Latitude, LatLngBounds.Northeast.Longitude, CurrentLang.Id, MainActivity.CurrentLocation.Latitude, MainActivity.CurrentLocation.Longitude, SelectedMainCategory, currentCategories);
+                             markerUrlBuilder.SetBounds(LatLngBounds.Southwest.Latitude, LatLngBounds.Southwest.Longitude,
+                             LatLngBounds.Northeast.Latitude, LatLngBounds.Northeast.Longitude);
+
+                             markerUrlBuilder.SetMyLocation(MainActivity.CurrentLocation.Latitude, MainActivity.CurrentLocation.Longitude);
+                             loadedProducts = await markerUrlBuilder.LoadDataAsync();
                          }
                          else
                          {
-                             loadedProducts = await RestApiService.GetMarkers(LatLngBounds.Southwest.Latitude, LatLngBounds.Southwest.Longitude,
-                             LatLngBounds.Northeast.Latitude, LatLngBounds.Northeast.Longitude,
-                             SelectedMainCategory, currentCategories);
+                             markerUrlBuilder.SetBounds(LatLngBounds.Southwest.Latitude, LatLngBounds.Southwest.Longitude,
+                           LatLngBounds.Northeast.Latitude, LatLngBounds.Northeast.Longitude);
+
+                             loadedProducts =await markerUrlBuilder.LoadDataAsync();
                          }
-
-                         //       Log.Debug(TAG, "LoadedProducts " + loadedProducts.Count());
-
+                        
                          IEnumerable<ProductMarkerModel> newProductsInBound;
                          if (IsInternetConnection)
                          {
@@ -239,6 +242,7 @@ namespace NohandicapNative.Droid
             {
                 this.currentCategories = currentCategories;
             }
+            markerUrlBuilder.SubCategoriesList = currentCategories.Select(x => x.Id).ToList();
         }
        
         public override void OnResume()
@@ -251,7 +255,10 @@ namespace NohandicapNative.Droid
         {
             base.OnHiddenChanged(hidden);
             if (!hidden)
-            {              
+            {
+                markerUrlBuilder.LanguageId = CurrentLang.Id;
+                markerUrlBuilder.MainCategoryId = SelectedMainCategory.Id;
+                markerUrlBuilder.SubCategoriesList = currentCategories.Select(x => x.Id).ToList();
                 await LoadData();           
             }
             isShownNoInternet = false;

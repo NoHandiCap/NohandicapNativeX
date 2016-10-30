@@ -105,8 +105,8 @@ namespace NohandicapNative.Droid.Fragments
                     lng = position.Longitude.ToString(CultureInfo.InvariantCulture);
                 }
 
-                var coll = await RestApiService.GetMarkers(NohandicapApplication.SelectedMainCategory, selectedSubCategory, NohandicapApplication.CurrentLang.Id, lat, lng, 1);
-                AddProductsToCache(coll);
+              //  var coll = await RestApiService.GetMarkers(NohandicapApplication.SelectedMainCategory, selectedSubCategory, NohandicapApplication.CurrentLang.Id, lat, lng, 1);
+               // AddProductsToCache(coll);
 
             }
             catch (System.Exception e)
