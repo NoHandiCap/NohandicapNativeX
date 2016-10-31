@@ -58,7 +58,7 @@ namespace NohandicapNative.Droid
             }
             set
             {
-                Utils.WriteToSettings(MainActivity, Utils.LANG_ID_TAG, value.ToString());
+                Utils.WriteToSettings(MainActivity, Utils.LANG_ID_TAG, value.Id.ToString());
                 Utils.WriteToSettings(MainActivity, Utils.LANG_SHORT, value.ShortName);
             }
         }
