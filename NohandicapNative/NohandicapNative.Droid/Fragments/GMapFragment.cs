@@ -28,22 +28,22 @@ namespace NohandicapNative.Droid
     {     
 
         static readonly string TAG = "X:" + typeof(GMapFragment).Name;
-       
-        LayoutInflater inflater;   
-        GoogleMap map;            
-        MapView mapView;
-        List<CategoryModel> currentCategories;
+        protected int mDpi = 0;
+        LayoutInflater _inflater;   
+        GoogleMap _map;            
+        MapView _mapView;
+        List<CategoryModel> _currentCategories;
         public  ObservableCollection<ProductMarkerModel> ProductsInBounds;
         public LatLngBounds LatLngBounds = null;
-        private MarkerUrlBuilder markerUrlBuilder;
-        static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1,1);
+        MarkerUrlBuilder _markerUrlBuilder;
+        static readonly SemaphoreSlim SemaphoreSlim = new SemaphoreSlim(1,1);
 
         bool isShownNoInternet = false;
 
         public GMapFragment(Boolean loadFromCache = true) : base(loadFromCache)
         {
             ProductsInBounds = new ObservableCollection<ProductMarkerModel>();
-            markerUrlBuilder=new MarkerUrlBuilder();
+            _markerUrlBuilder=new MarkerUrlBuilder();
   
         }
 
@@ -51,21 +51,24 @@ namespace NohandicapNative.Droid
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            this.inflater = inflater;          
+            this._inflater = inflater;          
             var view = inflater.Inflate(Resource.Layout.MapPage, container, false);
-            view.SetBackgroundColor(MainActivity.Resources.GetColor(Resource.Color.backgroundColor));        
-            
+            view.SetBackgroundColor(MainActivity.Resources.GetColor(Resource.Color.backgroundColor));
+            DisplayMetrics metrics = new DisplayMetrics();
+            Activity.WindowManager.DefaultDisplay.GetMetrics(metrics);
+            mDpi = (int)metrics.Density<=2 ? 1:2;
+           
             HasOptionsMenu = true;
-            mapView = view.FindViewById<MapView>(Resource.Id.map);
-            mapView.OnCreate(savedInstanceState);
-            mapView.OnResume();
+            _mapView = view.FindViewById<MapView>(Resource.Id.map);
+            _mapView.OnCreate(savedInstanceState);
+            _mapView.OnResume();
          
             if (!NohandicapApplication.CheckIfGPSenabled())
                 ShowNoGPSEnabled();
             //else
                 //Toast.MakeText(this.Context, "GPS enabled", ToastLength.Short).Show(); //on some phones it shows every few seconds: Wiko i Samsumg Galaxy 
 
-            mapView.GetMapAsync(this); //asynchronic loading map
+            _mapView.GetMapAsync(this); //asynchronic loading _map
 
             try
             {                                         
@@ -117,13 +120,13 @@ namespace NohandicapNative.Droid
 
         public async Task<bool> LoadData()
         {
-            if (map != null)
+            if (_map != null)
             {
                 await Task.Run(() =>
                 {
                     Activity.RunOnUiThread(() =>
                     {
-                        LatLngBounds = map.Projection.VisibleRegion.LatLngBounds;
+                        LatLngBounds = _map.Projection.VisibleRegion.LatLngBounds;
 
                     });
                 }).ContinueWith(async t =>
@@ -132,7 +135,7 @@ namespace NohandicapNative.Droid
                      {
                          if (LatLngBounds == null)
                          {
-                             await semaphoreSlim.WaitAsync();
+                             await SemaphoreSlim.WaitAsync();
                              try
                              {
                                  await LoadData();
@@ -140,7 +143,7 @@ namespace NohandicapNative.Droid
                              }
                              finally
                              {
-                                 semaphoreSlim.Release();
+                                 SemaphoreSlim.Release();
                              }
                              return;
                          }
@@ -149,18 +152,18 @@ namespace NohandicapNative.Droid
                          IEnumerable<ProductMarkerModel> loadedProducts = null;
                          if (MainActivity.CurrentLocation != null)
                          {
-                             markerUrlBuilder.SetBounds(LatLngBounds.Southwest.Latitude, LatLngBounds.Southwest.Longitude,
+                             _markerUrlBuilder.SetBounds(LatLngBounds.Southwest.Latitude, LatLngBounds.Southwest.Longitude,
                              LatLngBounds.Northeast.Latitude, LatLngBounds.Northeast.Longitude);
 
-                             markerUrlBuilder.SetMyLocation(MainActivity.CurrentLocation.Latitude, MainActivity.CurrentLocation.Longitude);
-                             loadedProducts = await markerUrlBuilder.LoadDataAsync();
+                             _markerUrlBuilder.SetMyLocation(MainActivity.CurrentLocation.Latitude, MainActivity.CurrentLocation.Longitude);
+                             loadedProducts = await _markerUrlBuilder.LoadDataAsync();
                          }
                          else
                          {
-                             markerUrlBuilder.SetBounds(LatLngBounds.Southwest.Latitude, LatLngBounds.Southwest.Longitude,
+                             _markerUrlBuilder.SetBounds(LatLngBounds.Southwest.Latitude, LatLngBounds.Southwest.Longitude,
                            LatLngBounds.Northeast.Latitude, LatLngBounds.Northeast.Longitude);
 
-                             loadedProducts =await markerUrlBuilder.LoadDataAsync();
+                             loadedProducts =await _markerUrlBuilder.LoadDataAsync();
                          }
                         
                          IEnumerable<ProductMarkerModel> newProductsInBound;
@@ -193,8 +196,8 @@ namespace NohandicapNative.Droid
             {
                 var lat = double.Parse(product.Lat, CultureInfo.InvariantCulture);
                 var lng = double.Parse(product.Lng, CultureInfo.InvariantCulture);
-                Log.Debug(TAG, "CurrentCategories count "+ currentCategories.Count);
-                var catMarker = currentCategories.FirstOrDefault(x => product.Categories.Any(y => y == x.Id))?.Marker;
+                Log.Debug(TAG, "CurrentCategories count "+ _currentCategories.Count);
+                var catMarker = _currentCategories.FirstOrDefault(x => product.Categories.Any(y => y == x.Id))?.Marker;
                 Log.Info(TAG, product.Id + " : " + product.Name + " : " + catMarker);
                 string catPinUrl = Utils.RESOURCE_PATH+ catMarker;   // ContentResolver.SchemeAndroidResource + "://" + Activity.PackageName + "/drawable/" + catMarker;
                 string customPinUrl = product.ProdimgPin;
@@ -209,7 +212,7 @@ namespace NohandicapNative.Droid
            
                    Activity.RunOnUiThread(() =>
                 {
-                    var marker = map.AddMarker(options);
+                    var marker = _map.AddMarker(options);
                     var picassoMarker = new PicassoMarker(marker);
 
                     if (string.IsNullOrEmpty(customPinUrl))
@@ -217,7 +220,7 @@ namespace NohandicapNative.Droid
                         customPinUrl = catPinUrl;
                     }
 
-                    Picasso.With(Activity).Load(customPinUrl).Resize(0,32).Into(picassoMarker);
+                    Picasso.With(Activity).Load(customPinUrl).Resize(0,32*mDpi).Into(picassoMarker);
                   
                     Log.Debug(TAG, "Added Marker ");
 
@@ -229,26 +232,26 @@ namespace NohandicapNative.Droid
         public void SetData(List<CategoryModel> currentCategories)
         {
            //Reload markers if catecories changed
-            if (map != null&&!this.currentCategories.Equals(currentCategories))
+            if (_map != null&&!this._currentCategories.Equals(currentCategories))
             {
-                map.Clear();              
+                _map.Clear();              
                 ProductsInBounds.Clear();                      
             }   
             if(currentCategories.Count==0)
             {
-                this.currentCategories = DbConnection.GetDataList<CategoryModel>(x => x.IsSelected && x.Group == NohandicapLibrary.SubCatGroup);
+                this._currentCategories = DbConnection.GetDataList<CategoryModel>(x => x.IsSelected && x.Group == NohandicapLibrary.SubCatGroup);
             }
             else
             {
-                this.currentCategories = currentCategories;
+                this._currentCategories = currentCategories;
             }
-            markerUrlBuilder.SubCategoriesList = currentCategories.Select(x => x.Id).ToList();
+            _markerUrlBuilder.SubCategoriesList = currentCategories.Select(x => x.Id).ToList();
         }
        
         public override void OnResume()
         {
             base.OnResume();
-           mapView.OnResume();
+           _mapView.OnResume();
         }            
       
         public async override void OnHiddenChanged(bool hidden)
@@ -256,9 +259,9 @@ namespace NohandicapNative.Droid
             base.OnHiddenChanged(hidden);
             if (!hidden)
             {
-                markerUrlBuilder.LanguageId = CurrentLang.Id;
-                markerUrlBuilder.MainCategoryId = SelectedMainCategory.Id;
-                markerUrlBuilder.SubCategoriesList = currentCategories.Select(x => x.Id).ToList();
+                _markerUrlBuilder.LanguageId = CurrentLang.Id;
+                _markerUrlBuilder.MainCategoryId = SelectedMainCategory.Id;
+                _markerUrlBuilder.SubCategoriesList = _currentCategories.Select(x => x.Id).ToList();
                 await LoadData();           
             }
             isShownNoInternet = false;
@@ -266,14 +269,14 @@ namespace NohandicapNative.Droid
 
         public async void OnMapReady(GoogleMap googleMap)
         {
-            map = googleMap;
-            map.UiSettings.MyLocationButtonEnabled = true;
-            map.MyLocationEnabled = true;
-            map.UiSettings.MapToolbarEnabled = true;
-            map.UiSettings.ZoomControlsEnabled = true;
-            map.SetInfoWindowAdapter(this);
-            map.CameraIdle += Map_CameraIdle;
-            map.InfoWindowClick += (s, e) => {
+            _map = googleMap;
+            _map.UiSettings.MyLocationButtonEnabled = true;
+            _map.MyLocationEnabled = true;
+            _map.UiSettings.MapToolbarEnabled = true;
+            _map.UiSettings.ZoomControlsEnabled = true;
+            _map.SetInfoWindowAdapter(this);
+            _map.CameraIdle += Map_CameraIdle;
+            _map.InfoWindowClick += (s, e) => {
                 var product = FindProductFromMarker((Marker)e.Marker);
                 var activity = new Intent(Activity, typeof(DetailActivity));
                activity.PutExtra(Utils.PRODUCT_ID, product.Id);
@@ -294,7 +297,7 @@ namespace NohandicapNative.Droid
             }
             CameraPosition cameraPosition = builder.Build();
             CameraUpdate cameraUpdate = CameraUpdateFactory.NewCameraPosition(cameraPosition);
-            map.MoveCamera(cameraUpdate);     
+            _map.MoveCamera(cameraUpdate);     
         }
 
         private async void Map_CameraIdle(object sender, EventArgs arg)
@@ -306,7 +309,7 @@ namespace NohandicapNative.Droid
             }
 
             //Make LoadData in queue 
-            await semaphoreSlim.WaitAsync();
+            await SemaphoreSlim.WaitAsync();
             try
             {
                 await LoadData();
@@ -319,7 +322,7 @@ namespace NohandicapNative.Droid
             {
                 //When the task is ready, release the semaphore. It is vital to ALWAYS release the semaphore when we are ready, or else we will end up with a Semaphore that is forever locked.
                 //This is why it is important to do the Release within a try...finally clause; program execution may crash or take a different path, this way you are guaranteed execution
-                semaphoreSlim.Release();
+                SemaphoreSlim.Release();
             }
         }
 
@@ -329,7 +332,7 @@ namespace NohandicapNative.Droid
         public View GetInfoContents(Marker marker)
         {
             Log.Debug(TAG, "Get Infowindows");
-            var info = inflater.Inflate(Resource.Layout.infoWindow, null);
+            var info = _inflater.Inflate(Resource.Layout.infoWindow, null);
             var product = FindProductFromMarker(marker);
             if (product == null) return null;
             Log.Debug(TAG, "Product id"+product.Id);
@@ -337,7 +340,7 @@ namespace NohandicapNative.Droid
             var imageView = info.FindViewById<ImageView>(Resource.Id.info_mainImageView);
             var title = info.FindViewById<TextView>(Resource.Id.info_titleTextView);
             var adress = info.FindViewById<TextView>(Resource.Id.info_adressTextView);
-            var  catImage = currentCategories.FirstOrDefault(x => product.Categories.Any(y => y == x.Id));
+            var  catImage = _currentCategories.FirstOrDefault(x => product.Categories.Any(y => y == x.Id));
             try
             {
                 string tooltipProdImg = product.ProdImg;
