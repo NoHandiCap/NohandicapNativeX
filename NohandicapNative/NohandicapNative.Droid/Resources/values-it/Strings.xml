@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">NoHandicap</string>
+  <string name="accept">Accettare</string>
+  <string name="all_cat">Tutte le categorie</string>
+  <string name="already_login">sei già un membro? Accesso</string>
+  <string name="authentication">Autenticazione ...</string>
+  <string name="bookingcom">Prenotazione</string>
+  <string name="categories">Categorie</string>
+  <string name="contact">contatto</string>
+  <string name="continue_text">proseguire</string>
+  <string name="create_account">Crea un account</string>
+  <string name="creating_account">Creazione account ...</string>
+  <string name="current_language_short">it</string>
+  <string name="demo">dimostrazione</string>
+  <string name="description">Descrizione</string>
+  <string name="dialog_gps_message">GPS non è abilitato. Vuoi andare al menu impostazioni?</string>
+  <string name="dialog_gps_title">impostazioni GPS</string>
+  <string name="dialog_gps_title_negative">Annulla</string>
+  <string name="dialog_gps_title_positive">impostazioni</string>
+  <string name="distance">Distanza:</string>
+  <string name="email">E-mail</string>
+  <string name="error">Errore</string>
+  <string name="error_char">almeno 3 caratteri</string>
+  <string name="error_login">Accesso fallito</string>
+  <string name="error_password_char">tra 4 e 10 caratteri alfanumerici</string>
+  <string name="error_password_equal">Le password non sono uguali</string>
+  <string name="error_valid_email">Inserire un indirizzo email valido</string>
+  <string name="error_valid_name">inserire un nome</string>
+  <string name="error_valid_phone">inserire un telefono valido</string>
+  <string name="error_valid_sex">Scegliere un genere</string>
+  <string name="home_page">Pagina</string>
+  <string name="information">INFORMAZIONI</string>
+  <string name="label">Etichetta</string>
+  <string name="lang_prompt">Scegli una lingua:</string>
+  <string name="large_text">Testo grande</string>
+  <string name="last_update">Ultimo aggiornamento:</string>
+  <string name="lastname">Cognome</string>
+  <string name="live_reload">LiveReload funziona con dispositivi iOS fuori dalla scatola se si aggiunge un tag script corretto (non ci sono estensioni del browser su dispositivi mobili). Quando il sito è in esecuzione sul computer locale (cioè sullo stesso quello che corre LiveReload app), il tag script di default va bene.</string>
+  <string name="location">LUOGO</string>
+  <string name="load_data">Caricamento dei dati dal server ...</string>
+  <string name="login" translatable="false">Accesso</string>
+  <string name="login_facebook">Collegare</string>
+  <string name="maennlich">Maschio</string>
+  <string name="main_cat1">invalidità</string>
+  <string name="main_cat2">persone parzialmente disabili</string>
+  <string name="main_cat3">Totale persone disabili</string>
+  <string name="medium_text">Media Testo</string>
+  <string name="name">Nome</string>
+  <string name="next">Il prossimo</string>
+  <string name="no_favorites">Non hai ancora aggiunto alcuna preferenza!</string>
+  <string name="open_hours">Orari di apertura</string>
+  <string name="password">parola d\'ordine</string>
+  <string name="phone">Telefono</string>
+  <string name="please_login">Accedete, per favore</string>
+  <string name="server_not_responding">Il server non risponde. Probabilmente senza connessione a internet.</string>
+  <string name="settings">impostazioni</string>
+  <string name="sign_up">Registrazione</string>
+  <string name="sync">sincronizzato</string>
+  <string name="synchronize">Sincronizzare</string>
+  <string name="try_text">Provare</string>
+  <string name="weiblich">Femmina</string>
+  <string-array name="lang_array">
+    <item>German</item>
+    <item>English</item>
+    <item>Itlaly</item>
+    <item>French</item>
+  </string-array>
+  <string-array name="lang_short_array">
+    <item>de</item>
+    <item>en</item>
+    <item>it</item>
+    <item>fr</item>
+  </string-array>
+  <string-array name="main_category_array">
+    <item>@string/main_cat1</item>
+    <item>@string/main_cat2</item>
+    <item>@string/main_cat3</item>
+  </string-array>
+  <string-array name="additional_category_array">
+    <item>Arts&amp;Cultura</item>
+    <item>Musei</item>
+    <item>Shopping</item>
+    <item>Sport&amp;Spa</item>
+    <item>Food&amp;Drink</item>
+    <item>Notturno</item>
+    <item>Utile</item>
+    <item>Eventi</item>
+    <item>Posizione</item>
+  </string-array>
+</resources>

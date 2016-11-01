@@ -25,7 +25,7 @@ namespace NohandicapNative.Droid
         static readonly string TAG = "X:" + typeof(FirstStartActivity).Name;
         ProgressDialog progressDialog;
         Button nextButton;
-        int[] flags = { Resource.Drawable.german, Resource.Drawable.english, Resource.Drawable.france };
+        int[] flags = { Resource.Drawable.german, Resource.Drawable.english, Resource.Drawable.italy, Resource.Drawable.france };
         private int _selecteLangID = 1;
         TextView spinnerPrompt;
         ListView langListView;
@@ -135,7 +135,7 @@ namespace NohandicapNative.Droid
                 string[] defaultLanguages = Resources.GetStringArray(Resource.Array.lang_array);
                 var defaultShortLanguages = Resources.GetStringArray(Resource.Array.lang_short_array);
 
-                for (int i = 0; i < defaultLanguages.Length; i++)
+                for (int i = 0; i < defaultLanguages.Length-1; i++)
                 {
                     LanguageModel lang = new LanguageModel();
                     lang.Id = i + 1;
