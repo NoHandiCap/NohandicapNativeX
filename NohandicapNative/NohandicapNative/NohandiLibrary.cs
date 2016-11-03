@@ -30,9 +30,9 @@ namespace NohandicapNative
         public const string LINK_GET_PRODUCTS   = LINK_API + "action=getprodlist&typemap=true&listfave=false&maincat={0}&search=&cat={1}&idlang={2}&gpslat={3}&gpslng={4}&num={5}&page={6}&app=true";
         public const string LINK_GET_FAV        = LINK_API + "action=getprodlist&typemap=true&listfave=true&iduser={0}&search=&num={1}&page={2}&app=true";
 
-        public const string LINK_LOGIN          = LINK_MAIN + "index.php?item=artikel&id="+ LOGIN_ARTIKEL_ID + "&com=login&action=login&type=app";
-        public const string LINK_SIGN_UP        = LINK_MAIN + "index.php?item=artikel&id="+ REGISTER_ARTIKEL_ID + "&com=login&action=register&type=app";
-        public const string LINK_SIGN_UP_WITH_FACEBOOK  = LINK_MAIN + "index.php?item=artikel&id=" + REGISTER_ARTIKEL_ID + "&com=login&action=registerorloginwithfacebook&type=app";
+        public const string LINK_LOGIN          = LINK_MAIN + "index.php?item=artikel&id="+ LOGIN_ARTIKEL_ID + "&com=Login&action=Login&type=app";
+        public const string LINK_SIGN_UP        = LINK_MAIN + "index.php?item=artikel&id="+ REGISTER_ARTIKEL_ID + "&com=Login&action=register&type=app";
+        public const string LINK_SIGN_UP_WITH_FACEBOOK  = LINK_MAIN + "index.php?item=artikel&id=" + REGISTER_ARTIKEL_ID + "&com=Login&action=registerorloginwithfacebook&type=app";
 
 
         public const string PRODUCT_TABLE   = "Products";

@@ -15,18 +15,17 @@ namespace NohandicapNative.Droid.Fragments
 {
   public  class SpinnerFragment:Fragment
     {
-        private static int SPINNER_WIDTH = 100;
-        private static int SPINNER_HEIGHT = 100;    
+        private static readonly int SPINNER_WIDTH = 100;
+        private static readonly int SPINNER_HEIGHT = 100;    
     public override View OnCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
         {
-            ProgressBar progressBar = new ProgressBar(container.Context);
-            if (container.GetType()==typeof(FrameLayout)) {
-                FrameLayout.LayoutParams layoutParams =
-                        new FrameLayout.LayoutParams(SPINNER_WIDTH, SPINNER_HEIGHT,GravityFlags.Center);
-                progressBar.LayoutParameters=layoutParams;
-            }
-            return progressBar;
+            var progressBar = new ProgressBar(container.Context);
+        if (container.GetType() != typeof (FrameLayout)) return progressBar;
+        var layoutParams =
+            new FrameLayout.LayoutParams(SPINNER_WIDTH, SPINNER_HEIGHT,GravityFlags.Center);
+        progressBar.LayoutParameters=layoutParams;
+        return progressBar;
         }
     }
 }

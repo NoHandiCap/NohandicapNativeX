@@ -11,7 +11,6 @@ namespace NohandicapNative.Droid.Adapters
 
     public class SpinnerAdapter : BaseAdapter
     {
-        Context context;
         int[] flags;
         string[] countryNames;
         LayoutInflater inflter;
@@ -27,7 +26,7 @@ namespace NohandicapNative.Droid.Adapters
         public SpinnerAdapter(Context applicationContext, int[] flags, string[] countryNames)
         {
 
-            this.context = applicationContext;
+          
             this.flags = flags;
             this.countryNames = countryNames;
             inflter = (LayoutInflater.From(applicationContext));

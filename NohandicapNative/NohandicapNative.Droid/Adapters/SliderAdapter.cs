@@ -5,6 +5,7 @@ using Android.Widget;
 using Android.Support.V4.View;
 using NohandicapNative.Droid.Services;
 using Android.Util;
+using NohandicapNative.Droid.Activities;
 using Square.Picasso;
 
 namespace NohandicapNative.Droid.Adapters
@@ -13,40 +14,34 @@ namespace NohandicapNative.Droid.Adapters
     {
         string TAG = "X: " + typeof(SliderAdapter).Name;
 
-        private Context context;
-       ProductDetailModel product;
+        private Context _context;
+       ProductDetailModel _product;
 
         public SliderAdapter(Context context, ProductDetailModel product)
         {
-            this.context = context;
-            this.product = product;
+            this._context = context;
+            this._product = product;
            
         }
-        public override int Count
-        {
-            get
-            {
-                return product.ImageCollection.Images.Count;
-            }
-        }
+        public override int Count => _product.ImageCollection.Images.Count;
 
-        public override bool IsViewFromObject(View view, Java.Lang.Object objectValue)
+      public override bool IsViewFromObject(View view, Java.Lang.Object objectValue)
         {
             return view == ((ImageView)objectValue);
         }
 
         public override Java.Lang.Object InstantiateItem(View container, int position)
         {
-            ImageView imageView = new ImageView(context);
+            ImageView imageView = new ImageView(_context);
             imageView.SetScaleType(ImageView.ScaleType.CenterCrop);
            
-            var img = product.ImageCollection.Images[position];
+            var img = _product.ImageCollection.Images[position];
           
             try
             {
                 var disp = NohandicapApplication.MainActivity.WindowManager.DefaultDisplay;               
                 var width = disp.Width;              
-                Picasso.With(context).Load(img).MemoryPolicy(MemoryPolicy.NoCache).Placeholder(Resource.Drawable.placeholder).Fit().Into(imageView);
+                Picasso.With(_context).Load(img).MemoryPolicy(MemoryPolicy.NoCache).Placeholder(Resource.Drawable.placeholder).Fit().Into(imageView);
 
                     
             }

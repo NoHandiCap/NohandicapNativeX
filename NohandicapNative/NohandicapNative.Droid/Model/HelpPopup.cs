@@ -13,24 +13,25 @@ using Android.Views;
 using Android.Views.Animations;
 using Android.Widget;
 using Java.Lang;
+using NohandicapNative.Droid.Activities;
 using String = System.String;
 
 namespace NohandicapNative.Droid.Model
 {
     public class HelpPopup
     {
-        protected Context mContext;
-        protected PopupWindow mWindow;
+        private readonly Context mContext;
+        private readonly PopupWindow mWindow;
 
-        private TextView mHelpTextView;
-        private ImageView mUpImageView;
-        private ImageView mDownImageView;
-        protected View mView;
-        private IWindowManager WindowManager;
-        protected Drawable mBackgroundDrawable = null;
-        protected IShowListener showListener;
+        private TextView _mHelpTextView;
+        private ImageView _mUpImageView;
+        private ImageView _mDownImageView;
+        private View _mView;
+        private IWindowManager _windowManager;
+        private Drawable _mBackgroundDrawable = null;
+        private IShowListener _showListener;
 
-        public HelpPopup(Context context, String text, int viewResource)
+        private HelpPopup(Context context, string text, int viewResource)
         {
             mContext = context;
             mWindow = new PopupWindow(context);
@@ -38,13 +39,13 @@ namespace NohandicapNative.Droid.Model
                 .GetSystemService(Context.LayoutInflaterService);
 
             SetContentView(layoutInflater.Inflate(viewResource, null));
-            WindowManager = NohandicapApplication.MainActivity.WindowManager;
-            mHelpTextView = (TextView)mView.FindViewById(Resource.Id.text);
-            mUpImageView = (ImageView)mView.FindViewById(Resource.Id.arrow_up);
-            mDownImageView = (ImageView)mView.FindViewById(Resource.Id.arrow_down);
+            _windowManager = NohandicapApplication.MainActivity.WindowManager;
+            _mHelpTextView = (TextView)_mView.FindViewById(Resource.Id.text);
+            _mUpImageView = (ImageView)_mView.FindViewById(Resource.Id.arrow_up);
+            _mDownImageView = (ImageView)_mView.FindViewById(Resource.Id.arrow_down);
 
-            mHelpTextView.MovementMethod = ScrollingMovementMethod.Instance;
-            mHelpTextView.Selected = true;
+            _mHelpTextView.MovementMethod = ScrollingMovementMethod.Instance;
+            _mHelpTextView.Selected = true;
         }
 
         public HelpPopup(Context context) : this(context, "", Resource.Layout.popup_layout)
@@ -67,10 +68,10 @@ namespace NohandicapNative.Droid.Model
             Rect anchorRect = new Rect(location[0], location[1], location[0]
                                                                  + anchor.Width, location[1] + anchor.Height);
 
-            mView.Measure(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent);
+            _mView.Measure(ViewGroup.LayoutParams.WrapContent, ViewGroup.LayoutParams.WrapContent);
 
-            int rootHeight = mView.MeasuredHeight;
-            int rootWidth = mView.MeasuredWidth;
+            int rootHeight = _mView.MeasuredHeight;
+            int rootWidth = _mView.MeasuredWidth;
 
             int screenWidth = NohandicapApplication.MainActivity.WindowManager.DefaultDisplay.Width;
             int screenHeight = NohandicapApplication.MainActivity.WindowManager.DefaultDisplay.Height;
@@ -85,23 +86,21 @@ namespace NohandicapNative.Droid.Model
                 onTop = false;
             }
 
-            int whichArrow, requestedX;
-
-            whichArrow = ((onTop) ? Resource.Id.arrow_down : Resource.Id.arrow_up);
-            requestedX = anchorRect.CenterX();
+            var whichArrow = ((onTop) ? Resource.Id.arrow_down : Resource.Id.arrow_up);
+            var requestedX = anchorRect.CenterX();
 
             View arrow = whichArrow == Resource.Id.arrow_up
-                ? mUpImageView
-                : mDownImageView;
+                ? _mUpImageView
+                : _mDownImageView;
             View hideArrow = whichArrow == Resource.Id.arrow_up
-                ? mDownImageView
-                : mUpImageView;
+                ? _mDownImageView
+                : _mUpImageView;
 
             int arrowWidth = arrow.MeasuredWidth;
 
             arrow.Visibility = ViewStates.Visible;
 
-            ViewGroup.MarginLayoutParams param = (ViewGroup.MarginLayoutParams)arrow.LayoutParameters;
+            var param = (ViewGroup.MarginLayoutParams)arrow.LayoutParameters;
 
             hideArrow.Visibility = ViewStates.Invisible;
 
@@ -128,65 +127,65 @@ namespace NohandicapNative.Droid.Model
             if (onTop)
             {
                 int height = anchorRect.Top - anchorRect.Height();
-                mHelpTextView.SetMaxHeight(height);
+                _mHelpTextView.SetMaxHeight(height);
 
             }
             else
             {
-                mHelpTextView.SetMaxHeight(screenHeight - yPos);
+                _mHelpTextView.SetMaxHeight(screenHeight - yPos);
             }
 
             mWindow.ShowAtLocation(anchor, GravityFlags.NoGravity, xPos, yPos);
 
-            mView.Animation = AnimationUtils.LoadAnimation(mContext,
+            _mView.Animation = AnimationUtils.LoadAnimation(mContext,
                 Resource.Animation.float_anim);
 
         }
 
-        protected void PreShow()
+        private void PreShow()
         {
-            if (mView == null)
+            if (_mView == null)
                 throw new IllegalStateException("view undefined");
 
 
 
-            if (showListener != null)
+            if (_showListener != null)
             {
-                showListener.OnPreShow();
-                showListener.OnShow();
+                _showListener.OnPreShow();
+                _showListener.OnShow();
             }
 
-            if (mBackgroundDrawable == null)
+            if (_mBackgroundDrawable == null)
                 mWindow.SetBackgroundDrawable(new BitmapDrawable());
             else
-                mWindow.SetBackgroundDrawable(mBackgroundDrawable);
+                mWindow.SetBackgroundDrawable(_mBackgroundDrawable);
 
             mWindow.Width = ViewGroup.LayoutParams.WrapContent;
             mWindow.Height = ViewGroup.LayoutParams.WrapContent;
             mWindow.Touchable = true;
             mWindow.Focusable = true;
             mWindow.OutsideTouchable = true;
-            mWindow.ContentView = mView;
+            mWindow.ContentView = _mView;
         }
 
         public void SetBackgroundDrawable(Drawable background)
         {
-            mBackgroundDrawable = background;
+            _mBackgroundDrawable = background;
         }
 
         public void SetContentView(View root)
         {
-            mView = root;
+            _mView = root;
 
             mWindow.ContentView = root;
         }
 
-        public void SetContentView(int layoutResID)
+        public void SetContentView(int layoutResId)
         {
             LayoutInflater inflator = (LayoutInflater)mContext
                 .GetSystemService(Context.LayoutInflaterService);
 
-            SetContentView(inflator.Inflate(layoutResID, null));
+            SetContentView(inflator.Inflate(layoutResId, null));
         }
 
         public void SetOnDismissListener(PopupWindow.IOnDismissListener listener)
@@ -197,15 +196,12 @@ namespace NohandicapNative.Droid.Model
         public void Dismiss()
         {
             mWindow.Dismiss();
-            if (showListener != null)
-            {
-                showListener.OnDismiss();
-            }
+            _showListener?.OnDismiss();
         }
 
-        public void SetText(String text)
+        public void SetText(string text)
         {
-            mHelpTextView.Text = text;
+            _mHelpTextView.Text = text;
         }
 
         public interface IShowListener
@@ -217,7 +213,7 @@ namespace NohandicapNative.Droid.Model
 
         public void SetShowListener(IShowListener showListener)
         {
-            this.showListener = showListener;
+            this._showListener = showListener;
         }
     }
 }

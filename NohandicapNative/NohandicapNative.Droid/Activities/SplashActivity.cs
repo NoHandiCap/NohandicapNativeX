@@ -29,7 +29,7 @@ namespace NohandicapNative.Droid.Activities
         {
             base.OnResume();
 
-            Task startupWork = new Task(() =>
+            var startupWork = new Task(() =>
             {               
                 Log.Debug(TAG, "Working in the background - important stuff.");
             });

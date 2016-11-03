@@ -14,29 +14,25 @@ using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Globalization;
+using NohandicapNative.Droid.Activities;
 
 namespace NohandicapNative.Droid.Fragments
 {
     public abstract class BaseFragment : Android.Support.V4.App.Fragment
     {
-        private SpinnerFragment _spinnerFragment;
+        private readonly SpinnerFragment _spinnerFragment;
         
-        public  SqliteService DbConnection { get; set; }
+        public  SqliteService DbConnection { get; private set; }
 
-        public BaseFragment(Boolean loadFromCache = true)
+        protected BaseFragment(bool loadFromCache = true)
         {
             DbConnection = Utils.GetDatabaseConnection();
             _spinnerFragment = new SpinnerFragment();
             if (loadFromCache)
                 ThreadPool.QueueUserWorkItem(o => LoadCache());
         }
-        public MainActivity MainActivity
-        {
-            get
-            {
-                return NohandicapApplication.MainActivity;
-            }
-        }
+        public MainActivity MainActivity => NohandicapApplication.MainActivity;
+
         public ObservableCollection<ProductMarkerModel> CurrentProductsList
         {
             get
@@ -59,15 +55,10 @@ namespace NohandicapNative.Droid.Fragments
                 NohandicapApplication.CurrentLang = value;
             }
         }
-        public bool IsInternetConnection
-        {
-            get
-            {
-                return NohandicapApplication.IsInternetConnection;
-            }
-        }
 
-        public CategoryModel SelectedMainCategory
+        protected static bool IsInternetConnection => NohandicapApplication.IsInternetConnection;
+
+        public static CategoryModel SelectedMainCategory
         {
             get
             {
@@ -80,7 +71,7 @@ namespace NohandicapNative.Droid.Fragments
 
         }
 
-        public bool IsTablet {
+        protected static bool IsTablet {
             get
             {
                 return NohandicapApplication.IsTablet;
@@ -91,7 +82,7 @@ namespace NohandicapNative.Droid.Fragments
             }
         }
 
-        private async void LoadCache()
+        private void LoadCache()
         {
             try
             {
@@ -111,10 +102,10 @@ namespace NohandicapNative.Droid.Fragments
             }
             catch (System.Exception e)
             {
+                // ignored
 #if DEBUG
                 System.Diagnostics.Debugger.Break();
 #endif
-
             }
         }
         public async void AddProductsToCache(IEnumerable<ProductMarkerModel> products)
@@ -131,13 +122,15 @@ namespace NohandicapNative.Droid.Fragments
                     {
                         if (CurrentProductsList.Any(x => x.Distance != prod.Distance))
                         {
-                            CurrentProductsList.FirstOrDefault(x => x.Id == prod.Id).Distance = prod.Distance;
+                            var productMarkerModel = CurrentProductsList.FirstOrDefault(x => x.Id == prod.Id);
+                            if (productMarkerModel != null)
+                                productMarkerModel.Distance = prod.Distance;
                         }
                     }
                 }
             });
         }
-        public async void ShowSpinner(bool visibility)
+        public void ShowSpinner(bool visibility)
         {
            
             if (visibility)

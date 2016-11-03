@@ -6,11 +6,11 @@ namespace NohandicapNative.Droid.Model
 {
     public class CustomCallback : Java.Lang.Object, ICallback
     {
-        Action action = null;
+        Action _action = null;
 
         public CustomCallback(Action action)
         {
-            this.action = action;
+            this._action = action;
         }    
 
         public void OnError()
@@ -20,7 +20,7 @@ namespace NohandicapNative.Droid.Model
 
         public void OnSuccess()
         {
-            action?.Invoke();
+            _action?.Invoke();
         }
     }
 }

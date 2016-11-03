@@ -1,41 +1,39 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using Android.App;
 using Android.Content;
+using Android.Content.Res;
+using Android.Graphics;
 using Android.OS;
 using Android.Runtime;
+using Android.Support.V7.App;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
-using Android.Support.V7.App;
 using NohandicapNative.Droid.Adapters;
 using NohandicapNative.Droid.Services;
-using Android.Util;
-using System.Linq;
-using Android.Content.Res;
-using static Android.Widget.AdapterView;
-using Android.Graphics;
-using System.IO;
-using System;
-using System.Threading;
 
-namespace NohandicapNative.Droid
+namespace NohandicapNative.Droid.Activities
 {
     [Activity(Label = "FirstStartActivity")]
-    public class FirstStartActivity : AppCompatActivity, IOnItemClickListener
+    public class FirstStartActivity : AppCompatActivity, AdapterView.IOnItemClickListener
     {
         static readonly string TAG = "X:" + typeof(FirstStartActivity).Name;
-        ProgressDialog progressDialog;
-        Button nextButton;
-        int[] flags = { Resource.Drawable.german, Resource.Drawable.english, Resource.Drawable.italy, Resource.Drawable.france };
+        ProgressDialog _progressDialog;
+        Button _nextButton;
+        readonly int[] flags = { Resource.Drawable.german, Resource.Drawable.english, Resource.Drawable.italy, Resource.Drawable.france };
         private int _selecteLangID = 1;
-        TextView spinnerPrompt;
-        ListView langListView;
-        Resources res;
-        List<LanguageModel> LanguagesList;
-        List<CategoryModel> MainCategoriesList;
-        RelativeLayout languageLayout;
-        LinearLayout agreementLayout;
-        LinearLayout dataProtectionLayout;
-        LanguageModel currentLanguage;
+        TextView _spinnerPrompt;
+        ListView _langListView;
+        Resources _res;
+        List<LanguageModel> _languagesList;
+        List<CategoryModel> _mainCategoriesList;
+        RelativeLayout _languageLayout;
+        LinearLayout _agreementLayout;
+        LinearLayout _dataProtectionLayout;
+        LanguageModel _currentLanguage;
         protected override void OnCreate(Bundle bundle)
         {
             Log.Debug(TAG, "Set Theme");
@@ -44,63 +42,58 @@ namespace NohandicapNative.Droid
             Log.Debug(TAG, "Set view");
             SetContentView(Resource.Layout.FirstStart);
             Log.Debug(TAG, "Set loadContent");
-            agreementLayout = FindViewById<LinearLayout>(Resource.Id.agreementLayout);
-            languageLayout = FindViewById<RelativeLayout>(Resource.Id.languageLayout);
-            dataProtectionLayout = FindViewById<LinearLayout>(Resource.Id.dataProtectionLayout);
+            _agreementLayout = FindViewById<LinearLayout>(Resource.Id.agreementLayout);
+            _languageLayout = FindViewById<RelativeLayout>(Resource.Id.languageLayout);
+            _dataProtectionLayout = FindViewById<LinearLayout>(Resource.Id.dataProtectionLayout);
             var agreementTextView = FindViewById<TextView>(Resource.Id.agreementTextView);
             var dataProtectionTextView = FindViewById<TextView>(Resource.Id.dataProtectionTextView);
-            var agreeButton = agreementLayout.FindViewById<Button>(Resource.Id.agreeButton);
-            languageLayout.Visibility = ViewStates.Visible;
-            agreementLayout.Visibility = ViewStates.Gone;
-            dataProtectionLayout.Visibility = ViewStates.Gone;
+            var agreeButton = _agreementLayout.FindViewById<Button>(Resource.Id.agreeButton);
+            _languageLayout.Visibility = ViewStates.Visible;
+            _agreementLayout.Visibility = ViewStates.Gone;
+            _dataProtectionLayout.Visibility = ViewStates.Gone;
             agreeButton.Click += (s, e) =>
                 {
-                    agreementLayout.Visibility = ViewStates.Gone;
-                    dataProtectionLayout.Visibility = ViewStates.Visible;
+                    _agreementLayout.Visibility = ViewStates.Gone;
+                    _dataProtectionLayout.Visibility = ViewStates.Visible;
                 };
 
-            var agreeDataProtectionButton = dataProtectionLayout.FindViewById<Button>(Resource.Id.agreeDataProtectionButton);
+            var agreeDataProtectionButton = _dataProtectionLayout.FindViewById<Button>(Resource.Id.agreeDataProtectionButton);
             agreeDataProtectionButton.Click += (s, e) =>
             {
-                progressDialog = new ProgressDialog(this,
-        Resource.Style.StyledDialog);
-                progressDialog.Indeterminate = true;
-                progressDialog.SetMessage(res.GetString(Resource.String.load_data));
-                progressDialog.SetCanceledOnTouchOutside(false);
-                progressDialog.Show();
-                new System.Threading.Thread(new ThreadStart(delegate
-                {
-                    LoadData();
-
-                })).Start();
+                _progressDialog = new ProgressDialog(this,
+                    Resource.Style.StyledDialog) {Indeterminate = true};
+                _progressDialog.SetMessage(_res.GetString(Resource.String.load_data));
+                _progressDialog.SetCanceledOnTouchOutside(false);
+                _progressDialog.Show();
+                new Thread(LoadData).Start();
 
             };
-            LanguagesList = new List<LanguageModel>();
-            nextButton = FindViewById<Button>(Resource.Id.next_button);
-            spinnerPrompt = FindViewById<TextView>(Resource.Id.lang_spinner_prompt);
-            langListView = FindViewById<ListView>(Resource.Id.languageList);
+            _languagesList = new List<LanguageModel>();
+            _nextButton = FindViewById<Button>(Resource.Id.next_button);
+            _spinnerPrompt = FindViewById<TextView>(Resource.Id.lang_spinner_prompt);
+            _langListView = FindViewById<ListView>(Resource.Id.languageList);
             FillLanguageLocalTable();
             FillMainCategiesLocalTable();
-            nextButton.Text = Resources.GetString(Resource.String.next);
+            _nextButton.Text = Resources.GetString(Resource.String.next);
 
-            nextButton.Click += (s, e) =>
+            _nextButton.Click += (s, e) =>
              {
-                 agreementTextView.Text = Utils.ReadStream(this,"Agreement_",currentLanguage.ShortName, ".txt"); ; // Set TextView.Text to our asset content
-                 dataProtectionTextView.Text =Utils.ReadStream(this,"DataProtection_", currentLanguage.ShortName, ".txt"); // Set TextView.Text to our asset content
-                 languageLayout.Visibility = ViewStates.Gone;
-                 agreementLayout.Visibility = ViewStates.Visible;
+                 agreementTextView.Text = Utils.ReadStream(this,"Agreement_",_currentLanguage.ShortName, ".txt"); ; // Set TextView.Text to our asset content
+                 dataProtectionTextView.Text =Utils.ReadStream(this,"DataProtection_", _currentLanguage.ShortName, ".txt"); // Set TextView.Text to our asset content
+                 _languageLayout.Visibility = ViewStates.Gone;
+                 _agreementLayout.Visibility = ViewStates.Visible;
              };
-            langListView.OnItemClickListener = this;
+            _langListView.OnItemClickListener = this;
 
         }
         
         private void SetLocale(int position)
         {
-            Utils.WriteToSettings(this, Utils.LANG_ID_TAG, LanguagesList[position].Id.ToString());
-            Utils.WriteToSettings(this, Utils.LANG_SHORT, LanguagesList[position].ShortName);
-            res = Utils.SetLocale(this, LanguagesList[position].ShortName);
-            nextButton.Text = res.GetString(Resource.String.next);
-            spinnerPrompt.Text = res.GetString(Resource.String.lang_prompt);
+            Utils.WriteToSettings(this, Utils.LANG_ID_TAG, _languagesList[position].Id.ToString());
+            Utils.WriteToSettings(this, Utils.LANG_SHORT, _languagesList[position].ShortName);
+            _res = Utils.SetLocale(this, _languagesList[position].ShortName);
+            _nextButton.Text = _res.GetString(Resource.String.next);
+            _spinnerPrompt.Text = _res.GetString(Resource.String.lang_prompt);
         }
         public void OnItemClick(AdapterView parent, View view, int position, long id)
         {
@@ -108,10 +101,10 @@ namespace NohandicapNative.Droid
             {
                 SetLocale(position);
             }
-            for (int i = 0; i < langListView.ChildCount; i++)
+            for (int i = 0; i < _langListView.ChildCount; i++)
             {
-                var text = langListView.GetChildAt(i).FindViewById<TextView>(Resource.Id.grid_text);
-                var viewLayout = langListView.GetChildAt(i).FindViewById<LinearLayout>(Resource.Id.grid_layout);
+                var text = _langListView.GetChildAt(i).FindViewById<TextView>(Resource.Id.grid_text);
+                var viewLayout = _langListView.GetChildAt(i).FindViewById<LinearLayout>(Resource.Id.grid_layout);
                 if (position == i)
                 {
                     text.SetTextColor(Color.White);
@@ -125,9 +118,9 @@ namespace NohandicapNative.Droid
                     viewLayout.SetBackgroundColor(Color.White);
                 }
             }
-            currentLanguage = LanguagesList[position];
+            _currentLanguage = _languagesList[position];
         }
-        private async void FillLanguageLocalTable()
+        private void FillLanguageLocalTable()
         {
             try
             {
@@ -137,41 +130,42 @@ namespace NohandicapNative.Droid
 
                 for (int i = 0; i < defaultLanguages.Length-1; i++)
                 {
-                    LanguageModel lang = new LanguageModel();
-                    lang.Id = i + 1;
-                    lang.ShortName = defaultShortLanguages[i];
-                    lang.LanguageName = defaultLanguages[i];
+                    var lang = new LanguageModel
+                    {
+                        Id = i + 1,
+                        ShortName = defaultShortLanguages[i],
+                        LanguageName = defaultLanguages[i]
+                    };
 
-                    LanguagesList.Add(lang);
+                    _languagesList.Add(lang);
                 }
 
-                List<CustomRadioButton> langList = new List<CustomRadioButton>();
-                LanguagesList.ForEach(x => langList.Add(new CustomRadioButton()
+                var langList = new List<CustomRadioButton>();
+                _languagesList.ForEach(x => langList.Add(new CustomRadioButton()
                 {
                     Text = x.LanguageName
                 }));
-                langListView.Adapter = new RadioButtonListAdapter(this, flags, langList);
+                _langListView.Adapter = new RadioButtonListAdapter(this, flags, langList);
 
-                langListView.PerformItemClick(langListView, 0, 0);
+                _langListView.PerformItemClick(_langListView, 0, 0);
                 OnItemClick(null, null, 0, 0);
             }
             catch (Exception)
             {
-
+               
 #if DEBUG
                 System.Diagnostics.Debugger.Break();
 #endif
-
             }
         }
         private void FillMainCategiesLocalTable()
         {
 
-            List<string> mainItems = Resources.GetStringArray(Resource.Array.main_category_array).ToList();
-            MainCategoriesList = new List<CategoryModel>();
+            var mainItems = Resources.GetStringArray(Resource.Array.main_category_array).ToList();
+            _mainCategoriesList = new List<CategoryModel>();
             foreach (var item in mainItems)
             {
-                MainCategoriesList.Add(new CategoryModel()
+                _mainCategoriesList.Add(new CategoryModel()
                 {
                     Id = mainItems.IndexOf(item) + 1,
                     Name = item,
@@ -184,16 +178,16 @@ namespace NohandicapNative.Droid
         {
             var conn = Utils.GetDatabaseConnection();
             conn.CreateTables();
-            conn.InsertUpdateProductList(LanguagesList);
-            conn.InsertUpdateProductList(MainCategoriesList);
-            conn.SetSelectedCategory(MainCategoriesList[0]);
+            conn.InsertUpdateProductList(_languagesList);
+            conn.InsertUpdateProductList(_mainCategoriesList);
+            conn.SetSelectedCategory(_mainCategoriesList[0]);
             var result = await RestApiService.CheckUpdate(conn, _selecteLangID.ToString(), Utils.GetLastUpdate(this));
 
             if (result != null)
             {
-                // On complete call either onLoginSuccess or onLoginFailed
+                // On complete call either onLoginSuccess or OnLoginFailed
 
-                // onLoginFailed();
+                // OnLoginFailed();
 
                 Log.Debug(TAG, "Work is finished - start MainActivity.");
 
@@ -209,16 +203,14 @@ namespace NohandicapNative.Droid
             }
             else
             {
-                RunOnUiThread(() => {
-                    ShowProgressDialog();
-                });
+                RunOnUiThread(ShowProgressDialog);
             }
         }
 
 
         private void ShowProgressDialog()
         {
-            progressDialog.Dismiss();
+            _progressDialog.Dismiss();
             var builder = new Android.Support.V7.App.AlertDialog.Builder(this);
             builder.SetPositiveButton(Resources.GetString(Resource.String.try_text), (sender, args) =>
             {

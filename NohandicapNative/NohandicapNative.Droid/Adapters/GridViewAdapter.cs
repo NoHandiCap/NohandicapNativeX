@@ -9,6 +9,7 @@ using Android.Graphics;
 using static Android.Views.View;
 using Android.Graphics.Drawables;
 using Java.Lang;
+using NohandicapNative.Droid.Activities;
 using NohandicapNative.Droid.Fragments;
 using Context = Android.Content.Context;
 
@@ -17,25 +18,19 @@ namespace NohandicapNative.Droid.Adapters
 {
     public class GridViewAdapter : BaseAdapter
     {
-        private BaseFragment baseFragment;
-        private List<CategoryModel> categories;   
+        private  BaseFragment _baseFragment;
+        private List<CategoryModel> _categories;   
    
         public GridViewAdapter(BaseFragment baseFragment)
         {
-            this.baseFragment = baseFragment;
+            this._baseFragment = baseFragment;
             UpdateCategories();
         }
         public void UpdateCategories()
         {
-            categories = baseFragment.DbConnection.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.SubCatGroup).OrderBy(x=>x.Sort).ToList();
+            _categories = _baseFragment.DbConnection.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.SubCatGroup).OrderBy(x=>x.Sort).ToList();
         }
-        public override int Count
-        {
-            get
-            {
-              return  categories.Count;
-            }
-        }
+        public override int Count => _categories.Count;
 
         public override Java.Lang.Object GetItem(int position)
         {
@@ -43,33 +38,31 @@ namespace NohandicapNative.Droid.Adapters
         }
         public  string GetItemText(int position)
         {
-            return categories[position].Name.ToString();
+            return _categories[position].Name.ToString();
         }
         public override long GetItemId(int position)
         {
-            return categories[position].Id;
+            return _categories[position].Id;
         }
 
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
-            View grid;
-            LayoutInflater inflater = (LayoutInflater)baseFragment.MainActivity
+            LayoutInflater inflater = (LayoutInflater)_baseFragment.MainActivity
                 .GetSystemService(Context.LayoutInflaterService);
             GridView gridView = (GridView)parent;
-            var category = categories[position];
-            grid = new View(baseFragment.MainActivity);
-            grid = inflater.Inflate(Resource.Layout.grid_item, null);
+            var category = _categories[position];
+            var grid = inflater.Inflate(Resource.Layout.grid_item, null);
             //   var backgroundButton = grid.FindViewById<RelativeLayout>(Resource.Id.backgroundLayout);
             TextView textView = (TextView)grid.FindViewById(Resource.Id.grid_text);
             ImageView imageView = (ImageView)grid.FindViewById(Resource.Id.grid_image);
             textView.Text = category.Name;
-            imageView.SetImageDrawable(Utils.GetImage(baseFragment.MainActivity, category.Icon));
+            imageView.SetImageDrawable(Utils.GetImage(_baseFragment.MainActivity, category.Icon));
             LayerDrawable bgDrawable = (LayerDrawable)grid.Background;
             GradientDrawable bgShape = (GradientDrawable)bgDrawable.FindDrawableByLayerId(Resource.Id.shape_id);
             GradientDrawable bgBorder = (GradientDrawable)bgDrawable.FindDrawableByLayerId(Resource.Id.border_id);
 
             int width = gridView.ColumnWidth;
-            var orientation = baseFragment.Resources.Configuration.Orientation;
+            var orientation = _baseFragment.Resources.Configuration.Orientation;
             imageView.LayoutParameters.Height = width / 3;
             imageView.LayoutParameters.Width = width / 3;
             bgShape.SetColor(Color.ParseColor(category.Color));
@@ -77,7 +70,7 @@ namespace NohandicapNative.Droid.Adapters
             {
                 if (category.IsSelected)
                 {
-                    bgBorder.SetColor(baseFragment.Resources.GetColor(Resource.Color.selectedCategoryColor));
+                    bgBorder.SetColor(_baseFragment.Resources.GetColor(Resource.Color.selectedCategoryColor));
                 }
                 else
                 {

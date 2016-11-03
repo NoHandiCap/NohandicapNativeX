@@ -9,19 +9,19 @@ namespace NohandicapNative.Droid.Model
 {
     public class PicassoMarker : Java.Lang.Object, ITarget
     {
-        Marker marker;       
+        Marker _marker;       
         public PicassoMarker(Marker marker)
         {
-           this.marker = marker;           
+           this._marker = marker;           
         }
         public override int GetHashCode()
         {
-            return marker.GetHashCode();
+            return _marker.GetHashCode();
         }
         public override bool Equals(Java.Lang.Object o)
         {
             if (typeof(PicassoMarker)==o.GetType()) {
-                Marker marker = ((PicassoMarker)o).marker;
+                Marker marker = ((PicassoMarker)o)._marker;
                 return marker.Equals(marker);
             } else {
                 return false;
@@ -34,8 +34,8 @@ namespace NohandicapNative.Droid.Model
 
         public void OnBitmapLoaded(Bitmap p0, Picasso.LoadedFrom p1)
         {
-            marker.SetIcon(BitmapDescriptorFactory.FromBitmap(p0));
-            marker.Visible = true;
+            _marker.SetIcon(BitmapDescriptorFactory.FromBitmap(p0));
+            _marker.Visible = true;
         }
 
         public void OnPrepareLoad(Drawable p0)

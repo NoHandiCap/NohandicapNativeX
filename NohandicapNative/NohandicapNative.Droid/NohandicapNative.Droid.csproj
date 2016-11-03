@@ -164,7 +164,7 @@
     <Compile Include="Adapters\RadioButtonListAdapter.cs" />
     <Compile Include="Adapters\SliderAdapter.cs" />
     <Compile Include="Adapters\SpinnerAdapter.cs" />
-    <Compile Include="Adapters\SquareLinearLayout.cs" />
+    <Compile Include="Adapters\SquareRelativeLayout.cs" />
     <Compile Include="Fragments\BaseFragment.cs" />
     <Compile Include="Fragments\SpinnerFragment.cs" />
     <Compile Include="Model\ButtonGridView.cs" />
@@ -586,7 +586,9 @@
     <AndroidResource Include="Resources\drawable\italy.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\values-it\Strings.xml" />
+    <AndroidResource Include="Resources\values-it\Strings.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\Agreement_it.txt" />

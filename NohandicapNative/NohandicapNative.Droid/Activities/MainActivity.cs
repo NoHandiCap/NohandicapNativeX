@@ -1,39 +1,36 @@
 ﻿using System;
-
-
-using Android.Content;
-using Android.Runtime;
-using Android.Views;
-
-using Android.OS;
-using Android.Support.V7.App;
-using BottomNavigationBar;
-using Android.Graphics;
-using BottomNavigationBar.Listeners;
 using System.Collections.Generic;
-using Android.Graphics.Drawables;
-using Android.Widget;
-using Android.App;
-using Android.Support.Design.Widget;
-using NohandicapNative.Droid.Services;
-using Android.Content.Res;
-using Java.Util;
-using Android.Preferences;
-using Android.Util;
+using System.Collections.ObjectModel;
+using System.Json;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Linq;
+using Android.App;
+using Android.Content;
+using Android.Content.Res;
+using Android.Graphics;
+using Android.Graphics.Drawables;
 using Android.Locations;
-using Xamarin.Auth;
-using System.Json;
-using Square.Picasso;
-using System.Collections.ObjectModel;
-
-using Java.Net;
-using System.Globalization;
 using Android.Net;
+using Android.OS;
+using Android.Preferences;
+using Android.Runtime;
+using Android.Support.Design.Widget;
+using Android.Support.V7.App;
+using Android.Util;
+using Android.Views;
+using Android.Widget;
+using BottomNavigationBar;
+using BottomNavigationBar.Listeners;
+using Java.Util;
+using NohandicapNative.Droid.Fragments;
+using NohandicapNative.Droid.Services;
+using Square.Picasso;
+using Xamarin.Auth;
+using static Square.Picasso.Picasso;
+using ListFragment = NohandicapNative.Droid.Fragments.ListFragment;
 
-namespace NohandicapNative.Droid
+namespace NohandicapNative.Droid.Activities
 {
     #region Application region
 #if DEBUG
@@ -52,7 +49,7 @@ namespace NohandicapNative.Droid
             get
             {
                 var conn = Utils.GetDatabaseConnection();
-                int id = int.Parse(Utils.ReadFromSettings(MainActivity, Utils.LANG_ID_TAG, "1"));
+                var id = int.Parse(Utils.ReadFromSettings(MainActivity, Utils.LANG_ID_TAG, "1"));
                 var lang = conn.GetDataList<LanguageModel>(x => x.Id == id).FirstOrDefault();
                 return lang;
             }
@@ -62,38 +59,30 @@ namespace NohandicapNative.Droid
                 Utils.WriteToSettings(MainActivity, Utils.LANG_SHORT, value.ShortName);
             }
         }
-        public static bool IsInternetConnection
-        {
-            get
-            {
-                return CheckIfConnectedToInternet();
-            }
-            set { }
-        }
+        public static bool IsInternetConnection => CheckIfConnectedToInternet();
 
-        public static bool CheckIfConnectedToInternet()
+        private static bool CheckIfConnectedToInternet()
         {
-            ConnectivityManager connectivityManager = (ConnectivityManager)MainActivity.GetSystemService(ConnectivityService);
-            NetworkInfo activeConnection = connectivityManager.ActiveNetworkInfo;
-            bool isOnline = (activeConnection != null) && activeConnection.IsConnected;
+            var connectivityManager = (ConnectivityManager)MainActivity.GetSystemService(ConnectivityService);
+            var activeConnection = connectivityManager.ActiveNetworkInfo;
+            var isOnline = (activeConnection != null) && activeConnection.IsConnected;
             return isOnline;
         }
 
-        public static bool CheckIfGPSenabled()
+        public static bool CheckIfGpSenabled()
         {
             LocationManager locationManager = (LocationManager)MainActivity.GetSystemService(LocationService);
             // getting GPS status
-            bool isGPSEnabled = locationManager.IsProviderEnabled(LocationManager.GpsProvider);
-            return isGPSEnabled;
+            bool isGpsEnabled = locationManager.IsProviderEnabled(LocationManager.GpsProvider);
+            return isGpsEnabled;
         }
 
         public static CategoryModel SelectedMainCategory
         {
             get
             {
-                CategoryModel cat;
                 var conn = Utils.GetDatabaseConnection();
-                cat = conn.GetSelectedMainCategory();
+                var cat = conn.GetSelectedMainCategory();
                 return cat;
             }
             set
@@ -122,10 +111,10 @@ namespace NohandicapNative.Droid
         public override void OnCreate()
         {
             base.OnCreate();
-            AppDomain currentDomain = AppDomain.CurrentDomain;
+            var currentDomain = AppDomain.CurrentDomain;
             currentDomain.UnhandledException += CurrentDomain_UnhandledException;
             Log.Debug(TAG, "Configure locale");
-            ISharedPreferences settings = PreferenceManager.GetDefaultSharedPreferences(this);
+            var settings = PreferenceManager.GetDefaultSharedPreferences(this);
             string lang = settings.GetString(Utils.LANG_SHORT, null);
             if (lang != null)
             {
@@ -135,12 +124,12 @@ namespace NohandicapNative.Droid
             }
             Log.Debug(TAG, "Locale configuration finished");
 
-            Picasso.Builder builder = new Picasso.Builder(this);
+            var builder = new Builder(this);
             builder.Downloader(new OkHttpDownloader(this, int.MaxValue));
-            Picasso built = builder.Build();
+            var built = builder.Build();
             built.IndicatorsEnabled = false;
             built.LoggingEnabled = false;
-            Picasso.SetSingletonInstance(built);
+            SetSingletonInstance(built);
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -157,7 +146,7 @@ namespace NohandicapNative.Droid
 
         protected override void Dispose(bool disposing)
         {
-            AppDomain currentDomain = AppDomain.CurrentDomain;
+            var currentDomain = AppDomain.CurrentDomain;
             currentDomain.UnhandledException -= CurrentDomain_UnhandledException;
             base.Dispose(disposing);
         }
@@ -172,13 +161,13 @@ namespace NohandicapNative.Droid
         #region Properties
         static readonly string TAG = "X:" + typeof(MainActivity).Name;
         private BottomBar _bottomBar;
-        Android.Support.V7.Widget.Toolbar toolbar;
-        List<TabItem> items;
+        Android.Support.V7.Widget.Toolbar _toolbar;
+        List<TabItem> _items;
         public HomeFragment HomePage { get; set; }
         public GMapFragment MapPage { get; set; }
         public ListFragment ListPage { get; set; }
         public FavoritesFragment Favorites { get; set; }
-        int lastPos = 0;
+        int _lastPos = 0;
         public Location CurrentLocation { get; set; }
 
         LocationManager _locationManager = (LocationManager)Android.App.Application.Context.GetSystemService(LocationService);
@@ -191,12 +180,10 @@ namespace NohandicapNative.Droid
         {
             get
             {
-                if (_currentProductsList.Count == 0)
-                {
-                    var conn = Utils.GetDatabaseConnection();
-                    var products = conn.GetDataList<ProductMarkerModel>(50);
-                    _currentProductsList = new ObservableCollection<ProductMarkerModel>(products);
-                }
+                if (_currentProductsList.Count != 0) return _currentProductsList;
+                var conn = Utils.GetDatabaseConnection();
+                var products = conn.GetDataList<ProductMarkerModel>(50);
+                _currentProductsList = new ObservableCollection<ProductMarkerModel>(products);
                 return _currentProductsList;
             }
             set
@@ -214,14 +201,14 @@ namespace NohandicapNative.Droid
             NohandicapApplication.IsTablet = Resources.GetBoolean(Resource.Boolean.is_tablet);
             NohandicapApplication.MainActivity = this;
 
-            toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
+            _toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             _bottomBar = BottomBar.AttachShy(FindViewById<CoordinatorLayout>(Resource.Id.myCoordinator), FindViewById<LinearLayout>(Resource.Id.linContent), bundle);
             HomePage = new HomeFragment(false);
             MapPage = new GMapFragment(false);
             ListPage = new ListFragment(false);
             Favorites = new FavoritesFragment(false);
             _currentProductsList = new ObservableCollection<ProductMarkerModel>();
-            items = NohandicapLibrary.GetTabs(NohandicapApplication.IsTablet);
+            _items = NohandicapLibrary.GetTabs(NohandicapApplication.IsTablet);
             PrepareBar();
             if (bundle != null)
             {
@@ -234,24 +221,21 @@ namespace NohandicapNative.Droid
             ThreadPool.QueueUserWorkItem(o => InitializeLocationManager());
         }
 
-        public async void CheckUpdate()
+        private async void CheckUpdate()
         {
             try
             {
-                string langId = Utils.ReadFromSettings(this, Utils.LANG_ID_TAG, "1");
+                var langId = Utils.ReadFromSettings(this, Utils.LANG_ID_TAG, "1");
                 var conn = Utils.GetDatabaseConnection();
                 var updateList = await RestApiService.CheckUpdate(conn, langId, Utils.GetLastUpdate(this));
-                if (updateList != null)
+                if (updateList == null) return;
+                if (updateList.Count != 0)
                 {
-                    if (updateList.Count != 0)
-                    {
-                        // Utils.WriteToSettings(this, NohandicapLibrary.PRODUCT_TABLE, updateList[NohandicapLibrary.PRODUCT_TABLE]);
-                        Utils.WriteToSettings(this, NohandicapLibrary.CATEGORY_TABLE, updateList[NohandicapLibrary.CATEGORY_TABLE]);
-                        Utils.WriteToSettings(this, NohandicapLibrary.LANGUAGE_TABLE, updateList[NohandicapLibrary.LANGUAGE_TABLE]);
-                    }
-                    Utils.WriteToSettings(this, Utils.LAST_UPDATE_DATE, DateTime.Now.ToShortDateString());
+                    // Utils.WriteToSettings(this, NohandicapLibrary.PRODUCT_TABLE, updateList[NohandicapLibrary.PRODUCT_TABLE]);
+                    Utils.WriteToSettings(this, NohandicapLibrary.CATEGORY_TABLE, updateList[NohandicapLibrary.CATEGORY_TABLE]);
+                    Utils.WriteToSettings(this, NohandicapLibrary.LANGUAGE_TABLE, updateList[NohandicapLibrary.LANGUAGE_TABLE]);
                 }
-
+                Utils.WriteToSettings(this, Utils.LAST_UPDATE_DATE, DateTime.Now.ToShortDateString());
             }
             catch (Exception e)
             {
@@ -266,16 +250,16 @@ namespace NohandicapNative.Droid
         {
 
             Log.Debug(TAG, "Prepare Bar.....");
-            SetSupportActionBar(toolbar);
+            SetSupportActionBar(_toolbar);
 
             _bottomBar.NoTabletGoodness();
             _bottomBar.UseFixedMode();
 
-            var tabItems = new BottomBarTab[items.Count];
+            var tabItems = new BottomBarTab[_items.Count];
             for (int i = 0; i < tabItems.Length; i++)
             {
 
-                var tab = items[i];
+                var tab = _items[i];
                 var icon = Utils.GetImage(this, tab.Image);
 
                 tabItems[i] = new BottomBarTab(Utils.SetDrawableSize(this, icon, 40, 40), tab.Title);
@@ -285,7 +269,7 @@ namespace NohandicapNative.Droid
             _bottomBar.SetItems(tabItems);
             for (int i = 0; i < tabItems.Length; i++)
             {
-                var tab = items[i];
+                var tab = _items[i];
                 _bottomBar.MapColorForTab(i, tab.Color);
                 //  _bottomBar.MapColorForTab(i, Color.ParseColor(Utils.BACKGROUND));
 
@@ -343,14 +327,14 @@ namespace NohandicapNative.Droid
                     break;
             }
             SupportActionBar.Show();
-            SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Color.ParseColor(items[position].Color)));
-            SupportActionBar.Title = items[position].Title;
+            SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Color.ParseColor(_items[position].Color)));
+            SupportActionBar.Title = _items[position].Title;
             if (position == 0)
             {
                 SupportActionBar.Title = "Nohandicap";
             }
 
-            lastPos = position;
+            _lastPos = position;
         }
 
         public void LoginToFacebook(FavoritesFragment fragment, bool allowCancel)
@@ -383,7 +367,7 @@ namespace NohandicapNative.Droid
                     var builder = new Android.Support.V7.App.AlertDialog.Builder(this);
                     if (t.IsFaulted)
                     {
-                        builder.SetMessage(t.Exception.Flatten().InnerException.ToString());
+                        builder.SetMessage(t.Exception.Flatten().InnerException?.ToString());
                         fragment.UserLoginSuccess(null);
                     }
                     else if (t.IsCanceled)
@@ -409,16 +393,16 @@ namespace NohandicapNative.Droid
                         fragment.UserLoginSuccess(user);
                     }
 
-                }, UIScheduler);
+                }, UiScheduler);
             };
 
             var intent = auth.GetUI(this);
             StartActivity(intent);
         }
 
-        private static readonly TaskScheduler UIScheduler = TaskScheduler.FromCurrentSynchronizationContext();
+        private static readonly TaskScheduler UiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
 
-        public void ShowFragment(Android.Support.V4.App.Fragment fragment, string tag)
+        private void ShowFragment(Android.Support.V4.App.Fragment fragment, string tag)
         {
             Android.Support.V4.App.FragmentManager fragmentManager = SupportFragmentManager;
 
@@ -432,10 +416,10 @@ namespace NohandicapNative.Droid
                 //if the fragment does not exist, add it to fragment manager.
                 fragmentManager.BeginTransaction().Add(Resource.Id.flContent, fragment, tag).Commit();
             }
-            if (fragmentManager.FindFragmentByTag(lastPos.ToString()) != null)
+            if (fragmentManager.FindFragmentByTag(_lastPos.ToString()) != null)
             {
                 //if the other fragment is visible, hide it.
-                fragmentManager.BeginTransaction().Hide(fragmentManager.FindFragmentByTag(lastPos.ToString())).Commit();
+                fragmentManager.BeginTransaction().Hide(fragmentManager.FindFragmentByTag(_lastPos.ToString())).Commit();
             }
 
         }
@@ -451,12 +435,10 @@ namespace NohandicapNative.Droid
         #endregion
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
-            switch (item.ItemId)
+            if (item.ItemId == Android.Resource.Id.Home)
             {
-                // Respond to the action bar's Up/Home button
-                case Android.Resource.Id.Home:
-                    SetCurrentTab(0);
-                    return true;
+                SetCurrentTab(0);
+                return true;
             }
             return base.OnOptionsItemSelected(item);
         }
@@ -480,9 +462,9 @@ namespace NohandicapNative.Droid
             try
             {
                 //LocationManager lm = (LocationManager)GetSystemService(LocationService);
-                IList<String> providers = _locationManager.GetProviders(true);
+                IList<string> providers = _locationManager.GetProviders(true);
 
-                foreach (String provider in providers)
+                foreach (string provider in providers)
                 {
                     Location l = _locationManager.GetLastKnownLocation(provider);
                     if (l == null)

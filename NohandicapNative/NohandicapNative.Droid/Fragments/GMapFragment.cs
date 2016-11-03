@@ -20,6 +20,7 @@ using NohandicapNative.Droid.Fragments;
 using Android.Provider;
 using System.Diagnostics;
 using Android.Graphics;
+using NohandicapNative.Droid.Activities;
 using CameraPosition = Android.Gms.Maps.Model.CameraPosition;
 
 namespace NohandicapNative.Droid
@@ -57,13 +58,12 @@ namespace NohandicapNative.Droid
             DisplayMetrics metrics = new DisplayMetrics();
             Activity.WindowManager.DefaultDisplay.GetMetrics(metrics);
             mDpi = (int)metrics.Density<=2 ? 1:2;
-           
             HasOptionsMenu = true;
             _mapView = view.FindViewById<MapView>(Resource.Id.map);
             _mapView.OnCreate(savedInstanceState);
             _mapView.OnResume();
          
-            if (!NohandicapApplication.CheckIfGPSenabled())
+            if (!NohandicapApplication.CheckIfGpSenabled())
                 ShowNoGPSEnabled();
             //else
                 //Toast.MakeText(this.Context, "GPS enabled", ToastLength.Short).Show(); //on some phones it shows every few seconds: Wiko i Samsumg Galaxy 

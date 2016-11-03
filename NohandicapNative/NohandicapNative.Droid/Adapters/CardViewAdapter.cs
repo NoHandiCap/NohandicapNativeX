@@ -15,6 +15,7 @@ using System.Threading;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using Android.Gms.Maps.Model;
+using NohandicapNative.Droid.Activities;
 using NohandicapNative.Droid.Fragments;
 
 namespace NohandicapNative.Droid.Adapters
@@ -22,39 +23,41 @@ namespace NohandicapNative.Droid.Adapters
     public class CardViewAdapter : BaseAdapter<ProductMarkerModel>
     {
         string TAG = "X: " + typeof (CardView).Name;
-        private readonly BaseFragment baseFragment;
-        private readonly List<ProductMarkerModel> products;
+        private readonly BaseFragment _baseFragment;
+        private readonly List<ProductMarkerModel> _products;
         List<CategoryModel> selectedCategory;
         List<CategoryModel> categories;
-        int PageNumber = 1;
-        bool isFav = false;
+        int _pageNumber = 1;
+        bool _isFav = false;
         SqliteService conn;
-        private MarkerUrlBuilder markerUrlBuilder;
+        private MarkerUrlBuilder _markerUrlBuilder;
 
         public CardViewAdapter(BaseFragment context, bool isFav)
         {
 
             conn = Utils.GetDatabaseConnection();
-            baseFragment = context;
+            _baseFragment = context;
             selectedCategory = conn.GetSubSelectedCategory();
-            markerUrlBuilder = new MarkerUrlBuilder();
-            markerUrlBuilder.LanguageId = baseFragment.CurrentLang.Id;
-            markerUrlBuilder.MainCategoryId = baseFragment.SelectedMainCategory.Id;
-            markerUrlBuilder.SubCategoriesList = selectedCategory.Select(x => x.Id).ToList();
+            _markerUrlBuilder = new MarkerUrlBuilder
+            {
+                LanguageId = _baseFragment.CurrentLang.Id,
+                MainCategoryId = BaseFragment.SelectedMainCategory.Id,
+                SubCategoriesList = selectedCategory.Select(x => x.Id).ToList()
+            };
             categories = conn.GetDataList<CategoryModel>();
-            products = new List<ProductMarkerModel>();
-            this.isFav = isFav;
+            _products = new List<ProductMarkerModel>();
+            this._isFav = isFav;
             if (!isFav)
             {
-                var LatLngBounds = baseFragment.MainActivity.MapPage.LatLngBounds;
-                var inBounds = baseFragment.MainActivity.MapPage.ProductsInBounds
-                    .Where(x => LatLngBounds.Contains(new LatLng(
+                var latLngBounds = _baseFragment.MainActivity.MapPage.LatLngBounds;
+                var inBounds = _baseFragment.MainActivity.MapPage.ProductsInBounds
+                    .Where(x => latLngBounds.Contains(new LatLng(
                         double.Parse(x.Lat, CultureInfo.InvariantCulture),
                         double.Parse(x.Lng, CultureInfo.InvariantCulture))
                         ));
-                products = new List<ProductMarkerModel>(Utils.SortProductsByDistance(inBounds));
+                _products = new List<ProductMarkerModel>(Utils.SortProductsByDistance(inBounds));
             }
-            baseFragment.ShowSpinner(products.Count == 0);
+            _baseFragment.ShowSpinner(_products.Count == 0);
             StartLoad();
 
         }
@@ -63,24 +66,15 @@ namespace NohandicapNative.Droid.Adapters
         {
             if (await LoadNextData())
             {
-                baseFragment.ShowSpinner(false);
+                _baseFragment.ShowSpinner(false);
             }
         }
 
-        public override ProductMarkerModel this[int position]
-        {
-            get { return products[position]; }
-        }
+        public override ProductMarkerModel this[int position] => _products[position];
 
-        public override int Count
-        {
-            get { return products.Count; }
-        }
+        public override int Count => _products.Count;
 
-        public override long GetItemId(int position)
-        {
-            return products[position].Id;
-        }
+        public override long GetItemId(int position) => _products[position].Id;
 
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
@@ -89,7 +83,7 @@ namespace NohandicapNative.Droid.Adapters
             if (view == null)
             {
 // view = context.LayoutInflater.Inflate(Resource.Layout.list_item, parent, false);
-                view = baseFragment.MainActivity.LayoutInflater.Inflate(Resource.Layout.list_item_first, parent, false);
+                view = _baseFragment.MainActivity.LayoutInflater.Inflate(Resource.Layout.list_item_first, parent, false);
                 view.SetBackgroundColor(Color.White);
             }
 
@@ -98,14 +92,14 @@ namespace NohandicapNative.Droid.Adapters
             var adress = view.FindViewById<TextView>(Resource.Id.adressTextView);
             var positionTextView = view.FindViewById<TextView>(Resource.Id.positionTextView);
             var distanceLayout = view.FindViewById<LinearLayout>(Resource.Id.distanceLayout);
-            title.Text = products[position].Name;
-            adress.Text = products[position].Address;
+            title.Text = _products[position].Name;
+            adress.Text = _products[position].Address;
 
-            if (baseFragment.MainActivity.CurrentLocation != null
-                && NohandicapApplication.CheckIfGPSenabled()
-                && !string.IsNullOrEmpty(products[position].Distance))
+            if (_baseFragment.MainActivity.CurrentLocation != null
+                && NohandicapApplication.CheckIfGpSenabled()
+                && !string.IsNullOrEmpty(_products[position].Distance))
             {
-                positionTextView.Text = products[position].Distance + " km";
+                positionTextView.Text = _products[position].Distance + " km";
             }
             else
             {
@@ -113,9 +107,9 @@ namespace NohandicapNative.Droid.Adapters
             }
 
             string imageUrl = "";
-            if (!string.IsNullOrEmpty(products[position].ProdImg))
+            if (!string.IsNullOrEmpty(_products[position].ProdImg))
             {
-                imageUrl = products[position].ProdImg;
+                imageUrl = _products[position].ProdImg;
             }
             else
             {
@@ -123,11 +117,11 @@ namespace NohandicapNative.Droid.Adapters
                 CategoryModel catImage;
                 if (selectedCategory.Count != 0)
                 {
-                    catImage = selectedCategory.FirstOrDefault(x => products[position].Categories.Any(y => y == x.Id));
+                    catImage = selectedCategory.FirstOrDefault(x => _products[position].Categories.Any(y => y == x.Id));
                 }
                 else
                 {
-                    catImage = selectedCategory.FirstOrDefault(x => products[position].Categories.Any(y => y == x.Id));
+                    catImage = selectedCategory.FirstOrDefault(x => _products[position].Categories.Any(y => y == x.Id));
 
                 }
                 if (catImage != null)
@@ -136,10 +130,10 @@ namespace NohandicapNative.Droid.Adapters
                     imageView.SetBackgroundColor(Color.ParseColor(catImage.Color));
                 }
             }
-            Picasso.With(baseFragment.MainActivity).Load(imageUrl).Resize(60, 60).CenterInside().Into(imageView);
-            if (products.Count - 5 == position)
+            Picasso.With(_baseFragment.MainActivity).Load(imageUrl).Resize(60, 60).CenterInside().Into(imageView);
+            if (_products.Count - 5 == position)
             {
-                ThreadPool.QueueUserWorkItem(o => LoadNextData());
+                ThreadPool.QueueUserWorkItem(async o =>await LoadNextData());
 
             }
             return view;
@@ -153,29 +147,29 @@ namespace NohandicapNative.Droid.Adapters
             IEnumerable<ProductMarkerModel> newProducts;
 
 
-            if (isFav)
+            if (_isFav)
             {
                 var user = conn.GetDataList<UserModel>().FirstOrDefault();
                 if (user == null) return true;
-                newProducts = await RestApiService.GetFavorites(user.Id, PageNumber);
+                newProducts = await RestApiService.GetFavorites(user.Id, _pageNumber);
                 newProducts = Utils.SortProductsByDistance(newProducts);
             }
             else
             {
-                var latLngBounds = baseFragment.MainActivity.MapPage.LatLngBounds;
+                var latLngBounds = _baseFragment.MainActivity.MapPage.LatLngBounds;
                 if (latLngBounds != null)
                 {
-                    markerUrlBuilder.SetBounds(latLngBounds.Southwest.Latitude, latLngBounds.Southwest.Longitude,
+                    _markerUrlBuilder.SetBounds(latLngBounds.Southwest.Latitude, latLngBounds.Southwest.Longitude,
                         latLngBounds.Northeast.Latitude, latLngBounds.Northeast.Longitude);
-                    markerUrlBuilder.PageNumber = PageNumber + 1;
+                    _markerUrlBuilder.PageNumber = _pageNumber + 1;
 
                 }
-                var position = baseFragment.MainActivity.CurrentLocation;
+                var position = _baseFragment.MainActivity.CurrentLocation;
                 if (position != null)
                 {
-                    markerUrlBuilder.SetMyLocation(position.Latitude, position.Longitude);
+                    _markerUrlBuilder.SetMyLocation(position.Latitude, position.Longitude);
                 }
-                newProducts = await markerUrlBuilder.LoadDataAsync();
+                newProducts = await _markerUrlBuilder.LoadDataAsync();
                 if (position == null)
                 {
                     newProducts = newProducts.OrderBy(x => x.Name);
@@ -183,16 +177,16 @@ namespace NohandicapNative.Droid.Adapters
 
             }
 
-            PageNumber++;
+            _pageNumber++;
 
             foreach (var product in newProducts)
             {
-                if (!products.Any(x => x.Id == product.Id))
+                if (_products.All(x => x.Id != product.Id))
                 {
-                    //   baseFragment.MainActivity.CurrentProductsList.Add(product);
-                    baseFragment.MainActivity.RunOnUiThread(() =>
+                    //   _baseFragment.MainActivity.CurrentProductsList.Add(product);
+                    _baseFragment.MainActivity.RunOnUiThread(() =>
                     {
-                        products.Add(product);
+                        _products.Add(product);
                         NotifyDataSetChanged();
                     });
                 }

@@ -10,6 +10,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.Net;
+using NohandicapNative.Droid.Activities;
 
 namespace NohandicapNative.Droid.Services
 {
@@ -22,7 +23,7 @@ namespace NohandicapNative.Droid.Services
             if (intent.Extras != null)
             {
                 NetworkInfo ni = (NetworkInfo)intent.Extras.Get(ConnectivityManager.ExtraNetworkInfo);               
-                    NohandicapApplication.IsInternetConnection = ni.IsConnected;
+                  //  NohandicapApplication.IsInternetConnection = ni.IsConnected;
             }
         }
     }

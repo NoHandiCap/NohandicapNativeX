@@ -1,39 +1,33 @@
-using System.Collections.Generic;
 using System.Linq;
 using Android.Content;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
+using NohandicapNative.Droid.Activities;
 using NohandicapNative.Droid.Adapters;
-using Android.App;
 using NohandicapNative.Droid.Services;
-using Android.Locations;
-using System.Globalization;
-using System.Collections.ObjectModel;
-using NohandicapNative.Droid.Fragments;
-using System;
 
-namespace NohandicapNative.Droid
+namespace NohandicapNative.Droid.Fragments
 {
   public  class ListFragment : BaseFragment
     {           
-        ListView listView;
-        CardViewAdapter cardViewAdapter;
-        TextView mainCategoryName;
-        ImageView mainCategoryImage;
-        TextView subCategoryName;
+        ListView _listView;
+        CardViewAdapter _cardViewAdapter;
+        TextView _mainCategoryName;
+        ImageView _mainCategoryImage;
+        TextView _subCategoryName;
        
         public ListFragment(bool loadFromCache = true) : base(loadFromCache) { }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             var view = inflater.Inflate(Resource.Layout.ListPage, container, false);
-            listView = view.FindViewById<ListView>(Resource.Id.listview);
+            _listView = view.FindViewById<ListView>(Resource.Id.listview);
             view.SetBackgroundColor(Resources.GetColor(Resource.Color.backgroundColor));
-            mainCategoryName = view.FindViewById<TextView>(Resource.Id.mainCategoryTextView);
-            mainCategoryImage = view.FindViewById<ImageView>(Resource.Id.mainCategoryImageView);
-            subCategoryName = view.FindViewById<TextView>(Resource.Id.subCategoryTextView);       
-            listView.ItemClick += ListView_ItemClick; 
+            _mainCategoryName = view.FindViewById<TextView>(Resource.Id.mainCategoryTextView);
+            _mainCategoryImage = view.FindViewById<ImageView>(Resource.Id.mainCategoryImageView);
+            _subCategoryName = view.FindViewById<TextView>(Resource.Id.subCategoryTextView);       
+            _listView.ItemClick += ListView_ItemClick; 
             ReloadData();
             return view;
         }
@@ -55,28 +49,24 @@ namespace NohandicapNative.Droid
             }
         }
 
-        private async void ReloadData()
+        private void ReloadData()
         {
             var selectedSubCategory = DbConnection.GetSubSelectedCategory();
             if (selectedSubCategory.Count != 9)
             {
-                var categories = "";
-                foreach (var item in selectedSubCategory)
-                {
-                    categories += item.Name + ", ";
-                }
+                var categories = selectedSubCategory.Aggregate("", (current, item) => current + (item.Name + ", "));
                 categories = categories.Substring(0, categories.Length - 2);                
-                subCategoryName.Text = categories;
+                _subCategoryName.Text = categories;
             }
             else
             {
-                subCategoryName.Text = Resources.GetString(Resource.String.all_cat);
+                _subCategoryName.Text = Resources.GetString(Resource.String.all_cat);
             }
-            mainCategoryName.Text = SelectedMainCategory.Name;         
+            _mainCategoryName.Text = SelectedMainCategory.Name;         
             var image = Utils.GetImage(Activity, "wheelchair" + SelectedMainCategory.Id);
-            mainCategoryImage.SetImageDrawable(Utils.SetDrawableSize(Activity, image, 140, 65));
-            cardViewAdapter = new CardViewAdapter(this,false);
-            listView.Adapter = cardViewAdapter;   
+            _mainCategoryImage.SetImageDrawable(Utils.SetDrawableSize(Activity, image, 140, 65));
+            _cardViewAdapter = new CardViewAdapter(this,false);
+            _listView.Adapter = _cardViewAdapter;   
         }
     }
 }

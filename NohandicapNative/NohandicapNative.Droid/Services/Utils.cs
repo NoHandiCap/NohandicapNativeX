@@ -22,6 +22,7 @@ using System.Threading.Tasks;
 using Java.Net;
 using System.Globalization;
 using System.IO;
+using NohandicapNative.Droid.Activities;
 using File = Java.IO.File;
 
 namespace NohandicapNative.Droid.Services

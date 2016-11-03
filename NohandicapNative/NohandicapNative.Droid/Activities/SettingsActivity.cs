@@ -13,23 +13,25 @@ using Android.Content.Res;
 using static Android.Widget.AdapterView;
 using System.Threading.Tasks;
 using System;
+using NohandicapNative.Droid.Activities;
+using NohandicapNative.Droid.Fragments;
 
 namespace NohandicapNative.Droid
 {
     [Activity(Label = "@string/settings")]
     public  class SettingsActivity : AppCompatActivity, IOnItemClickListener
     {
-        Android.Support.V7.Widget.Toolbar toolbar;         
-        int[] flags = { Resource.Drawable.german, Resource.Drawable.english, Resource.Drawable.france };
-        List<LanguageModel> languageList;
-        Resources res;
-        LanguageModel selectedLanguage;
-        ListView langListView;
-        Button syncButton;
-        Button logoutButton;
-        TextView lastUpdateTextView;
-        TextView userTextView;
-        LinearLayout loginLayout;
+        Android.Support.V7.Widget.Toolbar _toolbar;
+        readonly int[] flags = { Resource.Drawable.german, Resource.Drawable.english, Resource.Drawable.france };
+        List<LanguageModel> _languageList;
+        LanguageModel _selectedLanguage;
+        ListView _langListView;
+        Button _syncButton;
+        Button _logoutButton;
+        TextView _lastUpdateTextView;
+        TextView _userTextView;
+        LinearLayout _loginLayout;
+        private Resources _res;
       
  
         public SettingsActivity()
@@ -42,32 +44,32 @@ namespace NohandicapNative.Droid
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.SettingsPage);
             PrepareBar();              
-            loginLayout = (LinearLayout)FindViewById(Resource.Id.loginLayout);
-            syncButton = (Button)FindViewById(Resource.Id.syncButton);
-            logoutButton= (Button)FindViewById(Resource.Id.logoutButton);
-            userTextView = (TextView)FindViewById(Resource.Id.userTextView);
-            lastUpdateTextView= (TextView)FindViewById(Resource.Id.lastUpdateTextView);
-            lastUpdateTextView.Text = Resources.GetString(Resource.String.last_update) + Utils.ReadFromSettings(this, Utils.LAST_UPDATE_DATE);
+            _loginLayout = (LinearLayout)FindViewById(Resource.Id.loginLayout);
+            _syncButton = (Button)FindViewById(Resource.Id.syncButton);
+            _logoutButton= (Button)FindViewById(Resource.Id.logoutButton);
+            _userTextView = (TextView)FindViewById(Resource.Id.userTextView);
+            _lastUpdateTextView= (TextView)FindViewById(Resource.Id.lastUpdateTextView);
+            _lastUpdateTextView.Text = Resources.GetString(Resource.String.last_update) + Utils.ReadFromSettings(this, Utils.LAST_UPDATE_DATE);
             var conn = Utils.GetDatabaseConnection();
-            languageList = conn.GetDataList<LanguageModel>();           
-            langListView = FindViewById<ListView>(Resource.Id.languageList);
-            langListView.OnItemClickListener = this;
+            _languageList = conn.GetDataList<LanguageModel>();           
+            _langListView = FindViewById<ListView>(Resource.Id.languageList);
+            _langListView.OnItemClickListener = this;
             List<CustomRadioButton> langList = new List<CustomRadioButton>();
             conn.GetDataList<LanguageModel>().ForEach(x => langList.Add(new CustomRadioButton()
             {
                 Text = x.LanguageName
             }));
             var currentLocale = Utils.ReadFromSettings(this, Utils.LANG_ID_TAG);
-            langListView.Adapter = new RadioButtonListAdapter(this, flags, langList,int.Parse(currentLocale)-1);
-            syncButton.Click += async(s,e)=>{
+            _langListView.Adapter = new RadioButtonListAdapter(this, flags, langList,int.Parse(currentLocale)-1);
+            _syncButton.Click += async(s,e)=>{
                 ProgressDialog progressDialog = new ProgressDialog(this,
                  Resource.Style.StyledDialog);
                 progressDialog.Indeterminate = true;
                 var a = Resources.GetString(Resource.String.load_data);
                 progressDialog.SetMessage(a);
                 progressDialog.Show();
-                var _selectedLangID = Utils.ReadFromSettings(this,Utils.LANG_ID_TAG);
-                bool result = await conn.SynchronizeDataBase(_selectedLangID);
+                var selectedLangId = Utils.ReadFromSettings(this,Utils.LANG_ID_TAG);
+                bool result = await conn.SynchronizeDataBase(selectedLangId);
                 
                 if (result)
                 {                 
@@ -85,8 +87,8 @@ namespace NohandicapNative.Droid
         }
         private void PrepareBar()
         {
-            toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
-            SetSupportActionBar(toolbar);
+            _toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
+            SetSupportActionBar(_toolbar);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Resources.GetColor(Resource.Color.themeColor)));
             SupportActionBar.Title = Resources.GetString(Resource.String.settings);
@@ -97,32 +99,31 @@ namespace NohandicapNative.Droid
             var user = conn.GetDataList<UserModel>().FirstOrDefault();
             if (user != null)
             {
-                userTextView.Text = user.Vname;
-                logoutButton.Click += (s, e) =>
+                _userTextView.Text = user.Vname;
+                _logoutButton.Click += (s, e) =>
                 {
                     conn.Logout();
                     
                     Utils.WriteToSettings(this, Utils.IS_LOGIN, Utils.IS_NOT_LOGED);
-                    loginLayout.Visibility = ViewStates.Gone;
+                    _loginLayout.Visibility = ViewStates.Gone;
                    NohandicapApplication.MainActivity.Favorites=new FavoritesFragment();
                 };
             }
             else
             {
-                loginLayout.Visibility = ViewStates.Gone;
+                _loginLayout.Visibility = ViewStates.Gone;
             }            
         }       
         private async Task<bool> ReloadData()
         {
-            try { 
-            ProgressDialog progressDialog = new ProgressDialog(this,
-           Resource.Style.StyledDialog);
+            try {
+                ProgressDialog progressDialog = new ProgressDialog(this,
+                    Resource.Style.StyledDialog) {Indeterminate = true};
 
-            progressDialog.Indeterminate = true;
-            progressDialog.SetMessage(Resources.GetString(Resource.String.load_data));
+                progressDialog.SetMessage(Resources.GetString(Resource.String.load_data));
             progressDialog.Show();
             var conn = Utils.GetDatabaseConnection();
-            var result = await conn.SynchronizeDataBase(selectedLanguage.Id.ToString());
+            var result = await conn.SynchronizeDataBase(_selectedLanguage.Id.ToString());
             
             if (result)
             {                
@@ -149,17 +150,17 @@ namespace NohandicapNative.Droid
         {
             if (position == 0)
             {
-                selectedLanguage = languageList[position];
+                _selectedLanguage = _languageList[position];
             }
-            for (int i = 0; i < langListView.ChildCount; i++)
+            for (int i = 0; i < _langListView.ChildCount; i++)
             {
-                var text = langListView.GetChildAt(i).FindViewById<TextView>(Resource.Id.grid_text);
-                var viewLayout = langListView.GetChildAt(i).FindViewById<LinearLayout>(Resource.Id.grid_layout);
+                var text = _langListView.GetChildAt(i).FindViewById<TextView>(Resource.Id.grid_text);
+                var viewLayout = _langListView.GetChildAt(i).FindViewById<LinearLayout>(Resource.Id.grid_layout);
                 if (position == i)
                 {
                     text.SetTextColor(Color.White);
                     viewLayout.SetBackgroundColor(Resources.GetColor(Resource.Color.themeColor));
-                    selectedLanguage = languageList[position];
+                    _selectedLanguage = _languageList[position];
                 }
                 else
                 {
@@ -171,12 +172,12 @@ namespace NohandicapNative.Droid
         }
         private async void SaveSettings()
         {
-            if (selectedLanguage != null)
+            if (_selectedLanguage != null)
             {
                 if (await ReloadData())
                 {
-                    NohandicapApplication.CurrentLang = selectedLanguage;                 
-                    res = Utils.SetLocale(this, selectedLanguage.ShortName);
+                    NohandicapApplication.CurrentLang = _selectedLanguage;                 
+                    _res = Utils.SetLocale(this, _selectedLanguage.ShortName);
                     Utils.ReloadMainActivity(Application, this);
                     Finish();
                 }
