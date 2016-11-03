@@ -23,7 +23,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/imageView"
                 android:layout_gravity="center"
-                android:layout_marginRight="5dp" />
+                android:layout_marginRight="5dp"
+           android:layout_marginLeft="40dp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -57,7 +58,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/imageView3"
                 android:layout_gravity="center"
-                android:layout_marginLeft="5dp" />
+                
+                />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -92,7 +94,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/imageView2"
                 android:layout_gravity="center"
-                android:layout_marginRight="5dp" />
+                android:layout_marginRight="5dp"
+              android:layout_marginLeft="18dp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

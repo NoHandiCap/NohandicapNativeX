@@ -14,6 +14,7 @@ using NohandicapNative.Droid.Activities;
 using NohandicapNative.Droid.Adapters;
 using NohandicapNative.Droid.Model;
 using NohandicapNative.Droid.Services;
+using Square.Picasso;
 
 namespace NohandicapNative.Droid.Fragments
 {
@@ -113,9 +114,12 @@ namespace NohandicapNative.Droid.Fragments
             mainCat[categorySelected - 1].SetTextColor(Color.Black);
             mainCat[categorySelected - 1].SetTypeface(null, TypefaceStyle.Bold);
             mainLayout[categorySelected - 1].Selected = true;
-            mainImg[0].SetImageDrawable(Utils.SetDrawableSize(Activity, Resource.Drawable.wheelchair1, 140, 65));
-            mainImg[1].SetImageDrawable(Utils.SetDrawableSize(Activity, Resource.Drawable.wheelchair2, 140, 65));
-            mainImg[2].SetImageDrawable(Utils.SetDrawableSize(Activity, Resource.Drawable.wheelchair3, 140, 65));
+            Picasso.With(Activity).Load(Resource.Drawable.wheelchair1).Resize(45,55).Into(mainImg[0]);
+            Picasso.With(Activity).Load(Resource.Drawable.wheelchair2).Resize(90, 55).Into(mainImg[1]);
+            Picasso.With(Activity).Load(Resource.Drawable.wheelchair3).Resize(135, 55).Into(mainImg[2]);
+            //mainImg[0].SetImageDrawable(Utils.SetDrawableSize(Activity, Resource.Drawable.wheelchair1, 140, 65));
+            //mainImg[1].SetImageDrawable(Utils.SetDrawableSize(Activity, Resource.Drawable.wheelchair2, 140, 65));
+            //mainImg[2].SetImageDrawable(Utils.SetDrawableSize(Activity, Resource.Drawable.wheelchair3, 140, 65));
 
             _additionalCategory = _rootView.FindViewById<ButtonGridView>(Resource.Id.additionalCategory);
             GridRotation();
