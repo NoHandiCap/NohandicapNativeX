@@ -243,7 +243,7 @@ namespace NohandicapNative
                             }
                             else
                             {
-                                if (x.Id == saveSelectedCat.Id)
+                                if (x.Id == saveSelectedCat?.Id)
                                 {
                                     x.IsSelected = true;
                                 }

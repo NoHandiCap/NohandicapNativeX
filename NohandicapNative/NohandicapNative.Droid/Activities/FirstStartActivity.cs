@@ -23,6 +23,8 @@ namespace NohandicapNative.Droid.Activities
         static readonly string TAG = "X:" + typeof(FirstStartActivity).Name;
         ProgressDialog _progressDialog;
         Button _nextButton;
+        Button agreeButton;
+        Button agreeDataProtectionButton;
         readonly int[] flags = { Resource.Drawable.german, Resource.Drawable.english, Resource.Drawable.france, Resource.Drawable.italy};
         private int _selecteLangID = 1;
         TextView _spinnerPrompt;
@@ -48,7 +50,7 @@ namespace NohandicapNative.Droid.Activities
             _dataProtectionLayout = FindViewById<LinearLayout>(Resource.Id.dataProtectionLayout);
             var agreementTextView = FindViewById<TextView>(Resource.Id.agreementTextView);
             var dataProtectionTextView = FindViewById<TextView>(Resource.Id.dataProtectionTextView);
-            var agreeButton = _agreementLayout.FindViewById<Button>(Resource.Id.agreeButton);
+             agreeButton = _agreementLayout.FindViewById<Button>(Resource.Id.agreeButton);
             _languageLayout.Visibility = ViewStates.Visible;
             _agreementLayout.Visibility = ViewStates.Gone;
             _dataProtectionLayout.Visibility = ViewStates.Gone;
@@ -58,7 +60,7 @@ namespace NohandicapNative.Droid.Activities
                     _dataProtectionLayout.Visibility = ViewStates.Visible;
                 };
 
-            var agreeDataProtectionButton = _dataProtectionLayout.FindViewById<Button>(Resource.Id.agreeDataProtectionButton);
+             agreeDataProtectionButton = _dataProtectionLayout.FindViewById<Button>(Resource.Id.agreeDataProtectionButton);
             agreeDataProtectionButton.Click += (s, e) =>
             {
                 _progressDialog = new ProgressDialog(this,
@@ -74,7 +76,7 @@ namespace NohandicapNative.Droid.Activities
             _spinnerPrompt = FindViewById<TextView>(Resource.Id.lang_spinner_prompt);
             _langListView = FindViewById<ListView>(Resource.Id.languageList);
             FillLanguageLocalTable();
-            FillMainCategoriesLocalTable();
+         
             _nextButton.Text = Resources.GetString(Resource.String.next);
 
             _nextButton.Click += (s, e) =>
@@ -90,11 +92,14 @@ namespace NohandicapNative.Droid.Activities
         
         private void SetLocale(int position)
         {
-            Utils.WriteToSettings(this, Utils.LANG_ID_TAG, _languagesList[position].Id.ToString());
+            _selecteLangID = _languagesList[position].Id;
+            Utils.WriteToSettings(this, Utils.LANG_ID_TAG, _selecteLangID.ToString());
             Utils.WriteToSettings(this, Utils.LANG_SHORT, _languagesList[position].ShortName);
             _res = Utils.SetLocale(this, _languagesList[position].ShortName);
             _nextButton.Text = _res.GetString(Resource.String.next);
             _spinnerPrompt.Text = _res.GetString(Resource.String.lang_prompt);
+            agreeButton.Text= _res.GetString(Resource.String.accept);
+            agreeDataProtectionButton.Text= _res.GetString(Resource.String.accept);
         }
         public void OnItemClick(AdapterView parent, View view, int position, long id)
         {
@@ -172,15 +177,16 @@ namespace NohandicapNative.Droid.Activities
                     Group = 2
                 });
             }
+            var conn = Utils.GetDatabaseConnection();
+            conn.InsertUpdateProductList(_languagesList);
+            conn.InsertUpdateProductList(_mainCategoriesList);
+            conn.SetSelectedCategory(_mainCategoriesList[0]);
 
         }
         private async void LoadData()
         {
             var conn = Utils.GetDatabaseConnection();
             conn.CreateTables();
-            conn.InsertUpdateProductList(_languagesList);
-            conn.InsertUpdateProductList(_mainCategoriesList);
-            conn.SetSelectedCategory(_mainCategoriesList[0]);
             var result = await RestApiService.CheckUpdate(conn, _selecteLangID.ToString(), Utils.GetLastUpdate(this));
 
             if (result != null)
@@ -218,6 +224,7 @@ namespace NohandicapNative.Droid.Activities
             });
             builder.SetNegativeButton(Resources.GetString(Resource.String.continue_text), (sender, args) =>
             {
+                FillMainCategoriesLocalTable();
                 StartActivity(new Intent(Application.Context, typeof(MainActivity)));
                 Finish();
             });
