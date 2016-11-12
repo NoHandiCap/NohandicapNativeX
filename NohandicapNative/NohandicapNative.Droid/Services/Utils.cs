@@ -269,7 +269,6 @@ namespace NohandicapNative.Droid.Services
         public static string ReadFromSettings(Context context, string key,string defValue=null)
         {
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
-
             return prefs.GetString(key, defValue);
         }
      

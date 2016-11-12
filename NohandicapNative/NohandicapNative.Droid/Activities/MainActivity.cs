@@ -69,7 +69,7 @@ namespace NohandicapNative.Droid.Activities
             return isOnline;
         }
 
-        public static bool CheckIfGpSenabled()
+        public static bool CheckIfGPSenabled()
         {
             LocationManager locationManager = (LocationManager)MainActivity.GetSystemService(LocationService);
             // getting GPS status
@@ -89,9 +89,7 @@ namespace NohandicapNative.Droid.Activities
             {
                 var conn = Utils.GetDatabaseConnection();
                 conn.SetSelectedCategory(value);
-
             }
-
         }
 
         public static bool IsTablet { get; set; }

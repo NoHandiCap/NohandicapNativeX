@@ -65,14 +65,14 @@
   <string-array name="lang_array">
     <item>Deutsch</item>
     <item>English</item>
-    <item>Italienisch</item>
-    <item>Französisch</item>  
+    <item>Französisch</item>
+    <item>Italienisch</item> 
   </string-array>
   <string-array name="lang_short_array">
     <item>de</item>
     <item>en</item>
-    <item>it</item>
     <item>fr</item>
+    <item>it</item>
   </string-array>
   <string-array name="main_category_array">
     <item>@string/main_cat1</item>

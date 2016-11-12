@@ -23,7 +23,7 @@ namespace NohandicapNative.Droid.Activities
         static readonly string TAG = "X:" + typeof(FirstStartActivity).Name;
         ProgressDialog _progressDialog;
         Button _nextButton;
-        readonly int[] flags = { Resource.Drawable.german, Resource.Drawable.english, Resource.Drawable.italy, Resource.Drawable.france };
+        readonly int[] flags = { Resource.Drawable.german, Resource.Drawable.english, Resource.Drawable.france, Resource.Drawable.italy};
         private int _selecteLangID = 1;
         TextView _spinnerPrompt;
         ListView _langListView;
@@ -34,6 +34,7 @@ namespace NohandicapNative.Droid.Activities
         LinearLayout _agreementLayout;
         LinearLayout _dataProtectionLayout;
         LanguageModel _currentLanguage;
+
         protected override void OnCreate(Bundle bundle)
         {
             Log.Debug(TAG, "Set Theme");
@@ -73,13 +74,13 @@ namespace NohandicapNative.Droid.Activities
             _spinnerPrompt = FindViewById<TextView>(Resource.Id.lang_spinner_prompt);
             _langListView = FindViewById<ListView>(Resource.Id.languageList);
             FillLanguageLocalTable();
-            FillMainCategiesLocalTable();
+            FillMainCategoriesLocalTable();
             _nextButton.Text = Resources.GetString(Resource.String.next);
 
             _nextButton.Click += (s, e) =>
              {
                  agreementTextView.Text = Utils.ReadStream(this,"Agreement_",_currentLanguage.ShortName, ".txt"); ; // Set TextView.Text to our asset content
-                 dataProtectionTextView.Text =Utils.ReadStream(this,"DataProtection_", _currentLanguage.ShortName, ".txt"); // Set TextView.Text to our asset content
+                 dataProtectionTextView.Text = Utils.ReadStream(this,"DataProtection_", _currentLanguage.ShortName, ".txt"); // Set TextView.Text to our asset content
                  _languageLayout.Visibility = ViewStates.Gone;
                  _agreementLayout.Visibility = ViewStates.Visible;
              };
@@ -124,7 +125,6 @@ namespace NohandicapNative.Droid.Activities
         {
             try
             {
-
                 string[] defaultLanguages = Resources.GetStringArray(Resource.Array.lang_array);
                 var defaultShortLanguages = Resources.GetStringArray(Resource.Array.lang_short_array);
 
@@ -158,7 +158,7 @@ namespace NohandicapNative.Droid.Activities
 #endif
             }
         }
-        private void FillMainCategiesLocalTable()
+        private void FillMainCategoriesLocalTable()
         {
 
             var mainItems = Resources.GetStringArray(Resource.Array.main_category_array).ToList();

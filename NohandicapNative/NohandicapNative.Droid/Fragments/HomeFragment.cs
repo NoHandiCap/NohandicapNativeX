@@ -20,7 +20,7 @@ namespace NohandicapNative.Droid.Fragments
 {
   public  class HomeFragment: BaseFragment, IOnMenuTabSelectedListener
     {
-      readonly int[] _mainCategoriesText = { Resource.Id.first_category, Resource.Id.second_category, Resource.Id.thrity_category };
+      readonly int[] _mainCategoriesText = { Resource.Id.first_category, Resource.Id.second_category, Resource.Id.third_category };
       readonly int[] _mainCategoriesImgView = { Resource.Id.imageView, Resource.Id.imageView2, Resource.Id.imageView3 };
       readonly int[] _mainCategoriesLayout= { Resource.Id.category_linearLayout, Resource.Id.category_linearLayout3, Resource.Id.category_linearLayout2 };
       

@@ -63,7 +63,7 @@ namespace NohandicapNative.Droid
             _mapView.OnCreate(savedInstanceState);
             _mapView.OnResume();
          
-            if (!NohandicapApplication.CheckIfGpSenabled())
+            if (!NohandicapApplication.CheckIfGPSenabled())
                 ShowNoGPSEnabled();
             //else
                 //Toast.MakeText(this.Context, "GPS enabled", ToastLength.Short).Show(); //on some phones it shows every few seconds: Wiko i Samsumg Galaxy 

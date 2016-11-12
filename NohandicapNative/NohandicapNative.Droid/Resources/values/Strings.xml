@@ -64,14 +64,14 @@
   <string-array name="lang_array">
     <item>German</item>
     <item>English</item>
-    <item>Italy  </item>
     <item>French</item>
+    <item>Italy  </item>
   </string-array>
   <string-array name="lang_short_array">
     <item>de</item>
     <item>en</item>
-    <item>it</item>
     <item>fr</item>
+    <item>it</item>
   </string-array>
   <string-array name="main_category_array">
     <item>@string/main_cat1</item>
