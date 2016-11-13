@@ -6,6 +6,7 @@ using Android.Widget;
 using NohandicapNative.Droid.Activities;
 using NohandicapNative.Droid.Adapters;
 using NohandicapNative.Droid.Services;
+using Square.Picasso;
 
 namespace NohandicapNative.Droid.Fragments
 {
@@ -62,9 +63,9 @@ namespace NohandicapNative.Droid.Fragments
             {
                 _subCategoryName.Text = Resources.GetString(Resource.String.all_cat);
             }
-            _mainCategoryName.Text = SelectedMainCategory.Name;         
-            var image = Utils.GetImage(Activity, "wheelchair" + SelectedMainCategory.Id);
-            _mainCategoryImage.SetImageDrawable(Utils.SetDrawableSize(Activity, image, 140, 65));
+            _mainCategoryName.Text = SelectedMainCategory.Name;
+            var url = Utils.RESOURCE_PATH + "wheelchair" + SelectedMainCategory.Id;
+            Picasso.With(Activity).Load(url).Resize(0, 55).Into(_mainCategoryImage);
             _cardViewAdapter = new CardViewAdapter(this,false);
             _listView.Adapter = _cardViewAdapter;   
         }
