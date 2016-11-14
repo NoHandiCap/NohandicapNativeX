@@ -22,7 +22,7 @@ namespace NohandicapNative.Droid.Fragments
     {
       readonly int[] _mainCategoriesText = { Resource.Id.first_category, Resource.Id.second_category, Resource.Id.third_category };
       readonly int[] _mainCategoriesImgView = { Resource.Id.imageView, Resource.Id.imageView2, Resource.Id.imageView3 };
-      readonly int[] _mainCategoriesLayout= { Resource.Id.category_linearLayout, Resource.Id.category_linearLayout3, Resource.Id.category_linearLayout2 };
+      readonly int[] _mainCategoriesLayout= { Resource.Id.first_row, Resource.Id.second_row, Resource.Id.third_row };
       
         ButtonGridView _additionalCategory;     
         View _rootView;
@@ -49,15 +49,15 @@ namespace NohandicapNative.Droid.Fragments
             _rootView.SetBackgroundColor(Activity.Resources.GetColor(Resource.Color.backgroundColor));
             this.HasOptionsMenu = true;
            
-            _mainCategoriesList = DbConnection.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.MainCatGroup);
+            _mainCategoriesList = DbConnection.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.MainCatGroup).OrderBy(x=>x.Id).ToList();
             _subCategoriesList = DbConnection.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.SubCatGroup);
 
             TextView[] mainCat = new TextView[_mainCategoriesList.Count];
             ImageView[] mainImg = new ImageView[_mainCategoriesList.Count];
-            LinearLayout[] mainLayout = new LinearLayout[_mainCategoriesList.Count];
+            TableRow[] mainLayout = new TableRow[_mainCategoriesList.Count];
             var askBtn1 = _rootView.FindViewById<ImageButton>(Resource.Id.imageViewAsk);
-            var askBtn2 = _rootView.FindViewById<ImageButton>(Resource.Id.imageViewAsk3);
-            var askBtn3 = _rootView.FindViewById<ImageButton>(Resource.Id.imageViewAsk2);
+            var askBtn2 = _rootView.FindViewById<ImageButton>(Resource.Id.imageViewAsk2);
+            var askBtn3 = _rootView.FindViewById<ImageButton>(Resource.Id.imageViewAsk3);
             askBtn1.Tag = _mainCategoriesList[0].Id;
             askBtn2.Tag = _mainCategoriesList[1].Id;
             askBtn3.Tag = _mainCategoriesList[2].Id;
@@ -70,7 +70,7 @@ namespace NohandicapNative.Droid.Fragments
                 mainCat[i] = _rootView.FindViewById<TextView>(_mainCategoriesText[i]);
                 mainCat[i].Text = _mainCategoriesList[i].Name;
                 mainImg[i] = _rootView.FindViewById<ImageView>(_mainCategoriesImgView[i]);
-                mainLayout[i] = _rootView.FindViewById<LinearLayout>(_mainCategoriesLayout[i]);
+                mainLayout[i] = _rootView.FindViewById<TableRow>(_mainCategoriesLayout[i]);
             }
 
             for (int i = 0; i < mainCat.Length; i++)
@@ -79,6 +79,7 @@ namespace NohandicapNative.Droid.Fragments
                 mainCat[i].SetTypeface(null, TypefaceStyle.Normal);
                 mainCat[i].SetBackgroundColor(Color.White);
                 mainLayout[i].Selected = false;
+                mainLayout[i].SetBackgroundColor(Color.White);
                 mainLayout[i].Click +=async(s, e) =>
                 {
                     var layout = (LinearLayout)s;
@@ -114,9 +115,9 @@ namespace NohandicapNative.Droid.Fragments
             mainCat[categorySelected - 1].SetTextColor(Color.Black);
             mainCat[categorySelected - 1].SetTypeface(null, TypefaceStyle.Bold);
             mainLayout[categorySelected - 1].Selected = true;
-            Picasso.With(Activity).Load(Resource.Drawable.wheelchair1).Resize(45,55).Into(mainImg[0]);
-            Picasso.With(Activity).Load(Resource.Drawable.wheelchair2).Resize(90, 55).Into(mainImg[1]);
-            Picasso.With(Activity).Load(Resource.Drawable.wheelchair3).Resize(135, 55).Into(mainImg[2]);
+            Picasso.With(Activity).Load(Resource.Drawable.wheelchair1).Resize(0,55).Into(mainImg[0]);
+            Picasso.With(Activity).Load(Resource.Drawable.wheelchair2).Resize(0, 55).Into(mainImg[1]);
+            Picasso.With(Activity).Load(Resource.Drawable.wheelchair3).Resize(0, 55).Into(mainImg[2]);
             //mainImg[0].SetImageDrawable(Utils.SetDrawableSize(Activity, Resource.Drawable.wheelchair1, 140, 65));
             //mainImg[1].SetImageDrawable(Utils.SetDrawableSize(Activity, Resource.Drawable.wheelchair2, 140, 65));
             //mainImg[2].SetImageDrawable(Utils.SetDrawableSize(Activity, Resource.Drawable.wheelchair3, 140, 65));

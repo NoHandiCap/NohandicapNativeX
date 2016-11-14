@@ -15,113 +15,143 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="2">
-        <RelativeLayout
+      <TableLayout
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:id="@+id/categryTableLayout">
+        <TableRow
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="top"
-            android:layout_weight="3"
-            android:id="@+id/categoryLayout"
-            android:layout_marginBottom="20dp">
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="fill_parent"
-                android:layout_height="@dimen/main_category_height"
-                android:id="@+id/category_linearLayout"
-                android:layout_marginTop="5dp"
-                android:background="#ffffff">
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/imageView"
-                    android:layout_gravity="center"
-                    android:layout_marginRight="5dp" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="@string/large_text"
-                    android:id="@+id/first_category"
-                    android:layout_gravity="center"
-                    android:textColor="#000000" />
-                <ImageButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="@dimen/ask_img_width"
-                    android:layout_marginBottom="@dimen/ask_img_width"
-                    android:id="@+id/imageViewAsk"
-                    android:src="@drawable/ask"
-                    android:background="@null"
-                    android:scaleType="fitCenter" />
-            </LinearLayout>
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="fill_parent"
-                android:layout_height="@dimen/main_category_height"
-                android:id="@+id/category_linearLayout2"
-                android:layout_below="@+id/category_linearLayout3"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:background="#ffffff">
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/imageView3"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="5dp" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="@string/large_text"
-                    android:id="@+id/third_category"
-                    android:layout_gravity="center"
-                    android:textColor="#000000" />
-                <ImageButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="@dimen/ask_img_width"
-                    android:layout_marginBottom="@dimen/ask_img_width"
-                    android:id="@+id/imageViewAsk2"
-                    android:src="@drawable/ask"
-                    android:background="@null"
-                    android:scaleType="fitCenter" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal"
-                android:layout_width="fill_parent"
-                android:layout_height="@dimen/main_category_height"
-                android:id="@+id/category_linearLayout3"
-                android:layout_below="@+id/category_linearLayout"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:background="#ffffff">
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/imageView2"
-                    android:layout_gravity="center"
-                    android:layout_marginRight="5dp" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="@string/large_text"
-                    android:id="@+id/second_category"
-                    android:layout_gravity="center"
-                    android:textColor="#000000" />
-                <ImageButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="@dimen/ask_img_width"
-                    android:layout_marginBottom="@dimen/ask_img_width"
-                    android:id="@+id/imageViewAsk3"
-                    android:src="@drawable/ask"
-                    android:background="@null"
-                    android:scaleType="fitCenter" />
-            </LinearLayout>
-        </RelativeLayout>
+            android:layout_height="match_parent"
+            android:id="@+id/first_row">
+          <RelativeLayout
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_weight="1"
+              android:layout_marginRight="5dp">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageView"
+                android:layout_weight="2"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+          </RelativeLayout>
+          <LinearLayout
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_weight="5">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/large_text"
+                android:id="@+id/first_category"
+                android:layout_gravity="center"
+                android:textColor="#000000" />
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/ask_img_width"
+                android:layout_marginBottom="@dimen/ask_img_width"
+                android:layout_marginLeft="5dp"
+                android:id="@+id/imageViewAsk"
+                android:src="@drawable/ask"
+                android:background="@null"
+                android:scaleType="fitCenter" />
+          </LinearLayout>
+        </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="4px"
+            android:id="@+id/second_row">
+          <RelativeLayout
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_weight="1"
+              android:layout_marginRight="5dp">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageView2"
+                android:layout_weight="2"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+          </RelativeLayout>
+          <LinearLayout
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_weight="5">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/large_text"
+                android:id="@+id/second_category"
+                android:layout_gravity="center"
+                android:textColor="#000000" />
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/ask_img_width"
+                android:layout_marginBottom="@dimen/ask_img_width"
+                android:layout_marginLeft="5dp"
+                android:id="@+id/imageViewAsk2"
+                android:src="@drawable/ask"
+                android:background="@null"
+                android:scaleType="fitCenter" />
+          </LinearLayout>
+        </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="4px"
+            android:layout_marginBottom="4px"
+            android:id="@+id/third_row">
+          <RelativeLayout
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_weight="1"
+              android:layout_marginRight="5dp">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageView3"
+                android:layout_weight="2"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+          </RelativeLayout>
+          <LinearLayout
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_weight="5">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="@string/large_text"
+                android:id="@+id/third_category"
+                android:layout_gravity="center"
+                android:textColor="#000000" />
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/ask_img_width"
+                android:layout_marginBottom="@dimen/ask_img_width"
+                android:layout_marginLeft="5dp"
+                android:id="@+id/imageViewAsk3"
+                android:src="@drawable/ask"
+                android:background="@null"
+                android:scaleType="fitCenter" />
+          </LinearLayout>
+        </TableRow>
+      </TableLayout>
         <NohandicapNative.Droid.ButtonGridView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -133,7 +163,7 @@
             android:stretchMode="columnWidth"
             android:gravity="top"
             android:layout_weight="3"
-            android:layout_below="@+id/categoryLayout"
+            android:layout_below="@+id/categryTableLayout"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
     </RelativeLayout>

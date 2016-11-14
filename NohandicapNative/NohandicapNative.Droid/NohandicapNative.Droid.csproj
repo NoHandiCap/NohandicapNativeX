@@ -69,6 +69,7 @@
       <HintPath>..\..\packages\BottomNavigationBar.1.4.0.2\lib\MonoAndroid403\BottomNavigationBar.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Java.Interop" />
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -268,7 +269,9 @@
     <AndroidResource Include="Resources\layout-xlarge\HomePage.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout-xlarge\HomePage_port.axml" />
+    <AndroidResource Include="Resources\layout-xlarge\HomePage_port.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
     <AndroidResource Include="Resources\layout-sw600dp\HomePage.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
