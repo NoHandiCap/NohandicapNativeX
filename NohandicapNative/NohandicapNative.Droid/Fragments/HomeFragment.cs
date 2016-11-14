@@ -29,7 +29,7 @@ namespace NohandicapNative.Droid.Fragments
         LayoutInflater _inflater;
         List<CategoryModel> _subCategoriesList;
         List<CategoryModel> _mainCategoriesList;
-
+      private TableRow[] mainLayout;
         GridViewAdapter _buttonsAdapter;
 
         public HomeFragment(Boolean loadFromCache = true) : base(loadFromCache) { }
@@ -54,7 +54,7 @@ namespace NohandicapNative.Droid.Fragments
 
             TextView[] mainCat = new TextView[_mainCategoriesList.Count];
             ImageView[] mainImg = new ImageView[_mainCategoriesList.Count];
-            TableRow[] mainLayout = new TableRow[_mainCategoriesList.Count];
+            mainLayout = new TableRow[_mainCategoriesList.Count];
             var askBtn1 = _rootView.FindViewById<ImageButton>(Resource.Id.imageViewAsk);
             var askBtn2 = _rootView.FindViewById<ImageButton>(Resource.Id.imageViewAsk2);
             var askBtn3 = _rootView.FindViewById<ImageButton>(Resource.Id.imageViewAsk3);
@@ -166,6 +166,17 @@ namespace NohandicapNative.Droid.Fragments
                 helpPopup.Show(btn);
             }
         }
+
+      public override void OnHiddenChanged(bool hidden)
+      {
+          for (int i = 0; i < mainLayout.Length; i++)
+          {
+              mainLayout[i].Invalidate();
+               
+                mainLayout[i].RequestLayout();
+          }
+          base.OnHiddenChanged(hidden);
+      }
 
       private void ShowDropDown(View view)
       {
