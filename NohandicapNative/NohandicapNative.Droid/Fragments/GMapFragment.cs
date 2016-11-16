@@ -29,7 +29,7 @@ namespace NohandicapNative.Droid
     {     
 
         static readonly string TAG = "X:" + typeof(GMapFragment).Name;
-        protected int mDpi = 0;
+        protected int pixelDensityIndex = 0, defaultMarkerSize = 32, markerResizeIndex = 32;
         LayoutInflater _inflater;   
         GoogleMap _map;            
         MapView _mapView;
@@ -38,26 +38,32 @@ namespace NohandicapNative.Droid
         public LatLngBounds LatLngBounds = null;
         MarkerUrlBuilder _markerUrlBuilder;
         static readonly SemaphoreSlim SemaphoreSlim = new SemaphoreSlim(1,1);
-
         bool isShownNoInternet = false;
 
         public GMapFragment(Boolean loadFromCache = true) : base(loadFromCache)
         {
             ProductsInBounds = new ObservableCollection<ProductMarkerModel>();
-            _markerUrlBuilder=new MarkerUrlBuilder();
-  
+            _markerUrlBuilder = new MarkerUrlBuilder();
         }
 
+        /*
+         * For screens with higher pixel density there is a need to multiply marker size.
+        */
 
+        private void SetScreenDensity()
+        {
+            DisplayMetrics metrics = new DisplayMetrics();
+            Activity.WindowManager.DefaultDisplay.GetMetrics(metrics);
+            pixelDensityIndex = (int)metrics.Density <= 2 ? 1 : 2;
+            markerResizeIndex = defaultMarkerSize * pixelDensityIndex;
+        }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             this._inflater = inflater;          
             var view = inflater.Inflate(Resource.Layout.MapPage, container, false);
             view.SetBackgroundColor(MainActivity.Resources.GetColor(Resource.Color.backgroundColor));
-            DisplayMetrics metrics = new DisplayMetrics();
-            Activity.WindowManager.DefaultDisplay.GetMetrics(metrics);
-            mDpi = (int)metrics.Density<=2 ? 1:2;
+            SetScreenDensity();
             HasOptionsMenu = true;
             _mapView = view.FindViewById<MapView>(Resource.Id.map);
             _mapView.OnCreate(savedInstanceState);
@@ -72,25 +78,19 @@ namespace NohandicapNative.Droid
 
             try
             {                                         
-              
                 var selectedCategories = DbConnection.GetSubSelectedCategory();
+
                 if (selectedCategories.Count != 0)
-                {
                     SetData(selectedCategories);
-                }
                 else
-                {
                     SetData(DbConnection.GetDataList<CategoryModel>(x => x.Group == NohandicapLibrary.SubCatGroup));
-                }
-                
-            } catch(Exception e)
+            }
+            catch (Exception e)
             {
                 Log.Debug(TAG, "Check Update " + e.Message);
             }
             return view;
         }
-
-       
 
         /**
          * Function to show settings alert dialog
@@ -139,7 +139,6 @@ namespace NohandicapNative.Droid
                              try
                              {
                                  await LoadData();
-
                              }
                              finally
                              {
@@ -163,7 +162,7 @@ namespace NohandicapNative.Droid
                              _markerUrlBuilder.SetBounds(LatLngBounds.Southwest.Latitude, LatLngBounds.Southwest.Longitude,
                            LatLngBounds.Northeast.Latitude, LatLngBounds.Northeast.Longitude);
 
-                             loadedProducts =await _markerUrlBuilder.LoadDataAsync();
+                             loadedProducts = await _markerUrlBuilder.LoadDataAsync();
                          }
                         
                          IEnumerable<ProductMarkerModel> newProductsInBound;
@@ -181,7 +180,6 @@ namespace NohandicapNative.Droid
                      catch (Exception e)
                      {
                          Debugger.Break();
-
                      }
                  });
                 return true;             
@@ -210,22 +208,21 @@ namespace NohandicapNative.Droid
                  
                 Log.Debug(TAG, "Set Marker Options.");
            
-                   Activity.RunOnUiThread(() =>
+                Activity.RunOnUiThread(() =>
                 {
                     var marker = _map.AddMarker(options);
                     var picassoMarker = new PicassoMarker(marker);
 
                     if (string.IsNullOrEmpty(customPinUrl))
-                    {
                         customPinUrl = catPinUrl;
-                    }
 
-                    Picasso.With(Activity).Load(customPinUrl).Resize(0,32*mDpi).Into(picassoMarker);
+                    Picasso.With(Activity).Load(customPinUrl).Resize(0, markerResizeIndex).Into(picassoMarker);
                   
                     Log.Debug(TAG, "Added Marker ");
 
                 });
-                   ProductsInBounds.Add(product);
+
+                ProductsInBounds.Add(product);
                }
             });
         }
@@ -276,14 +273,16 @@ namespace NohandicapNative.Droid
             _map.UiSettings.ZoomControlsEnabled = true;
             _map.SetInfoWindowAdapter(this);
             _map.CameraIdle += Map_CameraIdle;
+
             _map.InfoWindowClick += (s, e) => {
                 var product = FindProductFromMarker((Marker)e.Marker);
-                var activity = new Intent(Activity, typeof(DetailActivity));
-               activity.PutExtra(Utils.PRODUCT_ID, product.Id);
-               Activity.StartActivity(activity);
+                var detailActivity = new Intent(Activity, typeof(DetailActivity));
+               detailActivity.PutExtra(Utils.PRODUCT_ID, product.Id);
+               Activity.StartActivity(detailActivity);
             };
           
-            CameraPosition.Builder builder = CameraPosition.InvokeBuilder();                     
+            CameraPosition.Builder builder = CameraPosition.InvokeBuilder();         
+                        
             if (MainActivity.CurrentLocation != null)
             {
                 var myLocation = MainActivity.CurrentLocation;
@@ -295,6 +294,7 @@ namespace NohandicapNative.Droid
             {
                 builder.Target(new LatLng(48.2274656, 16.4067023)).Zoom(10); //Vienna
             }
+
             CameraPosition cameraPosition = builder.Build();
             CameraUpdate cameraUpdate = CameraUpdateFactory.NewCameraPosition(cameraPosition);
             _map.MoveCamera(cameraUpdate);     
@@ -326,8 +326,6 @@ namespace NohandicapNative.Droid
             }
         }
 
-
-
         #region InfoWindowAdapter
         public View GetInfoContents(Marker marker)
         {
@@ -354,7 +352,6 @@ namespace NohandicapNative.Droid
                 else
                 {
                     imageView.SetBackgroundColor(Color.White);
-
                 }
 
                 Picasso.With(Activity).Load(tooltipProdImg).Placeholder(Resource.Drawable.placeholder).Resize(50, 50).Into(imageView, 
@@ -385,6 +382,7 @@ namespace NohandicapNative.Droid
         {
             return null;
         }
+
         private ProductMarkerModel FindProductFromMarker (Marker marker)
         {
             ProductMarkerModel product;
@@ -401,13 +399,12 @@ namespace NohandicapNative.Droid
         public override void OnCreateOptionsMenu(IMenu menu, MenuInflater inflater)
         {
             if (!IsTablet)
-            {
                 inflater.Inflate(Resource.Menu.map_menu, menu);
-            }
+
             base.OnCreateOptionsMenu(menu, inflater);
         }
 
-        public  override bool OnOptionsItemSelected(IMenuItem item)
+        public override bool OnOptionsItemSelected(IMenuItem item)
         {
             switch (item.ItemId)
             {
@@ -420,6 +417,9 @@ namespace NohandicapNative.Droid
                     MainActivity.SupportActionBar.Title = "Map";
                     break;
             }
+
+            Task.Run(async () => { await LoadData(); }).Wait();
+
             return true;
         }
         
