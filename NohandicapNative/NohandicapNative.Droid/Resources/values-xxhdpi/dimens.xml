@@ -7,6 +7,6 @@
   <dimen name="main_category_text">12dp</dimen>
   <dimen name="main_category_image">30dp</dimen>
   <dimen name="detail_image_height">300dp</dimen>
-  <dimen name="ask_img_width">3dp</dimen>
+  <dimen name="ask_img_width">0dp</dimen>
 
 </resources>

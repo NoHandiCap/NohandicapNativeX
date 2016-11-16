@@ -609,7 +609,9 @@
     <AndroidAsset Include="Assets\main_category_3_it.txt" />
   </ItemGroup>
   <ItemGroup>
-    <TransformFile Include="Resources\values-xxhdpi\dimens.xml" />
+    <TransformFile Include="Resources\values-xxhdpi\dimens.xml">
+      <SubType>Designer</SubType>
+    </TransformFile>
   </ItemGroup>
   <Import Project="..\NohandicapNative\NohandicapNative.projitems" Label="Shared" Condition="Exists('..\NohandicapNative\NohandicapNative.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

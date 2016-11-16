@@ -56,7 +56,13 @@ namespace NohandicapNative.Droid.Services
             lastUpdate.Add(NohandicapLibrary.LANGUAGE_TABLE, Utils.ReadFromSettings(context, NohandicapLibrary.LANGUAGE_TABLE));
             return lastUpdate;
         }
-
+        public static int GetScreenDensity(Activity activity)
+        {
+            DisplayMetrics metrics = new DisplayMetrics();
+            activity.WindowManager.DefaultDisplay.GetMetrics(metrics);
+          int  pixelDensityIndex = (int)metrics.Density <= 2 ? 1 : 2;
+            return pixelDensityIndex;
+        }
         public static bool isAppIsInBackground(Context context)
         {
             bool isInBackground = true;

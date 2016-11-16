@@ -52,10 +52,7 @@ namespace NohandicapNative.Droid
 
         private void SetScreenDensity()
         {
-            DisplayMetrics metrics = new DisplayMetrics();
-            Activity.WindowManager.DefaultDisplay.GetMetrics(metrics);
-            pixelDensityIndex = (int)metrics.Density <= 2 ? 1 : 2;
-            markerResizeIndex = defaultMarkerSize * pixelDensityIndex;
+            markerResizeIndex = defaultMarkerSize * Utils.GetScreenDensity(Activity);
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
