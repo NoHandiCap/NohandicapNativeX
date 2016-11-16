@@ -259,8 +259,8 @@ namespace NohandicapNative.Droid.Activities
 
                 var tab = _items[i];
                 var icon = Utils.GetImage(this, tab.Image);
-
-                tabItems[i] = new BottomBarTab(Utils.SetDrawableSize(this, icon, 40, 40), tab.Title);
+                var screenDimens = Utils.GetScreenDensity(this);
+                tabItems[i] = new BottomBarTab(Utils.SetDrawableSize(this, icon, 40 * screenDimens, 40 * screenDimens), tab.Title);
                 _bottomBar.SetActiveTabColor(Color.Red);
 
             }
