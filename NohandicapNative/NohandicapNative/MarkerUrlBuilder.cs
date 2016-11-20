@@ -15,7 +15,7 @@ namespace NohandicapNative
           
             _isBoundsEnaled = false;
             SubCategoriesList = new List<int>();
-            CountMarkertToLoad = 50;
+            CountMarkersToLoad = NohandicapLibrary.DefaultCountMarkersToLoad;
             PageNumber = 1;
         }
 
@@ -40,7 +40,7 @@ namespace NohandicapNative
         public double MyLocationLongitude { get; set; }
         public List<int> SubCategoriesList { get; set; }
         public int PageNumber { get; set; }
-        public int CountMarkertToLoad { get; set; }
+        public int CountMarkersToLoad { get; set; }
 
         public string Url
         {
@@ -133,7 +133,7 @@ namespace NohandicapNative
                        NortheastLongitude.ToString(CultureInfo.InvariantCulture);
                 //invariantculture to have double with "." and not with ","
             
-           var url = string.Format(NohandicapLibrary.LINK_GET_MARKERS_GPS, MainCategoryId, CountMarkertToLoad, LanguageId,
+           var url = string.Format(NohandicapLibrary.LINK_GET_MARKERS_GPS, MainCategoryId, CountMarkersToLoad, LanguageId,
                 MyLocationLatitude.ToString(CultureInfo.InvariantCulture),
                 MyLocationLongitude.ToString(CultureInfo.InvariantCulture), boundBox,
                 PrepareSubCategoryString(SubCategoriesList), PageNumber);

@@ -143,10 +143,7 @@ namespace NohandicapNative.Droid.Adapters
         private async Task<bool> LoadNextData()
         {
             var conn = Utils.GetDatabaseConnection();
-
-
             IEnumerable<ProductMarkerModel> newProducts;
-
 
             if (_isFav)
             {
@@ -160,7 +157,7 @@ namespace NohandicapNative.Droid.Adapters
                 var latLngBounds = _baseFragment.MainActivity.MapPage.LatLngBounds;
                 if (latLngBounds != null)
                 {
-                    if (_products.Count < 50)
+                    if (_products.Count < NohandicapLibrary.DefaultCountMarkersToLoad)
                     {
                         _markerUrlBuilder.PageNumber = 1;
                     }
@@ -186,8 +183,6 @@ namespace NohandicapNative.Droid.Adapters
                 }
 
             }
-
-     
 
             foreach (var product in newProducts)
             {
