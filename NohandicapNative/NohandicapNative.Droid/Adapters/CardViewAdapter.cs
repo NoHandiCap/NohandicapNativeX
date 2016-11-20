@@ -159,9 +159,13 @@ namespace NohandicapNative.Droid.Adapters
                 var latLngBounds = _baseFragment.MainActivity.MapPage.LatLngBounds;
                 if (latLngBounds != null)
                 {
+                    if (_baseFragment.MainActivity.MapPage.ProductsInBounds.Count > 50)
+                    {
+                        _pageNumber++;
+                    }
                     _markerUrlBuilder.SetBounds(latLngBounds.Southwest.Latitude, latLngBounds.Southwest.Longitude,
                         latLngBounds.Northeast.Latitude, latLngBounds.Northeast.Longitude);
-                    _markerUrlBuilder.PageNumber = _pageNumber + 1;
+                    _markerUrlBuilder.PageNumber = _pageNumber;
 
                 }
                 var position = _baseFragment.MainActivity.CurrentLocation;
