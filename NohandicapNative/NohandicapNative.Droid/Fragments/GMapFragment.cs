@@ -57,6 +57,7 @@ namespace NohandicapNative.Droid
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
+          
             this._inflater = inflater;          
             var view = inflater.Inflate(Resource.Layout.MapPage, container, false);
             view.SetBackgroundColor(MainActivity.Resources.GetColor(Resource.Color.backgroundColor));
@@ -240,6 +241,7 @@ namespace NohandicapNative.Droid
                 this._currentCategories = currentCategories;
             }
             _markerUrlBuilder.SubCategoriesList = currentCategories.Select(x => x.Id).ToList();
+           
         }
        
         public override void OnResume()

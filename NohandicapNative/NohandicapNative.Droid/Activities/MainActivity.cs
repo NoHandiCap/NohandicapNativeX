@@ -327,11 +327,23 @@ namespace NohandicapNative.Droid.Activities
             SupportActionBar.Show();
             SupportActionBar.SetBackgroundDrawable(new ColorDrawable(Color.ParseColor(_items[position].Color)));
             SupportActionBar.Title = _items[position].Title;
+            var dbConn = Utils.GetDatabaseConnection();
+            var selectedCategory = dbConn.GetSubSelectedCategory();
+            if (!NohandicapApplication.IsTablet)
+            {
+                if (position == 1)
+                {
+                    if (selectedCategory.Count!=0&& selectedCategory.Count <8)
+                    {
+                        SupportActionBar.Title = selectedCategory[0].Name;
+                    }
+                }
+            }
             if (position == 0)
             {
                 SupportActionBar.Title = "Nohandicap";
             }
-
+            
             _lastPos = position;
         }
 
