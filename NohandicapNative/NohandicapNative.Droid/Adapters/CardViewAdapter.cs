@@ -30,6 +30,7 @@ namespace NohandicapNative.Droid.Adapters
         int _pageNumber = 1;
         bool _isFav = false;
         SqliteService conn;
+
         private MarkerUrlBuilder _markerUrlBuilder;
 
         public CardViewAdapter(BaseFragment context, bool isFav)
@@ -159,13 +160,18 @@ namespace NohandicapNative.Droid.Adapters
                 var latLngBounds = _baseFragment.MainActivity.MapPage.LatLngBounds;
                 if (latLngBounds != null)
                 {
-                    if (_baseFragment.MainActivity.MapPage.ProductsInBounds.Count > 50)
+                    if (_products.Count < 50)
+                    {
+                        _markerUrlBuilder.PageNumber = 1;
+                    }
+                    else
                     {
                         _pageNumber++;
+                        _markerUrlBuilder.PageNumber = _pageNumber;
                     }
                     _markerUrlBuilder.SetBounds(latLngBounds.Southwest.Latitude, latLngBounds.Southwest.Longitude,
                         latLngBounds.Northeast.Latitude, latLngBounds.Northeast.Longitude);
-                    _markerUrlBuilder.PageNumber = _pageNumber;
+                 
 
                 }
                 var position = _baseFragment.MainActivity.CurrentLocation;
@@ -181,7 +187,7 @@ namespace NohandicapNative.Droid.Adapters
 
             }
 
-            _pageNumber++;
+     
 
             foreach (var product in newProducts)
             {
