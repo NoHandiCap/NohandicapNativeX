@@ -20,11 +20,17 @@
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
-        <LinearLayout
-            android:orientation="vertical"
-            android:padding="10dip"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
+      <LinearLayout
+         android:orientation="vertical"
+         android:padding="10dip"
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content">
+
+          <LinearLayout
+              android:orientation="vertical"
+              android:padding="10dip"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content">
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
@@ -33,29 +39,29 @@
                 android:background="@color/themeColor"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="15dp">
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="1dp"
-                    android:background="@color/backgroundColor">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="Medium Text"
-                        android:id="@+id/userTextView"
-                        android:layout_weight="2"
-                        android:textColor="@color/themeColor"
-                        android:layout_marginLeft="5dp" />
-                    <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Logout"
-                        android:id="@+id/logoutButton"
-                        style="@style/Widget.AppCompat.Button.Borderless.Colored"
-                        android:layout_marginRight="5dp" />
-                </LinearLayout>
+              <LinearLayout
+                  android:orientation="horizontal"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:layout_margin="1dp"
+                  android:background="@color/backgroundColor">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Medium Text"
+                    android:id="@+id/userTextView"
+                    android:layout_weight="2"
+                    android:textColor="@color/themeColor"
+                    android:layout_marginLeft="5dp" />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Logout"
+                    android:id="@+id/logoutButton"
+                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                    android:layout_marginRight="5dp" />
+              </LinearLayout>
             </LinearLayout>
             <TextView
                 android:id="@+id/lang_spinner_prompt"
@@ -94,20 +100,52 @@
                 android:textSize="10dp"
                 android:id="@+id/lastUpdateTextView"
                 android:layout_gravity="center_horizontal" />
-        </LinearLayout>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Our web site: www.nohandicap.net"
-            android:textSize="20dp"
-            android:autoLink="web"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="false"
-            android:layout_alignParentRight="false"
-            android:textAlignment="center"
-            android:textColor="@color/themeColor"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="5dp" />
+          </LinearLayout>
+          <LinearLayout
+                         android:orientation="vertical"
+                         android:layout_width="match_parent"
+                         android:layout_height="wrap_content"
+                         android:layout_margin="1dp"
+                         android:padding="10dip"
+                         android:id="@+id/websites_vertical_container"
+                         android:layout_alignParentBottom="true"
+                         android:layout_alignParentLeft="false"
+                         android:layout_alignParentRight="false"
+                         android:layout_alignParentEnd="true"
+                         android:background="@color/backgroundColor">
+            <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="@string/project_website"
+                    android:textSize="15dp"
+                    android:gravity="center_horizontal"
+                    android:autoLink="web"
+                    android:id="@+id/project_website_link"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="false"
+                    android:layout_alignParentRight="false"
+                    android:textAlignment="center"
+                    android:textColor="@color/themeColor"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="5dp" />
+            <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="@string/powered_by"
+                    android:textSize="15dp"
+                    android:gravity="center_horizontal"
+                    android:autoLink="web"
+                    android:id="@+id/deineseite_website_link"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="false"
+                    android:layout_alignParentRight="false"
+                    android:textAlignment="center"
+                    android:textColor="@color/themeColor"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="5dp" />
+          </LinearLayout>
+      </LinearLayout>
     </RelativeLayout>
 </LinearLayout>

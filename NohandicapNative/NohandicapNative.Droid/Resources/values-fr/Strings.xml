@@ -61,6 +61,8 @@
   <string name="dialog_gps_message">GPS est pas activé. Voulez-vous aller dans le menu des paramètres?</string>
   <string name="dialog_gps_title_positive">Paramètres</string>
   <string name="dialog_gps_title_negative">Annuler</string>
+  <string name="project_website">Official Website: www.nohandicap.net</string>
+  <string name="powered_by">Powered by: www.deineseite.at</string>
 
   <string-array name="lang_array">
     <item>Allemand</item>
