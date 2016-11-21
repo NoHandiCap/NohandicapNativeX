@@ -17,79 +17,97 @@
             app:popupTheme="@style/Theme.AppCompat.Light"
             app:title="@string/app_name" />
     </android.support.design.widget.AppBarLayout>
-    <LinearLayout
-        android:orientation="vertical"
-        android:padding="10dip"
+    <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="fill_parent">
         <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/loginLayout"
-            android:background="@color/themeColor"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="15dp">
+            android:orientation="vertical"
+            android:padding="10dip"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="1dp"
-                android:background="@color/backgroundColor">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Medium Text"
-                    android:id="@+id/userTextView"
-                    android:layout_weight="2"
-                    android:textColor="@color/themeColor"
-                    android:layout_marginLeft="5dp" />
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Logout"
-                    android:id="@+id/logoutButton"
-                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
-                    android:layout_marginRight="5dp" />
+                android:id="@+id/loginLayout"
+                android:background="@color/themeColor"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="15dp">
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="1dp"
+                    android:background="@color/backgroundColor">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Medium Text"
+                        android:id="@+id/userTextView"
+                        android:layout_weight="2"
+                        android:textColor="@color/themeColor"
+                        android:layout_marginLeft="5dp" />
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Logout"
+                        android:id="@+id/logoutButton"
+                        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                        android:layout_marginRight="5dp" />
+                </LinearLayout>
             </LinearLayout>
+            <TextView
+                android:id="@+id/lang_spinner_prompt"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/lang_prompt"
+                android:layout_above="@+id/languageList"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:textAlignment="center"
+                android:gravity="center_horizontal" />
+            <ListView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/languageList"
+                android:divider="#00000000"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:dividerHeight="4dp"
+                android:paddingLeft="40dp"
+                android:paddingRight="40dp"
+                android:layout_marginTop="15dp" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/synchronize"
+                android:id="@+id/syncButton"
+                style="@style/AppThemeNoBar.Button"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="30dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Small Text"
+                android:textSize="10dp"
+                android:id="@+id/lastUpdateTextView"
+                android:layout_gravity="center_horizontal" />
         </LinearLayout>
-        <TextView
-            android:id="@+id/lang_spinner_prompt"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/lang_prompt"
-            android:layout_above="@+id/languageList"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:textAlignment="center"
-            android:gravity="center_horizontal" />
-        <ListView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/languageList"
-            android:divider="#00000000"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"
-            android:dividerHeight="4dp"
-            android:paddingLeft="40dp"
-            android:paddingRight="40dp"
-            android:layout_marginTop="15dp" />
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/synchronize"
-            android:id="@+id/syncButton"
-            style="@style/AppThemeNoBar.Button"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="30dp" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Small Text"
-            android:textSize="10dp"
-            android:id="@+id/lastUpdateTextView"
-            android:layout_gravity="center_horizontal" />
-    </LinearLayout>
+            android:text="Our web site: www.nohandicap.net"
+            android:textSize="20dp"
+            android:autoLink="web"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="false"
+            android:layout_alignParentRight="false"
+            android:textAlignment="center"
+            android:textColor="@color/themeColor"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="5dp" />
+    </RelativeLayout>
 </LinearLayout>
