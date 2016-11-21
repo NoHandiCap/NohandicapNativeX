@@ -63,6 +63,29 @@ namespace NohandicapNative.Droid.Services
           int  pixelDensityIndex = (int)metrics.Density <= 2 ? 1 : 2;
             return pixelDensityIndex;
         }
+        public static void SetListViewHeightBasedOnChildren(ListView listView)
+        {
+            IListAdapter listAdapter = listView.Adapter;
+            if (listAdapter == null)
+                return;
+
+            int desiredWidth = View.MeasureSpec.MakeMeasureSpec(listView.Width, MeasureSpecMode.Unspecified);
+            int totalHeight = 0;
+            View view = null;
+            for (int i = 0; i < listAdapter.Count; i++)
+            {
+                view = listAdapter.GetView(i, view, listView);
+                if (i == 0)
+
+                    view.LayoutParameters=new ViewGroup.LayoutParams(desiredWidth, ViewGroup.LayoutParams.WrapContent);
+                view.Measure(View.MeasureSpec.MakeMeasureSpec(desiredWidth, MeasureSpecMode.AtMost), View.MeasureSpec.MakeMeasureSpec(0, MeasureSpecMode.Unspecified));
+               // view.Measure(desiredWidth, 0);
+                totalHeight += view.MeasuredHeight/2;
+            }
+            ViewGroup.LayoutParams param = listView.LayoutParameters;
+             param.Height = totalHeight + (listView.DividerHeight * (listAdapter.Count - 1));
+            listView.LayoutParameters= param;
+        }
         public static bool isAppIsInBackground(Context context)
         {
             bool isInBackground = true;

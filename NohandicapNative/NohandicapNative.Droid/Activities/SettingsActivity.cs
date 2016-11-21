@@ -53,6 +53,7 @@ namespace NohandicapNative.Droid
             var conn = Utils.GetDatabaseConnection();
             _languageList = conn.GetDataList<LanguageModel>();           
             _langListView = FindViewById<ListView>(Resource.Id.languageList);
+           
             _langListView.OnItemClickListener = this;
             List<CustomRadioButton> langList = new List<CustomRadioButton>();
             conn.GetDataList<LanguageModel>().ForEach(x => langList.Add(new CustomRadioButton()
@@ -61,6 +62,7 @@ namespace NohandicapNative.Droid
             }));
             var currentLocale = Utils.ReadFromSettings(this, Utils.LANG_ID_TAG);
             _langListView.Adapter = new RadioButtonListAdapter(this, flags, langList,int.Parse(currentLocale)-1);
+            Utils.SetListViewHeightBasedOnChildren(_langListView);
             _syncButton.Click += async(s,e)=>{
                 ProgressDialog progressDialog = new ProgressDialog(this,
                  Resource.Style.StyledDialog);
