@@ -196,6 +196,8 @@ namespace NohandicapNative.Droid.Activities
             SetTheme(Resource.Style.AppThemeNoBar);
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.Main);
+            var dbConn = Utils.GetDatabaseConnection();
+            dbConn.UnSelectAllCategories();
             NohandicapApplication.IsTablet = Resources.GetBoolean(Resource.Boolean.is_tablet);
             NohandicapApplication.MainActivity = this;
 
