@@ -48,7 +48,7 @@ namespace NohandicapNative.Droid.Adapters
             categories = conn.GetDataList<CategoryModel>();
             _products = new List<ProductMarkerModel>();
             this._isFav = isFav;
-            if (!isFav)
+            /*if (!isFav)
             {
                 var latLngBounds = _baseFragment.MainActivity.MapPage.LatLngBounds;
                 var inBounds = _baseFragment.MainActivity.MapPage.ProductsInBounds
@@ -57,7 +57,7 @@ namespace NohandicapNative.Droid.Adapters
                         double.Parse(x.Lng, CultureInfo.InvariantCulture))
                         ));
                 _products = new List<ProductMarkerModel>(Utils.SortProductsByDistance(inBounds));
-            }
+            }*/
             _baseFragment.ShowSpinner(_products.Count == 0);
             StartLoad();
 
