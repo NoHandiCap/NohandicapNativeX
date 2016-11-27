@@ -186,15 +186,15 @@ namespace NohandicapNative.Droid.Adapters
 
             foreach (var product in newProducts)
             {
-                if (_products.All(x => x.Id != product.Id))
-                {
+                //if (_products.All(x => x.Id != product.Id))
+                //{
                     //   _baseFragment.MainActivity.CurrentProductsList.Add(product);
                     _baseFragment.MainActivity.RunOnUiThread(() =>
                     {
                         _products.Add(product);
                         NotifyDataSetChanged();
                     });
-                }
+                //}
             }
             return true;
 
