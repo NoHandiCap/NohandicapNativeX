@@ -292,7 +292,6 @@ namespace NohandicapNative.Droid.Activities
                     _fab.Selected = false;
                     _user.Favorites.Remove(_product.ID);
                     _conn.InsertUpdateProduct(_user);
-                    NohandicapApplication.MainActivity.Favorites.ReloadData();
                     var url = Format(NohandicapLibrary.LINK_DELFAV, _user.Id, _product.ID);
                   await RestApiService.GetDataFromUrl<UserModel>(url, readBack: false);
                 }

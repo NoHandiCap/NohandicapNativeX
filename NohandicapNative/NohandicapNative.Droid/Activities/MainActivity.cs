@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
+using Android.Content.PM;
 using Android.Content.Res;
 using Android.Graphics;
 using Android.Graphics.Drawables;
@@ -14,6 +15,7 @@ using Android.Locations;
 using Android.Net;
 using Android.OS;
 using Android.Preferences;
+using Android.Provider;
 using Android.Runtime;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
@@ -198,6 +200,7 @@ namespace NohandicapNative.Droid.Activities
             SetContentView(Resource.Layout.Main);
             var dbConn = Utils.GetDatabaseConnection();
             dbConn.UnSelectAllCategories();
+            ThreadPool.QueueUserWorkItem(o =>Utils.SetStatisticData(this));
             NohandicapApplication.IsTablet = Resources.GetBoolean(Resource.Boolean.is_tablet);
             NohandicapApplication.MainActivity = this;
 
@@ -219,8 +222,10 @@ namespace NohandicapNative.Droid.Activities
 
             ThreadPool.QueueUserWorkItem(o => CheckUpdate());
             ThreadPool.QueueUserWorkItem(o => InitializeLocationManager());
+           
         }
 
+      
         private async void CheckUpdate()
         {
             try

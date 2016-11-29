@@ -24,7 +24,6 @@ namespace NohandicapNative
         #region Private properties
 
         private int _mainCategoryId;
-        private int _languagId;
         private string _url;
         private bool _isBoundsEnaled;
 
@@ -42,10 +41,7 @@ namespace NohandicapNative
         public int PageNumber { get; set; }
         public int CountMarkersToLoad { get; set; }
 
-        public string Url
-        {
-            get { return _url; }
-        }
+        public string Url => _url?? GenerateUrl();
 
         public int MainCategoryId
         {
@@ -59,12 +55,7 @@ namespace NohandicapNative
             set { _mainCategoryId = value; }
         }
 
-        public int LanguageId
-        {
-            get { return _languagId; }
-            set { _languagId = value; }
-        }
-        
+        public int LanguageId { get; set; }
 
         #endregion
 
