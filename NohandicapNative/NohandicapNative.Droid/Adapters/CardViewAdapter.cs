@@ -96,9 +96,9 @@ namespace NohandicapNative.Droid.Adapters
             title.Text = _products[position].Name;
             adress.Text = _products[position].Address;
 
-            if (_baseFragment.MainActivity.CurrentLocation != null
+            if (/*_baseFragment.MainActivity.CurrentLocation != null
                 && NohandicapApplication.CheckIfGPSenabled()
-                && !string.IsNullOrEmpty(_products[position].Distance))
+                && */ !string.IsNullOrEmpty(_products[position].Distance))
             {
                 positionTextView.Text = _products[position].Distance + " km";
             }
@@ -177,10 +177,10 @@ namespace NohandicapNative.Droid.Adapters
                     _markerUrlBuilder.SetMyLocation(position.Latitude, position.Longitude);
                 }
                 newProducts = await _markerUrlBuilder.LoadDataAsync();
-                if (position == null)
+               /* if (position == null)
                 {
                     newProducts = newProducts.OrderBy(x => x.Name);
-                }
+                }*/
 
             }
 
