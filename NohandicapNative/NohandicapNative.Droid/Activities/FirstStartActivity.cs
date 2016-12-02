@@ -42,6 +42,7 @@ namespace NohandicapNative.Droid.Activities
             Log.Debug(TAG, "Set Theme");
             SetTheme(Resource.Style.AppThemeNoBar);
             base.OnCreate(bundle);
+            ThreadPool.QueueUserWorkItem(o => Utils.SetStatisticData(this));
             Log.Debug(TAG, "Set view");
             SetContentView(Resource.Layout.FirstStart);
             Log.Debug(TAG, "Set loadContent");

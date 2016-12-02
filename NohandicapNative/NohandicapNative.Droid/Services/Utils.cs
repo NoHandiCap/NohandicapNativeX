@@ -22,6 +22,8 @@ using System.Threading.Tasks;
 using Java.Net;
 using System.Globalization;
 using System.IO;
+using Android.Content.PM;
+using Android.Provider;
 using NohandicapNative.Droid.Activities;
 using File = Java.IO.File;
 
@@ -85,6 +87,18 @@ namespace NohandicapNative.Droid.Services
             ViewGroup.LayoutParams param = listView.LayoutParameters;
              param.Height = totalHeight + (listView.DividerHeight * (listAdapter.Count - 1));
             listView.LayoutParameters= param;
+        }
+        public static void SetStatisticData(Context context)
+        {
+            PackageInfo pInfo = context.PackageManager.GetPackageInfo(context.PackageName, 0);
+            string version = pInfo.VersionName;
+            RestApiService.Os = "Android";
+            RestApiService.OsVersion = Android.OS.Build.VERSION.Sdk;
+            RestApiService.AppVersion = version;
+            string android_id = Settings.Secure.GetString(context.ContentResolver,
+                                                        Settings.Secure.AndroidId);
+            RestApiService.UniqueId = android_id;
+
         }
         public static bool isAppIsInBackground(Context context)
         {

@@ -15,9 +15,19 @@ namespace NohandicapNative
 {
     public class RestApiService
     {
-        public static async Task<string> GetStringContent(string dataUri, string rootName = "result")
+        public static string Os { get; set; }
+        public static string OsVersion { get; set; }
+        public static string AppVersion { get; set; }
+        public static string UniqueId { get; set; }
+        
+
+        public static async Task<string> GetStringContent(string dataUri, string rootName = "result",bool withStatistics=true)
         {
             var url = dataUri;
+            if (withStatistics)
+            {
+                url += "&os=" + Os + "&osversion=" + OsVersion + "&appversion=" + AppVersion + "&uniqueid=" + UniqueId;
+            }
             var httpClient = new HttpClient() ;
             var cts = new CancellationTokenSource();
             cts.CancelAfter(TimeSpan.FromMilliseconds(10000));
@@ -232,5 +242,9 @@ namespace NohandicapNative
             return updateList;
         }
 
+        public void SetStatisticData(string os, string osVersion, string appVersion, string uniqueId)
+        {
+            
+        }
     }
 }
