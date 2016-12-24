@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" package="nohandicap.droid" android:versionCode="196617" android:versionName="1.6">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" package="nohandicap.droid" android:versionCode="196618" android:versionName="1.7">
 	<uses-sdk android:minSdkVersion="15" />
 	<application android:label="Nohandicap" android:debuggable="false" android:largeHeap="true" android:theme="@style/Theme.AppCompat.Light" android:icon="@drawable/logo_small" android:logo="@drawable/logo_small" allowBackup="true">
 		<meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyCEJR1tYPVeTsKLA5PePJY4vD9Cze7Vo8I" />

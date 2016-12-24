@@ -44,6 +44,8 @@ namespace NohandicapNative.Droid
         {
             ProductsInBounds = new ObservableCollection<ProductMarkerModel>();
             _markerUrlBuilder = new MarkerUrlBuilder();
+            _markerUrlBuilder.LanguageId = CurrentLang.Id;
+            _markerUrlBuilder.MainCategoryId = SelectedMainCategory.Id;
         }
 
         /*
