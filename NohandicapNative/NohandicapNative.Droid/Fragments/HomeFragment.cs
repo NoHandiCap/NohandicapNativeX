@@ -115,7 +115,7 @@ namespace NohandicapNative.Droid.Fragments
             mainCat[categorySelected - 1].SetTypeface(null, TypefaceStyle.Bold);
             mainLayout[categorySelected - 1].Selected = true;
             var screenDimens = Utils.GetScreenDensity(Activity);
-            Picasso.With(Activity).Load(Resource.Drawable.wheelchair1).Resize(0, 40*screenDimens).Into(mainImg[0]);
+            Picasso.With(Activity).Load(Resource.Drawable.wheelchair1).Resize(0, 40 * screenDimens).Into(mainImg[0]);
             Picasso.With(Activity).Load(Resource.Drawable.wheelchair2).Resize(0, 40 * screenDimens).Into(mainImg[1]);
             Picasso.With(Activity).Load(Resource.Drawable.wheelchair3).Resize(0, 40 * screenDimens).Into(mainImg[2]);
             //mainImg[0].SetImageDrawable(Utils.SetDrawableSize(Activity, Resource.Drawable.wheelchair1, 140, 65));
